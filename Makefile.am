@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = foreign
+
 SUBDIRS = . tests
 
 lib_LTLIBRARIES = libqrencode.la
