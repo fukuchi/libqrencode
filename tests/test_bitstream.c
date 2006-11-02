@@ -24,6 +24,8 @@ void test_1bitStream(void)
 	}
 	printf("\n");
 
+	BitStream_free(bstream);
+
 	testEnd(flag);
 }
 
@@ -52,6 +54,8 @@ void test_8nbitsStream(void)
 	BitStream_append(bstream, 32, (unsigned char *)&data);
 
 	testEnd(memcmp(correct, bstream->data, 7));
+
+	BitStream_free(bstream);
 }
 
 void test_varStream(void)
@@ -97,6 +101,9 @@ void test_varStream(void)
 
 	flag = memcmp(correct, bstream->data, 6);
 	flag |= (bstream->data[6] & 0x3f) != (correct[6] & 0x3f);
+
+	BitStream_free(bstream);
+
 	testEnd(flag);
 }
 

@@ -36,7 +36,7 @@ BitStream *BitStream_new(int size)
 	int byte;
 
 	d = div(size, 8);
-	byte = d.quot + d.rem?1:0;
+	byte = d.quot + (d.rem?1:0);
 
 	bstream = (BitStream *)malloc(sizeof(BitStream));
 	bstream->size = size;
