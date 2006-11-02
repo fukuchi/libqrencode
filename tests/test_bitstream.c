@@ -1,18 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "common.h"
-
-typedef struct {
-	int size;
-	unsigned char *data;
-
-	int remain;
-	unsigned char *head;
-} BitStream;
-
-extern BitStream *BitStream_new(int size);
-extern void BitStream_append(BitStream *bstream, int size, unsigned char *data);
-extern void BitStream_free(BitStream *bstream);
+#include "../bitstream.h"
 
 void test_1bitStream(void)
 {

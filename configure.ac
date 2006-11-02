@@ -2,7 +2,7 @@ AC_INIT(QRencode, 0.1.0, fukuchi@megaui.net)
 
 dnl information on the package
 
-PACKAGE=QRencode
+PACKAGE=qrencode
 MAJOR_VERSION=0
 MINOR_VERSION=1
 MICRO_VERSION=0

@@ -28,6 +28,7 @@
 #include <assert.h>
 
 #include "qrencode.h"
+#include "bitstream.h"
 
 /******************************************************************************
  * Error Correction Level
@@ -70,8 +71,7 @@ struct _QRenc_List {
 	QRenc_EncodeMode mode;
 	int size;				///< Size of data chunk.
 	unsigned char *data;	///< Data chunk.
-	int bits;				///< Number of bits of encoded bit stream.
-	unsigned char *bdata;	///< Encoded bit stream.
+	BitStream *bstream;
 	QRenc_List *next;
 };
 
@@ -100,8 +100,7 @@ int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, 
 	entry->mode = mode;
 	entry->size = size;
 	entry->data = (unsigned char *)malloc(size);
-	entry->bits = 0;
-	entry->bdata = NULL;
+	entry->bstream = NULL;
 
 	memcpy(entry->data, data, size);
 	entry->next = NULL;
@@ -125,8 +124,8 @@ void QRenc_freeData(QRenc_DataStream *stream)
 	while(list != NULL) {
 		free(list->data);
 		next = list->next;
-		if(list->bdata != NULL) {
-			free(list->bdata);
+		if(list->bstream != NULL) {
+			BitStream_free(list->bstream);
 		}
 		free(list);
 		list = next;
@@ -139,74 +138,29 @@ void QRenc_freeData(QRenc_DataStream *stream)
  * Data conversion
  *****************************************************************************/
 
-typedef struct {
-	int size;
-	unsigned char *data;
 
-	int remain;
-	unsigned char *head;
-} BitStream;
-
-BitStream *BitStream_new(int size)
+/**
+ * Convert the data stream in the data chunk to a bit stream.
+ * @param list
+ * @return number of bits
+ */
+static int QRenc_encodeBitStream(QRenc_List *list)
 {
-	BitStream *bstream;
-	div_t d;
-	int byte;
-
-	d = div(size, 8);
-	byte = d.quot + d.rem?1:0;
-
-	bstream = (BitStream *)malloc(sizeof(BitStream));
-	bstream->size = size;
-	bstream->data = (unsigned char *)malloc(byte);
-	bstream->head = bstream->data;
-	bstream->remain = 0;
-
-	return bstream;
-}
-
-void BitStream_append(BitStream *bstream, int size, unsigned char *data)
-{
-	int sb;
-	int shift;
-
-	sb = size / 8;
-
-	if(bstream->remain == 0) {
-		memcpy(bstream->head, data, sb);
-		bstream->head += sb;
-		if(size & 7) {
-			*bstream->head = data[sb];
-			bstream->remain = 8 - (size - sb * 8);
-		}
-	} else {
-		shift = 8 - bstream->remain;
-		while(size > 7) {
-			*bstream->head++ |= *data << shift;
-			*bstream->head = *data++ >> bstream->remain;
-			size -= 8;
-		}
-		if(size > 0) {
-			*bstream->head |= *data << shift;
-			if(size > bstream->remain) {
-				bstream->head++;
-				*bstream->head = *data >> bstream->remain;
-				bstream->remain += 8 - size;
-			} else {
-				bstream->remain -= size;
-				if(bstream->remain == 0) {
-					bstream->head++;
-					bstream->remain = 8;
-				}
-			}
-		}
+	assert(list != NULL);
+	switch(list->mode) {
+		case QR_MODE_NUM:
+//			return QRenc_encodeModeNum(list);
+			break;
+		case QR_MODE_AN:
+//			return QRenc_encodeModeAn(list);
+			break;
+		case QR_MODE_8:
+//			return QRenc_encodeMode8(list);
+			break;
+		case QR_MODE_KANJI:
+//			return QRenc_encodeModeKanji(list);
+			break;
 	}
-}
-
-void BitStream_free(BitStream *bstream)
-{
-	free(bstream->data);
-	free(bstream);
 }
 
 /**
@@ -231,7 +185,7 @@ static BitStream *QRenc_createBitStream(QRenc_DataStream *stream)
 	bstream = BitStream_new(bits);
 	list = stream->head;
 	while(list != NULL) {
-		BitStream_append(bstream, list->bits, list->bdata);
+		BitStream_append(bstream, list->bstream->size, list->bstream->data);
 	}
 
 	return bstream;
