@@ -28,6 +28,7 @@
 #include <assert.h>
 
 #include "qrencode.h"
+#include "qrspec.h"
 #include "bitstream.h"
 
 /******************************************************************************
@@ -69,7 +70,7 @@ extern void QRenc_setVersion(int v)
 typedef struct _QRenc_List QRenc_List;
 struct _QRenc_List {
 	QRenc_EncodeMode mode;
-	int size;				///< Size of data chunk.
+	int size;				///< Size of data chunk (byte).
 	unsigned char *data;	///< Data chunk.
 	BitStream *bstream;
 	QRenc_List *next;
@@ -81,7 +82,7 @@ struct _QRenc_DataStream {
 };
 
 
-QRenc_DataStream *QRenc_initData(void)
+QRenc_DataStream *QRenc_newData(void)
 {
 	QRenc_DataStream *stream;
 
@@ -140,27 +141,185 @@ void QRenc_freeData(QRenc_DataStream *stream)
 
 
 /**
- * Convert the data stream in the data chunk to a bit stream.
- * @param list
+ * Convert the number data stream to a bit stream.
+ * @param entry
  * @return number of bits
  */
-static int QRenc_encodeBitStream(QRenc_List *list)
+static int QRenc_encodeModeNum(QRenc_List *entry)
 {
-	assert(list != NULL);
-	switch(list->mode) {
-		case QR_MODE_NUM:
-//			return QRenc_encodeModeNum(list);
+	int bits;
+	int words;
+	int i;
+	unsigned int val;
+	
+	words = entry->size / 3;
+	bits = words * 8;
+	switch(entry->size - words * 3) {
+		case 1:
+			bits += 4;
 			break;
-		case QR_MODE_AN:
-//			return QRenc_encodeModeAn(list);
+		case 2:
+			bits += 7;
 			break;
-		case QR_MODE_8:
-//			return QRenc_encodeMode8(list);
-			break;
-		case QR_MODE_KANJI:
-//			return QRenc_encodeModeKanji(list);
+		default:
 			break;
 	}
+
+	entry->bstream = BitStream_new(bits);
+
+	for(i=0; i<words; i++) {
+		val  = (entry->data[i*3  ] - '0') * 100;
+		val += (entry->data[i*3+1] - '0') * 10;
+		val += (entry->data[i*3+2] - '0');
+	}
+}
+
+/**
+ * Convert the data stream in the data chunk to a bit stream.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_encodeBitStream(QRenc_List *entry)
+{
+	assert(entry != NULL);
+	switch(entry->mode) {
+		case QR_MODE_NUM:
+			return QRenc_encodeModeNum(entry);
+			break;
+		case QR_MODE_AN:
+//			return QRenc_encodeModeAn(entry);
+			break;
+		case QR_MODE_8:
+//			return QRenc_encodeMode8(entry);
+			break;
+		case QR_MODE_KANJI:
+//			return QRenc_encodeModeKanji(entry);
+			break;
+	}
+}
+
+/**
+ * Estimates the length of the encoded bit stream of numeric data.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_estimateBitsModeNum(QRenc_List *entry)
+{
+	int w;
+	int bits;
+
+	w = entry->size / 3;
+	bits = w * 10;
+	switch(entry->size - w * 3) {
+		case 1:
+			bits += 4;
+			break;
+		case 2:
+			bits += 7;
+			break;
+		default:
+			break;
+	}
+
+	return bits;
+}
+
+/**
+ * Estimates the length of the encoded bit stream of alphabet-numeric data.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_estimateBitsModeAn(QRenc_List *entry)
+{
+	int w;
+	int bits;
+
+	w = entry->size / 2;
+	bits = w * 11;
+	if(entry->size & 1) {
+		bits += 6;
+	}
+
+	return bits;
+}
+
+/**
+ * Estimates the length of the encoded bit stream of 8 bit data.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_estimateBitsMode8(QRenc_List *entry)
+{
+	return entry->size * 8;
+}
+
+/**
+ * Estimates the length of the encoded bit stream of kanji data.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_estimateBitsModeKanji(QRenc_List *entry)
+{
+	return (entry->size / 2) * 13;
+}
+
+/**
+ * Estimates the length of the encoded bit stream on the current version.
+ * @param entry
+ * @param version version of the symbol
+ * @return number of bits
+ */
+static int QRenc_estimateBitStreamSizeOfEntry(QRenc_List *entry, int version)
+{
+	int bits = 0;
+	int l, m;
+	int num;
+
+	assert(entry != NULL);
+	switch(entry->mode) {
+		case QR_MODE_NUM:
+			bits = QRenc_estimateBitsModeNum(entry);
+			break;
+		case QR_MODE_AN:
+			bits = QRenc_estimateBitsModeAn(entry);
+			break;
+		case QR_MODE_8:
+			bits = QRenc_estimateBitsMode8(entry);
+			break;
+		case QR_MODE_KANJI:
+			bits = QRenc_estimateBitsModeKanji(entry);
+			break;
+	}
+
+	l = QRspec_lengthIndicator(entry->mode, version);
+	m = 1 << l;
+	num = (bits + m - 1) / m;
+
+	bits += num * (4 + l); // mode indicator (4bits) + length indicator
+
+	return bits;
+}
+
+/**
+ * Estimates the length of the encoded bit stream of the data stream.
+ * @param stream data stream
+ * @param version version of the symbol
+ * @return number of bits
+ */
+int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version)
+{
+	QRenc_List *list;
+	int bits = 0;
+
+	assert(stream != NULL);
+
+	list = stream->head;
+	while(list != NULL) {
+		bits += QRenc_estimateBitStreamSizeOfEntry(list, version);
+		list = list->next;
+	}
+
+	return bits;
 }
 
 /**
@@ -168,7 +327,7 @@ static int QRenc_encodeBitStream(QRenc_List *list)
  * @param stream input data stream.
  * @return bit stream.
  */
-static BitStream *QRenc_createBitStream(QRenc_DataStream *stream)
+int QRenc_createBitStream(QRenc_DataStream *stream)
 {
 	QRenc_List *list;
 	int bits = 0;
@@ -182,11 +341,5 @@ static BitStream *QRenc_createBitStream(QRenc_DataStream *stream)
 		list = list->next;
 	}
 
-	bstream = BitStream_new(bits);
-	list = stream->head;
-	while(list != NULL) {
-		BitStream_append(bstream, list->bstream->size, list->bstream->data);
-	}
-
-	return bstream;
+	return bits;
 }

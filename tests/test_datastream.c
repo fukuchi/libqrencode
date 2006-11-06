@@ -7,7 +7,7 @@ void test_freeDataStream(void)
 	unsigned char dummy[8];
 
 	testStart("Fee DataStream(always passed, but check valgrind.");
-	stream = QRenc_initData();
+	stream = QRenc_newData();
 	QRenc_appendData(stream, QR_MODE_8, 8, dummy);
 	QRenc_appendData(stream, QR_MODE_8, 8, dummy);
 	QRenc_appendData(stream, QR_MODE_8, 8, dummy);

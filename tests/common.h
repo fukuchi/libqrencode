@@ -11,6 +11,7 @@
 #define RESULT(_args_...) (printf(".....") + printf(_args_))
 
 #define testStart(__arg__) (testStartReal(__FUNCTION__, __arg__))
+#define testEndExp(__arg__) (testEnd(!(__arg__)))
 
 static int tests = 0;
 static int failed = 0;

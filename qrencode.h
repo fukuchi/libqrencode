@@ -76,10 +76,10 @@ extern void QRenc_setVersion(int version);
  * Encoding mode.
  */
 typedef enum {
-	QR_MODE_NUM,	///< Numeric mode
-	QR_MODE_AN,		///< Alphabet-numeric mode
-	QR_MODE_8,		///< 8-bit data mode
-	QR_MODE_KANJI	///< Kanji (shift-jis) mode
+	QR_MODE_NUM = 0,	///< Numeric mode
+	QR_MODE_AN,			///< Alphabet-numeric mode
+	QR_MODE_8,			///< 8-bit data mode
+	QR_MODE_KANJI		///< Kanji (shift-jis) mode
 } QRenc_EncodeMode;
 
 /******************************************************************************
@@ -95,7 +95,7 @@ typedef struct _QRenc_DataStream QRenc_DataStream;
  * Instantiate a data stream object.
  * @return Stream object (initialized).
  */
-extern QRenc_DataStream *QRenc_initData(void);
+extern QRenc_DataStream *QRenc_newData(void);
 
 /**
  * Append data to the stream object.
