@@ -130,3 +130,18 @@ int QRspec_lengthIndicator(QRenc_EncodeMode mode, int version)
 
 	return lengthTableBits[mode][l];
 }
+
+int QRspec_maximumWords(QRenc_EncodeMode mode, int version)
+{
+	int l;
+
+	if(version < 9) {
+		l = 0;
+	} else if(version < 26) {
+		l = 1;
+	} else {
+		l = 2;
+	}
+
+	return lengthTableWords[mode][l];
+}

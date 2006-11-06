@@ -76,6 +76,35 @@ struct _QRenc_List {
 	QRenc_List *next;
 };
 
+static QRenc_List *QRenc_newEntry(QRenc_EncodeMode mode, int size, unsigned char *data)
+{
+	QRenc_List *entry;
+
+	entry = (QRenc_List *)malloc(sizeof(QRenc_List));
+	entry->mode = mode;
+	entry->size = size;
+	entry->data = (unsigned char *)malloc(size);
+	memcpy(entry->data, data, size);
+	entry->bstream = NULL;
+	entry->next = NULL;
+
+	return entry;
+}
+
+static QRenc_List *QRenc_freeEntry(QRenc_List *entry)
+{
+	QRenc_List *next;
+
+	next = entry->next;
+	free(entry->data);
+	if(entry->bstream) {
+		BitStream_free(entry->bstream);
+	}
+	free(entry);
+
+	return next;
+}
+
 struct _QRenc_DataStream {
 	QRenc_List *head;
 	QRenc_List *tail;
@@ -97,14 +126,7 @@ int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, 
 {
 	QRenc_List *entry;
 
-	entry = (QRenc_List *)malloc(sizeof(QRenc_List));
-	entry->mode = mode;
-	entry->size = size;
-	entry->data = (unsigned char *)malloc(size);
-	entry->bstream = NULL;
-
-	memcpy(entry->data, data, size);
-	entry->next = NULL;
+	entry = QRenc_newEntry(mode, size, data);
 
 	if(stream->tail == NULL) {
 		stream->head = entry;
@@ -119,84 +141,19 @@ int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, 
 
 void QRenc_freeData(QRenc_DataStream *stream)
 {
-	QRenc_List *list, *next;
+	QRenc_List *list;
 
 	list = stream->head;
 	while(list != NULL) {
-		free(list->data);
-		next = list->next;
-		if(list->bstream != NULL) {
-			BitStream_free(list->bstream);
-		}
-		free(list);
-		list = next;
+		list = QRenc_freeEntry(list);
 	}
 
 	free(stream);
 }
 
 /******************************************************************************
- * Data conversion
+ * Estimation of the version number
  *****************************************************************************/
-
-
-/**
- * Convert the number data stream to a bit stream.
- * @param entry
- * @return number of bits
- */
-static int QRenc_encodeModeNum(QRenc_List *entry)
-{
-	int bits;
-	int words;
-	int i;
-	unsigned int val;
-	
-	words = entry->size / 3;
-	bits = words * 8;
-	switch(entry->size - words * 3) {
-		case 1:
-			bits += 4;
-			break;
-		case 2:
-			bits += 7;
-			break;
-		default:
-			break;
-	}
-
-	entry->bstream = BitStream_new(bits);
-
-	for(i=0; i<words; i++) {
-		val  = (entry->data[i*3  ] - '0') * 100;
-		val += (entry->data[i*3+1] - '0') * 10;
-		val += (entry->data[i*3+2] - '0');
-	}
-}
-
-/**
- * Convert the data stream in the data chunk to a bit stream.
- * @param entry
- * @return number of bits
- */
-static int QRenc_encodeBitStream(QRenc_List *entry)
-{
-	assert(entry != NULL);
-	switch(entry->mode) {
-		case QR_MODE_NUM:
-			return QRenc_encodeModeNum(entry);
-			break;
-		case QR_MODE_AN:
-//			return QRenc_encodeModeAn(entry);
-			break;
-		case QR_MODE_8:
-//			return QRenc_encodeMode8(entry);
-			break;
-		case QR_MODE_KANJI:
-//			return QRenc_encodeModeKanji(entry);
-			break;
-	}
-}
 
 /**
  * Estimates the length of the encoded bit stream of numeric data.
@@ -320,6 +277,82 @@ int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version)
 	}
 
 	return bits;
+}
+
+/**
+ * Estimates the required version number of the symbol.
+ * @param stream data stream
+ * @return required version number
+ */
+static int QRenc_estimateVersion(QRenc_DataStream *stream)
+{
+	int bits;
+	int new, prev;
+
+	new = 0;
+	do {
+		prev = new;
+		bits = QRenc_estimateBitStreamSize(stream, prev);
+		new = QRspec_getMinVersion((bits + 7) / 8);
+		if (new == -1) {
+			return -1;
+		}
+	} while (new > prev);
+
+	return new;
+}
+
+/******************************************************************************
+ * Data conversion
+ *****************************************************************************/
+
+
+/**
+ * Convert the number data stream to a bit stream.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_encodeModeNum(QRenc_List *entry)
+{
+	int words;
+	QRenc_List *st1, *st2;
+	int bits1, bits2;
+
+	words = QRspec_maximumWords(QR_MODE_NUM, version);
+	if(words > entry->size) {
+		st1 = QRenc_newEntry(QR_MODE_NUM, words, entry->data);
+		st2 = QRenc_newEntry(QR_MODE_NUM, entry->size - words, &entry->data[words]);
+		bits1 = QRenc_encodeModeNum(st1);
+		bits2 = QRenc_encodeModeNum(st2);
+		entry->bstream = BitStream_new(bits1 + bits2);
+		BitStream_appendBitStream(entry->bstream, st1->bstream);
+		BitStream_appendBitStream(entry->bstream, st2->bstream);
+	} else {
+	}
+}
+
+/**
+ * Convert the data stream in the data chunk to a bit stream.
+ * @param entry
+ * @return number of bits
+ */
+static int QRenc_encodeBitStream(QRenc_List *entry)
+{
+	assert(entry != NULL);
+	switch(entry->mode) {
+		case QR_MODE_NUM:
+			return QRenc_encodeModeNum(entry);
+			break;
+		case QR_MODE_AN:
+//			return QRenc_encodeModeAn(entry);
+			break;
+		case QR_MODE_8:
+//			return QRenc_encodeMode8(entry);
+			break;
+		case QR_MODE_KANJI:
+//			return QRenc_encodeModeKanji(entry);
+			break;
+	}
 }
 
 /**

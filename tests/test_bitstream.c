@@ -107,11 +107,75 @@ void test_varStream(void)
 	testEnd(flag);
 }
 
+void test_bitStreamAppend(void)
+{
+	unsigned int data;
+	BitStream *bstream, *bs1, *bs2, *bs3, *bs4;
+	int flag;
+	unsigned char correct[7];
+	int i;
+
+	testStart("Various bit stream");
+	bstream = BitStream_new(54);
+
+	bs1 = BitStream_new(7);
+	data = 0x7f;
+	correct[0] = 0x7f;
+	BitStream_append(bs1, 7, (unsigned char *)&data);
+
+	bs2 = BitStream_new(14);
+	data = 0x0555;
+	correct[0] |= 0x80;
+	correct[1] = (0x55>>1) | (0x55<<7);
+	correct[2] = 0x05>>1;
+	BitStream_append(bs2, 14, (unsigned char *)&data);
+
+	bs3 = BitStream_new(29);
+	data = 0x12345678;
+	correct[2] |= 0x78 << 5;
+	correct[3] = (0x78 >> 3) | (0x56 << 5);
+	correct[4] = (0x56 >> 3) | (0x34 << 5);
+	correct[5] = (0x34 >> 3) | (0x12 << 5);
+	correct[6] = 0x12 >> 3;
+	BitStream_append(bs3, 29, (unsigned char *)&data);
+
+	bs4 = BitStream_new(4);
+	data = 0xff;
+	correct[6] |= (0xff & 0x0f) << 2;
+	BitStream_append(bs4, 4, (unsigned char *)&data);
+
+	BitStream_appendBitStream(bstream, bs1);
+	BitStream_appendBitStream(bstream, bs2);
+	BitStream_appendBitStream(bstream, bs3);
+	BitStream_appendBitStream(bstream, bs4);
+
+	for(i=0; i<7; i++) {
+		printf("%02x", correct[i]);
+	}
+	printf("\n");
+	for(i=0; i<7; i++) {
+		printf("%02x", bstream->data[i]);
+	}
+	printf("\n");
+
+	flag = memcmp(correct, bstream->data, 6);
+	flag |= (bstream->data[6] & 0x3f) != (correct[6] & 0x3f);
+
+	BitStream_free(bstream);
+	BitStream_free(bs1);
+	BitStream_free(bs2);
+	BitStream_free(bs3);
+	BitStream_free(bs4);
+
+	testEnd(flag);
+}
+
 int main(int argc, char **argv)
 {
     test_8nbitsStream();
 	test_varStream();
 	test_1bitStream();
+	test_bitStreamAppend();
 
 	report();
 

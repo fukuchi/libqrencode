@@ -56,11 +56,19 @@ extern int QRspec_getMinVersion(int size);
  *****************************************************************************/
 
 /**
- * Return the size of lenght indicator for mode and version.
+ * Return the size of lenght indicator for the mode and version.
  * @param mode
  * @param version
  * @return the size of the appropriate length indicator (bits).
  */
 extern int QRspec_lengthIndicator(QRenc_EncodeMode mode, int version);
+
+/**
+ * Return the maximum length for the mode and version.
+ * @param mode
+ * @param version
+ * @return the maximum length (words)
+ */
+extern int QRspec_maximumWords(QRenc_EncodeMode mode, int version);
 
 #endif /* __QRSPEC_H__ */

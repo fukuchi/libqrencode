@@ -37,4 +37,7 @@ extern BitStream *BitStream_new(int size);
 void BitStream_append(BitStream *bstream, int size, unsigned char *data);
 void BitStream_free(BitStream *bstream);
 
+#define BitStream_appendBitStream(__arg1__, __arg2__) \
+	BitStream_append((__arg1__), ((__arg2__)->size), ((__arg2__)->data))
+
 #endif /* __BITSTREAM_H__ */
