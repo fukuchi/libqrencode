@@ -49,7 +49,7 @@ extern QRspec_Capacity qrspecCapacity[];
  * @param size input code length (byte)
  * @return version number
  */
-extern int QRspec_getMinVersion(int size);
+extern int QRspec_getMinimumVersion(int size);
 
 /******************************************************************************
  * Length indicator

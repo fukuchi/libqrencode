@@ -92,17 +92,24 @@ void test_8(void)
 
 void test_kanji(void)
 {
+	int res;
+
 	QRenc_DataStream *stream;
-	unsigned char str[4]= {0x5f, 0x93, 0xaa, 0xe4};
+	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
 	int bits;
 
 	testStart("Estimation of Kanji stream (2 chars)");
 	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
-	bits = QRenc_estimateBitStreamSize(stream, 0);
-	testEndExp(bits == 38);
+	res = QRenc_appendData(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
+	if(res < 0) {
+		printf("Failed to add.\n");
+		testEnd(1);
+	} else {
+		bits = QRenc_estimateBitStreamSize(stream, 0);
+		testEndExp(bits == 38);
+		QRenc_appendData(gstream, QR_MODE_KANJI, 4, (unsigned char *)str);
+	}
 
-	QRenc_appendData(gstream, QR_MODE_KANJI, 4, (unsigned char *)str);
 	QRenc_freeData(stream);
 }
 

@@ -108,7 +108,6 @@ QRenc_ErrorCorrectionLevel QRenc_getErrorCorrectionLevel(QRenc_DataStream *strea
 	return stream->level;
 }
 
-
 QRenc_DataStream *QRenc_newData(void)
 {
 	QRenc_DataStream *stream;
@@ -215,7 +214,7 @@ static void QRenc_encodeModeNum(QRenc_List *entry, int version)
 	words = entry->size / 3;
 	entry->bstream = BitStream_new();
 
-	val = 0x01;
+	val = 0x1;
 	BitStream_appendNum(entry->bstream, 4, val);
 	
 	val = entry->size;
@@ -317,7 +316,7 @@ static void QRenc_encodeModeAn(QRenc_List *entry, int version)
 	words = entry->size / 2;
 	entry->bstream = BitStream_new();
 
-	val = 0x02;
+	val = 0x2;
 	BitStream_appendNum(entry->bstream, 4, val);
 	
 	val = entry->size;
@@ -362,7 +361,7 @@ static void QRenc_encodeMode8(QRenc_List *entry, int version)
 
 	entry->bstream = BitStream_new();
 
-	val = 0x04;
+	val = 0x4;
 	BitStream_appendNum(entry->bstream, 4, val);
 	
 	val = entry->size;
@@ -410,6 +409,37 @@ static int QRenc_checkModeKanji(int size, const unsigned char *data)
 	}
 
 	return 0;
+}
+
+/**
+ * Convert the kanji data stream to a bit stream.
+ * @param entry
+ */
+static void QRenc_encodeModeKanji(QRenc_List *entry, int version)
+{
+	int i;
+	unsigned int val, h;
+
+	entry->bstream = BitStream_new();
+
+	val = 0x8;
+	BitStream_appendNum(entry->bstream, 4, val);
+	
+	val = entry->size / 2;
+	BitStream_appendNum(entry->bstream, QRspec_lengthIndicator(QR_MODE_KANJI, version), val);
+
+	for(i=0; i<entry->size; i+=2) {
+		val = ((unsigned int)entry->data[i] << 8) | entry->data[i+1];
+		if(val <= 0x9ffc) {
+			val -= 0x8140;
+		} else {
+			val -= 0xc140;
+		}
+		h = (val >> 8) * 0xc0;
+		val = (val & 0xff) + h;
+
+		BitStream_appendNum(entry->bstream, 13, val);
+	}
 }
 
 /******************************************************************************
@@ -519,7 +549,7 @@ int QRenc_estimateVersion(QRenc_DataStream *stream)
 	do {
 		prev = new;
 		bits = QRenc_estimateBitStreamSize(stream, prev);
-		new = QRspec_getMinVersion((bits + 7) / 8);
+		new = QRspec_getMinimumVersion((bits + 7) / 8);
 		if (new == -1) {
 			return -1;
 		}
@@ -572,7 +602,7 @@ static int QRenc_encodeBitStream(QRenc_List *entry, int version)
 				QRenc_encodeMode8(entry, version);
 				break;
 			case QR_MODE_KANJI:
-//				QRenc_encodeModeKanji(entry, version);
+				QRenc_encodeModeKanji(entry, version);
 				break;
 			default:
 				break;
@@ -612,6 +642,25 @@ static int QRenc_createBitStream(QRenc_DataStream *stream)
  */
 static int QRenc_convertData(QRenc_DataStream *stream)
 {
+	int bits;
+	int ver;
+
+	ver = QRenc_estimateVersion(stream);
+	QRenc_setVersion(stream, ver);
+
+	for(;;) {
+		bits = QRenc_createBitStream(stream);
+		ver = QRspec_getMinimumVersion((bits + 7) / 8);
+		if(ver < 0) {
+			return -1;
+		} else if(ver > QRenc_getVersion(stream)) {
+			QRenc_setVersion(stream, ver);
+		} else {
+			break;
+		}
+	}
+
+	return 0;
 }
 
 BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
@@ -619,7 +668,7 @@ BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
 	BitStream *bstream;
 	QRenc_List *list;
 
-	QRenc_createBitStream(stream);
+	QRenc_convertData(stream);
 	bstream = BitStream_new();
 	list = stream->head;
 	while(list != NULL) {

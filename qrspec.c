@@ -87,7 +87,7 @@ QRspec_Capacity qrspecCapacity[QRSPEC_VERSION_MAX + 1] = {
  * @param size input code length (byte)
  * @return version number
  */
-int QRspec_getMinVersion(int size)
+int QRspec_getMinimumVersion(int size)
 {
 	int i;
 
@@ -109,20 +109,13 @@ static int lengthTableBits[4][3] = {
 	{ 8, 10, 12}
 };
 
-static int lengthTableWords[4][3] = {
-	{307, 1228, 4915},
-	{ 93,  372, 1489},
-	{ 32, 8192, 8192},
-	{ 19,   78,  315}
-};
-
 int QRspec_lengthIndicator(QRenc_EncodeMode mode, int version)
 {
 	int l;
 
-	if(version < 9) {
+	if(version <= 9) {
 		l = 0;
-	} else if(version < 26) {
+	} else if(version <= 26) {
 		l = 1;
 	} else {
 		l = 2;
@@ -134,14 +127,22 @@ int QRspec_lengthIndicator(QRenc_EncodeMode mode, int version)
 int QRspec_maximumWords(QRenc_EncodeMode mode, int version)
 {
 	int l;
+	int bits;
+	int words;
 
-	if(version < 9) {
+	if(version <= 9) {
 		l = 0;
-	} else if(version < 26) {
+	} else if(version <= 26) {
 		l = 1;
 	} else {
 		l = 2;
 	}
 
-	return lengthTableWords[mode][l];
+	bits = lengthTableBits[mode][l];
+	words = (1 << bits) - 1;
+	if(mode == QR_MODE_KANJI) {
+		words *= 2; // the number of bytes is required
+	}
+
+	return words;
 }
