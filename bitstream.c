@@ -29,60 +29,111 @@
 
 #include "bitstream.h"
 
-BitStream *BitStream_new(int size)
+BitStream *BitStream_new(void)
 {
 	BitStream *bstream;
-	div_t d;
-	int byte;
-
-	d = div(size, 8);
-	byte = d.quot + (d.rem?1:0);
 
 	bstream = (BitStream *)malloc(sizeof(BitStream));
-	bstream->size = size;
-	bstream->data = (unsigned char *)malloc(byte);
-	bstream->head = bstream->data;
-	bstream->remain = 0;
+	bstream->data = NULL;
 
 	return bstream;
 }
 
-void BitStream_append(BitStream *bstream, int size, unsigned char *data)
+BitStream *BitStream_newFromNum(int bits, unsigned int num)
 {
-	int sb;
-	int shift;
+	unsigned int mask;
+	int i;
+	char *p;
+	BitStream *bstream;
 
-	sb = size / 8;
+	bstream = BitStream_new();
+	bstream->data = (char *)malloc(bits + 1);
 
-	if(bstream->remain == 0) {
-		memcpy(bstream->head, data, sb);
-		bstream->head += sb;
-		if(size & 7) {
-			*bstream->head = data[sb];
-			bstream->remain = 8 - (size - sb * 8);
+	p = bstream->data;
+	mask = 1 << (bits - 1);
+	for(i=0; i<bits; i++) {
+		if(num & mask) {
+			*p = '1';
+		} else {
+			*p = '0';
 		}
-	} else {
-		shift = 8 - bstream->remain;
-		while(size > 7) {
-			*bstream->head++ |= *data << shift;
-			*bstream->head = *data++ >> bstream->remain;
-			size -= 8;
-		}
-		if(size > 0) {
-			*bstream->head |= *data << shift;
-			if(size > bstream->remain) {
-				bstream->head++;
-				*bstream->head = *data >> bstream->remain;
-				bstream->remain += 8 - size;
+		p++;
+		mask = mask >> 1;
+	}
+	*p = '\0';
+
+	return bstream;
+}
+
+BitStream *BitStream_newFromBytes(int size, unsigned char *data)
+{
+	unsigned char mask;
+	int i, j;
+	char *p;
+	BitStream *bstream;
+
+	bstream = BitStream_new();
+	bstream->data = (char *)malloc(size * 8 + 1);
+
+	p = bstream->data;
+	for(i=0; i<size; i++) {
+		mask = 0x80;
+		for(j=0; j<8; j++) {
+			if(data[i] & mask) {
+				*p = '1';
 			} else {
-				bstream->remain -= size;
-				if(bstream->remain == 0) {
-					bstream->head++;
-					bstream->remain = 8;
-				}
+				*p = '0';
 			}
+			p++;
+			mask = mask >> 1;
 		}
 	}
+	*p = '\0';
+
+	return bstream;
+}
+
+void BitStream_append(BitStream *bstream, BitStream *arg)
+{
+	int l1, l2;
+	char *new;
+
+	if(bstream->data == NULL) {
+		bstream->data = strdup(arg->data);
+		return;
+	}
+
+	l1 = strlen(bstream->data);
+	l2 = strlen(arg->data);
+	new = (char *)malloc(l1 + l2 + 1);
+	strcpy(new, bstream->data);
+	strcat(new, arg->data);
+
+	free(bstream->data);
+	bstream->data = new;
+}
+
+void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
+{
+	BitStream *b;
+
+	b = BitStream_newFromNum(bits, num);
+	BitStream_append(bstream, b);
+	BitStream_free(b);
+}
+
+void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
+{
+	BitStream *b;
+
+	b = BitStream_newFromBytes(size, data);
+	BitStream_append(bstream, b);
+	BitStream_free(b);
+}
+
+unsigned int BitStream_size(BitStream *bstream)
+{
+	return strlen(bstream->data);
 }
 
 void BitStream_free(BitStream *bstream)

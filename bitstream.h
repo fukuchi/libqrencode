@@ -26,18 +26,16 @@
 #define __BITSTREAM_H__
 
 typedef struct {
-	int size;
-	unsigned char *data;
-
-	int remain;
-	unsigned char *head;
+	char *data;
 } BitStream;
 
-extern BitStream *BitStream_new(int size);
-void BitStream_append(BitStream *bstream, int size, unsigned char *data);
-void BitStream_free(BitStream *bstream);
-
-#define BitStream_appendBitStream(__arg1__, __arg2__) \
-	BitStream_append((__arg1__), ((__arg2__)->size), ((__arg2__)->data))
+extern BitStream *BitStream_new(void);
+extern BitStream *BitStream_newFromNum(int bits, unsigned int num);
+extern BitStream *BitStream_newFromBytes(int size, unsigned char *data);
+extern void BitStream_append(BitStream *bstream, BitStream *arg);
+extern void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num);
+extern void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data);
+extern unsigned int BitStream_size(BitStream *bstream);
+extern void BitStream_free(BitStream *bstream);
 
 #endif /* __BITSTREAM_H__ */

@@ -284,7 +284,7 @@ int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version)
  * @param stream data stream
  * @return required version number
  */
-static int QRenc_estimateVersion(QRenc_DataStream *stream)
+int QRenc_estimateVersion(QRenc_DataStream *stream)
 {
 	int bits;
 	int new, prev;
@@ -316,19 +316,54 @@ static int QRenc_encodeModeNum(QRenc_List *entry)
 {
 	int words;
 	QRenc_List *st1, *st2;
-	int bits1, bits2;
+	int i;
+	unsigned int val;
+
+	if(entry->bstream != NULL) {
+		BitStream_free(entry->bstream);
+		entry->bstream = NULL;
+	}
 
 	words = QRspec_maximumWords(QR_MODE_NUM, version);
-	if(words > entry->size) {
+	if(entry->size > words) {
 		st1 = QRenc_newEntry(QR_MODE_NUM, words, entry->data);
 		st2 = QRenc_newEntry(QR_MODE_NUM, entry->size - words, &entry->data[words]);
-		bits1 = QRenc_encodeModeNum(st1);
-		bits2 = QRenc_encodeModeNum(st2);
-		entry->bstream = BitStream_new(bits1 + bits2);
-		BitStream_appendBitStream(entry->bstream, st1->bstream);
-		BitStream_appendBitStream(entry->bstream, st2->bstream);
+		QRenc_encodeModeNum(st1);
+		QRenc_encodeModeNum(st2);
+		entry->bstream = BitStream_new();
+		BitStream_append(entry->bstream, st1->bstream);
+		BitStream_append(entry->bstream, st2->bstream);
+		QRenc_freeEntry(st1);
+		QRenc_freeEntry(st2);
 	} else {
+		words = entry->size / 3;
+		entry->bstream = BitStream_new();
+
+		val = 0x01;
+		BitStream_appendNum(entry->bstream, 4, val);
+		
+		val = entry->size;
+		BitStream_appendNum(entry->bstream, QRspec_lengthIndicator(QR_MODE_NUM, version), val);
+
+		for(i=0; i<words; i++) {
+			val  = (entry->data[i*3  ] - '0') * 100;
+			val += (entry->data[i*3+1] - '0') * 10;
+			val += (entry->data[i*3+2] - '0');
+
+			BitStream_appendNum(entry->bstream, 10, val);
+		}
+
+		if(entry->size - words * 3 == 1) {
+			val = entry->data[words*3] - '0';
+			BitStream_appendNum(entry->bstream, 4, val);
+		} else if(entry->size - words * 3 == 2) {
+			val  = (entry->data[words*3  ] - '0') * 10;
+			val += (entry->data[words*3+1] - '0');
+			BitStream_appendNum(entry->bstream, 7, val);
+		}
 	}
+
+	return BitStream_size(entry->bstream);
 }
 
 /**
@@ -352,19 +387,21 @@ static int QRenc_encodeBitStream(QRenc_List *entry)
 		case QR_MODE_KANJI:
 //			return QRenc_encodeModeKanji(entry);
 			break;
+		default:
+			break;
 	}
+	return 0;
 }
 
 /**
  * Convert the input data stream to a bit stream.
  * @param stream input data stream.
- * @return bit stream.
+ * @return length of the bit stream.
  */
-int QRenc_createBitStream(QRenc_DataStream *stream)
+static int QRenc_createBitStream(QRenc_DataStream *stream)
 {
 	QRenc_List *list;
 	int bits = 0;
-	BitStream *bstream;
 
 	assert(stream != NULL);
 
@@ -375,4 +412,20 @@ int QRenc_createBitStream(QRenc_DataStream *stream)
 	}
 
 	return bits;
+}
+
+BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
+{
+	BitStream *bstream;
+	QRenc_List *list;
+
+	QRenc_createBitStream(stream);
+	bstream = BitStream_new();
+	list = stream->head;
+	while(list != NULL) {
+		BitStream_append(bstream, list->bstream);
+		list = list->next;
+	}
+
+	return bstream;
 }
