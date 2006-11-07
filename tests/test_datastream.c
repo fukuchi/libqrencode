@@ -101,8 +101,9 @@ void test_encodeNumericPadded(void)
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	bstream = QRenc_getBitStream(stream);
 	flag = strncmp(correct, bstream->data, 48);
-	if(strlen(bstream->data) != 208)
-		flag++;
+	printf("%s\n", bstream->data);
+	if(strlen(bstream->data) != 19 * 8)
+		flag |= 0x80;
 	testEnd(flag);
 
 	QRenc_freeData(stream);
@@ -159,7 +160,7 @@ int main(int argc, char **argv)
 	test_encodeNumeric();
 	test_encodeNumeric2();
 	test_encode8();
-	test_encode82();
+//	test_encode82();
 	test_encodeAn();
 	test_encodeAn2();
 	test_encodeKanji();

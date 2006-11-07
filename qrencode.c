@@ -549,7 +549,7 @@ static int QRenc_estimateVersion(QRenc_DataStream *stream)
 	do {
 		prev = new;
 		bits = QRenc_estimateBitStreamSize(stream, prev);
-		new = QRspec_getMinimumVersion((bits + 7) / 8);
+		new = QRspec_getMinimumVersion((bits + 7) / 8, stream->level);
 		if (new == -1) {
 			return -1;
 		}
@@ -650,7 +650,7 @@ static int QRenc_convertData(QRenc_DataStream *stream)
 
 	for(;;) {
 		bits = QRenc_createBitStream(stream);
-		ver = QRspec_getMinimumVersion((bits + 7) / 8);
+		ver = QRspec_getMinimumVersion((bits + 7) / 8, stream->level);
 		if(ver < 0) {
 			return -1;
 		} else if(ver > QRenc_getVersion(stream)) {
@@ -677,7 +677,7 @@ static BitStream *QRenc_createPaddingBit(QRenc_DataStream *stream)
 	if(stream->version <= 0)
 		return NULL;
 
-	maxwords = qrspecCapacity[stream->version].words;
+	maxwords = QRspec_getMaximumCodeLength(stream->version, stream->level);
 	maxbits = maxwords * 8;
 	
 	list = stream->head;

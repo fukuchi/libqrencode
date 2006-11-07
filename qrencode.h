@@ -53,7 +53,7 @@ typedef struct _QRenc_DataStream QRenc_DataStream;
  * Level of error correction.
  */
 typedef enum {
-	QR_EC_LEVEL_L,
+	QR_EC_LEVEL_L = 0,
 	QR_EC_LEVEL_M,
 	QR_EC_LEVEL_Q,
 	QR_EC_LEVEL_H

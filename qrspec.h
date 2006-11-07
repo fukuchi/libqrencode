@@ -36,20 +36,25 @@
 typedef struct {
 	int length; //< Edge length of the symbol
 	int words;   //< Data capacity (bytes)
-	int rsL;
-	int rsM;
-	int rsH;
-	int rsQ;
+	int ec[4];
 } QRspec_Capacity;
 
 extern QRspec_Capacity qrspecCapacity[];
+
+/**
+ * Return maximum data code length (bytes) for the version.
+ * @param version
+ * @param level
+ * @return maximum size (bytes)
+ */
+extern int QRspec_getMaximumCodeLength(int version, QRenc_ErrorCorrectionLevel level);
 
 /**
  * Return a version number that satisfies the input code length.
  * @param size input code length (byte)
  * @return version number
  */
-extern int QRspec_getMinimumVersion(int size);
+extern int QRspec_getMinimumVersion(int size, QRenc_ErrorCorrectionLevel level);
 
 /******************************************************************************
  * Length indicator
