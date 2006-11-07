@@ -72,6 +72,8 @@ BitStream *BitStream_newFromBytes(int size, unsigned char *data)
 	char *p;
 	BitStream *bstream;
 
+	assert(data != NULL);
+
 	bstream = BitStream_new();
 	bstream->data = (char *)malloc(size * 8 + 1);
 
@@ -98,6 +100,11 @@ void BitStream_append(BitStream *bstream, BitStream *arg)
 	int l1, l2;
 	char *new;
 
+	assert(bstream != NULL);
+
+	if(arg == NULL || arg->data == NULL) {
+		return;
+	}
 	if(bstream->data == NULL) {
 		bstream->data = strdup(arg->data);
 		return;
@@ -117,6 +124,8 @@ void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
 {
 	BitStream *b;
 
+	assert(bstream != NULL);
+
 	b = BitStream_newFromNum(bits, num);
 	BitStream_append(bstream, b);
 	BitStream_free(b);
@@ -126,6 +135,8 @@ void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 {
 	BitStream *b;
 
+	assert(bstream != NULL);
+
 	b = BitStream_newFromBytes(size, data);
 	BitStream_append(bstream, b);
 	BitStream_free(b);
@@ -133,11 +144,17 @@ void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 
 unsigned int BitStream_size(BitStream *bstream)
 {
+	assert(bstream != NULL);
+
 	return strlen(bstream->data);
 }
 
 void BitStream_free(BitStream *bstream)
 {
-	free(bstream->data);
+	assert(bstream != NULL);
+
+	if(bstream->data != NULL) {
+		free(bstream->data);
+	}
 	free(bstream);
 }

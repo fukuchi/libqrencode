@@ -3,4 +3,4 @@
 
 extern int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version);
 extern BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream);
-extern int QRenc_estimateVersion(QRenc_DataStream *stream);
+extern BitStream *QRenc_getBitStream(QRenc_DataStream *stream);

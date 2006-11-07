@@ -540,7 +540,7 @@ int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version)
  * @param stream data stream
  * @return required version number
  */
-int QRenc_estimateVersion(QRenc_DataStream *stream)
+static int QRenc_estimateVersion(QRenc_DataStream *stream)
 {
 	int bits;
 	int new, prev;
@@ -663,18 +663,95 @@ static int QRenc_convertData(QRenc_DataStream *stream)
 	return 0;
 }
 
+/**
+ * Create padding bits for the input stream.
+ * @param stream input data stream.
+ * @return padding bit stream.
+ */
+static BitStream *QRenc_createPaddingBit(QRenc_DataStream *stream)
+{
+	int bits, maxbits, words, maxwords, i;
+	QRenc_List *list;
+	BitStream *bstream;
+
+	if(stream->version <= 0)
+		return NULL;
+
+	maxwords = qrspecCapacity[stream->version].words;
+	maxbits = maxwords * 8;
+	
+	list = stream->head;
+	bits = 0;
+	while(list != NULL) {
+		bits += BitStream_size(list->bstream);
+		list = list->next;
+	}
+
+	words = (bits + 7) / 8;
+
+	if(bits == maxbits)
+		return NULL;
+
+	if(maxbits - bits < 5) {
+		bstream = BitStream_new();
+		BitStream_appendNum(bstream, maxbits - bits, 0);
+		return bstream;
+	}
+
+	bstream = BitStream_new();
+	BitStream_appendNum(bstream, words * 8 - bits, 0);
+
+	for(i=0; i<maxwords - words; i++) {
+		if(i & 1) {
+			BitStream_appendNum(bstream, 8, 0x11);
+		} else {
+			BitStream_appendNum(bstream, 8, 0xec);
+		}
+	}
+
+	return bstream;
+}
+
+/**
+ * Merge all bit streams in the input data stream
+ * @param stream input data stream.
+ * @return merged bit stream
+ */
+
 BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
 {
 	BitStream *bstream;
 	QRenc_List *list;
 
-	QRenc_convertData(stream);
+	if(QRenc_convertData(stream) < 0) {
+		return NULL;
+	}
+
 	bstream = BitStream_new();
 	list = stream->head;
 	while(list != NULL) {
 		BitStream_append(bstream, list->bstream);
 		list = list->next;
 	}
+
+	return bstream;
+}
+
+/**
+ * Merge all bit streams in the input data stream and append padding bits
+ * @param stream input data stream.
+ * @return padded merged bit stream
+ */
+
+BitStream *QRenc_getBitStream(QRenc_DataStream *stream)
+{
+	BitStream *bstream;
+
+	bstream = QRenc_mergeBitStream(stream);
+	if(bstream == NULL) {
+		return NULL;
+	}
+	BitStream_append(bstream, QRenc_createPaddingBit(stream));
 
 	return bstream;
 }

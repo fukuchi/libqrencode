@@ -88,6 +88,27 @@ void test_encodeNumeric(void)
 	BitStream_free(bstream);
 }
 
+void test_encodeNumericPadded(void)
+{
+	QRenc_DataStream *stream;
+	char num[9] = "01234567";
+	char correct[] = "000100000010000000001100010101100110000110000000";
+	BitStream *bstream;
+	int flag;
+
+	testStart("Encoding numeric stream. (8 digits)(padded)");
+	stream = QRenc_newData();
+	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	bstream = QRenc_getBitStream(stream);
+	flag = strncmp(correct, bstream->data, 48);
+	if(strlen(bstream->data) != 208)
+		flag++;
+	testEnd(flag);
+
+	QRenc_freeData(stream);
+	BitStream_free(bstream);
+}
+
 void test_encodeNumeric2(void)
 {
 	QRenc_DataStream *stream;
@@ -142,6 +163,7 @@ int main(int argc, char **argv)
 	test_encodeAn();
 	test_encodeAn2();
 	test_encodeKanji();
+	test_encodeNumericPadded();
 
 	report();
 
