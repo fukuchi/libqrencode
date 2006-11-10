@@ -95,11 +95,89 @@ void test_eccTable2(void)
 	testEnd(terr);
 }
 
+void test_alignment1(void)
+{
+	QRspec_Alignment *al;
+	int i;
+	int err = 0;
+	int rbpos;
+
+	testStart("Checking alignment pattern table(1)");
+	rbpos = 14;
+	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
+		al = QRspec_getAlignmentPattern(i);
+		if(i == 1) {
+			if(al != NULL) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		} else if(i < 7) {
+			if(al->n != 1) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+			if(al->pos[al->n*2-1] != rbpos) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		} else if(i < 14) {
+			if(al->n != 6) {
+				printf("Error in version %d.(%d)\n", i, al->n);
+				err++;
+			}
+			if(al->pos[al->n*2-1] != rbpos) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		} else if(i < 21) {
+			if(al->n != 13) {
+				printf("Error in version %d.(%d)\n", i, al->n);
+				err++;
+			}
+			if(al->pos[al->n*2-1] != rbpos) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		} else if(i < 28) {
+			if(al->n != 22) {
+				printf("Error in version %d.(%d)\n", i, al->n);
+				err++;
+			}
+			if(al->pos[al->n*2-1] != rbpos) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		} else if(i < 35) {
+			if(al->n != 33) {
+				printf("Error in version %d.(%d)\n", i, al->n);
+				err++;
+			}
+			if(al->pos[al->n*2-1] != rbpos) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		} else {
+			if(al->n != 46) {
+				printf("Error in version %d.(%d)\n", i, al->n);
+				err++;
+			}
+			if(al->pos[al->n*2-1] != rbpos) {
+				printf("Error in version %d.\n", i);
+				err++;
+			}
+		}
+		QRspec_freeAlignment(al);
+		rbpos += 4;
+	}
+	testEnd(err);
+}
+
 int main(int argc, char **argv)
 {
 	test_eccTable();
 	test_eccTable2();
 //	print_eccTable();
+	test_alignment1();
 
 	report();
 

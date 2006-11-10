@@ -95,4 +95,16 @@ int *QRspec_getEccSpec(int version, QRenc_ErrorCorrectionLevel level);
 #define QRspec_rsDataCodes2(__spec__) (__spec__[4])
 #define QRspec_rsEccCodes2(__spec__) (__spec__[5])
 
+/******************************************************************************
+ * Alignment pattern
+ *****************************************************************************/
+
+typedef struct {
+	int n;
+	int *pos;
+} QRspec_Alignment;
+
+extern QRspec_Alignment *QRspec_getAlignmentPattern(int version);
+extern void QRspec_freeAlignment(QRspec_Alignment *al);
+
 #endif /* __QRSPEC_H__ */

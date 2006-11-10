@@ -236,3 +236,94 @@ int *QRspec_getEccSpec(int version, QRenc_ErrorCorrectionLevel level)
 
 	return array;
 }
+
+/******************************************************************************
+ * Alignment pattern
+ *****************************************************************************/
+
+static int alignmentPattern[QRSPEC_VERSION_MAX+1][2] = {
+	{ 0,  0},
+	{ 0,  0}, {18,  0}, {22,  0}, {26,  0}, {30,  0}, // 1- 5
+	{34,  0}, {22, 38}, {24, 42}, {26, 46}, {28, 50}, // 6-10
+	{30, 54}, {32, 58}, {34, 62}, {26, 46}, {26, 48}, //11-15
+	{26, 50}, {30, 54}, {30, 56}, {30, 58}, {34, 62}, //16-20
+	{28, 50}, {26, 50}, {30, 54}, {28, 54}, {32, 58}, //21-25
+	{30, 58}, {34, 62}, {26, 50}, {30, 54}, {26, 52}, //26-30
+	{30, 56}, {34, 60}, {30, 58}, {34, 62}, {30, 54}, //31-35
+	{24, 50}, {28, 54}, {32, 58}, {26, 54}, {30, 58}, //35-40
+};
+
+QRspec_Alignment *QRspec_getAlignmentPattern(int version)
+{
+	int length;
+	int d, w, x, y, cx, cy;
+	QRspec_Alignment *al;
+	int *p;
+
+	if(version < 2) return NULL;
+
+	al = (QRspec_Alignment *)malloc(sizeof(QRspec_Alignment));
+
+	length = qrspecCapacity[version].length;
+	d = alignmentPattern[version][1] - alignmentPattern[version][0];
+	if(d < 0) {
+		w = 2;
+	} else {
+		w = (length - alignmentPattern[version][0]) / d + 2;
+	}
+
+	al->n = w * w - 3;
+	al->pos = (int *)malloc(sizeof(int) * al->n * 2);
+
+	if(al->n == 1) {
+		al->pos[0] = alignmentPattern[version][0];
+		al->pos[1] = alignmentPattern[version][0];
+
+		return al;
+	}
+#if 0
+	printf("%d ", version);
+	cx = alignmentPattern[version][0];
+	for(x=0; x<w-1; x++) {
+		printf(" %3d", cx);
+		cx += d;
+	}
+	printf("\n");
+#endif
+
+	p = al->pos;
+
+	cx = alignmentPattern[version][0];
+	for(x=1; x<w - 1; x++) {
+		p[0] = 6;
+		p[1] = cx;
+		p[2] = cx;
+		p[3] = 6;
+		cx += d;
+		p += 4;
+	}
+
+	cy = alignmentPattern[version][0];
+	for(y=0; y<w-1; y++) {
+		cx = alignmentPattern[version][0];
+		for(x=0; x<w-1; x++) {
+			p[0] = cx;
+			p[1] = cy;
+			cx += d;
+			p += 2;
+		}
+		cy += d;
+	}
+
+	return al;
+}
+
+void QRspec_freeAlignment(QRspec_Alignment *al)
+{
+	if(al != NULL) {
+		if(al->pos != NULL) {
+			free(al->pos);
+		}
+		free(al);
+	}
+}
