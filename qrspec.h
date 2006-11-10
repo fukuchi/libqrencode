@@ -1,11 +1,7 @@
 /*
  * qrencode - QR-code encoder
  *
- * Originally written by Y.Swetake
- * Copyright (c)2003-2005 Y.Swetake
- *
- * Ported to C and modified by Kentaro Fukuchi
- * Copyright (c) 2006 Kentaro Fukuchi
+ * Copyright (C) 2006 Kentaro Fukuchi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +68,7 @@ extern int QRspec_lengthIndicator(QRenc_EncodeMode mode, int version);
  * Return the maximum length for the mode and version.
  * @param mode
  * @param version
- * @return the maximum length (words)
+ * @return the maximum length (bytes)
  */
 extern int QRspec_maximumWords(QRenc_EncodeMode mode, int version);
 

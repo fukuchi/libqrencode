@@ -1,11 +1,8 @@
 /*
  * qrencode - QR-code encoder
  *
- * Originally written by Y.Swetake
- * Copyright (c)2003-2005 Y.Swetake
- *
- * Ported to C and modified by Kentaro Fukuchi
- * Copyright (c) 2006 Kentaro Fukuchi
+ * Binary sequence class.
+ * Copyright (C) 2006 Kentaro Fukuchi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,4 +154,39 @@ void BitStream_free(BitStream *bstream)
 		free(bstream->data);
 	}
 	free(bstream);
+}
+
+unsigned char *BitStream_toByte(BitStream *bstream)
+{
+	int i, j, size, bytes;
+	unsigned char *data, v;
+	char *p;
+
+	assert(bstream != NULL);
+
+	size = BitStream_size(bstream);
+	data = (unsigned char *)malloc((size + 7) / 8);
+	bytes = size  / 8;
+
+	p = bstream->data;
+	for(i=0; i<bytes; i++) {
+		v = 0;
+		for(j=0; j<8; j++) {
+			v = v << 1;
+			v |= *p == '1';
+			p++;
+		}
+		data[i] = v;
+	}
+	if(size & 8) {
+		v = 0;
+		for(j=0; j<(size & 8); j++) {
+			v = v << 1;
+			v |= *p == '1';
+			p++;
+		}
+		data[bytes] = v;
+	}
+
+	return data;
 }

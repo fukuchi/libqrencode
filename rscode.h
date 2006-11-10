@@ -1,7 +1,12 @@
 /*
  * qrencode - QR-code encoder
  *
- * Binary sequence class.
+ * Reed solomon encoder. This file is taken from Phil Karn's libfec and
+ * editted and packed into a pair of .c and .h files.
+ *
+ * Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
+ * (libfec is released under the GNU Lesser General Public License.)
+ *
  * Copyright (C) 2006 Kentaro Fukuchi
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,21 +24,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __BITSTREAM_H__
-#define __BITSTREAM_H__
+#ifndef __RSCODE_H__
+#define __RSCODE_H__
 
-typedef struct {
-	char *data;
-} BitStream;
+/*
+ * General purpose RS codec, 8-bit symbols.
+ */
 
-extern BitStream *BitStream_new(void);
-extern BitStream *BitStream_newFromNum(int bits, unsigned int num);
-extern BitStream *BitStream_newFromBytes(int size, unsigned char *data);
-extern void BitStream_append(BitStream *bstream, BitStream *arg);
-extern void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num);
-extern void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data);
-extern unsigned int BitStream_size(BitStream *bstream);
-extern unsigned char *BitStream_toByte(BitStream *bstream);
-extern void BitStream_free(BitStream *bstream);
+typedef struct _RS RS;
 
-#endif /* __BITSTREAM_H__ */
+/* WARNING: Thread unsafe!!! */
+extern RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad);
+extern void encode_rs_char(RS *rs, unsigned char *data, unsigned char *parity);
+extern void free_rs_char(RS *rs);
+
+#endif /* __RSCODE_H__ */

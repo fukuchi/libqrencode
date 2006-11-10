@@ -1,9 +1,6 @@
 /**
  * qrencode - QR-code encoder
  *
- * Originally written by Y.Swetake
- * Copyright (C)2003-2005 Y.Swetake
- *
  * Ported to C and modified by Kentaro Fukuchi
  * Copyright (C) 2006 Kentaro Fukuchi
  *

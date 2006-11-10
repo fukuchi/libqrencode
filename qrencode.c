@@ -1,11 +1,7 @@
 /*
  * qrencode - QR-code encoder
  *
- * Originally written by Y.Swetake
- * Copyright (c)2003-2005 Y.Swetake
- *
- * Ported to C and modified by Kentaro Fukuchi
- * Copyright (c) 2006 Kentaro Fukuchi
+ * Copyright (C) 2006 Kentaro Fukuchi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -755,3 +751,9 @@ BitStream *QRenc_getBitStream(QRenc_DataStream *stream)
 
 	return bstream;
 }
+
+/**
+ * Get byte array that includes all data code and error correction code.
+ * @param stream input data stream.
+ * @return byte array of data code and error correction code
+ */

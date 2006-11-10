@@ -1,11 +1,7 @@
 /*
  * qrencode - QR-code encoder
  *
- * Originally written by Y.Swetake
- * Copyright (c)2003-2005 Y.Swetake
- *
- * Ported to C and modified by Kentaro Fukuchi
- * Copyright (c) 2006 Kentaro Fukuchi
+ * Copyright (C) 2006 Kentaro Fukuchi
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)
@@ -38,6 +34,10 @@
  * Version and capacity
  *****************************************************************************/
 
+/**
+ * Table of the capacity of symbols
+ * See Table 1 (pp.13) and Table 12-16 (pp.30-36), JIS X0510:2004.
+ */
 QRspec_Capacity qrspecCapacity[QRSPEC_VERSION_MAX + 1] = {
 	{  0,    0, {   0,    0,    0,    0}},
 	{ 21,   26, {   7,   10,   13,   17}}, // 1
@@ -62,7 +62,7 @@ QRspec_Capacity qrspecCapacity[QRSPEC_VERSION_MAX + 1] = {
 	{ 97, 1085, { 224,  416,  600,  700}}, //20
 	{101, 1156, { 224,  442,  644,  750}},
 	{105, 1258, { 252,  476,  690,  816}},
-	{109, 1364, { 280,  504,  750,  900}},
+	{109, 1364, { 270,  504,  750,  900}},
 	{113, 1474, { 300,  560,  810,  960}},
 	{117, 1588, { 312,  588,  870, 1050}}, //25
 	{121, 1706, { 336,  644,  952, 1110}},
@@ -87,13 +87,18 @@ int QRspec_getMaximumCodeLength(int version, QRenc_ErrorCorrectionLevel level)
 	return qrspecCapacity[version].words - qrspecCapacity[version].ec[level];
 }
 
+int QRspec_getECCLength(int version, QRenc_ErrorCorrectionLevel level)
+{
+	return qrspecCapacity[version].ec[level];
+}
+
 int QRspec_getMinimumVersion(int size, QRenc_ErrorCorrectionLevel level)
 {
 	int i;
 	int words;
 
 	for(i=1; i<= QRSPEC_VERSION_MAX; i++) {
-		words  = qrspecCapacity[i].words; - qrspecCapacity[i].ec[level];
+		words  = qrspecCapacity[i].words - qrspecCapacity[i].ec[level];
 		if(words >= size) return i;
 	}
 
@@ -147,4 +152,87 @@ int QRspec_maximumWords(QRenc_EncodeMode mode, int version)
 	}
 
 	return words;
+}
+
+/******************************************************************************
+ * Error correction code
+ *****************************************************************************/
+
+/**
+ * Table of the error correction code (Reed-Solomon block)
+ * See Table 12-16 (pp.30-36), JIS X0510:2004.
+ */
+static int eccTable[QRSPEC_VERSION_MAX+1][4][2] = {
+	{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},
+	{{ 1,  0}, { 1,  0}, { 1,  0}, { 1,  0}}, // 1
+	{{ 1,  0}, { 1,  0}, { 1,  0}, { 1,  0}},
+	{{ 1,  0}, { 1,  0}, { 2,  0}, { 2,  0}},
+	{{ 1,  0}, { 2,  0}, { 2,  0}, { 4,  0}},
+	{{ 1,  0}, { 2,  0}, { 2,  2}, { 2,  2}}, // 5
+	{{ 2,  0}, { 4,  0}, { 4,  0}, { 4,  0}},
+	{{ 2,  0}, { 4,  0}, { 2,  4}, { 4,  1}},
+	{{ 2,  0}, { 2,  2}, { 4,  2}, { 4,  2}},
+	{{ 2,  0}, { 3,  2}, { 4,  4}, { 4,  4}},
+	{{ 2,  2}, { 4,  1}, { 6,  2}, { 6,  2}}, //10
+	{{ 4,  0}, { 1,  4}, { 4,  4}, { 3,  8}},
+	{{ 2,  2}, { 6,  2}, { 4,  6}, { 7,  4}},
+	{{ 4,  0}, { 8,  1}, { 8,  4}, {12,  4}},
+	{{ 3,  1}, { 4,  5}, {11,  5}, {11,  5}},
+	{{ 5,  1}, { 5,  5}, { 5,  7}, {11,  7}}, //15
+	{{ 5,  1}, { 7,  3}, {15,  2}, { 3, 13}},
+	{{ 1,  5}, {10,  1}, { 1, 15}, { 2, 17}},
+	{{ 5,  1}, { 9,  4}, {17,  1}, { 2, 19}},
+	{{ 3,  4}, { 3, 11}, {17,  4}, { 9, 16}},
+	{{ 3,  5}, { 3, 13}, {15,  5}, {15, 10}}, //20
+	{{ 4,  4}, {17,  0}, {17,  6}, {19,  6}},
+	{{ 2,  7}, {17,  0}, { 7, 16}, {34,  0}},
+	{{ 4,  5}, { 4, 14}, {11, 14}, {16, 14}},
+	{{ 6,  4}, { 6, 14}, {11, 16}, {30,  2}},
+	{{ 8,  4}, { 8, 13}, { 7, 22}, {22, 13}}, //25
+	{{10,  2}, {19,  4}, {28,  6}, {33,  4}},
+	{{ 8,  4}, {22,  3}, { 8, 26}, {12, 28}},
+	{{ 3, 10}, { 3, 23}, { 4, 31}, {11, 31}},
+	{{ 7,  7}, {21,  7}, { 1, 37}, {19, 26}},
+	{{ 5, 10}, {19, 10}, {15, 25}, {23, 25}}, //30
+	{{13,  3}, { 2, 29}, {42,  1}, {23, 28}},
+	{{17,  0}, {10, 23}, {10, 35}, {19, 35}},
+	{{17,  1}, {14, 21}, {29, 19}, {11, 46}},
+	{{13,  6}, {14, 23}, {44,  7}, {59,  1}},
+	{{12,  7}, {12, 26}, {39, 14}, {22, 41}}, //35
+	{{ 6, 14}, { 6, 34}, {46, 10}, { 2, 64}},
+	{{17,  4}, {29, 14}, {49, 10}, {24, 46}},
+	{{ 4, 18}, {13, 32}, {48, 14}, {42, 32}},
+	{{20,  4}, {40,  7}, {43, 22}, {10, 67}},
+	{{19,  6}, {18, 31}, {34, 34}, {20, 61}},//40
+};
+
+int *QRspec_getEccBlockNum(int version, QRenc_ErrorCorrectionLevel level)
+{
+	int b1, b2;
+	int data, ecc;
+	int *array;
+
+	b1 = eccTable[version][level][0];
+	b2 = eccTable[version][level][1];
+
+	data = QRspec_getMaximumCodeLength(version, level);
+	ecc  = QRspec_getECCLength(version, level);
+
+	array = (int *)malloc(sizeof(int) * 6);
+
+	if(b2 == 0) {
+		array[0] = b1;
+		array[1] = data / b1;
+		array[2] = ecc / b1;
+		array[3] = array[4] = array[5] = 0;
+	} else {
+		array[0] = b1;
+		array[1] = data / (b1 + b2);
+		array[2] = ecc  / (b1 + b2);
+		array[3] = b2;
+		array[4] = array[1] + 1;
+		array[5] = (ecc - (array[2] * b1)) / b2;
+	}
+
+	return array;
 }

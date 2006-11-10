@@ -55,13 +55,33 @@ void test_appendBytes(void)
 	BitStream_free(bstream);
 }
 
+void test_toByte(void)
+{
+	BitStream *bstream;
+	unsigned char correct[] = {
+		0x8a, 0xff, 0xff, 0x12, 0x34, 0x56, 0x78
+	};
+	unsigned char *result;
 
+	testStart("Convert to  byte array");
+	bstream = BitStream_new();
+
+	BitStream_appendBytes(bstream, 1, &correct[0]);
+	BitStream_appendBytes(bstream, 2, &correct[1]);
+	BitStream_appendBytes(bstream, 4, &correct[3]);
+
+	result = BitStream_toByte(bstream);
+	testEnd(memcmp(correct, result, 7));
+
+	BitStream_free(bstream);
+}
 
 int main(int argc, char **argv)
 {
 	test_num();
 	test_bytes();
     test_appendBytes();
+    test_toByte();
 
 	report();
 
