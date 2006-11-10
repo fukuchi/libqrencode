@@ -1,4 +1,4 @@
-/**
+/*
  * qrencode - QR-code encoder
  *
  * Copyright (C) 2006 Kentaro Fukuchi
@@ -18,12 +18,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#ifndef __DATASTREAM_H__
+#define __DATASTREAM_H__
 
 #include "qrencode.h"
-#include "qrspec.h"
 #include "bitstream.h"
-#include "datastream.h"
+
+/**
+ * Pack all bit streams padding bits into a byte array.
+ * @param stream input data stream.
+ * @return padded merged byte stream
+ */
+extern unsigned char *QRenc_getByteStream(QRenc_DataStream *stream);
+
+#endif /* __DATASTREAM_H__ */
