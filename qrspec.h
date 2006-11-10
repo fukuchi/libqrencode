@@ -72,4 +72,27 @@ extern int QRspec_lengthIndicator(QRenc_EncodeMode mode, int version);
  */
 extern int QRspec_maximumWords(QRenc_EncodeMode mode, int version);
 
+/******************************************************************************
+ * Error correction code
+ *****************************************************************************/
+
+/**
+ * Return an array of ECC specification.
+ * @param version
+ * @param level
+ * @return an array of ECC specification contains as following:
+ * {# of type1 blocks, # of data code, # of ecc code,
+ *  # of type2 blocks, # of data code, # of ecc code}
+ * It can be freed by calling free().
+ */
+int *QRspec_getEccSpec(int version, QRenc_ErrorCorrectionLevel level);
+
+#define QRspec_rsBlockNum(__spec__) (__spec__[0] + __spec__[3])
+#define QRspec_rsBlockNum1(__spec__) (__spec__[0])
+#define QRspec_rsDataCodes1(__spec__) (__spec__[1])
+#define QRspec_rsEccCodes1(__spec__) (__spec__[2])
+#define QRspec_rsBlockNum2(__spec__) (__spec__[3])
+#define QRspec_rsDataCodes2(__spec__) (__spec__[4])
+#define QRspec_rsEccCodes2(__spec__) (__spec__[5])
+
 #endif /* __QRSPEC_H__ */

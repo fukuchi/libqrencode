@@ -35,7 +35,7 @@ typedef struct _RS RS;
 
 /* WARNING: Thread unsafe!!! */
 extern RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad);
-extern void encode_rs_char(RS *rs, unsigned char *data, unsigned char *parity);
+extern void encode_rs_char(RS *rs, const unsigned char *data, unsigned char *parity);
 extern void free_rs_char(RS *rs);
 
 #endif /* __RSCODE_H__ */

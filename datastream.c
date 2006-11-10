@@ -32,7 +32,6 @@
  * Entry of input data stream
  *****************************************************************************/
 
-typedef struct _QRenc_List QRenc_List;
 struct _QRenc_List {
 	QRenc_EncodeMode mode;
 	int size;				///< Size of data chunk (byte).
@@ -77,13 +76,6 @@ static QRenc_List *QRenc_freeEntry(QRenc_List *entry)
 /******************************************************************************
  * Input Data stream
  *****************************************************************************/
-
-struct _QRenc_DataStream {
-	int version;
-	QRenc_ErrorCorrectionLevel level;
-	QRenc_List *head;
-	QRenc_List *tail;
-};
 
 int QRenc_getVersion(QRenc_DataStream *stream)
 {
@@ -743,12 +735,15 @@ BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
 BitStream *QRenc_getBitStream(QRenc_DataStream *stream)
 {
 	BitStream *bstream;
+	BitStream *padding;
 
 	bstream = QRenc_mergeBitStream(stream);
 	if(bstream == NULL) {
 		return NULL;
 	}
-	BitStream_append(bstream, QRenc_createPaddingBit(stream));
+	padding = QRenc_createPaddingBit(stream);
+	BitStream_append(bstream, padding);
+	BitStream_free(padding);
 
 	return bstream;
 }

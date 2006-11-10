@@ -24,6 +24,21 @@
 #include "qrencode.h"
 #include "bitstream.h"
 
+/******************************************************************************
+ * Entry of input data stream
+ *****************************************************************************/
+typedef struct _QRenc_List QRenc_List;
+
+/******************************************************************************
+ * Input Data stream
+ *****************************************************************************/
+struct _QRenc_DataStream {
+	int version;
+	QRenc_ErrorCorrectionLevel level;
+	QRenc_List *head;
+	QRenc_List *tail;
+};
+
 /**
  * Pack all bit streams padding bits into a byte array.
  * @param stream input data stream.

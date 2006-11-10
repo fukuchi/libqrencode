@@ -206,7 +206,7 @@ static int eccTable[QRSPEC_VERSION_MAX+1][4][2] = {
 	{{19,  6}, {18, 31}, {34, 34}, {20, 61}},//40
 };
 
-int *QRspec_getEccBlockNum(int version, QRenc_ErrorCorrectionLevel level)
+int *QRspec_getEccSpec(int version, QRenc_ErrorCorrectionLevel level)
 {
 	int b1, b2;
 	int data, ecc;

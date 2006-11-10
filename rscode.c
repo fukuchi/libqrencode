@@ -49,7 +49,6 @@ struct _RS {
 	int iprim;      /* prim-th root of 1, index form */
 	int pad;        /* Padding bytes in shortened block */
 	int gfpoly;
-	int refcount;
 	struct _RS *next;
 };
 
@@ -211,7 +210,6 @@ RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 		if(rs->nroots != nroots) continue;
 		if(rs->pad != pad) continue;
 
-		rs->refcount++;
 		return rs;
 	}
 
@@ -266,7 +264,7 @@ void free_rs_char(RS *rs)
 #undef A0
 #define A0 (NN) /* Special reserved value encoding zero in index form */
 
-void encode_rs_char(RS *rs, data_t *data, data_t *parity)
+void encode_rs_char(RS *rs, const data_t *data, data_t *parity)
 {
   int i, j;
   data_t feedback;

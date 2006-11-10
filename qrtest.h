@@ -5,4 +5,17 @@ extern int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version);
 extern BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream);
 extern BitStream *QRenc_getBitStream(QRenc_DataStream *stream);
 
-extern int *QRspec_getEccBlockNum(int version, QRenc_ErrorCorrectionLevel level);
+typedef struct {
+	int dataLength;
+	unsigned char *data;
+	int eccLength;
+	unsigned char *ecc;
+} RSblock;
+
+typedef struct {
+	unsigned char *datacode;
+	int blocks;
+	RSblock *rsblock;
+} QRRawCode;
+extern QRRawCode *QRraw_new(QRenc_DataStream *stream);
+extern void QRraw_free(QRRawCode *raw);

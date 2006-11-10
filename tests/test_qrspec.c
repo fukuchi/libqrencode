@@ -14,7 +14,7 @@ void print_eccTable(void)
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		printf("Version %2d\n", i);
 		for(j=0; j<4; j++) {
-			bl = QRspec_getEccBlockNum(i, j);
+			bl = QRspec_getEccSpec(i, j);
 			data = bl[0] * bl[1] + bl[3] * bl[4];
 			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
 			printf("%3d\t", ecc);
@@ -40,7 +40,7 @@ void test_eccTable(void)
 	testStart("Checking ECC table.");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		for(j=0; j<4; j++) {
-			bl = QRspec_getEccBlockNum(i, j);
+			bl = QRspec_getEccSpec(i, j);
 			data = bl[0] * bl[1] + bl[3] * bl[4];
 			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
 			if(qrspecCapacity[i].words != data + ecc) {
@@ -80,7 +80,7 @@ void test_eccTable2(void)
 	testStart("Checking ECC table(2)");
 	for(i=0; i<7; i++) {
 		err = 0;
-		bl = QRspec_getEccBlockNum(correct[i][0], correct[i][1]);
+		bl = QRspec_getEccSpec(correct[i][0], correct[i][1]);
 		idx = correct[i][2] * 3;
 		if(bl[idx] != correct[i][3]) err++;
 		if(bl[idx+1] + bl[idx+2] != correct[i][4]) err++;
