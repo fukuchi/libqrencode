@@ -74,6 +74,7 @@ void test_toByte(void)
 	testEnd(memcmp(correct, result, 7));
 
 	BitStream_free(bstream);
+	free(result);
 }
 
 int main(int argc, char **argv)

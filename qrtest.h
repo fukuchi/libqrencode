@@ -25,6 +25,13 @@ typedef struct {
 	unsigned char *datacode;
 	int blocks;
 	RSblock *rsblock;
+	int count;
+	int dataLength;
+	int eccLength;
+	int b1;
+	int b2;
 } QRRawCode;
+
 extern QRRawCode *QRraw_new(QRenc_DataStream *stream);
+extern unsigned char QRraw_getCode(QRRawCode *raw);
 extern void QRraw_free(QRRawCode *raw);

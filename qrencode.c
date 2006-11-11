@@ -43,6 +43,11 @@ typedef struct {
 	unsigned char *datacode;
 	int blocks;
 	RSblock *rsblock;
+	int count;
+	int dataLength;
+	int eccLength;
+	int b1;
+	int b2;
 } QRRawCode;
 
 static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
@@ -87,9 +92,45 @@ QRRawCode *QRraw_new(QRenc_DataStream *stream)
 		rsblock++;
 	}
 
+	raw->b1 = QRspec_rsBlockNum1(spec);
+	raw->b2 = QRspec_rsBlockNum2(spec);
+	raw->dataLength = QRspec_rsBlockNum1(spec) * QRspec_rsDataCodes1(spec)
+					+ QRspec_rsBlockNum2(spec) * QRspec_rsDataCodes2(spec);
+	raw->eccLength = QRspec_rsBlockNum(spec) * QRspec_rsEccCodes1(spec);
+	raw->count = 0;
+
 	free(spec);
 
 	return raw;
+}
+
+/**
+ * Return a code (byte).
+ * This function can be called iteratively.
+ * @param raw raw code.
+ * @return code
+ */
+unsigned char QRraw_getCode(QRRawCode *raw)
+{
+	int col, row;
+	unsigned char ret;
+
+	if(raw->count < raw->dataLength) {
+		row = raw->count % raw->blocks;
+		col = raw->count / raw->blocks;
+		if(col >= raw->rsblock[row].dataLength) {
+			row += raw->b1;
+		}
+		ret = raw->rsblock[row].data[col];
+	} else if(raw->count < raw->dataLength + raw->eccLength) {
+		row = (raw->count - raw->dataLength) % raw->blocks;
+		col = (raw->count - raw->dataLength) / raw->blocks;
+		ret = raw->rsblock[row].ecc[col];
+	} else {
+		return 0;
+	}
+	raw->count++;
+	return ret;
 }
 
 void QRraw_free(QRRawCode *raw)
