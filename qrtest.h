@@ -2,7 +2,7 @@
 #include "bitstream.h"
 
 typedef struct {
-	int length; //< Edge length of the symbol
+	int width; //< Edge length of the symbol
 	int words;   //< Data capacity (bytes)
 	int ec[4];
 } QRspec_Capacity;

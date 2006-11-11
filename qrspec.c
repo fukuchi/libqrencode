@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "qrspec.h"
 
@@ -34,7 +35,7 @@
  *****************************************************************************/
 
 typedef struct {
-	int length; //< Edge length of the symbol
+	int width; //< Edge length of the symbol
 	int words;  //< Data capacity (bytes)
 	int ec[4];  //< Number of ECC code (bytes)
 } QRspec_Capacity;
@@ -267,7 +268,7 @@ static int alignmentPattern[QRSPEC_VERSION_MAX+1][2] = {
 
 QRspec_Alignment *QRspec_getAlignmentPattern(int version)
 {
-	int length;
+	int width;
 	int d, w, x, y, cx, cy;
 	QRspec_Alignment *al;
 	int *p;
@@ -276,12 +277,12 @@ QRspec_Alignment *QRspec_getAlignmentPattern(int version)
 
 	al = (QRspec_Alignment *)malloc(sizeof(QRspec_Alignment));
 
-	length = qrspecCapacity[version].length;
+	width = qrspecCapacity[version].width;
 	d = alignmentPattern[version][1] - alignmentPattern[version][0];
 	if(d < 0) {
 		w = 2;
 	} else {
-		w = (length - alignmentPattern[version][0]) / d + 2;
+		w = (width - alignmentPattern[version][0]) / d + 2;
 	}
 
 	al->n = w * w - 3;
@@ -362,4 +363,179 @@ unsigned int QRspec_getVersionPattern(int version)
 	if(version < 7 || version > QRSPEC_VERSION_MAX) return 0;
 
 	return versionPattern[version -7];
+}
+
+/******************************************************************************
+ * Frame
+ *****************************************************************************/
+
+/**
+ * Cache of initial frames.
+ */
+/* C99 says that static storage shall be initalized to a null pointer
+ * by comipler. */
+static unsigned char *frames[QRSPEC_VERSION_MAX + 1];
+
+/**
+ * Put a finder pattern.
+ * @param frame
+ * @param width
+ * @param ox,oy upper-left coordinate of the pattern
+ */
+static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
+{
+	static unsigned char finder[] = {
+		0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
+		0x81, 0x80, 0x80, 0x80, 0x80, 0x80, 0x81,
+		0x81, 0x80, 0x81, 0x81, 0x81, 0x80, 0x81,
+		0x81, 0x80, 0x81, 0x81, 0x81, 0x80, 0x81,
+		0x81, 0x80, 0x81, 0x81, 0x81, 0x80, 0x81,
+		0x81, 0x80, 0x80, 0x80, 0x80, 0x80, 0x81,
+		0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
+	};
+	int x, y;
+	unsigned char *s;
+
+	frame += oy * width + ox;
+	s = finder;
+	for(y=0; y<7; y++) {
+		for(x=0; x<7; x++) {
+			frame[x] = s[x];
+		}
+		frame += width;
+		s += 7;
+	}
+}
+
+/**
+ * Put an alignment pattern.
+ * @param frame
+ * @param width
+ * @param ox,oy center coordinate of the pattern
+ */
+static void putAlignmentPattern(unsigned char *frame, int width, int ox, int oy)
+{
+	static unsigned char finder[] = {
+		0x81, 0x81, 0x81, 0x81, 0x81,
+		0x81, 0x80, 0x80, 0x80, 0x81,
+		0x81, 0x80, 0x81, 0x80, 0x81,
+		0x81, 0x80, 0x80, 0x80, 0x81,
+		0x81, 0x81, 0x81, 0x81, 0x81,
+	};
+	int x, y;
+	unsigned char *s;
+
+	frame += (oy - 2) * width + ox - 2;
+	s = finder;
+	for(y=0; y<5; y++) {
+		for(x=0; x<5; x++) {
+			frame[x] = s[x];
+		}
+		frame += width;
+		s += 5;
+	}
+}
+
+static unsigned char *QRspec_createFrame(int version)
+{
+	unsigned char *frame, *p, *q;
+	int width;
+	int x, y;
+	unsigned int verinfo, mask;
+	QRspec_Alignment *alignment;
+
+	width = qrspecCapacity[version].width;
+	frame = (unsigned char *)malloc(width * width);
+	memset(frame, 0, width * width);
+	/* Finder pattern */
+	putFinderPattern(frame, width, 0, 0);
+	putFinderPattern(frame, width, width - 7, 0);
+	putFinderPattern(frame, width, 0, width - 7);
+	/* Separator */
+	p = frame;
+	q = frame + width * (width - 7);
+	for(y=0; y<7; y++) {
+		p[7] = 0x80;
+		p[width - 8] = 0x80;
+		q[7] = 0x80;
+		p += width;
+		q += width;
+	}
+	memset(frame + width * 7, 0x80, 8);
+	memset(frame + width * 8 - 8, 0x80, 8);
+	memset(frame + width * (width - 8), 0x80, 8);
+	/* Mask format information area */
+	memset(frame + width * 8, 0x82, 9);
+	memset(frame + width * 9 - 8, 0x82, 8);
+	p = frame + 8;
+	for(y=0; y<8; y++) {
+		*p = 0x82;
+		p += width;
+	}
+	p = frame + width * (width - 7) + 8;
+	for(y=0; y<7; y++) {
+		*p = 0x82;
+		p += width;
+	}
+	/* Timing pattern */
+	p = frame + width * 6 + 8;
+	q = frame + width * 8 + 6;
+	for(x=1; x<width-15; x++) {
+		*p = *q = 0x80 | (x & 1);
+		p++;
+		q += width;
+	}
+	/* Alignment pattern */
+	alignment = QRspec_getAlignmentPattern(version);
+	if(alignment != NULL) {
+		for(x=0; x<alignment->n; x++) {
+			putAlignmentPattern(frame, width,
+					alignment->pos[x*2], alignment->pos[x*2+1]);
+		}
+		QRspec_freeAlignment(alignment);
+	}
+	/* Version information */
+	if(version >= 7) {
+		verinfo = QRspec_getVersionPattern(version);
+
+		p = frame + width * (width - 11);
+		mask = 0x20000;
+		for(x=0; x<6; x++) {
+			for(y=0; y<3; y++) {
+				p[width * y + x] = 0x80 | ((mask & verinfo) != 0);
+				mask = mask >> 1;
+			}
+		}
+
+		p = frame + width - 11;
+		mask = 0x200;
+		for(y=0; y<6; y++) {
+			for(x=0; x<3; x++) {
+				p[x] = 0x80 | ((mask & verinfo) != 0);
+				mask = mask >> 1;
+			}
+			p += width;
+		}
+	}
+	/* and a little bit... */
+	frame[width * (width - 8) + 8] = 0x81;
+
+	return frame;
+}
+
+unsigned char *QRspec_newFrame(int version)
+{
+	unsigned char *frame;
+	int width;
+
+	if(version < 1 || version > QRSPEC_VERSION_MAX) return NULL;
+
+	if(frames[version] == NULL) {
+		frames[version] = QRspec_createFrame(version);
+	}
+	width = qrspecCapacity[version].width;
+	frame = (unsigned char *)malloc(width * width);
+	memcpy(frame, frames[version], width * width);
+
+	return frame;
 }

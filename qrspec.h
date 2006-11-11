@@ -130,4 +130,15 @@ extern void QRspec_freeAlignment(QRspec_Alignment *al);
  */
 extern unsigned int QRspec_getVersionPattern(int version);
 
+/******************************************************************************
+ * Frame
+ *****************************************************************************/
+
+/**
+ * Return a copy of initialized frame.
+ * @param version
+ * @return Array of unsigned char. You can free it by free().
+ */
+extern unsigned char *QRspec_newFrame(int version);
+
 #endif /* __QRSPEC_H__ */

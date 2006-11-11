@@ -213,6 +213,23 @@ void test_verpat(void)
 	}
 }
 
+void print_newFrame(void)
+{
+	int width;
+	int x, y;
+	unsigned char *frame;
+
+	frame = QRspec_newFrame(7);
+	width = qrspecCapacity[7].width;
+	for(y=0; y<width; y++) {
+		for(x=0; x<width; x++) {
+			printf("%02x ", frame[y * width + x]);
+		}
+		printf("\n");
+	}
+	free(frame);
+}
+
 int main(int argc, char **argv)
 {
 	test_eccTable();
@@ -220,6 +237,7 @@ int main(int argc, char **argv)
 //	print_eccTable();
 	test_alignment1();
 	test_verpat();
+	print_newFrame();
 
 	report();
 
