@@ -635,7 +635,9 @@ static int QRenc_convertData(QRenc_DataStream *stream)
 	int ver;
 
 	ver = QRenc_estimateVersion(stream);
-	QRenc_setVersion(stream, ver);
+	if(ver > QRenc_getVersion(stream)) {
+		QRenc_setVersion(stream, ver);
+	}
 
 	for(;;) {
 		bits = QRenc_createBitStream(stream);
