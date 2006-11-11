@@ -369,33 +369,19 @@ unsigned int QRspec_getVersionPattern(int version)
  * Format information
  *****************************************************************************/
 
-/* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
-static unsigned int levelIndicator[4] = {1, 0, 3, 2};
+/* See calcFormatInfo in tests/test_qrspec.c */
+static unsigned int formatInfo[4][8] = {
+	{0x77c4, 0x73c4, 0x7daa, 0x79aa, 0x6318, 0x6318, 0x6976, 0x6976},
+	{0x5412, 0x5012, 0x5e7c, 0x5a7c, 0x40ce, 0x40ce, 0x4aa0, 0x4aa0},
+	{0x3068, 0x3068, 0x3a06, 0x3a06, 0x24b4, 0x20b4, 0x2eda, 0x2ada},
+	{0x13be, 0x13be, 0x19d0, 0x19d0, 0x0762, 0x0362, 0x0d0c, 0x090c}
+};
 
 unsigned int QRspec_getFormatInfo(int mask, QRenc_ErrorCorrectionLevel level)
 {
-	unsigned int data, ecc, b, code;
-	int i, c;
+	if(mask < 0 || mask > 7) return 0;
 
-	data = (levelIndicator[level] << 13) | (mask << 10);
-	ecc = data;
-	b = 1 << 14;
-	for(i=0; b != 0; i++) {
-		if(ecc & b) break;
-		b = b >> 1;
-	}
-	c = 4 - i;
-	code = 0x537 << c ; //10100110111
-	b = 1 << (10 + c);
-	for(i=0; i<c; i++) {
-		if(b & ecc) {
-			ecc ^= code;
-		}
-		code = code >> 1;
-		b = b >> 1;
-	}
-	
-	return (data | ecc) ^ 0x5412;
+	return formatInfo[level][mask];
 }
 
 /******************************************************************************

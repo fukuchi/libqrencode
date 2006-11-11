@@ -230,21 +230,51 @@ void print_newFrame(void)
 	free(frame);
 }
 
+/* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
+static unsigned int levelIndicator[4] = {1, 0, 3, 2};
+static unsigned int calcFormatInfo(int mask, QRenc_ErrorCorrectionLevel level)
+{
+	unsigned int data, ecc, b, code;
+	int i, c;
+
+	data = (levelIndicator[level] << 13) | (mask << 10);
+	ecc = data;
+	b = 1 << 14;
+	for(i=0; b != 0; i++) {
+		if(ecc & b) break;
+		b = b >> 1;
+	}
+	c = 4 - i;
+	code = 0x537 << c ; //10100110111
+	b = 1 << (10 + c);
+	for(i=0; i<c; i++) {
+		if(b & ecc) {
+			ecc ^= code;
+		}
+		code = code >> 1;
+		b = b >> 1;
+	}
+	
+	return (data | ecc) ^ 0x5412;
+}
+
 void test_format(void)
 {
 	unsigned int format;
+	int i, j;
+	int err = 0;
 
-	testStart("Format info test (mask 101, LEVEL M)");
-	format = QRspec_getFormatInfo(5, QR_EC_LEVEL_M);
-	testEndExp(format == 0x40ce);
-
-	testStart("Format info test (mask 011, LEVEL H)");
-	format = QRspec_getFormatInfo(3, QR_EC_LEVEL_H);
-	testEndExp(format == 0x19d0);
-
-	testStart("Format info test (mask 000, LEVEL L)");
-	format = QRspec_getFormatInfo(0, QR_EC_LEVEL_L);
-	testEndExp(format == 0x77c4);
+	testStart("Format info test");
+	for(i=0; i<4; i++) {
+		for(j=0; j<8; j++) {
+			format = calcFormatInfo(j, i);
+			if(format != QRspec_getFormatInfo(j, i)) {
+				printf("Level %d, mask %x\n", i, j);
+				err++;
+			}
+		}
+	}
+	testEnd(err);
 }
 
 int main(int argc, char **argv)
