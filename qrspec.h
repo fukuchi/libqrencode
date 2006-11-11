@@ -126,9 +126,21 @@ extern void QRspec_freeAlignment(QRspec_Alignment *al);
  * Return BCH encoded version information pattern that is used for the symbol
  * of version 7 or greater. Use lower 18 bits.
  * @param version
- * @return BCH coded version information pattern
+ * @return BCH encoded version information pattern
  */
 extern unsigned int QRspec_getVersionPattern(int version);
+
+/******************************************************************************
+ * Format information
+ *****************************************************************************/
+
+/**
+ * Return BCH encoded format information pattern.
+ * @param mask
+ * @param level
+ * @return BCH encoded format information pattern
+ */
+extern unsigned int QRspec_getFormatInfo(int mask, QRenc_ErrorCorrectionLevel level);
 
 /******************************************************************************
  * Frame

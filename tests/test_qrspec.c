@@ -230,6 +230,23 @@ void print_newFrame(void)
 	free(frame);
 }
 
+void test_format(void)
+{
+	unsigned int format;
+
+	testStart("Format info test (mask 101, LEVEL M)");
+	format = QRspec_getFormatInfo(5, QR_EC_LEVEL_M);
+	testEndExp(format == 0x40ce);
+
+	testStart("Format info test (mask 011, LEVEL H)");
+	format = QRspec_getFormatInfo(3, QR_EC_LEVEL_H);
+	testEndExp(format == 0x19d0);
+
+	testStart("Format info test (mask 000, LEVEL L)");
+	format = QRspec_getFormatInfo(0, QR_EC_LEVEL_L);
+	testEndExp(format == 0x77c4);
+}
+
 int main(int argc, char **argv)
 {
 	test_eccTable();
@@ -237,7 +254,8 @@ int main(int argc, char **argv)
 //	print_eccTable();
 	test_alignment1();
 	test_verpat();
-	print_newFrame();
+//	print_newFrame();
+	test_format();
 
 	report();
 

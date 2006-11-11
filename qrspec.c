@@ -366,6 +366,39 @@ unsigned int QRspec_getVersionPattern(int version)
 }
 
 /******************************************************************************
+ * Format information
+ *****************************************************************************/
+
+/* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
+static unsigned int levelIndicator[4] = {1, 0, 3, 2};
+
+unsigned int QRspec_getFormatInfo(int mask, QRenc_ErrorCorrectionLevel level)
+{
+	unsigned int data, ecc, b, code;
+	int i, c;
+
+	data = (levelIndicator[level] << 13) | (mask << 10);
+	ecc = data;
+	b = 1 << 14;
+	for(i=0; b != 0; i++) {
+		if(ecc & b) break;
+		b = b >> 1;
+	}
+	c = 4 - i;
+	code = 0x537 << c ; //10100110111
+	b = 1 << (10 + c);
+	for(i=0; i<c; i++) {
+		if(b & ecc) {
+			ecc ^= code;
+		}
+		code = code >> 1;
+		b = b >> 1;
+	}
+	
+	return (data | ecc) ^ 0x5412;
+}
+
+/******************************************************************************
  * Frame
  *****************************************************************************/
 
@@ -538,4 +571,8 @@ unsigned char *QRspec_newFrame(int version)
 	memcpy(frame, frames[version], width * width);
 
 	return frame;
+}
+
+void QRspec_fillFormatInfo(unsigned char *frame, int version, int mask)
+{
 }
