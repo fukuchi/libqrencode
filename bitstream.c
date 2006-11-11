@@ -178,9 +178,9 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 		}
 		data[i] = v;
 	}
-	if(size & 8) {
+	if(size & 7) {
 		v = 0;
-		for(j=0; j<(size & 8); j++) {
+		for(j=0; j<(size & 7); j++) {
 			v = v << 1;
 			v |= *p == '1';
 			p++;
