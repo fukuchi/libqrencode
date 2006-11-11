@@ -9,7 +9,6 @@
  * "Automatic identification and data capture techniques -- 
  *  QR Code 2005 bar code symbology specification" (ISO/IEC 18004:2006)
  *
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,6 +32,12 @@
 /******************************************************************************
  * Version and capacity
  *****************************************************************************/
+
+typedef struct {
+	int length; //< Edge length of the symbol
+	int words;  //< Data capacity (bytes)
+	int ec[4];  //< Number of ECC code (bytes)
+} QRspec_Capacity;
 
 /**
  * Table of the capacity of symbols
@@ -241,6 +246,13 @@ int *QRspec_getEccSpec(int version, QRenc_ErrorCorrectionLevel level)
  * Alignment pattern
  *****************************************************************************/
 
+/**
+ * Positions of alignment patterns.
+ * This array includes only the second and the third position of the alignment
+ * patterns. Rest of them can be calculated from the distance between them.
+ *
+ * See Table 1 in Appendix E (pp.71) of JIS X0510:2004.
+ */
 static int alignmentPattern[QRSPEC_VERSION_MAX+1][2] = {
 	{ 0,  0},
 	{ 0,  0}, {18,  0}, {22,  0}, {26,  0}, {30,  0}, // 1- 5
@@ -282,6 +294,7 @@ QRspec_Alignment *QRspec_getAlignmentPattern(int version)
 		return al;
 	}
 #if 0
+	/* Just for debug purpose */
 	printf("%d ", version);
 	cx = alignmentPattern[version][0];
 	for(x=0; x<w-1; x++) {
@@ -326,4 +339,27 @@ void QRspec_freeAlignment(QRspec_Alignment *al)
 		}
 		free(al);
 	}
+}
+
+/******************************************************************************
+ * Version information pattern
+ *****************************************************************************/
+
+/**
+ * Version information pattern (BCH coded).
+ * See Table 1 in Appendix D (pp.68) of JIS X0510:2004.
+ */
+static unsigned int versionPattern[QRSPEC_VERSION_MAX - 6] = {
+	0x07c94, 0x085bc, 0x09a99, 0x0a4d3, 0x0bbf6, 0x0c762, 0x0d847, 0x0e60d,
+	0x0f928, 0x10b78, 0x1145d, 0x12a17, 0x13532, 0x149a6, 0x15683, 0x168c9,
+	0x177ec, 0x18ec4, 0x191e1, 0x1afab, 0x1b08e, 0x1cc1a, 0x1d33f, 0x1ed75,
+	0x1f250, 0x209d5, 0x216f0, 0x228ba, 0x2379f, 0x24b0b, 0x2542e, 0x26a64,
+	0x27541, 0x28c69
+};
+
+unsigned int QRspec_getVersionPattern(int version)
+{
+	if(version < 7 || version > QRSPEC_VERSION_MAX) return 0;
+
+	return versionPattern[version -7];
 }

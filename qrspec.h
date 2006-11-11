@@ -27,15 +27,10 @@
  * Version and capacity
  *****************************************************************************/
 
+/**
+ * Maximum version (size) of QR-code symbol.
+ */
 #define QRSPEC_VERSION_MAX 40
-
-typedef struct {
-	int length; //< Edge length of the symbol
-	int words;   //< Data capacity (bytes)
-	int ec[4];
-} QRspec_Capacity;
-
-extern QRspec_Capacity qrspecCapacity[];
 
 /**
  * Return maximum data code length (bytes) for the version.
@@ -48,6 +43,7 @@ extern int QRspec_getMaximumCodeLength(int version, QRenc_ErrorCorrectionLevel l
 /**
  * Return a version number that satisfies the input code length.
  * @param size input code length (byte)
+ * @param level
  * @return version number
  */
 extern int QRspec_getMinimumVersion(int size, QRenc_ErrorCorrectionLevel level);
@@ -99,12 +95,39 @@ int *QRspec_getEccSpec(int version, QRenc_ErrorCorrectionLevel level);
  * Alignment pattern
  *****************************************************************************/
 
+/**
+ * Array of positions of alignment patterns.
+ * X and Y coordinates are interleaved into 'pos'.
+ */
 typedef struct {
-	int n;
+	int n;		//< Number of patterns
 	int *pos;
 } QRspec_Alignment;
 
+/**
+ * Return positions of alignment patterns.
+ * @param version
+ * @return a QRspec_Alignment object that contains all of positions of alignment
+ * patterns.
+ */
 extern QRspec_Alignment *QRspec_getAlignmentPattern(int version);
+
+/**
+ * Free QRspec_Alignment instance.
+ * @param al QRspec_Alignment instance.
+ */
 extern void QRspec_freeAlignment(QRspec_Alignment *al);
+
+/******************************************************************************
+ * Version information pattern
+ *****************************************************************************/
+
+/**
+ * Return BCH encoded version information pattern that is used for the symbol
+ * of version 7 or greater. Use lower 18 bits.
+ * @param version
+ * @return BCH coded version information pattern
+ */
+extern unsigned int QRspec_getVersionPattern(int version);
 
 #endif /* __QRSPEC_H__ */

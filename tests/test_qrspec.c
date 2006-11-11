@@ -172,12 +172,54 @@ void test_alignment1(void)
 	testEnd(err);
 }
 
+void test_verpat(void)
+{
+	int version;
+	unsigned int pattern;
+	int err = 0;
+	unsigned int data;
+	unsigned int code;
+	int i, c;
+	unsigned int mask;
+
+	for(version=7; version <= QRSPEC_VERSION_MAX; version++) {
+		pattern = QRspec_getVersionPattern(version);
+		if((pattern >> 12) != version) {
+			printf("Error in version %d.\n", version);
+			err++;
+			continue;
+		}
+		mask = 0x40;
+		for(i=0; mask != 0; i++) {
+			if(version & mask) break;
+			mask = mask >> 1;
+		}
+		c = 6 - i;
+		data = version << 12;
+		code = 0x1f25 << c;
+		mask = 0x40000 >> (6 - c);
+		for(i=0; i<=c; i++) {
+			if(mask & data) {
+				data ^= code;
+			}
+			code = code >> 1;
+			mask = mask >> 1;
+		}
+		data = (version << 12) | (data & 0xfff);
+		if(data != pattern) {
+			printf("Error in version %d\n", version);
+			err++;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	test_eccTable();
 	test_eccTable2();
 //	print_eccTable();
 	test_alignment1();
+	test_verpat();
 
 	report();
 

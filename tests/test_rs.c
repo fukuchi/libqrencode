@@ -6,7 +6,6 @@
 /* See pp. 73 of JIS X0510:2004 */
 void test_rscode1(void)
 {
-	int i;
 	QRenc_DataStream *stream;
 	QRRawCode *code;
 	static char str[8] = "01234567";
