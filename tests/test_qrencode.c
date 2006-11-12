@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "common.h"
+#include "../qrspec.h"
 #include "../qrtest.h"
 
 void test_iterate()
@@ -76,10 +77,93 @@ void test_iterate2()
 	testEnd(err);
 }
 
+void print_filler(void)
+{
+	int width;
+	int x, y;
+	int version = 5;
+	unsigned char *frame;
+
+	width = QRspec_getWidth(version);
+	frame = QRenc_fillerTest(version);
+
+	for(y=0; y<width; y++) {
+		for(x=0; x<width; x++) {
+			printf("%02x ", *frame++);
+		}
+		printf("\n");
+	}
+}
+
+void test_filler(void)
+{
+	int i;
+	unsigned char *frame;
+	int err = 0;
+	int j, w, e;
+
+	testStart("Frame fillter test");
+	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
+		frame = QRenc_fillerTest(i);
+		if(frame == NULL) {
+			printf("Something wrong in version %d\n", i);
+			err++;
+		} else {
+			w = QRspec_getWidth(i);
+			e = 0;
+			for(j=0; j<w*w; j++) {
+				if(frame[j] == 0) e++;
+			}
+			free(frame);
+			if(e) {
+				printf("Non-filled bit was found in version %d\n", i);
+				err++;
+			}
+		}
+
+	}
+	testEnd(err);
+}
+
+void print_mask(void)
+{
+	int mask;
+	int x, y;
+	int version = 4;
+	int width;
+	unsigned char *frame, *masked, *p;
+
+	width = QRspec_getWidth(version);
+	frame = (unsigned char *)malloc(width * width);
+	memset(frame, 0x20, width * width);
+	for(mask=0; mask<8; mask++) {
+		masked = QRenc_mask(width, frame, mask);
+		p = masked;
+		printf("mask %d:\n", mask);
+		for(y=0; y<width; y++) {
+			for(x=0; x<width; x++) {
+				if(*p & 1) {
+					printf("#");
+				} else {
+					printf(" ");
+				}
+				p++;
+			}
+			printf("\n");
+		}
+		printf("\n");
+		free(masked);
+	}
+	free(frame);
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
 	test_iterate2();
+//	print_filler();
+	test_filler();
+//	print_mask();
 
 	report();
 

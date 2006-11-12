@@ -38,7 +38,15 @@
  * @param level
  * @return maximum size (bytes)
  */
-extern int QRspec_getMaximumCodeLength(int version, QRenc_ErrorCorrectionLevel level);
+extern int QRspec_getDataLength(int version, QRenc_ErrorCorrectionLevel level);
+
+/**
+ * Return maximum error correction code length (bytes) for the version.
+ * @param version
+ * @param level
+ * @return ECC size (bytes)
+ */
+extern int QRspec_getECCLength(int version, QRenc_ErrorCorrectionLevel level);
 
 /**
  * Return a version number that satisfies the input code length.
@@ -47,6 +55,20 @@ extern int QRspec_getMaximumCodeLength(int version, QRenc_ErrorCorrectionLevel l
  * @return version number
  */
 extern int QRspec_getMinimumVersion(int size, QRenc_ErrorCorrectionLevel level);
+
+/**
+ * Return the width of the symbol for the version.
+ * @param version
+ * @return width
+ */
+extern int QRspec_getWidth(int version);
+
+/**
+ * Return the numer of remainder bits.
+ * @param version
+ * @return number of remainder bits
+ */
+extern int QRspec_getRemainder(int version);
 
 /******************************************************************************
  * Length indicator

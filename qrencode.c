@@ -144,3 +144,244 @@ void QRraw_free(QRRawCode *raw)
 	free(raw->rsblock);
 	free(raw);
 }
+
+/******************************************************************************
+ * Frame filling
+ *****************************************************************************/
+
+typedef struct {
+	int width;
+	unsigned char *frame;
+	int x, y;
+	int dir;
+	int bit;
+} FrameFiller;
+
+static FrameFiller *FrameFiller_new(int width, unsigned char *frame)
+{
+	FrameFiller *filler;
+
+	filler = (FrameFiller *)malloc(sizeof(FrameFiller));
+	filler->width = width;
+	filler->frame = frame;
+	filler->x = width - 1;
+	filler->y = width - 1;
+	filler->dir = -1;
+	filler->bit = -1;
+
+	return filler;
+}
+
+static unsigned char *FrameFiller_next(FrameFiller *filler)
+{
+	unsigned char *p;
+	int x, y, w;
+
+	if(filler->bit == -1) {
+		filler->bit = 0;
+		return filler->frame + filler->y * filler->width + filler->x;
+	}
+
+	x = filler->x;
+	y = filler->y;
+	p = filler->frame;
+	w = filler->width;
+
+	if(filler->bit == 0) {
+		x--;
+		filler->bit++;
+	} else {
+		x++;
+		y += filler->dir;
+		filler->bit--;
+	}
+
+	if(filler->dir < 0) {
+		if(y < 0) {
+			y = 0;
+			x -= 2;
+			filler->dir = 1;
+			if(x == 6) {
+				x--;
+				y = 9;
+			}
+		}
+	} else {
+		if(y == w) {
+			y = w - 1;
+			x -= 2;
+			filler->dir = -1;
+			if(x == 6) {
+				x--;
+				y -= 8;
+			}
+		}
+	}
+	if(x < 0 || y < 0) return NULL;
+
+	filler->x = x;
+	filler->y = y;
+
+	if(p[y * w + x] & 0x80) {
+		// This tail recursion could be optimized.
+		return FrameFiller_next(filler);
+	}
+	return &p[y * w + x];
+}
+
+unsigned char *QRenc_fillerTest(int version)
+{
+	int width, length;
+	unsigned char *frame, *p;
+	FrameFiller *filler;
+	int i, j;
+	unsigned char cl = 1;
+	unsigned char ch = 0;
+
+	width = QRspec_getWidth(version);
+	frame = QRspec_newFrame(version);
+	filler = FrameFiller_new(width, frame);
+	length = QRspec_getDataLength(version, QR_EC_LEVEL_L)
+			+ QRspec_getECCLength(version, QR_EC_LEVEL_L);
+
+	for(i=0; i<length; i++) {
+		for(j=0; j<8; j++) {
+			p = FrameFiller_next(filler);
+			*p = ch | cl;
+			cl++;
+			if(cl == 9) {
+				cl = 1;
+				ch += 0x10;
+			}
+		}
+	}
+	length = QRspec_getRemainder(version);
+	for(i=0; i<length; i++) {
+		p = FrameFiller_next(filler);
+		*p = 0xa0;
+	}
+	p = FrameFiller_next(filler);
+	free(filler);
+	if(p != NULL) {
+		return NULL;
+	}
+
+	return frame;
+}
+
+/******************************************************************************
+ * Mask
+ *****************************************************************************/
+
+#define MASKMAKER(__exp__) \
+	int x, y;\
+\
+	for(y=0; y<width; y++) {\
+		for(x=0; x<width; x++) {\
+			if(*s & 0x20) {\
+				*d = *s ^ ((__exp__) == 0);\
+			} else {\
+				*d = *s;\
+			}\
+			s++; d++;\
+		}\
+	}
+
+static void QRenc_mask0(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER((x+y)&1)
+}
+
+static void QRenc_mask1(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER(y&1)
+}
+
+static void QRenc_mask2(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER(x%3)
+}
+
+static void QRenc_mask3(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER((x+y)%3)
+}
+
+static void QRenc_mask4(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER(((y/2)+(x/3))&1)
+}
+
+static void QRenc_mask5(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER(((x*y)&1)+(x*y)%3)
+}
+
+static void QRenc_mask6(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER((((x*y)&1)+(x*y)%3)&1)
+}
+
+static void QRenc_mask7(int width, const unsigned char *s, unsigned char *d)
+{
+	MASKMAKER((((x*y)%3)+((x+y)&1))&1)
+}
+
+typedef void MaskMaker(int, const unsigned char *, unsigned char *);
+static MaskMaker *maskMakers[] = {
+	QRenc_mask0, QRenc_mask1, QRenc_mask2, QRenc_mask3,
+	QRenc_mask4, QRenc_mask5, QRenc_mask6, QRenc_mask7
+};
+
+unsigned char *QRenc_mask(int width, unsigned char *frame, int mask)
+{
+	unsigned char *masked;
+
+	masked = (unsigned char *)malloc(width * width);
+
+	maskMakers[mask](width, frame, masked);
+
+	return masked;
+}
+
+/******************************************************************************
+ * QR-code encoding
+ *****************************************************************************/
+
+unsigned char *QRenc_encode(QRenc_DataStream *stream)
+{
+	int version;
+	int width;
+	QRRawCode *raw;
+	unsigned char *frame, *p, code, mask;
+	FrameFiller *filler;
+	int i, j;
+
+	version = QRenc_getVersion(stream);
+	width = QRspec_getWidth(version);
+	raw = QRraw_new(stream);
+	frame = QRspec_newFrame(version);
+	filler = FrameFiller_new(width, frame);
+
+	/* inteleaved data and ecc codes */
+	for(i=0; i<raw->dataLength; i++) {
+		code = QRraw_getCode(raw);
+		mask = 0x80;
+		for(j=0; j<8; j++) {
+			p = FrameFiller_next(filler);
+			*p = 0xa0 | ((mask & code) != 0);
+			mask = mask >> 1;
+		}
+	}
+	/* remainder bits */
+	j = QRspec_getRemainder(version);
+	for(i=0; i<j; i++) {
+		p = FrameFiller_next(filler);
+		*p = 0xa0;
+	}
+	free(filler);
+	/* masking */
+	/* put format information */
+
+	return frame;
+}

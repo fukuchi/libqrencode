@@ -4,6 +4,7 @@
 typedef struct {
 	int width; //< Edge length of the symbol
 	int words;   //< Data capacity (bytes)
+	int remainder; //< Remainder bit (bits)
 	int ec[4];
 } QRspec_Capacity;
 
@@ -35,3 +36,6 @@ typedef struct {
 extern QRRawCode *QRraw_new(QRenc_DataStream *stream);
 extern unsigned char QRraw_getCode(QRRawCode *raw);
 extern void QRraw_free(QRRawCode *raw);
+
+unsigned char *QRenc_fillerTest(int version);
+unsigned char *QRenc_mask(int width, unsigned char *frame, int mask);

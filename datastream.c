@@ -77,6 +77,19 @@ static QRenc_List *QRenc_freeEntry(QRenc_List *entry)
  * Input Data stream
  *****************************************************************************/
 
+QRenc_DataStream *QRenc_newData(void)
+{
+	QRenc_DataStream *stream;
+
+	stream = (QRenc_DataStream *)malloc(sizeof(QRenc_DataStream));
+	stream->head = NULL;
+	stream->tail = NULL;
+	stream->version = 0;
+	stream->level = QR_EC_LEVEL_L;
+
+	return stream;
+}
+
 int QRenc_getVersion(QRenc_DataStream *stream)
 {
 	return stream->version;
@@ -95,19 +108,6 @@ void QRenc_setErrorCorrectionLevel(QRenc_DataStream *stream, QRenc_ErrorCorrecti
 QRenc_ErrorCorrectionLevel QRenc_getErrorCorrectionLevel(QRenc_DataStream *stream)
 {
 	return stream->level;
-}
-
-QRenc_DataStream *QRenc_newData(void)
-{
-	QRenc_DataStream *stream;
-
-	stream = (QRenc_DataStream *)malloc(sizeof(QRenc_DataStream));
-	stream->head = NULL;
-	stream->tail = NULL;
-	stream->version = 0;
-	stream->level = QR_EC_LEVEL_L;
-
-	return stream;
 }
 
 int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, unsigned char *data)
@@ -668,7 +668,7 @@ static BitStream *QRenc_createPaddingBit(QRenc_DataStream *stream)
 	if(stream->version <= 0)
 		return NULL;
 
-	maxwords = QRspec_getMaximumCodeLength(stream->version, stream->level);
+	maxwords = QRspec_getDataLength(stream->version, stream->level);
 	maxbits = maxwords * 8;
 	
 	list = stream->head;
