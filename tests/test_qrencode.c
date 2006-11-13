@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "common.h"
+#include "../qrencode_inner.h"
 #include "../qrspec.h"
-#include "../qrtest.h"
 
 void test_iterate()
 {

@@ -1,4 +1,4 @@
-/*
+/**
  * qrencode - QR-code encoder
  *
  * Copyright (C) 2006 Kentaro Fukuchi
@@ -18,36 +18,46 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __DATASTREAM_H__
-#define __DATASTREAM_H__
-
-#include "qrencode.h"
-#include "bitstream.h"
-
-/******************************************************************************
- * Entry of input data stream
- *****************************************************************************/
-typedef struct _QRenc_List QRenc_List;
-
-/******************************************************************************
- * Input Data stream
- *****************************************************************************/
-struct _QRenc_DataStream {
-	int version;
-	QRenc_ErrorCorrectionLevel level;
-	QRenc_List *head;
-	QRenc_List *tail;
-};
+#ifndef __QRENCODE_INNER_H__
+#define __QRENCODE_INNER_H__
 
 /**
- * Pack all bit streams padding bits into a byte array.
- * @param stream input data stream.
- * @return padded merged byte stream
+ * This header file includes definitions for inner use.
  */
-extern unsigned char *QRenc_getByteStream(QRenc_DataStream *stream);
 
-extern int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version);
-extern BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream);
-extern BitStream *QRenc_getBitStream(QRenc_DataStream *stream);
+/******************************************************************************
+ * Raw code
+ *****************************************************************************/
+typedef struct {
+	int dataLength;
+	unsigned char *data;
+	int eccLength;
+	unsigned char *ecc;
+} RSblock;
 
-#endif /* __DATASTREAM_H__ */
+typedef struct {
+	unsigned char *datacode;
+	int blocks;
+	RSblock *rsblock;
+	int count;
+	int dataLength;
+	int eccLength;
+	int b1;
+	int b2;
+} QRRawCode;
+
+extern QRRawCode *QRraw_new(QRenc_DataStream *stream);
+extern unsigned char QRraw_getCode(QRRawCode *raw);
+extern void QRraw_free(QRRawCode *raw);
+
+/******************************************************************************
+ * Frame filling
+ *****************************************************************************/
+extern unsigned char *QRenc_fillerTest(int version);
+
+/******************************************************************************
+ * Masking
+ *****************************************************************************/
+extern unsigned char *QRenc_mask(int width, unsigned char *frame, int mask);
+
+#endif /* __QRENCODE_INNER_H__ */

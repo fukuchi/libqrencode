@@ -2,7 +2,6 @@
 #include <string.h>
 #include "common.h"
 #include "../qrspec.h"
-#include "../qrtest.h"
 
 void print_eccTable(void)
 {
@@ -43,12 +42,12 @@ void test_eccTable(void)
 			bl = QRspec_getEccSpec(i, j);
 			data = bl[0] * bl[1] + bl[3] * bl[4];
 			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
-			if(qrspecCapacity[i].words != data + ecc) {
+			if(data + ecc != QRspec_getDataLength(i, j) + QRspec_getECCLength(i, j)) {
 				printf("Error in version %d, level %d: invalid size\n", i, j);
 				printf("%d %d %d %d %d %d\n", bl[0], bl[1], bl[2], bl[3], bl[4], bl[5]);
 				err++;
 			}
-			if(qrspecCapacity[i].ec[j] != ecc) {
+			if(ecc != QRspec_getECCLength(i, j)) {
 				printf("Error in version %d, level %d: invalid data\n", i, j);
 				printf("%d %d %d %d %d %d\n", bl[0], bl[1], bl[2], bl[3], bl[4], bl[5]);
 				err++;
@@ -220,7 +219,7 @@ void print_newFrame(void)
 	unsigned char *frame;
 
 	frame = QRspec_newFrame(7);
-	width = qrspecCapacity[7].width;
+	width = QRspec_getWidth(7);
 	for(y=0; y<width; y++) {
 		for(x=0; x<width; x++) {
 			printf("%02x ", frame[y * width + x]);

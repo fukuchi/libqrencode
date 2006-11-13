@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
-#include "../qrtest.h"
+#include "../datastream.h"
+#include "../qrencode_inner.h"
 
 QRenc_DataStream *gstream;
 

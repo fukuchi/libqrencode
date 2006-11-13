@@ -22,8 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "qrencode.h"
+#include "qrencode_inner.h"
 #include "qrspec.h"
 #include "bitstream.h"
 #include "datastream.h"
@@ -32,23 +34,6 @@
 /******************************************************************************
  * Raw code
  *****************************************************************************/
-typedef struct {
-	int dataLength;
-	unsigned char *data;
-	int eccLength;
-	unsigned char *ecc;
-} RSblock;
-
-typedef struct {
-	unsigned char *datacode;
-	int blocks;
-	RSblock *rsblock;
-	int count;
-	int dataLength;
-	int eccLength;
-	int b1;
-	int b2;
-} QRRawCode;
 
 static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
 {
@@ -270,11 +255,21 @@ unsigned char *QRenc_fillerTest(int version)
 }
 
 /******************************************************************************
- * Mask
+ * Masking
  *****************************************************************************/
+
+/**
+ * Demerit coefficients.
+ * See Section 8.8.2, pp.45, JIS X0510:2004.
+ */
+#define N1 (3)
+#define N2 (3)
+#define N3 (40)
+#define N4 (10)
 
 #define MASKMAKER(__exp__) \
 	int x, y;\
+	unsigned int b = 0;\
 \
 	for(y=0; y<width; y++) {\
 		for(x=0; x<width; x++) {\
@@ -283,51 +278,53 @@ unsigned char *QRenc_fillerTest(int version)
 			} else {\
 				*d = *s;\
 			}\
+			b += (*d & 1);\
 			s++; d++;\
 		}\
-	}
+	}\
+	return b;
 
-static void QRenc_mask0(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask0(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((x+y)&1)
 }
 
-static void QRenc_mask1(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask1(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(y&1)
 }
 
-static void QRenc_mask2(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask2(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(x%3)
 }
 
-static void QRenc_mask3(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask3(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((x+y)%3)
 }
 
-static void QRenc_mask4(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask4(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(((y/2)+(x/3))&1)
 }
 
-static void QRenc_mask5(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask5(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(((x*y)&1)+(x*y)%3)
 }
 
-static void QRenc_mask6(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask6(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((((x*y)&1)+(x*y)%3)&1)
 }
 
-static void QRenc_mask7(int width, const unsigned char *s, unsigned char *d)
+static int QRenc_mask7(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((((x*y)%3)+((x+y)&1))&1)
 }
 
-typedef void MaskMaker(int, const unsigned char *, unsigned char *);
+typedef int MaskMaker(int, const unsigned char *, unsigned char *);
 static MaskMaker *maskMakers[] = {
 	QRenc_mask0, QRenc_mask1, QRenc_mask2, QRenc_mask3,
 	QRenc_mask4, QRenc_mask5, QRenc_mask6, QRenc_mask7
@@ -342,6 +339,27 @@ unsigned char *QRenc_mask(int width, unsigned char *frame, int mask)
 	maskMakers[mask](width, frame, masked);
 
 	return masked;
+}
+
+unsigned int QRenc_evaluateSymbol(int width, unsigned char *frame)
+{
+	int i;
+	unsigned char *mask[8];
+	int minDemerit = INT_MAX;
+	int minMask;
+	int blacks;
+	int demerit;
+
+	for(i=0; i<8; i++) {
+		demerit = 0;
+		mask[i] = (unsigned char *)malloc(width * width);
+		blacks = maskMakers[i](width, frame, mask[i]);
+		blacks = 100 * blacks / (width * width);
+		demerit = (abs(blacks - 50) / 5) * N4;
+		if(demerit > minDemerit)
+			continue;
+
+	}
 }
 
 /******************************************************************************
