@@ -56,6 +56,11 @@ extern void QRraw_free(QRRawCode *raw);
 extern unsigned char *QRenc_fillerTest(int version);
 
 /******************************************************************************
+ * Format information
+ *****************************************************************************/
+extern void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRenc_ErrorCorrectionLevel level);
+
+/******************************************************************************
  * Masking
  *****************************************************************************/
 extern unsigned char *QRenc_mask(int width, unsigned char *frame, int mask);

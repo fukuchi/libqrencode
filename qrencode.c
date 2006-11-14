@@ -255,6 +255,40 @@ unsigned char *QRenc_fillerTest(int version)
 }
 
 /******************************************************************************
+ * Format information
+ *****************************************************************************/
+
+void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRenc_ErrorCorrectionLevel level)
+{
+	unsigned int format;
+	unsigned char v;
+	int i;
+
+	format =  QRspec_getFormatInfo(mask, level);
+
+	for(i=0; i<8; i++) {
+		v = (unsigned char)(format & 1);
+		frame[width * 8 + width - 1 - i] = v;
+		if(i < 6) {
+			frame[width * i + 8] = v;
+		} else {
+			frame[width * (i + 1) + 8] = v;
+		}
+		format= format >> 1;
+	}
+	for(i=0; i<7; i++) {
+		v = (unsigned char)(format & 1);
+		frame[width * (width - 7 + i) + 8] = v;
+		if(i == 0) {
+			frame[width * 8 + 7] = v;
+		} else {
+			frame[width * 8 + 6 - i] = v;
+		}
+		format= format >> 1;
+	}
+}
+
+/******************************************************************************
  * Masking
  *****************************************************************************/
 
@@ -283,6 +317,7 @@ unsigned char *QRenc_fillerTest(int version)
 		}\
 	}\
 	return b;
+/* FIXME: this frame lacks format information */
 
 static int QRenc_mask0(int width, const unsigned char *s, unsigned char *d)
 {
@@ -339,6 +374,10 @@ unsigned char *QRenc_mask(int width, unsigned char *frame, int mask)
 	maskMakers[mask](width, frame, masked);
 
 	return masked;
+}
+
+static int QRenc_evaluateN2(int width, unsigned char *frame)
+{
 }
 
 unsigned int QRenc_evaluateSymbol(int width, unsigned char *frame)
@@ -399,7 +438,6 @@ unsigned char *QRenc_encode(QRenc_DataStream *stream)
 	}
 	free(filler);
 	/* masking */
-	/* put format information */
 
 	return frame;
 }

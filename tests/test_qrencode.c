@@ -157,6 +157,54 @@ void print_mask(void)
 	free(frame);
 }
 
+void test_format(void)
+{
+	unsigned char *frame;
+	unsigned int format;
+	int width;
+	int i;
+	unsigned int decode;
+
+	testStart("Test format information(level L,mask 0)");
+	width = QRspec_getWidth(1);
+	frame = QRspec_newFrame(1);
+	format = QRspec_getFormatInfo(1, QR_EC_LEVEL_L);
+	QRenc_writeFormatInformation(width, frame, 1, QR_EC_LEVEL_L);
+	decode = 0;
+	for(i=0; i<8; i++) {
+		decode = decode << 1;
+		decode |= frame[width * 8 + i + (i > 5)] & 1;
+	}
+	for(i=0; i<7; i++) {
+		decode = decode << 1;
+		decode |= frame[width * ((6 - i) + (i < 1)) + 8] & 1;
+	}
+	if(decode != format) {
+		printf("Upper-left format information is invalid.\n");
+		printf("%08x, %08x\n", format, decode);
+		testEnd(1);
+		return;
+	}
+	decode = 0;
+	for(i=0; i<7; i++) {
+		decode = decode << 1;
+		decode |= frame[width * (width - 1 - i) + 8] & 1;
+	}
+	for(i=0; i<8; i++) {
+		decode = decode << 1;
+		decode |= frame[width * 8 + width - 8 + i] & 1;
+	}
+	if(decode != format) {
+		printf("Bottom and right format information is invalid.\n");
+		printf("%08x, %08x\n", format, decode);
+		testEnd(1);
+		return;
+	}
+
+
+	testEnd(0);
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
@@ -164,6 +212,7 @@ int main(int argc, char **argv)
 //	print_filler();
 	test_filler();
 //	print_mask();
+	test_format();
 
 	report();
 
