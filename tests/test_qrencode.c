@@ -137,7 +137,7 @@ void print_mask(void)
 	frame = (unsigned char *)malloc(width * width);
 	memset(frame, 0x20, width * width);
 	for(mask=0; mask<8; mask++) {
-		masked = QRenc_mask(width, frame, mask);
+		masked = QRenc_makeMask(width, frame, mask);
 		p = masked;
 		printf("mask %d:\n", mask);
 		for(y=0; y<width; y++) {
@@ -201,8 +201,144 @@ void test_format(void)
 		return;
 	}
 
+	free(frame);
 
 	testEnd(0);
+}
+
+#define N1 (3)
+#define N2 (3)
+#define N3 (40)
+#define N4 (10)
+
+void test_eval(void)
+{
+	unsigned char *frame;
+	int w = 6;
+	int demerit;
+
+	frame = (unsigned char *)malloc(w * w);
+
+	testStart("Test mask evaluation (all white)");
+	memset(frame, 0, w * w);
+	demerit = QRenc_evaluateSymbol(w, frame);
+	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
+
+	testStart("Test mask evaluation (all black)");
+	memset(frame, 1, w * w);
+	demerit = QRenc_evaluateSymbol(w, frame);
+	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
+
+	free(frame);
+}
+
+/* .#.#.#.#.#
+ * #.#.#.#.#.
+ * ..##..##..
+ * ##..##..##
+ * ...###...#
+ * ###...###.
+ * ....####..
+ * ####....##
+ * .....#####
+ * #####.....
+ */
+void test_eval2(void)
+{
+	unsigned char *frame;
+	int w = 10;
+	int demerit;
+	int x;
+
+	frame = (unsigned char *)malloc(w * w);
+
+	testStart("Test mask evaluation (run length penalty check)");
+	for(x=0; x<w; x++) {
+		frame[      x] = x & 1;
+		frame[w   + x] = (x & 1) ^ 1;
+		frame[w*2 + x] = (x / 2) & 1;
+		frame[w*3 + x] = ((x / 2) & 1) ^ 1;
+		frame[w*4 + x] = (x / 3) & 1;
+		frame[w*5 + x] = ((x / 3) & 1) ^ 1;
+		frame[w*6 + x] = (x / 4) & 1;
+		frame[w*7 + x] = ((x / 4) & 1) ^ 1;
+		frame[w*8 + x] = (x / 5) & 1;
+		frame[w*9 + x] = ((x / 5) & 1) ^ 1;
+	}
+	demerit = QRenc_evaluateSymbol(w, frame);
+	testEndExp(demerit == N1 * 4 + N2 * 4);
+
+	free(frame);
+}
+
+void test_eval3(void)
+{
+	unsigned char *frame;
+	int w = 15;
+	int demerit;
+	int x, y;
+	static unsigned char pattern[7][15] = {
+		{0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0}, // N3x1
+		{1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1}, // N3x1
+		{1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1}, // N3x1
+		{1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0}, // 0
+		{1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1}, // N3x2
+		{1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0}, // N3 + (N1+1)
+		{1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1}  // (N1+1)
+	};
+
+	frame = (unsigned char *)malloc(w * w);
+
+	testStart("Test mask evaluation (1:1:3:1:1 check)");
+	for(y=0; y<5; y++) {
+		for(x=0; x<w; x++) {
+			frame[w*y*2     + x] = pattern[y][x];
+			frame[w*(y*2+1) + x] = pattern[y][x]^1;
+		}
+	}
+	for(x=0; x<w; x++) {
+		frame[w*10 + x] = x & 1;
+	}
+	for(y=5; y<7; y++) {
+		for(x=0; x<w; x++) {
+			frame[w*(y*2+1) + x] = pattern[y][x];
+			frame[w*(y*2+2) + x] = pattern[y][x]^1;
+		}
+	}
+	demerit = QRenc_evaluateSymbol(w, frame);
+	testEndExp(demerit == N3 * 6 + (N1 + 1) * 4);
+
+	free(frame);
+}
+
+void test_encode(void)
+{
+	QRenc_DataStream *stream;
+	char num[9] = "01234567";
+	unsigned char *frame;
+	int err = 0;
+	int x, y, w;
+
+	testStart("Test encode (1-L)");
+	stream = QRenc_newData();
+	QRenc_setVersion(stream, 1);
+	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_L);
+	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	frame = QRenc_encode(stream);
+	w = QRenc_getWidth(stream);
+	for(y=0; y<w; y++) {
+		for(x=0; x<w; x++) {
+			if(frame[y*w+x] & 1) {
+				printf("#");
+			} else {
+				printf(" ");
+			}
+		}
+		printf("\n");
+	}
+	testEnd(err);
+	QRenc_freeData(stream);
+	free(frame);
 }
 
 int main(int argc, char **argv)
@@ -213,6 +349,10 @@ int main(int argc, char **argv)
 	test_filler();
 //	print_mask();
 	test_format();
+	test_eval();
+	test_eval2();
+	test_eval3();
+	test_encode();
 
 	report();
 

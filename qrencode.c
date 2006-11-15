@@ -317,7 +317,6 @@ void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRe
 		}\
 	}\
 	return b;
-/* FIXME: this frame lacks format information */
 
 static int QRenc_mask0(int width, const unsigned char *s, unsigned char *d)
 {
@@ -365,7 +364,7 @@ static MaskMaker *maskMakers[] = {
 	QRenc_mask4, QRenc_mask5, QRenc_mask6, QRenc_mask7
 };
 
-unsigned char *QRenc_mask(int width, unsigned char *frame, int mask)
+unsigned char *QRenc_makeMask(int width, unsigned char *frame, int mask)
 {
 	unsigned char *masked;
 
@@ -376,41 +375,155 @@ unsigned char *QRenc_mask(int width, unsigned char *frame, int mask)
 	return masked;
 }
 
-static int QRenc_evaluateN2(int width, unsigned char *frame)
-{
-}
+static int runLength[QRSPEC_WIDTH_MAX + 1];
 
-unsigned int QRenc_evaluateSymbol(int width, unsigned char *frame)
+static int QRenC_calcN1N3(int length, int *runLength)
 {
 	int i;
-	unsigned char *mask[8];
+	int demerit = 0;
+	int fact;
+
+	for(i=0; i<length; i++) {
+		if(runLength[i] >= 5) {
+			demerit += N1 + (runLength[i] - 5);
+		}
+		if((i & 1)) {
+			if(i >= 3 && i < length-2 && (runLength[i] % 3) == 0) {
+				fact = runLength[i] / 3;
+				if(runLength[i-2] == fact &&
+				   runLength[i-1] == fact &&
+				   runLength[i+1] == fact &&
+				   runLength[i+2] == fact) {
+					if(runLength[i-3] < 0 || runLength[i-3] >= 4 * fact) {
+						demerit += N3;
+					} else if(i+3 >= length || runLength[i+3] >= 4 * fact) {
+						demerit += N3;
+					}
+				}
+			}
+		}
+	}
+
+	return demerit;
+}
+
+int QRenc_evaluateSymbol(int width, unsigned char *frame)
+{
+	int x, y;
+	unsigned char *p;
+	unsigned char b22, w22;
+	unsigned int i;
+	int head;
+	int demerit = 0;
+
+	p = frame;
+	i = 0;
+	for(y=0; y<width; y++) {
+		head = 0;
+		runLength[0] = 1;
+		for(x=0; x<width; x++) {
+			if(x > 0 && y > 0) {
+				b22 = p[0] & p[-1] & p[-width] & p [-width-1] & 1;
+				w22 = (p[0] | p[-1] | p[-width] | p [-width-1] ) & 1;
+				if(b22 | (w22 ^ 1)) {
+					demerit += N2;
+				}
+			}
+			if(x == 0 && (p[0] & 1)) {
+				runLength[0] = -1;
+				head = 1;
+				runLength[head] = 1;
+			} else if(x > 0) {
+				if((p[0] ^ p[-1]) & 1) {
+					head++;
+					runLength[head] = 1;
+				} else {
+					runLength[head]++;
+				}
+			}
+			p++;
+		}
+		demerit += QRenC_calcN1N3(head+1, runLength);
+	}
+
+	i = 0;
+	for(x=0; x<width; x++) {
+		head = 0;
+		runLength[0] = 1;
+		p = frame + x;
+		for(y=0; y<width; y++) {
+			if(y == 0 && (p[0] & 1)) {
+				runLength[0] = -1;
+				head = 1;
+				runLength[head] = 1;
+			} else if(y > 0) {
+				if((p[0] ^ p[-width]) & 1) {
+					head++;
+					runLength[head] = 1;
+				} else {
+					runLength[head]++;
+				}
+			}
+			p+=width;
+		}
+		demerit += QRenC_calcN1N3(head+1, runLength);
+	}
+
+	return demerit;
+}
+
+static unsigned char *QRenc_mask(int width, unsigned char *frame, QRenc_ErrorCorrectionLevel level)
+{
+	int i;
+	unsigned char *mask, *bestMask;
 	int minDemerit = INT_MAX;
-	int minMask;
+	int bestMaskNum = 0;
 	int blacks;
 	int demerit;
 
+	bestMask = NULL;
+
 	for(i=0; i<8; i++) {
 		demerit = 0;
-		mask[i] = (unsigned char *)malloc(width * width);
-		blacks = maskMakers[i](width, frame, mask[i]);
+		mask = (unsigned char *)malloc(width * width);
+		blacks = maskMakers[i](width, frame, mask);
 		blacks = 100 * blacks / (width * width);
 		demerit = (abs(blacks - 50) / 5) * N4;
 		if(demerit > minDemerit)
 			continue;
-
+		demerit += QRenc_evaluateSymbol(width, mask);
+		if(demerit < minDemerit) {
+			minDemerit = demerit;
+			bestMaskNum = i;
+			if(bestMask != NULL) {
+				free(bestMask);
+			}
+			bestMask = mask;
+		} else {
+			free(mask);
+		}
 	}
+
+	QRenc_writeFormatInformation(width, bestMask, bestMaskNum, level);
+
+	return bestMask;
 }
 
 /******************************************************************************
  * QR-code encoding
  *****************************************************************************/
 
+int QRenc_getWidth(QRenc_DataStream *stream)
+{
+	return QRspec_getWidth(QRenc_getVersion(stream));
+}
+
 unsigned char *QRenc_encode(QRenc_DataStream *stream)
 {
 	int version;
 	int width;
 	QRRawCode *raw;
-	unsigned char *frame, *p, code, mask;
+	unsigned char *frame, *masked, *p, code, bit;
 	FrameFiller *filler;
 	int i, j;
 
@@ -421,15 +534,16 @@ unsigned char *QRenc_encode(QRenc_DataStream *stream)
 	filler = FrameFiller_new(width, frame);
 
 	/* inteleaved data and ecc codes */
-	for(i=0; i<raw->dataLength; i++) {
+	for(i=0; i<raw->dataLength + raw->eccLength; i++) {
 		code = QRraw_getCode(raw);
-		mask = 0x80;
+		bit = 0x80;
 		for(j=0; j<8; j++) {
 			p = FrameFiller_next(filler);
-			*p = 0xa0 | ((mask & code) != 0);
-			mask = mask >> 1;
+			*p = 0xa0 | ((bit & code) != 0);
+			bit = bit >> 1;
 		}
 	}
+	QRraw_free(raw);
 	/* remainder bits */
 	j = QRspec_getRemainder(version);
 	for(i=0; i<j; i++) {
@@ -438,6 +552,9 @@ unsigned char *QRenc_encode(QRenc_DataStream *stream)
 	}
 	free(filler);
 	/* masking */
+	masked = QRenc_mask(width, frame, QRenc_getErrorCorrectionLevel(stream));
 
-	return frame;
+	free(frame);
+
+	return masked;
 }

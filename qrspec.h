@@ -33,6 +33,11 @@
 #define QRSPEC_VERSION_MAX 40
 
 /**
+ * Maximum width of a symbol
+ */
+#define QRSPEC_WIDTH_MAX 177
+
+/**
  * Return maximum data code length (bytes) for the version.
  * @param version
  * @param level

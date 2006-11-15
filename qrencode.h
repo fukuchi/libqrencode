@@ -119,6 +119,7 @@ extern int QRenc_checkData(QRenc_EncodeMode mode, int size, const unsigned char 
 /******************************************************************************
  * QRcode output
  *****************************************************************************/
+extern int QRenc_getWidth(QRenc_DataStream *stream);
 extern unsigned char *QRenc_encode(QRenc_DataStream *stream);
 
 #endif /* __QRENCODE_H__ */

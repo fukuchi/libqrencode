@@ -63,6 +63,7 @@ extern void QRenc_writeFormatInformation(int width, unsigned char *frame, int ma
 /******************************************************************************
  * Masking
  *****************************************************************************/
-extern unsigned char *QRenc_mask(int width, unsigned char *frame, int mask);
+extern unsigned char *QRenc_makeMask(int width, unsigned char *frame, int mask);
 
+extern int QRenc_evaluateSymbol(int width, unsigned char *frame);
 #endif /* __QRENCODE_INNER_H__ */
