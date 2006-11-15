@@ -9,6 +9,10 @@ else if [ -d /usr/share/aclocal ]; then
     fi
 fi
 
+if [ ! -d use]; then
+    mkdir use
+fi
+
 aclocal -I $ACLOCAL_DIR
 
 libtoolize --automake #--copy
