@@ -9,7 +9,7 @@ else if [ -d /usr/share/aclocal ]; then
     fi
 fi
 
-if [ ! -d use]; then
+if [ ! -d use ]; then
     mkdir use
 fi
 
