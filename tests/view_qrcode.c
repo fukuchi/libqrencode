@@ -40,7 +40,7 @@ int eventloop(void)
 
 void view_simple(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9] = "01234567";
 	unsigned char *frame, *q;
 	unsigned int v, *p1, *p2;
@@ -50,7 +50,7 @@ void view_simple(void)
 	int flag = 1;
 	int version = 1;
 	int mask = 0;
-	QRenc_ErrorCorrectionLevel level = QR_EC_LEVEL_L;
+	QRecLevel level = QR_ECLEVEL_L;
 	QRcode *qrcode;
 	SDL_Event event;
 	int loop;
@@ -112,19 +112,19 @@ void view_simple(void)
 						loop = 0;
 						break;
 					case SDLK_l:
-						level = QR_EC_LEVEL_L;
+						level = QR_ECLEVEL_L;
 						loop = 0;
 						break;
 					case SDLK_m:
-						level = QR_EC_LEVEL_M;
+						level = QR_ECLEVEL_M;
 						loop = 0;
 						break;
 					case SDLK_h:
-						level = QR_EC_LEVEL_H;
+						level = QR_ECLEVEL_H;
 						loop = 0;
 						break;
 					case SDLK_q:
-						level = QR_EC_LEVEL_Q;
+						level = QR_ECLEVEL_Q;
 						loop = 0;
 						break;
 					case SDLK_ESCAPE:

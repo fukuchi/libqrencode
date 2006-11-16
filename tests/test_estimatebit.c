@@ -5,11 +5,11 @@
 #include "../datastream.h"
 #include "../qrencode_inner.h"
 
-QRenc_DataStream *gstream;
+QRinput *gstream;
 
 void test_numbit(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9]="01234567";
 	int bits;
 
@@ -25,7 +25,7 @@ void test_numbit(void)
 
 void test_numbit2(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[17]="0123456789012345";
 	int bits;
 
@@ -41,7 +41,7 @@ void test_numbit2(void)
 
 void test_numbit3(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char *num;
 	int bits;
 
@@ -61,7 +61,7 @@ void test_numbit3(void)
 
 void test_an(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char str[6]="AC-42";
 	int bits;
 
@@ -77,7 +77,7 @@ void test_an(void)
 
 void test_8(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char str[9]="12345678";
 	int bits;
 
@@ -95,7 +95,7 @@ void test_kanji(void)
 {
 	int res;
 
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
 	int bits;
 

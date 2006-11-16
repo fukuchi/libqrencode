@@ -7,7 +7,7 @@
 void test_iterate()
 {
 	int i;
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9] = "01234567";
 	unsigned char *data;
 	QRRawCode *raw;
@@ -16,7 +16,7 @@ void test_iterate()
 	testStart("Test getCode (1-L)");
 	stream = QRenc_newData();
 	QRenc_setVersion(stream, 1);
-	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_L);
+	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	raw = QRraw_new(stream);
@@ -35,7 +35,7 @@ void test_iterate()
 void test_iterate2()
 {
 	int i;
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9] = "01234567";
 	QRRawCode *raw;
 	int err = 0;
@@ -62,7 +62,7 @@ void test_iterate2()
 	testStart("Test getCode (5-H)");
 	stream = QRenc_newData();
 	QRenc_setVersion(stream, 5);
-	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_H);
+	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_H);
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	raw = QRraw_new(stream);
@@ -168,8 +168,8 @@ void test_format(void)
 	testStart("Test format information(level L,mask 0)");
 	width = QRspec_getWidth(1);
 	frame = QRspec_newFrame(1);
-	format = QRspec_getFormatInfo(1, QR_EC_LEVEL_L);
-	QRenc_writeFormatInformation(width, frame, 1, QR_EC_LEVEL_L);
+	format = QRspec_getFormatInfo(1, QR_ECLEVEL_L);
+	QRenc_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
 	decode = 0;
 	for(i=0; i<8; i++) {
 		decode = decode << 1;
@@ -313,7 +313,7 @@ void test_eval3(void)
 
 void test_encode(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9] = "01234567";
 	unsigned char *frame;
 	int err = 0;
@@ -323,7 +323,7 @@ void test_encode(void)
 	testStart("Test encode (1-L)");
 	stream = QRenc_newData();
 	QRenc_setVersion(stream, 1);
-	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_L);
+	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	qrcode = QRenc_encode(stream);
 	w = qrcode->width;

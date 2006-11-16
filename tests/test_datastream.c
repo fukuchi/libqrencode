@@ -6,7 +6,7 @@
 
 void test_encodeKanji(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
 	char correct[] = "10000000001001101100111111101010101010";
 	BitStream *bstream;
@@ -24,7 +24,7 @@ void test_encodeKanji(void)
 
 void test_encode8(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char str[] = "AC-42";
 	char correct[] = "00100000001010011100111011100111001000010";
 	BitStream *bstream;
@@ -42,7 +42,7 @@ void test_encode8(void)
 
 void test_encodeAn(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char str[] = "AC-42";
 	char correct[] = "00100000001010011100111011100111001000010";
 	BitStream *bstream;
@@ -60,7 +60,7 @@ void test_encodeAn(void)
 
 void test_encodeAn2(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char str[] = "!,;$%";
 	int ret;
 
@@ -73,7 +73,7 @@ void test_encodeAn2(void)
 
 void test_encodeNumeric(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9] = "01234567";
 	char correct[] = "00010000001000000000110001010110011000011";
 	BitStream *bstream;
@@ -91,7 +91,7 @@ void test_encodeNumeric(void)
 
 void test_encodeNumericPadded(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[9] = "01234567";
 	char correct[] = "000100000010000000001100010101100110000110000000";
 	BitStream *bstream;
@@ -113,7 +113,7 @@ void test_encodeNumericPadded(void)
 
 void test_encodeNumeric2(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	char num[] = "0123456789012345";
 	char correct[] = "00010000010000000000110001010110011010100110111000010100111010100101";
 	BitStream *bstream;
@@ -131,7 +131,7 @@ void test_encodeNumeric2(void)
 
 void test_encode82(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	unsigned char *data;
 	BitStream *bstream;
 	char c1[] = "010011111111";

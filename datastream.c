@@ -33,14 +33,14 @@
  *****************************************************************************/
 
 struct _QRenc_List {
-	QRenc_EncodeMode mode;
+	QRencodeMode mode;
 	int size;				///< Size of data chunk (byte).
 	unsigned char *data;	///< Data chunk.
 	BitStream *bstream;
 	QRenc_List *next;
 };
 
-static QRenc_List *QRenc_newEntry(QRenc_EncodeMode mode, int size, unsigned char *data)
+static QRenc_List *QRenc_newEntry(QRencodeMode mode, int size, unsigned char *data)
 {
 	QRenc_List *entry;
 
@@ -77,40 +77,40 @@ static QRenc_List *QRenc_freeEntry(QRenc_List *entry)
  * Input Data stream
  *****************************************************************************/
 
-QRenc_DataStream *QRenc_newData(void)
+QRinput *QRenc_newData(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 
-	stream = (QRenc_DataStream *)malloc(sizeof(QRenc_DataStream));
+	stream = (QRinput *)malloc(sizeof(QRinput));
 	stream->head = NULL;
 	stream->tail = NULL;
 	stream->version = 0;
-	stream->level = QR_EC_LEVEL_L;
+	stream->level = QR_ECLEVEL_L;
 
 	return stream;
 }
 
-int QRenc_getVersion(QRenc_DataStream *stream)
+int QRenc_getVersion(QRinput *stream)
 {
 	return stream->version;
 }
 
-void QRenc_setVersion(QRenc_DataStream *stream, int v)
+void QRenc_setVersion(QRinput *stream, int v)
 {
 	stream->version = v;
 }
 
-void QRenc_setErrorCorrectionLevel(QRenc_DataStream *stream, QRenc_ErrorCorrectionLevel level)
+void QRenc_setErrorCorrectionLevel(QRinput *stream, QRecLevel level)
 {
 	stream->level = level;
 }
 
-QRenc_ErrorCorrectionLevel QRenc_getErrorCorrectionLevel(QRenc_DataStream *stream)
+QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream)
 {
 	return stream->level;
 }
 
-int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, unsigned char *data)
+int QRenc_appendData(QRinput *stream, QRencodeMode mode, int size, unsigned char *data)
 {
 	QRenc_List *entry;
 
@@ -130,7 +130,7 @@ int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, 
 	return 0;
 }
 
-void QRenc_freeData(QRenc_DataStream *stream)
+void QRenc_freeData(QRinput *stream)
 {
 	QRenc_List *list;
 
@@ -442,7 +442,7 @@ static void QRenc_encodeModeKanji(QRenc_List *entry, int version)
  * @param data
  * @return result
  */
-int QRenc_checkData(QRenc_EncodeMode mode, int size, const unsigned char *data)
+int QRenc_checkData(QRencodeMode mode, int size, const unsigned char *data)
 {
 	switch(mode) {
 		case QR_MODE_NUM:
@@ -508,7 +508,7 @@ static int QRenc_estimateBitStreamSizeOfEntry(QRenc_List *entry, int version)
  * @param version version of the symbol
  * @return number of bits
  */
-int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version)
+int QRenc_estimateBitStreamSize(QRinput *stream, int version)
 {
 	QRenc_List *list;
 	int bits = 0;
@@ -529,7 +529,7 @@ int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version)
  * @param stream data stream
  * @return required version number
  */
-static int QRenc_estimateVersion(QRenc_DataStream *stream)
+static int QRenc_estimateVersion(QRinput *stream)
 {
 	int bits;
 	int new, prev;
@@ -606,7 +606,7 @@ static int QRenc_encodeBitStream(QRenc_List *entry, int version)
  * @param stream input data stream.
  * @return length of the bit stream.
  */
-static int QRenc_createBitStream(QRenc_DataStream *stream)
+static int QRenc_createBitStream(QRinput *stream)
 {
 	QRenc_List *list;
 	int bits = 0;
@@ -629,7 +629,7 @@ static int QRenc_createBitStream(QRenc_DataStream *stream)
  * @param stream input data stream.
  * @return -1 if the input data was too large. Otherwise 0.
  */
-static int QRenc_convertData(QRenc_DataStream *stream)
+static int QRenc_convertData(QRinput *stream)
 {
 	int bits;
 	int ver;
@@ -659,7 +659,7 @@ static int QRenc_convertData(QRenc_DataStream *stream)
  * @param stream input data stream.
  * @return padding bit stream.
  */
-static BitStream *QRenc_createPaddingBit(QRenc_DataStream *stream)
+static BitStream *QRenc_createPaddingBit(QRinput *stream)
 {
 	int bits, maxbits, words, maxwords, i;
 	QRenc_List *list;
@@ -709,7 +709,7 @@ static BitStream *QRenc_createPaddingBit(QRenc_DataStream *stream)
  * @return merged bit stream
  */
 
-BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
+BitStream *QRenc_mergeBitStream(QRinput *stream)
 {
 	BitStream *bstream;
 	QRenc_List *list;
@@ -734,7 +734,7 @@ BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream)
  * @return padded merged bit stream
  */
 
-BitStream *QRenc_getBitStream(QRenc_DataStream *stream)
+BitStream *QRenc_getBitStream(QRinput *stream)
 {
 	BitStream *bstream;
 	BitStream *padding;
@@ -756,7 +756,7 @@ BitStream *QRenc_getBitStream(QRenc_DataStream *stream)
  * @return padded merged byte stream
  */
 
-unsigned char *QRenc_getByteStream(QRenc_DataStream *stream)
+unsigned char *QRenc_getByteStream(QRinput *stream)
 {
 	BitStream *bstream;
 	unsigned char *array;

@@ -6,7 +6,7 @@
 /* See pp. 73 of JIS X0510:2004 */
 void test_rscode1(void)
 {
-	QRenc_DataStream *stream;
+	QRinput *stream;
 	QRRawCode *code;
 	static char str[8] = "01234567";
 	static unsigned char correct[26] = {
@@ -17,7 +17,7 @@ void test_rscode1(void)
 	testStart("RS ecc test");
 	stream = QRenc_newData();
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)str);
-	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_M);
+	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_M);
 	code = QRraw_new(stream);
 
 	testEnd(memcmp(correct + 16, code->rsblock[0].ecc, 10));

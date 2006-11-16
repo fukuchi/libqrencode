@@ -32,9 +32,9 @@ typedef struct _QRenc_List QRenc_List;
 /******************************************************************************
  * Input Data stream
  *****************************************************************************/
-struct _QRenc_DataStream {
+struct _QRinput {
 	int version;
-	QRenc_ErrorCorrectionLevel level;
+	QRecLevel level;
 	QRenc_List *head;
 	QRenc_List *tail;
 };
@@ -44,10 +44,10 @@ struct _QRenc_DataStream {
  * @param stream input data stream.
  * @return padded merged byte stream
  */
-extern unsigned char *QRenc_getByteStream(QRenc_DataStream *stream);
+extern unsigned char *QRenc_getByteStream(QRinput *stream);
 
-extern int QRenc_estimateBitStreamSize(QRenc_DataStream *stream, int version);
-extern BitStream *QRenc_mergeBitStream(QRenc_DataStream *stream);
-extern BitStream *QRenc_getBitStream(QRenc_DataStream *stream);
+extern int QRenc_estimateBitStreamSize(QRinput *stream, int version);
+extern BitStream *QRenc_mergeBitStream(QRinput *stream);
+extern BitStream *QRenc_getBitStream(QRinput *stream);
 
 #endif /* __DATASTREAM_H__ */

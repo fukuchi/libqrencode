@@ -231,7 +231,7 @@ void print_newFrame(void)
 
 /* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
 static unsigned int levelIndicator[4] = {1, 0, 3, 2};
-static unsigned int calcFormatInfo(int mask, QRenc_ErrorCorrectionLevel level)
+static unsigned int calcFormatInfo(int mask, QRecLevel level)
 {
 	unsigned int data, ecc, b, code;
 	int i, c;

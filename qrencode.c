@@ -48,7 +48,7 @@ static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
 	encode_rs_char(rs, data, block->ecc);
 }
 
-QRRawCode *QRraw_new(QRenc_DataStream *stream)
+QRRawCode *QRraw_new(QRinput *stream)
 {
 	QRRawCode *raw;
 	int *spec;
@@ -226,8 +226,8 @@ unsigned char *QRenc_fillerTest(int version)
 	width = QRspec_getWidth(version);
 	frame = QRspec_newFrame(version);
 	filler = FrameFiller_new(width, frame);
-	length = QRspec_getDataLength(version, QR_EC_LEVEL_L)
-			+ QRspec_getECCLength(version, QR_EC_LEVEL_L);
+	length = QRspec_getDataLength(version, QR_ECLEVEL_L)
+			+ QRspec_getECCLength(version, QR_ECLEVEL_L);
 
 	for(i=0; i<length; i++) {
 		for(j=0; j<8; j++) {
@@ -258,7 +258,7 @@ unsigned char *QRenc_fillerTest(int version)
  * Format information
  *****************************************************************************/
 
-void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRenc_ErrorCorrectionLevel level)
+void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned int format;
 	unsigned char v;
@@ -472,7 +472,7 @@ int QRenc_evaluateSymbol(int width, unsigned char *frame)
 	return demerit;
 }
 
-static unsigned char *QRenc_mask(int width, unsigned char *frame, QRenc_ErrorCorrectionLevel level)
+static unsigned char *QRenc_mask(int width, unsigned char *frame, QRecLevel level)
 {
 	int i;
 	unsigned char *mask, *bestMask;
@@ -536,7 +536,7 @@ void QRenc_freeQRcode(QRcode *qrcode)
 	free(qrcode);
 }
 
-QRcode *QRenc_encode(QRenc_DataStream *stream)
+QRcode *QRenc_encode(QRinput *stream)
 {
 	int version;
 	int width;
@@ -579,7 +579,7 @@ QRcode *QRenc_encode(QRenc_DataStream *stream)
 	return qrcode;
 }
 
-QRcode *QRenc_encodeMask(QRenc_DataStream *stream, int mask)
+QRcode *QRenc_encodeMask(QRinput *stream, int mask)
 {
 	int version;
 	int width;

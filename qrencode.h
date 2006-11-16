@@ -29,17 +29,17 @@ typedef enum {
 	QR_MODE_AN,			///< Alphabet-numeric mode
 	QR_MODE_8,			///< 8-bit data mode
 	QR_MODE_KANJI		///< Kanji (shift-jis) mode
-} QRenc_EncodeMode;
+} QRencodeMode;
 
 /**
  * Level of error correction.
  */
 typedef enum {
-	QR_EC_LEVEL_L = 0,
-	QR_EC_LEVEL_M,
-	QR_EC_LEVEL_Q,
-	QR_EC_LEVEL_H
-} QRenc_ErrorCorrectionLevel;
+	QR_ECLEVEL_L = 0,
+	QR_ECLEVEL_M,
+	QR_ECLEVEL_Q,
+	QR_ECLEVEL_H
+} QRecLevel;
 
 /******************************************************************************
  * Input data stream
@@ -48,41 +48,41 @@ typedef enum {
 /**
  * Data structure to store input data stream.
  */
-typedef struct _QRenc_DataStream QRenc_DataStream;
+typedef struct _QRinput QRinput;
 
 /**
  * Instantiate a data stream object.
  * @return Stream object (initialized).
  */
-extern QRenc_DataStream *QRenc_newData(void);
+extern QRinput *QRenc_newData(void);
 
 /**
  * Get current error correction level.
  * @param stream input data stream
  * @return Current error correcntion level.
  */
-extern QRenc_ErrorCorrectionLevel QRenc_getErrorCorrectionLevel(QRenc_DataStream *stream);
+extern QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream);
 
 /**
  * Set error correction level of the QR-code that is to be encoded.
  * @param stream input data stream
  * @param level Error correction level.
  */
-extern void QRenc_setErrorCorrectionLevel(QRenc_DataStream *stream, QRenc_ErrorCorrectionLevel level);
+extern void QRenc_setErrorCorrectionLevel(QRinput *stream, QRecLevel level);
 
 /**
  * Get current version.
  * @param stream input data stream
  * @return current version
  */
-extern int QRenc_getVersion(QRenc_DataStream *stream);
+extern int QRenc_getVersion(QRinput *stream);
 
 /**
  * Set version of the QR-code that is to be encoded.
  * @param stream input data stream
  * @param version version number (0 = auto)
  */
-extern void QRenc_setVersion(QRenc_DataStream *stream, int version);
+extern void QRenc_setVersion(QRinput *stream, int version);
 
 /**
  * Append data to the stream object.
@@ -93,14 +93,14 @@ extern void QRenc_setVersion(QRenc_DataStream *stream, int version);
  * @param data A pointer to the memory area of the input data.
  * @return -1 when the input data is invalid. Otherwise 0.
  */
-extern int QRenc_appendData(QRenc_DataStream *stream, QRenc_EncodeMode mode, int size, unsigned char *data);
+extern int QRenc_appendData(QRinput *stream, QRencodeMode mode, int size, unsigned char *data);
 
 /**
  * Free the stream object.
  * All of data chunks in the stream object are freed too.
  * @param stream Stream object.
  */
-extern void QRenc_freeData(QRenc_DataStream *stream);
+extern void QRenc_freeData(QRinput *stream);
 
 /**
  * Validate the input data
@@ -109,7 +109,7 @@ extern void QRenc_freeData(QRenc_DataStream *stream);
  * @param data
  * @return result
  */
-extern int QRenc_checkData(QRenc_EncodeMode mode, int size, const unsigned char *data);
+extern int QRenc_checkData(QRencodeMode mode, int size, const unsigned char *data);
 
 /******************************************************************************
  * QRcode output
@@ -119,6 +119,7 @@ extern int QRenc_checkData(QRenc_EncodeMode mode, int size, const unsigned char 
  * QRcode class.
  */
 typedef struct {
+	int version; //< version of the symbol
 	int width; //< width of the symbol
 	unsigned char *data; //< symbol data
 } QRcode;
@@ -128,7 +129,7 @@ typedef struct {
  * @param stream input data stream.
  * @return an instance of QRcode class.
  */
-extern QRcode *QRenc_encode(QRenc_DataStream *stream);
+extern QRcode *QRenc_encode(QRinput *stream);
 
 /**
  * Free the instance of QRcode class.
