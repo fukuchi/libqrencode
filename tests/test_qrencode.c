@@ -340,7 +340,7 @@ void test_encode(void)
 	}
 	testEnd(err);
 	QRenc_freeData(stream);
-	free(frame);
+	QRenc_freeQRcode(qrcode);
 }
 
 int main(int argc, char **argv)

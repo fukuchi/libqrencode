@@ -74,7 +74,7 @@ void view_simple(void)
 	eventloop();
 
 
-	free(frame);
+	QRenc_freeQRcode(qrcode);
 }
 
 int main()
