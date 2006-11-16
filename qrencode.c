@@ -513,12 +513,28 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRenc_ErrorCor
  * QR-code encoding
  *****************************************************************************/
 
-int QRenc_getWidth(QRenc_DataStream *stream)
+static QRcode *QRenc_newQRcode(int width, unsigned char *data)
 {
-	return QRspec_getWidth(QRenc_getVersion(stream));
+	QRcode *qrcode;
+
+	qrcode = (QRcode *)malloc(sizeof(QRcode));
+	qrcode->width = width;
+	qrcode->data = data;
+
+	return qrcode;
 }
 
-unsigned char *QRenc_encode(QRenc_DataStream *stream)
+void QRenc_freeQRcode(QRcode *qrcode)
+{
+	if(qrcode == NULL) return;
+
+	if(qrcode->data != NULL) {
+		free(qrcode->data);
+	}
+	free(qrcode);
+}
+
+QRcode *QRenc_encode(QRenc_DataStream *stream)
 {
 	int version;
 	int width;
@@ -526,6 +542,7 @@ unsigned char *QRenc_encode(QRenc_DataStream *stream)
 	unsigned char *frame, *masked, *p, code, bit;
 	FrameFiller *filler;
 	int i, j;
+	QRcode *qrcode;
 
 	version = QRenc_getVersion(stream);
 	width = QRspec_getWidth(version);
@@ -553,8 +570,9 @@ unsigned char *QRenc_encode(QRenc_DataStream *stream)
 	free(filler);
 	/* masking */
 	masked = QRenc_mask(width, frame, QRenc_getErrorCorrectionLevel(stream));
+	qrcode = QRenc_newQRcode(width, masked);
 
 	free(frame);
 
-	return masked;
+	return qrcode;
 }

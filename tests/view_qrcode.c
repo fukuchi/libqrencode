@@ -44,15 +44,16 @@ void view_simple(void)
 	unsigned int v, *p1, *p2;
 	int width;
 	int x, y;
-	int ox;
 	int pitch;
+	QRcode *qrcode;
 
 	stream = QRenc_newData();
 	QRenc_setVersion(stream, 1);
 	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_L);
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	frame = QRenc_encode(stream);
-	width = QRenc_getWidth(stream);
+	qrcode = QRenc_encode(stream);
+	width = qrcode->width;
+	frame = qrcode->data;
 	QRenc_freeData(stream);
 	pitch = screen->pitch;
 	q = frame;

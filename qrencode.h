@@ -21,10 +21,6 @@
 #ifndef __QRENCODE_H__
 #define __QRENCODE_H__
 
-/******************************************************************************
- * Encoding mode
- *****************************************************************************/
-
 /**
  * Encoding mode.
  */
@@ -34,6 +30,16 @@ typedef enum {
 	QR_MODE_8,			///< 8-bit data mode
 	QR_MODE_KANJI		///< Kanji (shift-jis) mode
 } QRenc_EncodeMode;
+
+/**
+ * Level of error correction.
+ */
+typedef enum {
+	QR_EC_LEVEL_L = 0,
+	QR_EC_LEVEL_M,
+	QR_EC_LEVEL_Q,
+	QR_EC_LEVEL_H
+} QRenc_ErrorCorrectionLevel;
 
 /******************************************************************************
  * Input data stream
@@ -45,14 +51,10 @@ typedef enum {
 typedef struct _QRenc_DataStream QRenc_DataStream;
 
 /**
- * Level of error correction.
+ * Instantiate a data stream object.
+ * @return Stream object (initialized).
  */
-typedef enum {
-	QR_EC_LEVEL_L = 0,
-	QR_EC_LEVEL_M,
-	QR_EC_LEVEL_Q,
-	QR_EC_LEVEL_H
-} QRenc_ErrorCorrectionLevel;
+extern QRenc_DataStream *QRenc_newData(void);
 
 /**
  * Get current error correction level.
@@ -81,13 +83,6 @@ extern int QRenc_getVersion(QRenc_DataStream *stream);
  * @param version version number (0 = auto)
  */
 extern void QRenc_setVersion(QRenc_DataStream *stream, int version);
-
-
-/**
- * Instantiate a data stream object.
- * @return Stream object (initialized).
- */
-extern QRenc_DataStream *QRenc_newData(void);
 
 /**
  * Append data to the stream object.
@@ -119,7 +114,26 @@ extern int QRenc_checkData(QRenc_EncodeMode mode, int size, const unsigned char 
 /******************************************************************************
  * QRcode output
  *****************************************************************************/
-extern int QRenc_getWidth(QRenc_DataStream *stream);
-extern unsigned char *QRenc_encode(QRenc_DataStream *stream);
+
+/**
+ * QRcode class.
+ */
+typedef struct {
+	int width; //< width of the symbol
+	unsigned char *data; //< symbol data
+} QRcode;
+
+/**
+ * Create a symbol from the input data stream.
+ * @param stream input data stream.
+ * @return an instance of QRcode class.
+ */
+extern QRcode *QRenc_encode(QRenc_DataStream *stream);
+
+/**
+ * Free the instance of QRcode class.
+ * @param qrcode an instance of QRcode class.
+ */
+extern void QRenc_freeQRcode(QRcode *qrcode);
 
 #endif /* __QRENCODE_H__ */

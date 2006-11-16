@@ -318,14 +318,16 @@ void test_encode(void)
 	unsigned char *frame;
 	int err = 0;
 	int x, y, w;
+	QRcode *qrcode;
 
 	testStart("Test encode (1-L)");
 	stream = QRenc_newData();
 	QRenc_setVersion(stream, 1);
 	QRenc_setErrorCorrectionLevel(stream, QR_EC_LEVEL_L);
 	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	frame = QRenc_encode(stream);
-	w = QRenc_getWidth(stream);
+	qrcode = QRenc_encode(stream);
+	w = qrcode->width;
+	frame = qrcode->data;
 	for(y=0; y<w; y++) {
 		for(x=0; x<w; x++) {
 			if(frame[y*w+x] & 1) {
