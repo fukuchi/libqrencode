@@ -28,7 +28,7 @@
 #include "qrencode_inner.h"
 #include "qrspec.h"
 #include "bitstream.h"
-#include "datastream.h"
+#include "qrinput.h"
 #include "rscode.h"
 
 /******************************************************************************

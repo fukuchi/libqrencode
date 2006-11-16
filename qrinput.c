@@ -26,7 +26,7 @@
 #include "qrencode.h"
 #include "qrspec.h"
 #include "bitstream.h"
-#include "datastream.h"
+#include "qrinput.h"
 
 /******************************************************************************
  * Entry of input data stream
