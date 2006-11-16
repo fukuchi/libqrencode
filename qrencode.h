@@ -129,12 +129,12 @@ typedef struct {
  * @param stream input data stream.
  * @return an instance of QRcode class.
  */
-extern QRcode *QRenc_encode(QRinput *stream);
+extern QRcode *QRcode_encodeInput(QRinput *stream);
 
 /**
  * Free the instance of QRcode class.
  * @param qrcode an instance of QRcode class.
  */
-extern void QRenc_freeQRcode(QRcode *qrcode);
+extern void QRcode_free(QRcode *qrcode);
 
 #endif /* __QRENCODE_H__ */

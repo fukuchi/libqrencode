@@ -81,7 +81,7 @@ void view_simple(void)
 			}
 		}
 		SDL_Flip(screen);
-		QRenc_freeQRcode(qrcode);
+		QRcode_free(qrcode);
 		loop = 1;
 		while(loop) {
 			usleep(10000);

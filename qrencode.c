@@ -515,7 +515,7 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRecLevel leve
  * QR-code encoding
  *****************************************************************************/
 
-static QRcode *QRenc_newQRcode(int width, unsigned char *data)
+static QRcode *QRcode_new(int width, unsigned char *data)
 {
 	QRcode *qrcode;
 
@@ -526,7 +526,7 @@ static QRcode *QRenc_newQRcode(int width, unsigned char *data)
 	return qrcode;
 }
 
-void QRenc_freeQRcode(QRcode *qrcode)
+void QRcode_free(QRcode *qrcode)
 {
 	if(qrcode == NULL) return;
 
@@ -536,7 +536,7 @@ void QRenc_freeQRcode(QRcode *qrcode)
 	free(qrcode);
 }
 
-QRcode *QRenc_encode(QRinput *stream)
+QRcode *QRcode_encodeInput(QRinput *stream)
 {
 	int version;
 	int width;
@@ -572,7 +572,7 @@ QRcode *QRenc_encode(QRinput *stream)
 	free(filler);
 	/* masking */
 	masked = QRenc_mask(width, frame, QRenc_getErrorCorrectionLevel(stream));
-	qrcode = QRenc_newQRcode(width, masked);
+	qrcode = QRcode_new(width, masked);
 
 	free(frame);
 
@@ -617,7 +617,7 @@ QRcode *QRenc_encodeMask(QRinput *stream, int mask)
 	masked = (unsigned char *)malloc(width * width);
 	maskMakers[mask](width, frame, masked);
 	QRenc_writeFormatInformation(width, masked, mask, QRenc_getErrorCorrectionLevel(stream));
-	qrcode = QRenc_newQRcode(width, masked);
+	qrcode = QRcode_new(width, masked);
 
 	free(frame);
 

@@ -325,7 +325,7 @@ void test_encode(void)
 	QRenc_setVersion(stream, 1);
 	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	qrcode = QRenc_encode(stream);
+	qrcode = QRcode_encodeInput(stream);
 	w = qrcode->width;
 	frame = qrcode->data;
 	for(y=0; y<w; y++) {
@@ -340,7 +340,7 @@ void test_encode(void)
 	}
 	testEnd(err);
 	QRinput_free(stream);
-	QRenc_freeQRcode(qrcode);
+	QRcode_free(qrcode);
 }
 
 int main(int argc, char **argv)

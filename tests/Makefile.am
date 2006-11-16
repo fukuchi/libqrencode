@@ -1,11 +1,11 @@
 if HAVE_SDL
 sdlPROGRAMS = view_qrcode
 endif
-noinst_PROGRAMS = test_datastream test_bitstream test_estimatebit \
+noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_qrspec test_rs test_qrencode $(sdlPROGRAMS)
 
-test_datastream_SOURCES = test_datastream.c
-test_datastream_LDADD = ../libqrencode.la
+test_qrinput_SOURCES = test_qrinput.c
+test_qrinput_LDADD = ../libqrencode.la
 
 test_bitstream_SOURCES = test_bitstream.c
 test_bitstream_LDADD = ../bitstream.o
