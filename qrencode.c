@@ -489,9 +489,12 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRenc_ErrorCor
 		blacks = maskMakers[i](width, frame, mask);
 		blacks = 100 * blacks / (width * width);
 		demerit = (abs(blacks - 50) / 5) * N4;
-		if(demerit > minDemerit)
+		if(demerit > minDemerit) {
+			free(mask);
 			continue;
+		}
 		demerit += QRenc_evaluateSymbol(width, mask);
+		printf("%d\n", demerit);
 		if(demerit < minDemerit) {
 			minDemerit = demerit;
 			bestMaskNum = i;
@@ -570,6 +573,51 @@ QRcode *QRenc_encode(QRenc_DataStream *stream)
 	free(filler);
 	/* masking */
 	masked = QRenc_mask(width, frame, QRenc_getErrorCorrectionLevel(stream));
+	qrcode = QRenc_newQRcode(width, masked);
+
+	free(frame);
+
+	return qrcode;
+}
+
+QRcode *QRenc_encodeMask(QRenc_DataStream *stream, int mask)
+{
+	int version;
+	int width;
+	QRRawCode *raw;
+	unsigned char *frame, *masked, *p, code, bit;
+	FrameFiller *filler;
+	int i, j;
+	QRcode *qrcode;
+
+	version = QRenc_getVersion(stream);
+	width = QRspec_getWidth(version);
+	raw = QRraw_new(stream);
+	frame = QRspec_newFrame(version);
+	filler = FrameFiller_new(width, frame);
+
+	/* inteleaved data and ecc codes */
+	for(i=0; i<raw->dataLength + raw->eccLength; i++) {
+		code = QRraw_getCode(raw);
+		bit = 0x80;
+		for(j=0; j<8; j++) {
+			p = FrameFiller_next(filler);
+			*p = 0xa0 | ((bit & code) != 0);
+			bit = bit >> 1;
+		}
+	}
+	QRraw_free(raw);
+	/* remainder bits */
+	j = QRspec_getRemainder(version);
+	for(i=0; i<j; i++) {
+		p = FrameFiller_next(filler);
+		*p = 0xa0;
+	}
+	free(filler);
+	/* masking */
+	masked = (unsigned char *)malloc(width * width);
+	maskMakers[mask](width, frame, masked);
+	QRenc_writeFormatInformation(width, masked, mask, QRenc_getErrorCorrectionLevel(stream));
 	qrcode = QRenc_newQRcode(width, masked);
 
 	free(frame);
