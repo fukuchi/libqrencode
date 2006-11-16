@@ -494,7 +494,6 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRenc_ErrorCor
 			continue;
 		}
 		demerit += QRenc_evaluateSymbol(width, mask);
-		printf("%d\n", demerit);
 		if(demerit < minDemerit) {
 			minDemerit = demerit;
 			bestMaskNum = i;

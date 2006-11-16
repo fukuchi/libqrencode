@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <SDL.h>
 #include "common.h"
 #include "../qrencode_inner.h"
@@ -14,6 +15,7 @@ int eventloop(void)
 	int q = 1;
 
 	while(q) {
+		usleep(10000);
 		while(SDL_PollEvent(&event)) {
 			if(event.type == SDL_KEYDOWN) {
 				switch(event.key.keysym.sym) {
@@ -82,6 +84,7 @@ void view_simple(void)
 		QRenc_freeQRcode(qrcode);
 		loop = 1;
 		while(loop) {
+			usleep(10000);
 			while(SDL_PollEvent(&event)) {
 				if(event.type == SDL_KEYDOWN) {
 					switch(event.key.keysym.sym) {

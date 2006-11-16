@@ -246,7 +246,7 @@ static unsigned int calcFormatInfo(int mask, QRenc_ErrorCorrectionLevel level)
 	c = 4 - i;
 	code = 0x537 << c ; //10100110111
 	b = 1 << (10 + c);
-	for(i=0; i<c; i++) {
+	for(i=0; i<=c; i++) {
 		if(b & ecc) {
 			ecc ^= code;
 		}
@@ -267,11 +267,13 @@ void test_format(void)
 	for(i=0; i<4; i++) {
 		for(j=0; j<8; j++) {
 			format = calcFormatInfo(j, i);
+//			printf("0x%04x, ", format);
 			if(format != QRspec_getFormatInfo(j, i)) {
 				printf("Level %d, mask %x\n", i, j);
 				err++;
 			}
 		}
+//		printf("\n");
 	}
 	testEnd(err);
 }
