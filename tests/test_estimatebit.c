@@ -14,13 +14,13 @@ void test_numbit(void)
 	int bits;
 
 	testStart("Estimation of Numeric stream (8 digits)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	bits = QRenc_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 41);
 
-	QRenc_appendData(gstream, QR_MODE_NUM, 8, (unsigned char *)num);
-	QRenc_freeData(stream);
+	QRinput_append(gstream, QR_MODE_NUM, 8, (unsigned char *)num);
+	QRinput_free(stream);
 }
 
 void test_numbit2(void)
@@ -30,13 +30,13 @@ void test_numbit2(void)
 	int bits;
 
 	testStart("Estimation of Numeric stream (16 digits)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_NUM, 16, (unsigned char *)num);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 16, (unsigned char *)num);
 	bits = QRenc_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 68);
 
-	QRenc_appendData(gstream, QR_MODE_NUM, 16, (unsigned char *)num);
-	QRenc_freeData(stream);
+	QRinput_append(gstream, QR_MODE_NUM, 16, (unsigned char *)num);
+	QRinput_free(stream);
 }
 
 void test_numbit3(void)
@@ -46,16 +46,16 @@ void test_numbit3(void)
 	int bits;
 
 	testStart("Estimation of Numeric stream (400 digits)");
-	stream = QRenc_newData();
+	stream = QRinput_new();
 	num = (char *)malloc(401);
 	memset(num, '1', 400);
 	num[400] = '\0';
-	QRenc_appendData(stream, QR_MODE_NUM, 400, (unsigned char *)num);
+	QRinput_append(stream, QR_MODE_NUM, 400, (unsigned char *)num);
 	bits = QRenc_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 1362);
 
-	QRenc_appendData(gstream, QR_MODE_NUM, 400, (unsigned char *)num);
-	QRenc_freeData(stream);
+	QRinput_append(gstream, QR_MODE_NUM, 400, (unsigned char *)num);
+	QRinput_free(stream);
 	free(num);
 }
 
@@ -66,13 +66,13 @@ void test_an(void)
 	int bits;
 
 	testStart("Estimation of Alphabet-Numeric stream (5 chars)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_AN, 5, (unsigned char *)str);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
 	bits = QRenc_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 41);
 
-	QRenc_appendData(gstream, QR_MODE_AN, 5, (unsigned char *)str);
-	QRenc_freeData(stream);
+	QRinput_append(gstream, QR_MODE_AN, 5, (unsigned char *)str);
+	QRinput_free(stream);
 }
 
 void test_8(void)
@@ -82,13 +82,13 @@ void test_8(void)
 	int bits;
 
 	testStart("Estimation of 8 bit data stream (8 bytes)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_8, 8, (unsigned char *)str);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_8, 8, (unsigned char *)str);
 	bits = QRenc_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 76);
 
-	QRenc_appendData(gstream, QR_MODE_8, 8, (unsigned char *)str);
-	QRenc_freeData(stream);
+	QRinput_append(gstream, QR_MODE_8, 8, (unsigned char *)str);
+	QRinput_free(stream);
 }
 
 void test_kanji(void)
@@ -100,18 +100,18 @@ void test_kanji(void)
 	int bits;
 
 	testStart("Estimation of Kanji stream (2 chars)");
-	stream = QRenc_newData();
-	res = QRenc_appendData(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
+	stream = QRinput_new();
+	res = QRinput_append(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
 	if(res < 0) {
 		printf("Failed to add.\n");
 		testEnd(1);
 	} else {
 		bits = QRenc_estimateBitStreamSize(stream, 0);
 		testEndExp(bits == 38);
-		QRenc_appendData(gstream, QR_MODE_KANJI, 4, (unsigned char *)str);
+		QRinput_append(gstream, QR_MODE_KANJI, 4, (unsigned char *)str);
 	}
 
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 }
 
 void test_mix(void)
@@ -121,12 +121,12 @@ void test_mix(void)
 	testStart("Estimation of Mixed stream");
 	bits = QRenc_estimateBitStreamSize(gstream, 0);
 	testEndExp(bits == (41 + 68 + 1362 + 41 + 76 + 38));
-	QRenc_freeData(gstream);
+	QRinput_free(gstream);
 }
 
 int main(int argc, char **argv)
 {
-	gstream = QRenc_newData();
+	gstream = QRinput_new();
 
     test_numbit();
     test_numbit2();

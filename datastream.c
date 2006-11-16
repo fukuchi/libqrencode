@@ -44,7 +44,7 @@ static QRenc_List *QRenc_newEntry(QRencodeMode mode, int size, unsigned char *da
 {
 	QRenc_List *entry;
 
-	if(QRenc_checkData(mode, size, data)) {
+	if(QRinput_check(mode, size, data)) {
 		return NULL;
 	}
 
@@ -77,7 +77,7 @@ static QRenc_List *QRenc_freeEntry(QRenc_List *entry)
  * Input Data stream
  *****************************************************************************/
 
-QRinput *QRenc_newData(void)
+QRinput *QRinput_new(void)
 {
 	QRinput *stream;
 
@@ -110,7 +110,7 @@ QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream)
 	return stream->level;
 }
 
-int QRenc_appendData(QRinput *stream, QRencodeMode mode, int size, unsigned char *data)
+int QRinput_append(QRinput *stream, QRencodeMode mode, int size, unsigned char *data)
 {
 	QRenc_List *entry;
 
@@ -130,7 +130,7 @@ int QRenc_appendData(QRinput *stream, QRencodeMode mode, int size, unsigned char
 	return 0;
 }
 
-void QRenc_freeData(QRinput *stream)
+void QRinput_free(QRinput *stream)
 {
 	QRenc_List *list;
 
@@ -442,7 +442,7 @@ static void QRenc_encodeModeKanji(QRenc_List *entry, int version)
  * @param data
  * @return result
  */
-int QRenc_checkData(QRencodeMode mode, int size, const unsigned char *data)
+int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 {
 	switch(mode) {
 		case QR_MODE_NUM:

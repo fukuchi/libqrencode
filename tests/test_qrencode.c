@@ -14,10 +14,10 @@ void test_iterate()
 	int err = 0;
 
 	testStart("Test getCode (1-L)");
-	stream = QRenc_newData();
+	stream = QRinput_new();
 	QRenc_setVersion(stream, 1);
 	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	raw = QRraw_new(stream);
 	data = raw->datacode;
@@ -27,7 +27,7 @@ void test_iterate()
 		}
 	}
 
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	QRraw_free(raw);
 	testEnd(err);
 }
@@ -60,10 +60,10 @@ void test_iterate2()
 	};
 
 	testStart("Test getCode (5-H)");
-	stream = QRenc_newData();
+	stream = QRinput_new();
 	QRenc_setVersion(stream, 5);
 	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_H);
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	raw = QRraw_new(stream);
 	for(i=0; i<raw->dataLength; i++) {
@@ -72,7 +72,7 @@ void test_iterate2()
 		}
 	}
 
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	QRraw_free(raw);
 	testEnd(err);
 }
@@ -321,10 +321,10 @@ void test_encode(void)
 	QRcode *qrcode;
 
 	testStart("Test encode (1-L)");
-	stream = QRenc_newData();
+	stream = QRinput_new();
 	QRenc_setVersion(stream, 1);
 	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	qrcode = QRenc_encode(stream);
 	w = qrcode->width;
 	frame = qrcode->data;
@@ -339,7 +339,7 @@ void test_encode(void)
 		printf("\n");
 	}
 	testEnd(err);
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	QRenc_freeQRcode(qrcode);
 }
 

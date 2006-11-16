@@ -55,9 +55,9 @@ void view_simple(void)
 	SDL_Event event;
 	int loop;
 
-	stream = QRenc_newData();
+	stream = QRinput_new();
 
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	while(flag) {
 		QRenc_setVersion(stream, version);
@@ -143,7 +143,7 @@ void view_simple(void)
 		}
 	}
 
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 }
 
 int main()

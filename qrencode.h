@@ -54,7 +54,7 @@ typedef struct _QRinput QRinput;
  * Instantiate a data stream object.
  * @return Stream object (initialized).
  */
-extern QRinput *QRenc_newData(void);
+extern QRinput *QRinput_new(void);
 
 /**
  * Get current error correction level.
@@ -93,14 +93,14 @@ extern void QRenc_setVersion(QRinput *stream, int version);
  * @param data A pointer to the memory area of the input data.
  * @return -1 when the input data is invalid. Otherwise 0.
  */
-extern int QRenc_appendData(QRinput *stream, QRencodeMode mode, int size, unsigned char *data);
+extern int QRinput_append(QRinput *stream, QRencodeMode mode, int size, unsigned char *data);
 
 /**
  * Free the stream object.
  * All of data chunks in the stream object are freed too.
  * @param stream Stream object.
  */
-extern void QRenc_freeData(QRinput *stream);
+extern void QRinput_free(QRinput *stream);
 
 /**
  * Validate the input data
@@ -109,7 +109,7 @@ extern void QRenc_freeData(QRinput *stream);
  * @param data
  * @return result
  */
-extern int QRenc_checkData(QRencodeMode mode, int size, const unsigned char *data);
+extern int QRinput_check(QRencodeMode mode, int size, const unsigned char *data);
 
 /******************************************************************************
  * QRcode output

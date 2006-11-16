@@ -15,13 +15,13 @@ void test_rscode1(void)
 		0x2c, 0x55};
 
 	testStart("RS ecc test");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)str);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)str);
 	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_M);
 	code = QRraw_new(stream);
 
 	testEnd(memcmp(correct + 16, code->rsblock[0].ecc, 10));
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	QRraw_free(code);
 }
 

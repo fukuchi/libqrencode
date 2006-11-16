@@ -12,13 +12,13 @@ void test_encodeKanji(void)
 	BitStream *bstream;
 
 	testStart("Encoding kanji stream.");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
 	bstream = QRenc_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 }
 
@@ -30,13 +30,13 @@ void test_encode8(void)
 	BitStream *bstream;
 
 	testStart("Encoding alphabet-numeric stream.");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_AN, 5, (unsigned char *)str);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
 	bstream = QRenc_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 }
 
@@ -48,13 +48,13 @@ void test_encodeAn(void)
 	BitStream *bstream;
 
 	testStart("Encoding alphabet-numeric stream.");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_AN, 5, (unsigned char *)str);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
 	bstream = QRenc_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 }
 
@@ -65,10 +65,10 @@ void test_encodeAn2(void)
 	int ret;
 
 	testStart("Encoding INVALID alphabet-numeric stream.");
-	stream = QRenc_newData();
-	ret = QRenc_appendData(stream, QR_MODE_AN, 5, (unsigned char *)str);
+	stream = QRinput_new();
+	ret = QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
 	testEnd(!ret);
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 }
 
 void test_encodeNumeric(void)
@@ -79,13 +79,13 @@ void test_encodeNumeric(void)
 	BitStream *bstream;
 
 	testStart("Encoding numeric stream. (8 digits)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	bstream = QRenc_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 }
 
@@ -98,8 +98,8 @@ void test_encodeNumericPadded(void)
 	int flag;
 
 	testStart("Encoding numeric stream. (8 digits)(padded)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	bstream = QRenc_getBitStream(stream);
 	flag = strncmp(correct, bstream->data, 48);
 	printf("%s\n", bstream->data);
@@ -107,7 +107,7 @@ void test_encodeNumericPadded(void)
 		flag |= 0x80;
 	testEnd(flag);
 
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 }
 
@@ -119,13 +119,13 @@ void test_encodeNumeric2(void)
 	BitStream *bstream;
 
 	testStart("Encoding numeric stream. (16 digits)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_NUM, 16, (unsigned char *)num);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 16, (unsigned char *)num);
 	bstream = QRenc_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 }
 
@@ -141,8 +141,8 @@ void test_encode82(void)
 	data = (unsigned char *)malloc(257);
 	memset(data, 0, 257);
 	testStart("Encoding byte stream. (257 bytes)");
-	stream = QRenc_newData();
-	QRenc_appendData(stream, QR_MODE_8, 257, data);
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_8, 257, data);
 	bstream = QRenc_mergeBitStream(stream);
 	if(strncmp(c1, bstream->data, 12)) {
 		flag++;
@@ -151,7 +151,7 @@ void test_encode82(void)
 		flag++;
 	}
 	testEnd(flag);
-	QRenc_freeData(stream);
+	QRinput_free(stream);
 	BitStream_free(bstream);
 	free(data);
 }
