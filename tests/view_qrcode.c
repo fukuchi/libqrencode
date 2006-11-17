@@ -7,7 +7,6 @@
 #include "../qrspec.h"
 
 SDL_Surface *screen = NULL;
-#define WIDTH 400
 
 int eventloop(void)
 {
@@ -43,17 +42,18 @@ void view_simple(void)
 	QRinput *stream;
 	char num[9] = "01234567";
 	unsigned char *frame, *q;
-	unsigned int v, *p1, *p2;
 	int width;
 	int x, y;
 	int pitch;
 	int flag = 1;
 	int version = 1;
 	int mask = 0;
+	int scale = 4;
 	QRecLevel level = QR_ECLEVEL_L;
 	QRcode *qrcode;
 	SDL_Event event;
 	int loop;
+	SDL_Rect rect;
 
 	stream = QRinput_new();
 
@@ -63,18 +63,18 @@ void view_simple(void)
 		qrcode = QRcode_encodeMask(stream, version, level, mask);
 		width = qrcode->width;
 		frame = qrcode->data;
+		version = qrcode->version;
+		screen = SDL_SetVideoMode((width + 8) * scale, (width + 8) * scale, 32, 0);
 		pitch = screen->pitch;
 		q = frame;
 		SDL_FillRect(screen, NULL, 0xffffff);
 		for(y=0; y<width; y++) {
-			p1 = (unsigned int *)(screen->pixels + pitch * (y + 4) * 2 + 32);
-			p2 = (unsigned int *)(screen->pixels + pitch * ((y + 4) * 2 + 1) + 32);
 			for(x=0; x<width; x++) {
-				v = (*q&1)?0:0xffffff;
-				p1[x * 2] = v;
-				p1[x * 2 + 1] = v;
-				p2[x * 2] = v;
-				p2[x * 2 + 1] = v;
+				rect.x = (4 + x) * scale;
+				rect.y = (4 + y) * scale;
+				rect.w = scale;
+				rect.h = scale;
+				SDL_FillRect(screen, &rect, (*q&1)?0:0xffffff);
 				q++;
 			}
 		}
@@ -98,6 +98,15 @@ void view_simple(void)
 							version = 1;
 						loop = 0;
 						break;
+					case SDLK_UP:
+						scale++;
+						loop = 0;
+						break;
+					case SDLK_DOWN:
+						scale--;
+						if(scale < 1) scale = 1;
+						loop = 0;
+						break;
 					case SDLK_0:
 					case SDLK_1:
 					case SDLK_2:
@@ -107,6 +116,10 @@ void view_simple(void)
 					case SDLK_6:
 					case SDLK_7:
 						mask = (event.key.keysym.sym - SDLK_0);
+						loop = 0;
+						break;
+					case SDLK_8:
+						mask = -1;
 						loop = 0;
 						break;
 					case SDLK_l:
@@ -151,9 +164,9 @@ int main()
 		return -1;
 	}
 
-	screen = SDL_SetVideoMode(WIDTH, WIDTH, 32, 0);
-
 	view_simple();
+
+	SDL_Quit();
 
 	return 0;
 }

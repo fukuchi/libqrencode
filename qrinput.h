@@ -25,12 +25,12 @@
 #include "bitstream.h"
 
 /******************************************************************************
- * Entry of input data stream
+ * Entry of input data
  *****************************************************************************/
 typedef struct _QRenc_List QRenc_List;
 
 /******************************************************************************
- * Input Data stream
+ * Input Data
  *****************************************************************************/
 struct _QRinput {
 	int version;
@@ -41,41 +41,41 @@ struct _QRinput {
 
 /**
  * Get current error correction level.
- * @param stream input data stream
+ * @param input input data.
  * @return Current error correcntion level.
  */
-extern QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream);
+extern QRecLevel QRenc_getErrorCorrectionLevel(QRinput *input);
 
 /**
  * Set error correction level of the QR-code that is to be encoded.
- * @param stream input data stream
+ * @param input input data.
  * @param level Error correction level.
  */
-extern void QRenc_setErrorCorrectionLevel(QRinput *stream, QRecLevel level);
+extern void QRenc_setErrorCorrectionLevel(QRinput *input, QRecLevel level);
 
 /**
  * Get current version.
- * @param stream input data stream
- * @return current version
+ * @param input input data.
+ * @return current version.
  */
-extern int QRenc_getVersion(QRinput *stream);
+extern int QRenc_getVersion(QRinput *input);
 
 /**
  * Set version of the QR-code that is to be encoded.
- * @param stream input data stream
+ * @param input input data.
  * @param version version number (0 = auto)
  */
-extern void QRenc_setVersion(QRinput *stream, int version);
+extern void QRenc_setVersion(QRinput *input, int version);
 
 /**
  * Pack all bit streams padding bits into a byte array.
- * @param stream input data stream.
+ * @param input input data.
  * @return padded merged byte stream
  */
-extern unsigned char *QRenc_getByteStream(QRinput *stream);
+extern unsigned char *QRenc_getByteStream(QRinput *input);
 
-extern int QRenc_estimateBitStreamSize(QRinput *stream, int version);
-extern BitStream *QRenc_mergeBitStream(QRinput *stream);
-extern BitStream *QRenc_getBitStream(QRinput *stream);
+extern int QRenc_estimateBitStreamSize(QRinput *input, int version);
+extern BitStream *QRenc_mergeBitStream(QRinput *input);
+extern BitStream *QRenc_getBitStream(QRinput *input);
 
 #endif /* __QRINPUT_H__ */

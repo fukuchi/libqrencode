@@ -74,43 +74,43 @@ static QRenc_List *QRenc_freeEntry(QRenc_List *entry)
 }
 
 /******************************************************************************
- * Input Data stream
+ * Input Data
  *****************************************************************************/
 
 QRinput *QRinput_new(void)
 {
-	QRinput *stream;
+	QRinput *input;
 
-	stream = (QRinput *)malloc(sizeof(QRinput));
-	stream->head = NULL;
-	stream->tail = NULL;
-	stream->version = 0;
-	stream->level = QR_ECLEVEL_L;
+	input = (QRinput *)malloc(sizeof(QRinput));
+	input->head = NULL;
+	input->tail = NULL;
+	input->version = 0;
+	input->level = QR_ECLEVEL_L;
 
-	return stream;
+	return input;
 }
 
-int QRenc_getVersion(QRinput *stream)
+int QRenc_getVersion(QRinput *input)
 {
-	return stream->version;
+	return input->version;
 }
 
-void QRenc_setVersion(QRinput *stream, int v)
+void QRenc_setVersion(QRinput *input, int v)
 {
-	stream->version = v;
+	input->version = v;
 }
 
-void QRenc_setErrorCorrectionLevel(QRinput *stream, QRecLevel level)
+void QRenc_setErrorCorrectionLevel(QRinput *input, QRecLevel level)
 {
-	stream->level = level;
+	input->level = level;
 }
 
-QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream)
+QRecLevel QRenc_getErrorCorrectionLevel(QRinput *input)
 {
-	return stream->level;
+	return input->level;
 }
 
-int QRinput_append(QRinput *stream, QRencodeMode mode, int size, unsigned char *data)
+int QRinput_append(QRinput *input, QRencodeMode mode, int size, unsigned char *data)
 {
 	QRenc_List *entry;
 
@@ -119,27 +119,27 @@ int QRinput_append(QRinput *stream, QRencodeMode mode, int size, unsigned char *
 		return -1;
 	}
 
-	if(stream->tail == NULL) {
-		stream->head = entry;
-		stream->tail = entry;
+	if(input->tail == NULL) {
+		input->head = entry;
+		input->tail = entry;
 	} else {
-		stream->tail->next = entry;
-		stream->tail = entry;
+		input->tail->next = entry;
+		input->tail = entry;
 	}
 
 	return 0;
 }
 
-void QRinput_free(QRinput *stream)
+void QRinput_free(QRinput *input)
 {
 	QRenc_List *list;
 
-	list = stream->head;
+	list = input->head;
 	while(list != NULL) {
 		list = QRenc_freeEntry(list);
 	}
 
-	free(stream);
+	free(input);
 }
 
 /******************************************************************************
@@ -191,7 +191,7 @@ static int QRenc_estimateBitsModeNum(QRenc_List *entry)
 }
 
 /**
- * Convert the number data stream to a bit stream.
+ * Convert the number data to a bit stream.
  * @param entry
  */
 static void QRenc_encodeModeNum(QRenc_List *entry, int version)
@@ -293,7 +293,7 @@ static int QRenc_estimateBitsModeAn(QRenc_List *entry)
 }
 
 /**
- * Convert the alphabet-numeric data stream to a bit stream.
+ * Convert the alphabet-numeric data to a bit stream.
  * @param entry
  */
 static void QRenc_encodeModeAn(QRenc_List *entry, int version)
@@ -340,7 +340,7 @@ static int QRenc_estimateBitsMode8(QRenc_List *entry)
 }
 
 /**
- * Convert the 8bits data stream to a bit stream.
+ * Convert the 8bits data to a bit stream.
  * @param entry
  */
 static void QRenc_encodeMode8(QRenc_List *entry, int version)
@@ -401,7 +401,7 @@ static int QRenc_checkModeKanji(int size, const unsigned char *data)
 }
 
 /**
- * Convert the kanji data stream to a bit stream.
+ * Convert the kanji data to a bit stream.
  * @param entry
  */
 static void QRenc_encodeModeKanji(QRenc_List *entry, int version)
@@ -503,19 +503,19 @@ static int QRenc_estimateBitStreamSizeOfEntry(QRenc_List *entry, int version)
 }
 
 /**
- * Estimates the length of the encoded bit stream of the data stream.
- * @param stream data stream
+ * Estimates the length of the encoded bit stream of the data.
+ * @param input input data
  * @param version version of the symbol
  * @return number of bits
  */
-int QRenc_estimateBitStreamSize(QRinput *stream, int version)
+int QRenc_estimateBitStreamSize(QRinput *input, int version)
 {
 	QRenc_List *list;
 	int bits = 0;
 
-	assert(stream != NULL);
+	assert(input != NULL);
 
-	list = stream->head;
+	list = input->head;
 	while(list != NULL) {
 		bits += QRenc_estimateBitStreamSizeOfEntry(list, version);
 		list = list->next;
@@ -526,10 +526,10 @@ int QRenc_estimateBitStreamSize(QRinput *stream, int version)
 
 /**
  * Estimates the required version number of the symbol.
- * @param stream data stream
+ * @param input input data
  * @return required version number
  */
-static int QRenc_estimateVersion(QRinput *stream)
+static int QRenc_estimateVersion(QRinput *input)
 {
 	int bits;
 	int new, prev;
@@ -537,8 +537,8 @@ static int QRenc_estimateVersion(QRinput *stream)
 	new = 0;
 	do {
 		prev = new;
-		bits = QRenc_estimateBitStreamSize(stream, prev);
-		new = QRspec_getMinimumVersion((bits + 7) / 8, stream->level);
+		bits = QRenc_estimateBitStreamSize(input, prev);
+		new = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
 		if (new == -1) {
 			return -1;
 		}
@@ -552,7 +552,7 @@ static int QRenc_estimateVersion(QRinput *stream)
  *****************************************************************************/
 
 /**
- * Convert the data stream in the data chunk to a bit stream.
+ * Convert the input data in the data chunk to a bit stream.
  * @param entry
  * @return number of bits
  */
@@ -602,20 +602,20 @@ static int QRenc_encodeBitStream(QRenc_List *entry, int version)
 }
 
 /**
- * Convert the input data stream to a bit stream.
- * @param stream input data stream.
+ * Convert the input data to a bit stream.
+ * @param input input data.
  * @return length of the bit stream.
  */
-static int QRenc_createBitStream(QRinput *stream)
+static int QRenc_createBitStream(QRinput *input)
 {
 	QRenc_List *list;
 	int bits = 0;
 
-	assert(stream != NULL);
+	assert(input != NULL);
 
-	list = stream->head;
+	list = input->head;
 	while(list != NULL) {
-		bits += QRenc_encodeBitStream(list, stream->version);
+		bits += QRenc_encodeBitStream(list, input->version);
 		list = list->next;
 	}
 
@@ -623,29 +623,29 @@ static int QRenc_createBitStream(QRinput *stream)
 }
 
 /**
- * Convert the input data stream to a bit stream.
+ * Convert the input data to a bit stream.
  * When the version number is given and that is not sufficient, it is increased
  * automatically.
- * @param stream input data stream.
+ * @param input input data.
  * @return -1 if the input data was too large. Otherwise 0.
  */
-static int QRenc_convertData(QRinput *stream)
+static int QRenc_convertData(QRinput *input)
 {
 	int bits;
 	int ver;
 
-	ver = QRenc_estimateVersion(stream);
-	if(ver > QRenc_getVersion(stream)) {
-		QRenc_setVersion(stream, ver);
+	ver = QRenc_estimateVersion(input);
+	if(ver > QRenc_getVersion(input)) {
+		QRenc_setVersion(input, ver);
 	}
 
 	for(;;) {
-		bits = QRenc_createBitStream(stream);
-		ver = QRspec_getMinimumVersion((bits + 7) / 8, stream->level);
+		bits = QRenc_createBitStream(input);
+		ver = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
 		if(ver < 0) {
 			return -1;
-		} else if(ver > QRenc_getVersion(stream)) {
-			QRenc_setVersion(stream, ver);
+		} else if(ver > QRenc_getVersion(input)) {
+			QRenc_setVersion(input, ver);
 		} else {
 			break;
 		}
@@ -655,23 +655,23 @@ static int QRenc_convertData(QRinput *stream)
 }
 
 /**
- * Create padding bits for the input stream.
- * @param stream input data stream.
+ * Create padding bits for the input data.
+ * @param input input data.
  * @return padding bit stream.
  */
-static BitStream *QRenc_createPaddingBit(QRinput *stream)
+static BitStream *QRenc_createPaddingBit(QRinput *input)
 {
 	int bits, maxbits, words, maxwords, i;
 	QRenc_List *list;
 	BitStream *bstream;
 
-	if(stream->version <= 0)
+	if(input->version <= 0)
 		return NULL;
 
-	maxwords = QRspec_getDataLength(stream->version, stream->level);
+	maxwords = QRspec_getDataLength(input->version, input->level);
 	maxbits = maxwords * 8;
 	
-	list = stream->head;
+	list = input->head;
 	bits = 0;
 	while(list != NULL) {
 		bits += BitStream_size(list->bstream);
@@ -704,22 +704,22 @@ static BitStream *QRenc_createPaddingBit(QRinput *stream)
 }
 
 /**
- * Merge all bit streams in the input data stream
- * @param stream input data stream.
+ * Merge all bit streams in the input data.
+ * @param input input data.
  * @return merged bit stream
  */
 
-BitStream *QRenc_mergeBitStream(QRinput *stream)
+BitStream *QRenc_mergeBitStream(QRinput *input)
 {
 	BitStream *bstream;
 	QRenc_List *list;
 
-	if(QRenc_convertData(stream) < 0) {
+	if(QRenc_convertData(input) < 0) {
 		return NULL;
 	}
 
 	bstream = BitStream_new();
-	list = stream->head;
+	list = input->head;
 	while(list != NULL) {
 		BitStream_append(bstream, list->bstream);
 		list = list->next;
@@ -729,21 +729,21 @@ BitStream *QRenc_mergeBitStream(QRinput *stream)
 }
 
 /**
- * Merge all bit streams in the input data stream and append padding bits
- * @param stream input data stream.
+ * Merge all bit streams in the input data and append padding bits
+ * @param input input data.
  * @return padded merged bit stream
  */
 
-BitStream *QRenc_getBitStream(QRinput *stream)
+BitStream *QRenc_getBitStream(QRinput *input)
 {
 	BitStream *bstream;
 	BitStream *padding;
 
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRenc_mergeBitStream(input);
 	if(bstream == NULL) {
 		return NULL;
 	}
-	padding = QRenc_createPaddingBit(stream);
+	padding = QRenc_createPaddingBit(input);
 	BitStream_append(bstream, padding);
 	BitStream_free(padding);
 
@@ -752,16 +752,16 @@ BitStream *QRenc_getBitStream(QRinput *stream)
 
 /**
  * Pack all bit streams padding bits into a byte array.
- * @param stream input data stream.
+ * @param input input data.
  * @return padded merged byte stream
  */
 
-unsigned char *QRenc_getByteStream(QRinput *stream)
+unsigned char *QRenc_getByteStream(QRinput *input)
 {
 	BitStream *bstream;
 	unsigned char *array;
 
-	bstream = QRenc_getBitStream(stream);
+	bstream = QRenc_getBitStream(input);
 	array = BitStream_toByte(bstream);
 	BitStream_free(bstream);
 

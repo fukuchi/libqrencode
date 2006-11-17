@@ -46,7 +46,7 @@ typedef struct {
 	int b2;
 } QRRawCode;
 
-extern QRRawCode *QRraw_new(QRinput *stream);
+extern QRRawCode *QRraw_new(QRinput *input);
 extern unsigned char QRraw_getCode(QRRawCode *raw);
 extern void QRraw_free(QRRawCode *raw);
 
@@ -67,6 +67,6 @@ extern unsigned char *QRenc_makeMask(int width, unsigned char *frame, int mask);
 
 extern int QRenc_evaluateSymbol(int width, unsigned char *frame);
 
-QRcode *QRcode_encodeMask(QRinput *stream, int version, QRecLevel level, int mask);
+QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask);
 
 #endif /* __QRENCODE_INNER_H__ */
