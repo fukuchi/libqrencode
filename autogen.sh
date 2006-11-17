@@ -15,7 +15,7 @@ fi
 
 aclocal -I $ACLOCAL_DIR
 
-libtoolize --automake #--copy
-automake --add-missing #--copy
+libtoolize --automake --copy
+automake --add-missing --copy
 
 autoconf
