@@ -267,7 +267,7 @@ void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRe
 	format =  QRspec_getFormatInfo(mask, level);
 
 	for(i=0; i<8; i++) {
-		v = (unsigned char)(format & 1);
+		v = (unsigned char)(format & 1) | 0x84;
 		frame[width * 8 + width - 1 - i] = v;
 		if(i < 6) {
 			frame[width * i + 8] = v;
@@ -277,7 +277,7 @@ void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRe
 		format= format >> 1;
 	}
 	for(i=0; i<7; i++) {
-		v = (unsigned char)(format & 1);
+		v = (unsigned char)(format & 1) | 0x84;
 		frame[width * (width - 7 + i) + 8] = v;
 		if(i == 0) {
 			frame[width * 8 + 7] = v;
@@ -307,10 +307,10 @@ void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRe
 \
 	for(y=0; y<width; y++) {\
 		for(x=0; x<width; x++) {\
-			if(*s & 0x20) {\
-				*d = *s ^ ((__exp__) == 0);\
-			} else {\
+			if(*s & 0x80) {\
 				*d = *s;\
+			} else {\
+				*d = *s ^ ((__exp__) == 0);\
 			}\
 			b += (*d & 1);\
 			s++; d++;\
@@ -515,7 +515,7 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRecLevel leve
  * QR-code encoding
  *****************************************************************************/
 
-static QRcode *QRcode_new(int width, unsigned char *data)
+static QRcode *QRcode_new(int version, int width, unsigned char *data)
 {
 	QRcode *qrcode;
 
@@ -548,7 +548,6 @@ QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level)
 	QRenc_setVersion(input, version);
 	QRenc_setErrorCorrectionLevel(input, level);
 
-	version = QRenc_getVersion(input);
 	width = QRspec_getWidth(version);
 	raw = QRraw_new(input);
 	frame = QRspec_newFrame(version);
@@ -560,7 +559,7 @@ QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level)
 		bit = 0x80;
 		for(j=0; j<8; j++) {
 			p = FrameFiller_next(filler);
-			*p = 0xa0 | ((bit & code) != 0);
+			*p = 0x02 | ((bit & code) != 0);
 			bit = bit >> 1;
 		}
 	}
@@ -569,19 +568,19 @@ QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level)
 	j = QRspec_getRemainder(version);
 	for(i=0; i<j; i++) {
 		p = FrameFiller_next(filler);
-		*p = 0xa0;
+		*p = 0x02;
 	}
 	free(filler);
 	/* masking */
 	masked = QRenc_mask(width, frame, QRenc_getErrorCorrectionLevel(input));
-	qrcode = QRcode_new(width, masked);
+	qrcode = QRcode_new(version, width, masked);
 
 	free(frame);
 
 	return qrcode;
 }
 
-QRcode *QRenc_encodeMask(QRinput *input, int version, QRecLevel level, int mask)
+QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask)
 {
 	int width;
 	QRRawCode *raw;
@@ -603,7 +602,7 @@ QRcode *QRenc_encodeMask(QRinput *input, int version, QRecLevel level, int mask)
 		bit = 0x80;
 		for(j=0; j<8; j++) {
 			p = FrameFiller_next(filler);
-			*p = 0xa0 | ((bit & code) != 0);
+			*p = 0x02 | ((bit & code) != 0);
 			bit = bit >> 1;
 		}
 	}
@@ -612,14 +611,14 @@ QRcode *QRenc_encodeMask(QRinput *input, int version, QRecLevel level, int mask)
 	j = QRspec_getRemainder(version);
 	for(i=0; i<j; i++) {
 		p = FrameFiller_next(filler);
-		*p = 0xa0;
+		*p = 0x02;
 	}
 	free(filler);
 	/* masking */
 	masked = (unsigned char *)malloc(width * width);
 	maskMakers[mask](width, frame, masked);
 	QRenc_writeFormatInformation(width, masked, mask, QRenc_getErrorCorrectionLevel(input));
-	qrcode = QRcode_new(width, masked);
+	qrcode = QRcode_new(version, width, masked);
 
 	free(frame);
 

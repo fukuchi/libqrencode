@@ -446,11 +446,11 @@ static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
 static void putAlignmentPattern(unsigned char *frame, int width, int ox, int oy)
 {
 	static unsigned char finder[] = {
-		0x81, 0x81, 0x81, 0x81, 0x81,
-		0x81, 0x80, 0x80, 0x80, 0x81,
-		0x81, 0x80, 0x81, 0x80, 0x81,
-		0x81, 0x80, 0x80, 0x80, 0x81,
-		0x81, 0x81, 0x81, 0x81, 0x81,
+		0xa1, 0xa1, 0xa1, 0xa1, 0xa1,
+		0xa1, 0xa0, 0xa0, 0xa0, 0xa1,
+		0xa1, 0xa0, 0xa1, 0xa0, 0xa1,
+		0xa1, 0xa0, 0xa0, 0xa0, 0xa1,
+		0xa1, 0xa1, 0xa1, 0xa1, 0xa1,
 	};
 	int x, y;
 	unsigned char *s;
@@ -495,24 +495,24 @@ static unsigned char *QRspec_createFrame(int version)
 	memset(frame + width * 8 - 8, 0xc0, 8);
 	memset(frame + width * (width - 8), 0xc0, 8);
 	/* Mask format information area */
-	memset(frame + width * 8, 0xc2, 9);
-	memset(frame + width * 9 - 8, 0xc2, 8);
+	memset(frame + width * 8, 0x84, 9);
+	memset(frame + width * 9 - 8, 0x84, 8);
 	p = frame + 8;
 	for(y=0; y<8; y++) {
-		*p = 0xc2;
+		*p = 0x84;
 		p += width;
 	}
 	p = frame + width * (width - 7) + 8;
 	for(y=0; y<7; y++) {
-		*p = 0xc2;
+		*p = 0x84;
 		p += width;
 	}
 	/* Timing pattern */
 	p = frame + width * 6 + 8;
 	q = frame + width * 8 + 6;
 	for(x=1; x<width-15; x++) {
-		*p = (*p & 0xf0) | 0x80 | (x & 1);
-		*q = (*q & 0xf0) | 0x80 | (x & 1);
+		*p =  0x90 | (x & 1);
+		*q =  0x90 | (x & 1);
 		p++;
 		q += width;
 	}
@@ -533,23 +533,23 @@ static unsigned char *QRspec_createFrame(int version)
 		mask = 0x20000;
 		for(x=0; x<6; x++) {
 			for(y=0; y<3; y++) {
-				p[width * y + x] = 0xc0 | ((mask & verinfo) != 0);
+				p[width * y + x] = 0x88 | ((mask & verinfo) != 0);
 				mask = mask >> 1;
 			}
 		}
 
 		p = frame + width - 11;
-		mask = 0x200;
+		mask = 0x20000;
 		for(y=0; y<6; y++) {
 			for(x=0; x<3; x++) {
-				p[x] = 0xc0 | ((mask & verinfo) != 0);
+				p[x] = 0x88 | ((mask & verinfo) != 0);
 				mask = mask >> 1;
 			}
 			p += width;
 		}
 	}
 	/* and a little bit... */
-	frame[width * (width - 8) + 8] = 0xc1;
+	frame[width * (width - 8) + 8] = 0x81;
 
 	return frame;
 }

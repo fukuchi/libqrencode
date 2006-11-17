@@ -89,6 +89,20 @@ extern int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 
 /**
  * QRcode class.
+ * Symbol data is an array contains width*width uchars. Each uchar represents
+ * a module (dot). If the less significant bit of a uchar is 1, the
+ * corresponding module is black. The other bits are meaningless for usual
+ * application, but here the specification is described.
+ *
+ * 76543210
+ * |||||||+- 1=black/0=white
+ * ||||||+-- data and ecc code area
+ * |||||+--- format information
+ * ||||+---- version information
+ * |||+----- timing pattern
+ * ||+------ alignment pattern
+ * |+------- finder pattern and separator
+ * +-------- non-data modules (format, timing, etc.)
  */
 typedef struct {
 	int version;	///< version of the symbol
@@ -97,12 +111,13 @@ typedef struct {
 } QRcode;
 
 /**
- * Create a symbol from the input data stream.
+ * Create a symbol from the input data.
  * @param input input data.
  * @param version version of the symbol. If 0, the library chooses the minimum
- * version for the input data.
+ *                version for the input data.
  * @param level error correction level.
- * @return an instance of QRcode class.
+ * @return an instance of QRcode class. The version of the result QRcode may
+ *         be larger than the designated version.
  */
 extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
 
