@@ -321,10 +321,10 @@ void test_encode(void)
 	int x, y, w;
 	QRcode *qrcode;
 
-	testStart("Test encode (1-L)");
+	testStart("Test encode (1-M)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	qrcode = QRcode_encodeInput(stream, 1, QR_ECLEVEL_L);
+	qrcode = QRcode_encodeInput(stream, 1, QR_ECLEVEL_M);
 	w = qrcode->width;
 	frame = qrcode->data;
 	for(y=0; y<w; y++) {
@@ -342,6 +342,29 @@ void test_encode(void)
 	QRcode_free(qrcode);
 }
 
+void print_encode(void)
+{
+	QRinput *stream;
+	char num[9] = "01234567";
+	unsigned char *frame;
+	int x, y, w;
+	QRcode *qrcode;
+
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	qrcode = QRcode_encodeInput(stream, 1, QR_ECLEVEL_L);
+	w = qrcode->width;
+	frame = qrcode->data;
+	for(y=0; y<w; y++) {
+		for(x=0; x<w; x++) {
+			printf("%02x ", frame[y*w+x]);
+		}
+		printf("\n");
+	}
+	QRinput_free(stream);
+	QRcode_free(qrcode);
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
@@ -354,6 +377,7 @@ int main(int argc, char **argv)
 	test_eval2();
 	test_eval3();
 	test_encode();
+//	print_encode();
 
 	report();
 

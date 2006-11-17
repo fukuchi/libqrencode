@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 //	print_eccTable();
 	test_alignment1();
 	test_verpat();
-//	print_newFrame();
+	print_newFrame();
 	test_format();
 
 	report();
