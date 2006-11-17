@@ -35,51 +35,51 @@ typedef enum {
  * Level of error correction.
  */
 typedef enum {
-	QR_ECLEVEL_L = 0,
+	QR_ECLEVEL_L = 0, ///< lowest
 	QR_ECLEVEL_M,
 	QR_ECLEVEL_Q,
-	QR_ECLEVEL_H
+	QR_ECLEVEL_H      ///< highest
 } QRecLevel;
 
 /******************************************************************************
- * Input data stream
+ * Input data
  *****************************************************************************/
 
 /**
- * Data structure to store input data stream.
+ * Data structure to store input data.
  */
 typedef struct _QRinput QRinput;
 
 /**
- * Instantiate a data stream object.
- * @return Stream object (initialized).
+ * Instantiate an input data object.
+ * @return input object (initialized).
  */
 extern QRinput *QRinput_new(void);
 
 /**
- * Append data to the stream object.
- * The data is copied and appended to the stream object.
- * @param stream Stream object.
- * @param mode Encoding mode.
- * @param size Size of data (byte).
- * @param data A pointer to the memory area of the input data.
- * @return -1 when the input data is invalid. Otherwise 0.
+ * Append data to the input object.
+ * The data is copied and appended to the input object.
+ * @param input input object.
+ * @param mode encoding mode.
+ * @param size size of data (byte).
+ * @param data a pointer to the memory area of the input data.
+ * @return -1 when the input data is invalid. Otherwise, return 0.
  */
-extern int QRinput_append(QRinput *stream, QRencodeMode mode, int size, unsigned char *data);
+extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, unsigned char *data);
 
 /**
- * Free the stream object.
- * All of data chunks in the stream object are freed too.
- * @param stream Stream object.
+ * Free the input object.
+ * All of data chunks in the input object are freed too.
+ * @param input input object.
  */
-extern void QRinput_free(QRinput *stream);
+extern void QRinput_free(QRinput *input);
 
 /**
- * Validate the input data
+ * Validate the input data.
  * @param mode
  * @param size
  * @param data
- * @return result
+ * @return result return -1 if the input is invalid. Otherwise, return 0.
  */
 extern int QRinput_check(QRencodeMode mode, int size, const unsigned char *data);
 
@@ -91,17 +91,20 @@ extern int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
  * QRcode class.
  */
 typedef struct {
-	int version; //< version of the symbol
-	int width; //< width of the symbol
-	unsigned char *data; //< symbol data
+	int version;	///< version of the symbol
+	int width;		///< width of the symbol
+	unsigned char *data; ///< symbol data
 } QRcode;
 
 /**
  * Create a symbol from the input data stream.
- * @param stream input data stream.
+ * @param input input data.
+ * @param version version of the symbol. If 0, the library chooses the minimum
+ * version for the input data.
+ * @param level error correction level.
  * @return an instance of QRcode class.
  */
-extern QRcode *QRcode_encodeInput(QRinput *stream, int version, QRecLevel level);
+extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
 
 /**
  * Free the instance of QRcode class.

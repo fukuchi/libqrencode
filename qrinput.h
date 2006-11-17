@@ -18,8 +18,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __DATASTREAM_H__
-#define __DATASTREAM_H__
+#ifndef __QRINPUT_H__
+#define __QRINPUT_H__
 
 #include "qrencode.h"
 #include "bitstream.h"
@@ -78,4 +78,4 @@ extern int QRenc_estimateBitStreamSize(QRinput *stream, int version);
 extern BitStream *QRenc_mergeBitStream(QRinput *stream);
 extern BitStream *QRenc_getBitStream(QRinput *stream);
 
-#endif /* __DATASTREAM_H__ */
+#endif /* __QRINPUT_H__ */
