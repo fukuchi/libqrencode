@@ -40,6 +40,34 @@ struct _QRinput {
 };
 
 /**
+ * Get current error correction level.
+ * @param stream input data stream
+ * @return Current error correcntion level.
+ */
+extern QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream);
+
+/**
+ * Set error correction level of the QR-code that is to be encoded.
+ * @param stream input data stream
+ * @param level Error correction level.
+ */
+extern void QRenc_setErrorCorrectionLevel(QRinput *stream, QRecLevel level);
+
+/**
+ * Get current version.
+ * @param stream input data stream
+ * @return current version
+ */
+extern int QRenc_getVersion(QRinput *stream);
+
+/**
+ * Set version of the QR-code that is to be encoded.
+ * @param stream input data stream
+ * @param version version number (0 = auto)
+ */
+extern void QRenc_setVersion(QRinput *stream, int version);
+
+/**
  * Pack all bit streams padding bits into a byte array.
  * @param stream input data stream.
  * @return padded merged byte stream

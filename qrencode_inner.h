@@ -67,6 +67,6 @@ extern unsigned char *QRenc_makeMask(int width, unsigned char *frame, int mask);
 
 extern int QRenc_evaluateSymbol(int width, unsigned char *frame);
 
-QRcode *QRenc_encodeMask(QRinput *stream, int mask);
+QRcode *QRenc_encodeMask(QRinput *stream, int version, QRecLevel level, int mask);
 
 #endif /* __QRENCODE_INNER_H__ */

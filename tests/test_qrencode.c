@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
+#include "../qrinput.h"
 
 void test_iterate()
 {
@@ -322,10 +323,8 @@ void test_encode(void)
 
 	testStart("Test encode (1-L)");
 	stream = QRinput_new();
-	QRenc_setVersion(stream, 1);
-	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	qrcode = QRcode_encodeInput(stream);
+	qrcode = QRcode_encodeInput(stream, 1, QR_ECLEVEL_L);
 	w = qrcode->width;
 	frame = qrcode->data;
 	for(y=0; y<w; y++) {

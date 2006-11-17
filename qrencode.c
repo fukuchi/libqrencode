@@ -536,15 +536,17 @@ void QRcode_free(QRcode *qrcode)
 	free(qrcode);
 }
 
-QRcode *QRcode_encodeInput(QRinput *stream)
+QRcode *QRcode_encodeInput(QRinput *stream, int version, QRecLevel level)
 {
-	int version;
 	int width;
 	QRRawCode *raw;
 	unsigned char *frame, *masked, *p, code, bit;
 	FrameFiller *filler;
 	int i, j;
 	QRcode *qrcode;
+
+	QRenc_setVersion(stream, version);
+	QRenc_setErrorCorrectionLevel(stream, level);
 
 	version = QRenc_getVersion(stream);
 	width = QRspec_getWidth(version);
@@ -579,9 +581,8 @@ QRcode *QRcode_encodeInput(QRinput *stream)
 	return qrcode;
 }
 
-QRcode *QRenc_encodeMask(QRinput *stream, int mask)
+QRcode *QRenc_encodeMask(QRinput *stream, int version, QRecLevel level, int mask)
 {
-	int version;
 	int width;
 	QRRawCode *raw;
 	unsigned char *frame, *masked, *p, code, bit;
@@ -589,7 +590,8 @@ QRcode *QRenc_encodeMask(QRinput *stream, int mask)
 	int i, j;
 	QRcode *qrcode;
 
-	version = QRenc_getVersion(stream);
+	QRenc_setVersion(stream, version);
+	QRenc_setErrorCorrectionLevel(stream, level);
 	width = QRspec_getWidth(version);
 	raw = QRraw_new(stream);
 	frame = QRspec_newFrame(version);

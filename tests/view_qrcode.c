@@ -60,9 +60,7 @@ void view_simple(void)
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	while(flag) {
-		QRenc_setVersion(stream, version);
-		QRenc_setErrorCorrectionLevel(stream, level);
-		qrcode = QRenc_encodeMask(stream, mask);
+		qrcode = QRenc_encodeMask(stream, version, level, mask);
 		width = qrcode->width;
 		frame = qrcode->data;
 		pitch = screen->pitch;

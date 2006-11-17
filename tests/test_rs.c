@@ -2,6 +2,7 @@
 #include <string.h>
 #include "common.h"
 #include "../qrencode_inner.h"
+#include "../qrinput.h"
 
 /* See pp. 73 of JIS X0510:2004 */
 void test_rscode1(void)

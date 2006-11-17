@@ -57,34 +57,6 @@ typedef struct _QRinput QRinput;
 extern QRinput *QRinput_new(void);
 
 /**
- * Get current error correction level.
- * @param stream input data stream
- * @return Current error correcntion level.
- */
-extern QRecLevel QRenc_getErrorCorrectionLevel(QRinput *stream);
-
-/**
- * Set error correction level of the QR-code that is to be encoded.
- * @param stream input data stream
- * @param level Error correction level.
- */
-extern void QRenc_setErrorCorrectionLevel(QRinput *stream, QRecLevel level);
-
-/**
- * Get current version.
- * @param stream input data stream
- * @return current version
- */
-extern int QRenc_getVersion(QRinput *stream);
-
-/**
- * Set version of the QR-code that is to be encoded.
- * @param stream input data stream
- * @param version version number (0 = auto)
- */
-extern void QRenc_setVersion(QRinput *stream, int version);
-
-/**
  * Append data to the stream object.
  * The data is copied and appended to the stream object.
  * @param stream Stream object.
@@ -129,7 +101,7 @@ typedef struct {
  * @param stream input data stream.
  * @return an instance of QRcode class.
  */
-extern QRcode *QRcode_encodeInput(QRinput *stream);
+extern QRcode *QRcode_encodeInput(QRinput *stream, int version, QRecLevel level);
 
 /**
  * Free the instance of QRcode class.
