@@ -81,10 +81,10 @@ int main(int argc, char **argv)
 {
 	test_num();
 	test_bytes();
-    test_appendBytes();
-    test_toByte();
+	test_appendBytes();
+	test_toByte();
 
 	report();
 
-    return 0;
+	return 0;
 }

@@ -128,15 +128,15 @@ int main(int argc, char **argv)
 {
 	gstream = QRinput_new();
 
-    test_numbit();
-    test_numbit2();
-    test_numbit3();
-    test_an();
-    test_8();
-    test_kanji();
+	test_numbit();
+	test_numbit2();
+	test_numbit3();
+	test_an();
+	test_8();
+	test_kanji();
 	test_mix();
 
 	report();
 
-    return 0;
+	return 0;
 }
