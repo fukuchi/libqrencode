@@ -1,0 +1,53 @@
+libqrencode 1.0.0 - QR Code encoding library
+
+GENERAL INFORMATION
+===================
+Libqrencode is a library for encoding data in a QR Code symbol, a kind of 2D
+symbology that can be scanned by handy terminals such as a mobile phone with
+CCD. The capacity of QR Code is up to 7000 digits or 4000 characters, and has
+high robustness.
+
+SPECIFICATION
+=============
+Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial
+Standards) X0510:2004 or ISO/IEC 18004. Currently the following features are
+not supported:
+- ECI and FNC1 mode
+- Structured Append Feature
+- Micro QR Code
+- QR Code model 1
+
+INSTALL
+=======
+
+Requirements
+------------
+Some test programs or utility tools requires SDL, but the library itself has no
+dependencies. You can skip compiling those tools when if you want not to
+install programs using SDL. If you are trying to compile this library on MS-
+Windows, cygwin or some kinds of UNIX-like environments will be needed.
+
+Compile & install
+-----------------
+
+Just try
+
+./configure
+make
+make install
+
+This compiles and installs the library and header file to the appropriate
+directories. By default, /usr/local/lib and /usr/local/include. You can change
+the destination directory by passing some options to the configure script.
+Run "./configure --help" to see the list of options.
+
+Currently no program will be installed. If you want to install a binary
+(e.g. view_qrcode), please copy it manually.
+
+ACKNOWLEDGMENTS
+===============
+QR Code is registered trademarks of DENSO WAVE INCORPORATED in JAPAN and other
+countries.
+
+Reed-Solomon code encoder is written by Phil Karn, KA9Q.
+Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
