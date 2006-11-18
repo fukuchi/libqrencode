@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "qrencode.h"
 #include "qrspec.h"
@@ -477,7 +476,6 @@ static int QRenc_estimateBitStreamSizeOfEntry(QRenc_List *entry, int version)
 	int l, m;
 	int num;
 
-	assert(entry != NULL);
 	switch(entry->mode) {
 		case QR_MODE_NUM:
 			bits = QRenc_estimateBitsModeNum(entry);
@@ -512,8 +510,6 @@ int QRenc_estimateBitStreamSize(QRinput *input, int version)
 {
 	QRenc_List *list;
 	int bits = 0;
-
-	assert(input != NULL);
 
 	list = input->head;
 	while(list != NULL) {
@@ -560,8 +556,6 @@ static int QRenc_encodeBitStream(QRenc_List *entry, int version)
 {
 	int words;
 	QRenc_List *st1, *st2;
-
-	assert(entry != NULL);
 
 	if(entry->bstream != NULL) {
 		BitStream_free(entry->bstream);
@@ -610,8 +604,6 @@ static int QRenc_createBitStream(QRinput *input)
 {
 	QRenc_List *list;
 	int bits = 0;
-
-	assert(input != NULL);
 
 	list = input->head;
 	while(list != NULL) {
