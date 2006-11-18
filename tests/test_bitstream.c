@@ -10,7 +10,8 @@ void test_num(void)
 	char correct[] = "0010011010101111001101111011111";
 
 	testStart("New from num");
-	bstream = BitStream_newFromNum(31, data);
+	bstream = BitStream_new();
+	BitStream_appendNum(bstream, 31, data);
 	testEnd(strncmp(correct, bstream->data, 31));
 
 	BitStream_free(bstream);
@@ -23,7 +24,8 @@ void test_bytes(void)
 	char correct[] = "00111010";
 
 	testStart("New from bytes");
-	bstream = BitStream_newFromBytes(1, data);
+	bstream = BitStream_new();
+	BitStream_appendBytes(bstream, 1, data);
 	testEnd(strncmp(correct, bstream->data, 8));
 	BitStream_free(bstream);
 }

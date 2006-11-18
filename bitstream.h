@@ -27,8 +27,6 @@ typedef struct {
 } BitStream;
 
 extern BitStream *BitStream_new(void);
-extern BitStream *BitStream_newFromNum(int bits, unsigned int num);
-extern BitStream *BitStream_newFromBytes(int size, unsigned char *data);
 extern void BitStream_append(BitStream *bstream, BitStream *arg);
 extern void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num);
 extern void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data);

@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "bitstream.h"
 
@@ -36,7 +35,7 @@ BitStream *BitStream_new(void)
 	return bstream;
 }
 
-BitStream *BitStream_newFromNum(int bits, unsigned int num)
+static BitStream *BitStream_newFromNum(int bits, unsigned int num)
 {
 	unsigned int mask;
 	int i;
@@ -62,14 +61,12 @@ BitStream *BitStream_newFromNum(int bits, unsigned int num)
 	return bstream;
 }
 
-BitStream *BitStream_newFromBytes(int size, unsigned char *data)
+static BitStream *BitStream_newFromBytes(int size, unsigned char *data)
 {
 	unsigned char mask;
 	int i, j;
 	char *p;
 	BitStream *bstream;
-
-	assert(data != NULL);
 
 	bstream = BitStream_new();
 	bstream->data = (char *)malloc(size * 8 + 1);
@@ -97,8 +94,6 @@ void BitStream_append(BitStream *bstream, BitStream *arg)
 	int l1, l2;
 	char *new;
 
-	assert(bstream != NULL);
-
 	if(arg == NULL || arg->data == NULL) {
 		return;
 	}
@@ -121,8 +116,6 @@ void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
 {
 	BitStream *b;
 
-	assert(bstream != NULL);
-
 	b = BitStream_newFromNum(bits, num);
 	BitStream_append(bstream, b);
 	BitStream_free(b);
@@ -132,8 +125,6 @@ void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 {
 	BitStream *b;
 
-	assert(bstream != NULL);
-
 	b = BitStream_newFromBytes(size, data);
 	BitStream_append(bstream, b);
 	BitStream_free(b);
@@ -141,19 +132,7 @@ void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 
 unsigned int BitStream_size(BitStream *bstream)
 {
-	assert(bstream != NULL);
-
 	return strlen(bstream->data);
-}
-
-void BitStream_free(BitStream *bstream)
-{
-	assert(bstream != NULL);
-
-	if(bstream->data != NULL) {
-		free(bstream->data);
-	}
-	free(bstream);
 }
 
 unsigned char *BitStream_toByte(BitStream *bstream)
@@ -161,8 +140,6 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	int i, j, size, bytes;
 	unsigned char *data, v;
 	char *p;
-
-	assert(bstream != NULL);
 
 	size = BitStream_size(bstream);
 	data = (unsigned char *)malloc((size + 7) / 8);
@@ -189,4 +166,12 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	}
 
 	return data;
+}
+
+void BitStream_free(BitStream *bstream)
+{
+	if(bstream->data != NULL) {
+		free(bstream->data);
+	}
+	free(bstream);
 }
