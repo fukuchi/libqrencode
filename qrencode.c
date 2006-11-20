@@ -1,5 +1,5 @@
 /**
- * qrencode - QR-code encoder
+ * qrencode - QR Code encoder
  *
  * Copyright (C) 2006 Kentaro Fukuchi
  *

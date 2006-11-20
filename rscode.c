@@ -1,5 +1,5 @@
 /*
- * qrencode - QR-code encoder
+ * qrencode - QR Code encoder
  *
  * Reed solomon encoder. This file is taken from Phil Karn's libfec and
  * editted and packed into a pair of .c and .h files.

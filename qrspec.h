@@ -1,6 +1,7 @@
 /*
- * qrencode - QR-code encoder
+ * qrencode - QR Code encoder
  *
+ * QR Code specification in convenient format. 
  * Copyright (C) 2006 Kentaro Fukuchi
  *
  * This program is free software; you can redistribute it and/or modify
