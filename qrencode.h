@@ -65,7 +65,7 @@ extern QRinput *QRinput_new(void);
  * @param data a pointer to the memory area of the input data.
  * @return -1 when the input data is invalid. Otherwise, return 0.
  */
-extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, unsigned char *data);
+extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned char *data);
 
 /**
  * Free the input object.
@@ -94,15 +94,15 @@ extern int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
  * corresponding module is black. The other bits are meaningless for usual
  * application, but here the specification is described.
  *
- * 76543210
- * |||||||+- 1=black/0=white
- * ||||||+-- data and ecc code area
- * |||||+--- format information
- * ||||+---- version information
- * |||+----- timing pattern
- * ||+------ alignment pattern
- * |+------- finder pattern and separator
- * +-------- non-data modules (format, timing, etc.)
+ * MSB 76543210 LSB
+ *     |||||||`- 1=black/0=white
+ *     ||||||`-- data and ecc code area
+ *     |||||`--- format information
+ *     ||||`---- version information
+ *     |||`----- timing pattern
+ *     ||`------ alignment pattern
+ *     |`------- finder pattern and separator
+ *     `-------- non-data modules (format, timing, etc.)
  */
 typedef struct {
 	int version;	///< version of the symbol
@@ -135,7 +135,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version.
  */
-//extern QRcode *QRcode_encodeString(QRinput *input, int version, QRecLevel level);
+//extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint);
 
 /**
  * Free the instance of QRcode class.

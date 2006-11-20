@@ -39,7 +39,7 @@ struct _QRenc_List {
 	QRenc_List *next;
 };
 
-static QRenc_List *QRenc_newEntry(QRencodeMode mode, int size, unsigned char *data)
+static QRenc_List *QRenc_newEntry(QRencodeMode mode, int size, const unsigned char *data)
 {
 	QRenc_List *entry;
 
@@ -109,7 +109,7 @@ QRecLevel QRenc_getErrorCorrectionLevel(QRinput *input)
 	return input->level;
 }
 
-int QRinput_append(QRinput *input, QRencodeMode mode, int size, unsigned char *data)
+int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned char *data)
 {
 	QRenc_List *entry;
 
