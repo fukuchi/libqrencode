@@ -122,6 +122,22 @@ typedef struct {
 extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
 
 /**
+ * Create a symbol from the string. The library automatically parses the input
+ * string and encodes in a QR Code symbol.
+ * @param string input string. It should be NULL terminated.
+ * @param version version of the symbol. If 0, the library chooses the minimum
+ *                version for the input data.
+ * @param level error correction level.
+ * @param hint tell the library how non-alphanumerical characters should be
+ *             encoded. If QR_MODE_KANJI is given, those characters will be
+ *             encoded as Shif-JIS characters. If QR_MODE_8 is given, they wil
+ *             be encoded as is. If you want to embed UTF-8 string, choose this.
+ * @return an instance of QRcode class. The version of the result QRcode may
+ *         be larger than the designated version.
+ */
+//extern QRcode *QRcode_encodeString(QRinput *input, int version, QRecLevel level);
+
+/**
  * Free the instance of QRcode class.
  * @param qrcode an instance of QRcode class.
  */
