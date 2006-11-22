@@ -719,7 +719,7 @@ static int QRcode_eat8(const char *string, QRinput *input, int version, QRencode
 			if(hint == QR_MODE_KANJI && mode == QR_MODE_KANJI) {
 				break;
 			}
-			if(mode != QR_MODE_8) {
+			if(mode != QR_MODE_8 && mode != QR_MODE_KANJI) {
 				break;
 			}
 			p++;
@@ -748,7 +748,7 @@ static int QRcode_eat8(const char *string, QRinput *input, int version, QRencode
 			}
 		}
 	}
-	QRinput_append(input, QR_MODE_AN, p - string, (unsigned char *)string);
+	QRinput_append(input, QR_MODE_8, p - string, (unsigned char *)string);
 	return p - string;
 }
 

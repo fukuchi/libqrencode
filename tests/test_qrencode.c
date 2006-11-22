@@ -497,7 +497,7 @@ void test_split4(void)
 	QRcode_splitStringToQRinput("abcde1234567890123", input, 0, QR_MODE_8);
 	list = input->head;
 	if(list->mode != QR_MODE_AN || list->size != 5) {
-		printf("fist item is not alnum.\n");
+		printf("first item is not alnum.\n");
 		err++;
 	}
 	if(list->next == NULL) {
@@ -514,6 +514,54 @@ void test_split4(void)
 			err++;
 		}
 	}
+	testEnd(err);
+	QRinput_free(input);
+
+	testStart("Split test 8: bit, an, bit, num");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_8);
+	list = input->head;
+	if(list->mode != QR_MODE_8 || list->size != 2) {
+		printf("first item is not 8bit.\n");
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no second item.\n");
+		err++;
+		goto EXIT;
+	}
+	list = list->next;
+	if(list->mode != QR_MODE_AN || list->size != 11) {
+		printf("second item is not an: %d %d\n", list->mode, list->size);
+		printf("%s\n", list->data);
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no third item.\n");
+		err++;
+		goto EXIT;
+	}
+	list = list->next;
+	if(list->mode != QR_MODE_8 || list->size != 2) {
+		printf("third item is not an.\n");
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no fourth item.\n");
+		err++;
+		goto EXIT;
+	}
+	list = list->next;
+	if(list->mode != QR_MODE_NUM || list->size != 6) {
+		printf("fourth item is not num.\n");
+		err++;
+	}
+	if(list->next != NULL) {
+		printf("not terminated.\n");
+		err++;
+		goto EXIT;
+	}
+EXIT:
 	testEnd(err);
 	QRinput_free(input);
 }
