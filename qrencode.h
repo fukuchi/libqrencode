@@ -135,7 +135,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version.
  */
-//extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint);
+extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint);
 
 /**
  * Free the instance of QRcode class.

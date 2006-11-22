@@ -18,7 +18,7 @@ void test_rscode1(void)
 	testStart("RS ecc test");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)str);
-	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_M);
+	QRinput_setErrorCorrectionLevel(stream, QR_ECLEVEL_M);
 	code = QRraw_new(stream);
 
 	testEnd(memcmp(correct + 16, code->rsblock[0].ecc, 10));

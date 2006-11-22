@@ -14,7 +14,7 @@ void test_encodeKanji(void)
 	testStart("Encoding kanji stream.");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
@@ -32,7 +32,7 @@ void test_encode8(void)
 	testStart("Encoding alphabet-numeric stream.");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
@@ -50,7 +50,7 @@ void test_encodeAn(void)
 	testStart("Encoding alphabet-numeric stream.");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
@@ -81,7 +81,7 @@ void test_encodeNumeric(void)
 	testStart("Encoding numeric stream. (8 digits)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
@@ -100,7 +100,7 @@ void test_encodeNumericPadded(void)
 	testStart("Encoding numeric stream. (8 digits)(padded)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	bstream = QRenc_getBitStream(stream);
+	bstream = QRinput_getBitStream(stream);
 	flag = strncmp(correct, bstream->data, 48);
 	printf("%s\n", bstream->data);
 	if(strlen(bstream->data) != 19 * 8)
@@ -121,7 +121,7 @@ void test_encodeNumeric2(void)
 	testStart("Encoding numeric stream. (16 digits)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 16, (unsigned char *)num);
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
@@ -143,7 +143,7 @@ void test_encode82(void)
 	testStart("Encoding byte stream. (257 bytes)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_8, 257, data);
-	bstream = QRenc_mergeBitStream(stream);
+	bstream = QRinput_mergeBitStream(stream);
 	if(strncmp(c1, bstream->data, 12)) {
 		flag++;
 	}

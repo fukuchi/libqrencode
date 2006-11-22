@@ -55,20 +55,22 @@ extern void QRraw_free(QRRawCode *raw);
 /******************************************************************************
  * Frame filling
  *****************************************************************************/
-extern unsigned char *QRenc_fillerTest(int version);
+extern unsigned char *QRinput_fillerTest(int version);
 
 /******************************************************************************
  * Format information
  *****************************************************************************/
-extern void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
+extern void QRinput_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
 
 /******************************************************************************
  * Masking
  *****************************************************************************/
-extern unsigned char *QRenc_makeMask(int width, unsigned char *frame, int mask);
+extern unsigned char *QRinput_makeMask(int width, unsigned char *frame, int mask);
 
-extern int QRenc_evaluateSymbol(int width, unsigned char *frame);
+extern int QRinput_evaluateSymbol(int width, unsigned char *frame);
 
 QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask);
 
+void QRcode_splitStringToQRinput(const char *string, QRinput *input,
+		int version, QRencodeMode hint);
 #endif /* __QRENCODE_INNER_H__ */

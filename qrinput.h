@@ -28,7 +28,15 @@
 /******************************************************************************
  * Entry of input data
  *****************************************************************************/
-typedef struct _QRenc_List QRenc_List;
+typedef struct _QRinput_List QRinput_List;
+
+struct _QRinput_List {
+	QRencodeMode mode;
+	int size;				///< Size of data chunk (byte).
+	unsigned char *data;	///< Data chunk.
+	BitStream *bstream;
+	QRinput_List *next;
+};
 
 /******************************************************************************
  * Input Data
@@ -36,8 +44,8 @@ typedef struct _QRenc_List QRenc_List;
 struct _QRinput {
 	int version;
 	QRecLevel level;
-	QRenc_List *head;
-	QRenc_List *tail;
+	QRinput_List *head;
+	QRinput_List *tail;
 };
 
 /**
@@ -45,38 +53,49 @@ struct _QRinput {
  * @param input input data.
  * @return Current error correcntion level.
  */
-extern QRecLevel QRenc_getErrorCorrectionLevel(QRinput *input);
+extern QRecLevel QRinput_getErrorCorrectionLevel(QRinput *input);
 
 /**
  * Set error correction level of the QR-code that is to be encoded.
  * @param input input data.
  * @param level Error correction level.
  */
-extern void QRenc_setErrorCorrectionLevel(QRinput *input, QRecLevel level);
+extern void QRinput_setErrorCorrectionLevel(QRinput *input, QRecLevel level);
 
 /**
  * Get current version.
  * @param input input data.
  * @return current version.
  */
-extern int QRenc_getVersion(QRinput *input);
+extern int QRinput_getVersion(QRinput *input);
 
 /**
  * Set version of the QR-code that is to be encoded.
  * @param input input data.
  * @param version version number (0 = auto)
  */
-extern void QRenc_setVersion(QRinput *input, int version);
+extern void QRinput_setVersion(QRinput *input, int version);
 
 /**
  * Pack all bit streams padding bits into a byte array.
  * @param input input data.
  * @return padded merged byte stream
  */
-extern unsigned char *QRenc_getByteStream(QRinput *input);
+extern unsigned char *QRinput_getByteStream(QRinput *input);
 
-extern int QRenc_estimateBitStreamSize(QRinput *input, int version);
-extern BitStream *QRenc_mergeBitStream(QRinput *input);
-extern BitStream *QRenc_getBitStream(QRinput *input);
+extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
+extern BitStream *QRinput_mergeBitStream(QRinput *input);
+extern BitStream *QRinput_getBitStream(QRinput *input);
+
+extern signed char QRinput_anTable[];
+extern QRencodeMode QRinput_identifyMode(const char *string);
+
+/**
+ * Look up the alphabet-numeric convesion table (see JIS X0510:2004, pp.19).
+ * @param c character
+ * @return value
+ */
+#define QRinput_lookAnTable(__c__) \
+	((__c__ & 0x80)?-1:QRinput_anTable[(int)__c__])
 
 #endif /* __QRINPUT_H__ */

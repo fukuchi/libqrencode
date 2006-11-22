@@ -16,8 +16,8 @@ void test_iterate()
 
 	testStart("Test getCode (1-L)");
 	stream = QRinput_new();
-	QRenc_setVersion(stream, 1);
-	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
+	QRinput_setVersion(stream, 1);
+	QRinput_setErrorCorrectionLevel(stream, QR_ECLEVEL_L);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	raw = QRraw_new(stream);
@@ -62,8 +62,8 @@ void test_iterate2()
 
 	testStart("Test getCode (5-H)");
 	stream = QRinput_new();
-	QRenc_setVersion(stream, 5);
-	QRenc_setErrorCorrectionLevel(stream, QR_ECLEVEL_H);
+	QRinput_setVersion(stream, 5);
+	QRinput_setErrorCorrectionLevel(stream, QR_ECLEVEL_H);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 
 	raw = QRraw_new(stream);
@@ -86,7 +86,7 @@ void print_filler(void)
 	unsigned char *frame;
 
 	width = QRspec_getWidth(version);
-	frame = QRenc_fillerTest(version);
+	frame = QRinput_fillerTest(version);
 
 	for(y=0; y<width; y++) {
 		for(x=0; x<width; x++) {
@@ -105,7 +105,7 @@ void test_filler(void)
 
 	testStart("Frame fillter test");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
-		frame = QRenc_fillerTest(i);
+		frame = QRinput_fillerTest(i);
 		if(frame == NULL) {
 			printf("Something wrong in version %d\n", i);
 			err++;
@@ -138,7 +138,7 @@ void print_mask(void)
 	frame = (unsigned char *)malloc(width * width);
 	memset(frame, 0x20, width * width);
 	for(mask=0; mask<8; mask++) {
-		masked = QRenc_makeMask(width, frame, mask);
+		masked = QRinput_makeMask(width, frame, mask);
 		p = masked;
 		printf("mask %d:\n", mask);
 		for(y=0; y<width; y++) {
@@ -170,7 +170,7 @@ void test_format(void)
 	width = QRspec_getWidth(1);
 	frame = QRspec_newFrame(1);
 	format = QRspec_getFormatInfo(1, QR_ECLEVEL_L);
-	QRenc_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
+	QRinput_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
 	decode = 0;
 	for(i=0; i<8; i++) {
 		decode = decode << 1;
@@ -222,12 +222,12 @@ void test_eval(void)
 
 	testStart("Test mask evaluation (all white)");
 	memset(frame, 0, w * w);
-	demerit = QRenc_evaluateSymbol(w, frame);
+	demerit = QRinput_evaluateSymbol(w, frame);
 	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
 
 	testStart("Test mask evaluation (all black)");
 	memset(frame, 1, w * w);
-	demerit = QRenc_evaluateSymbol(w, frame);
+	demerit = QRinput_evaluateSymbol(w, frame);
 	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
 
 	free(frame);
@@ -266,7 +266,7 @@ void test_eval2(void)
 		frame[w*8 + x] = (x / 5) & 1;
 		frame[w*9 + x] = ((x / 5) & 1) ^ 1;
 	}
-	demerit = QRenc_evaluateSymbol(w, frame);
+	demerit = QRinput_evaluateSymbol(w, frame);
 	testEndExp(demerit == N1 * 4 + N2 * 4);
 
 	free(frame);
@@ -306,7 +306,7 @@ void test_eval3(void)
 			frame[w*(y*2+2) + x] = pattern[y][x]^1;
 		}
 	}
-	demerit = QRenc_evaluateSymbol(w, frame);
+	demerit = QRinput_evaluateSymbol(w, frame);
 	testEndExp(demerit == N3 * 6 + (N1 + 1) * 4);
 
 	free(frame);
@@ -393,6 +393,131 @@ void print_encode(void)
 	QRcode_free(qrcode);
 }
 
+void test_split1(void)
+{
+	QRinput *input;
+	BitStream *stream;
+
+	testStart("Split test 1: null string");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("", input, 0, QR_MODE_8);
+	stream = QRinput_mergeBitStream(input);
+	testEndExp(BitStream_size(stream) == 0);
+	QRinput_free(input);
+	BitStream_free(stream);
+}
+
+void test_split2(void)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int err = 0;
+
+	testStart("Split test 2: single typed strings (num)");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("0123", input, 0, QR_MODE_8);
+	list = input->head;
+	if(list->mode != QR_MODE_NUM || list->size != 4) {
+		err++;
+	}
+	if(list->next != NULL) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+
+	testStart("Split test 3: single typed strings (num2)");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("12345678901234567890", input, 0, QR_MODE_KANJI);
+	list = input->head;
+	if(list->mode != QR_MODE_NUM || list->size != 20) {
+		err++;
+	}
+	if(list->next != NULL) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+}
+
+void test_split3(void)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int err = 0;
+
+	testStart("Split test 4: single typed strings (an)");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8);
+	list = input->head;
+	if(list->mode != QR_MODE_AN || list->size != 5) {
+		err++;
+	}
+	if(list->next != NULL) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+
+	testStart("Split test 5: num + an");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI);
+	list = input->head;
+	if(list->mode != QR_MODE_AN || list->size != 9) {
+		err++;
+	}
+	if(list->next != NULL) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+
+	testStart("Split test 6: an + num + an");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI);
+	list = input->head;
+	if(list->mode != QR_MODE_AN || list->size != 7) {
+		err++;
+	}
+	if(list->next != NULL) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+}
+
+void test_split4(void)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int err = 0;
+
+	testStart("Split test 7: an and num entries");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("abcde1234567890123", input, 0, QR_MODE_8);
+	list = input->head;
+	if(list->mode != QR_MODE_AN || list->size != 5) {
+		printf("fist item is not alnum.\n");
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no second item.\n");
+		err++;
+	} else {
+		list = list->next;
+		if(list->mode != QR_MODE_NUM || list->size != 13) {
+			printf("second item is not number.: %d %d\n", list->mode, list->size);
+			err++;
+		}
+		if(list->next != NULL) {
+			printf("list is not terminated.\n");
+			err++;
+		}
+	}
+	testEnd(err);
+	QRinput_free(input);
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
@@ -406,6 +531,10 @@ int main(int argc, char **argv)
 	test_eval3();
 	test_encode();
 //	print_encode();
+	test_split1();
+	test_split2();
+	test_split3();
+	test_split4();
 
 	report();
 

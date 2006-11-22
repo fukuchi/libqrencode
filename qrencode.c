@@ -56,7 +56,7 @@ QRRawCode *QRraw_new(QRinput *input)
 	unsigned char *p;
 
 	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
-	raw->datacode = QRenc_getByteStream(input);
+	raw->datacode = QRinput_getByteStream(input);
 	spec = QRspec_getEccSpec(input->version, input->level);
 	raw->blocks = QRspec_rsBlockNum(spec);
 	raw->rsblock = (RSblock *)malloc(sizeof(RSblock) * raw->blocks);
@@ -213,7 +213,7 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 	return &p[y * w + x];
 }
 
-unsigned char *QRenc_fillerTest(int version)
+unsigned char *QRinput_fillerTest(int version)
 {
 	int width, length;
 	unsigned char *frame, *p;
@@ -257,7 +257,7 @@ unsigned char *QRenc_fillerTest(int version)
  * Format information
  *****************************************************************************/
 
-void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
+void QRinput_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned int format;
 	unsigned char v;
@@ -317,53 +317,53 @@ void QRenc_writeFormatInformation(int width, unsigned char *frame, int mask, QRe
 	}\
 	return b;
 
-static int QRenc_mask0(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask0(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((x+y)&1)
 }
 
-static int QRenc_mask1(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask1(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(y&1)
 }
 
-static int QRenc_mask2(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask2(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(x%3)
 }
 
-static int QRenc_mask3(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask3(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((x+y)%3)
 }
 
-static int QRenc_mask4(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask4(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(((y/2)+(x/3))&1)
 }
 
-static int QRenc_mask5(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask5(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(((x*y)&1)+(x*y)%3)
 }
 
-static int QRenc_mask6(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask6(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((((x*y)&1)+(x*y)%3)&1)
 }
 
-static int QRenc_mask7(int width, const unsigned char *s, unsigned char *d)
+static int QRinput_mask7(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((((x*y)%3)+((x+y)&1))&1)
 }
 
 typedef int MaskMaker(int, const unsigned char *, unsigned char *);
 static MaskMaker *maskMakers[] = {
-	QRenc_mask0, QRenc_mask1, QRenc_mask2, QRenc_mask3,
-	QRenc_mask4, QRenc_mask5, QRenc_mask6, QRenc_mask7
+	QRinput_mask0, QRinput_mask1, QRinput_mask2, QRinput_mask3,
+	QRinput_mask4, QRinput_mask5, QRinput_mask6, QRinput_mask7
 };
 
-unsigned char *QRenc_makeMask(int width, unsigned char *frame, int mask)
+unsigned char *QRinput_makeMask(int width, unsigned char *frame, int mask)
 {
 	unsigned char *masked;
 
@@ -381,7 +381,7 @@ static int runLength[QRSPEC_WIDTH_MAX + 1];
 //static int n3;
 //static int n4;
 
-static int QRenc_calcN1N3(int length, int *runLength)
+static int QRinput_calcN1N3(int length, int *runLength)
 {
 	int i;
 	int demerit = 0;
@@ -414,7 +414,7 @@ static int QRenc_calcN1N3(int length, int *runLength)
 	return demerit;
 }
 
-int QRenc_evaluateSymbol(int width, unsigned char *frame)
+int QRinput_evaluateSymbol(int width, unsigned char *frame)
 {
 	int x, y;
 	unsigned char *p;
@@ -451,7 +451,7 @@ int QRenc_evaluateSymbol(int width, unsigned char *frame)
 			}
 			p++;
 		}
-		demerit += QRenc_calcN1N3(head+1, runLength);
+		demerit += QRinput_calcN1N3(head+1, runLength);
 	}
 
 	i = 0;
@@ -474,13 +474,13 @@ int QRenc_evaluateSymbol(int width, unsigned char *frame)
 			}
 			p+=width;
 		}
-		demerit += QRenc_calcN1N3(head+1, runLength);
+		demerit += QRinput_calcN1N3(head+1, runLength);
 	}
 
 	return demerit;
 }
 
-static unsigned char *QRenc_mask(int width, unsigned char *frame, QRecLevel level)
+static unsigned char *QRinput_mask(int width, unsigned char *frame, QRecLevel level)
 {
 	int i;
 	unsigned char *mask, *bestMask;
@@ -503,7 +503,7 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRecLevel leve
 			free(mask);
 			continue;
 		}
-		demerit += QRenc_evaluateSymbol(width, mask);
+		demerit += QRinput_evaluateSymbol(width, mask);
 //		printf("(%d,%d,%d,%d)=%d\n", n1, n2, n3 ,n4, demerit);
 		if(demerit < minDemerit) {
 			minDemerit = demerit;
@@ -517,7 +517,7 @@ static unsigned char *QRenc_mask(int width, unsigned char *frame, QRecLevel leve
 		}
 	}
 
-	QRenc_writeFormatInformation(width, bestMask, bestMaskNum, level);
+	QRinput_writeFormatInformation(width, bestMask, bestMaskNum, level);
 
 	return bestMask;
 }
@@ -562,8 +562,8 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 	int i, j;
 	QRcode *qrcode;
 
-	QRenc_setVersion(input, version);
-	QRenc_setErrorCorrectionLevel(input, level);
+	QRinput_setVersion(input, version);
+	QRinput_setErrorCorrectionLevel(input, level);
 
 	width = QRspec_getWidth(version);
 	raw = QRraw_new(input);
@@ -590,15 +590,200 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 	free(filler);
 	/* masking */
 	if(mask < 0) {
-		masked = QRenc_mask(width, frame, level);
+		masked = QRinput_mask(width, frame, level);
 	} else {
 		masked = (unsigned char *)malloc(width * width);
 		maskMakers[mask](width, frame, masked);
-		QRenc_writeFormatInformation(width, masked, mask, QRenc_getErrorCorrectionLevel(input));
+		QRinput_writeFormatInformation(width, masked, mask, QRinput_getErrorCorrectionLevel(input));
 	}
 	qrcode = QRcode_new(version, width, masked);
 
 	free(frame);
 
 	return qrcode;
+}
+
+static int QRcode_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int QRcode_eat8(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int QRcode_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint);
+
+#define isdigit(__c__) ((unsigned char)((signed char)(__c__) - '0') < 10)
+#define isalnum(__c__) (QRinput_lookAnTable(__c__) >= 0)
+
+static int QRcode_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint)
+{
+	const char *p;
+	int run;
+	int rangeA, range8;
+
+	if(version <= 9) {
+		range8 = 4;
+		rangeA = 7;
+	} else if(version <= 26) {
+		range8 = 4;
+		rangeA = 8;
+	} else {
+		range8 = 5;
+		rangeA = 9;
+	}
+	p = string;
+	while(isdigit(*p)) {
+		p++;
+	}
+	run = p - string;
+	if(run < range8 && (*p & 0x80)) {
+		return QRcode_eat8(string, input, version, hint);
+	}
+	if(run < rangeA && isalnum(*p)) {
+		return QRcode_eatAn(string, input, version, hint);
+	}
+
+	QRinput_append(input, QR_MODE_NUM, run, (unsigned char *)string);
+	return run;
+}
+
+static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint)
+{
+	const char *p, *q;
+	int run;
+	int range, rangeN;
+
+	if(version <= 9) {
+		range = 6;
+		rangeN = 13;
+	} else if(version <= 26) {
+		range = 7;
+		rangeN = 15;
+	} else {
+		range = 8;
+		rangeN = 17;
+	}
+	p = string;
+	while(isalnum(*p)) {
+		if(isdigit(*p)) {
+			q = p;
+			while(isdigit(*q)) {
+				q++;
+			}
+			if(q - p >= rangeN) {
+				break;
+			} else {
+				p = q;
+			}
+		} else {
+			p++;
+		}
+	}
+	run = p - string;
+	if(run < range && (*p & 0x80)) {
+		return QRcode_eat8(string, input, version, hint);
+	}
+
+	QRinput_append(input, QR_MODE_AN, run, (unsigned char *)string);
+	return run;
+}
+
+static int QRcode_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint)
+{
+	const char *p;
+
+	p = string;
+	while(QRinput_identifyMode(p) == QR_MODE_KANJI) {
+		p += 2;
+	}
+	QRinput_append(input, QR_MODE_KANJI, p - string, (unsigned char *)string);
+	return p - string;
+}
+
+static int QRcode_eat8(const char *string, QRinput *input, int version, QRencodeMode hint)
+{
+	const char *p, *q;
+	int rangeA, rangeN;
+	QRencodeMode mode;
+
+	if(version <= 9) {
+		rangeN = 6;
+		rangeA = 11;
+	} else if(version <= 26) {
+		rangeN = 8;
+		rangeA = 15;
+	} else {
+		rangeN = 9;
+		rangeA = 16;
+	}
+	p = string;
+	while(1) {
+		while(*p != '\0') {
+			mode = QRinput_identifyMode(p);
+			if(hint == QR_MODE_KANJI && mode == QR_MODE_KANJI) {
+				break;
+			}
+			if(mode != QR_MODE_8) {
+				break;
+			}
+			p++;
+		}
+		if(*p == '\0') {
+			break;
+		} else if(isdigit(*p)) {
+			q = p;
+			while(isdigit(*q)) {
+				q++;
+			}
+			if(q - p >= rangeN) {
+				break;
+			} else {
+				p = q;
+			}
+		} else if(isalnum(*p)) {
+			q = p;
+			while(isalnum(*q)) {
+				q++;
+			}
+			if(q - p >= rangeA) {
+				break;
+			} else {
+				p = q;
+			}
+		}
+	}
+	QRinput_append(input, QR_MODE_AN, p - string, (unsigned char *)string);
+	return p - string;
+}
+
+void QRcode_splitStringToQRinput(const char *string, QRinput *input,
+		int version, QRencodeMode hint)
+{
+	int length;
+	QRencodeMode mode;
+
+	if(*string == '\0') return;
+
+	mode = QRinput_identifyMode(string);
+	if(mode == QR_MODE_NUM) {
+		length = QRcode_eatNum(string, input, version, hint);
+	} else if(mode == QR_MODE_AN) {
+		length = QRcode_eatAn(string, input, version, hint);
+	} else if(mode == QR_MODE_KANJI && hint == QR_MODE_KANJI) {
+		length = QRcode_eatKanji(string, input, version, hint);
+	} else {
+		length = QRcode_eat8(string, input, version, hint);
+	}
+	if(length == 0) return;
+	/* Of course this tail recursion could be optimized! Believe gcc. */
+	QRcode_splitStringToQRinput(&string[length], input, hint, version);
+}
+
+extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint)
+{
+	QRinput *input;
+
+	if(hint != QR_MODE_8 && hint != QR_MODE_KANJI) {
+		return NULL;
+	}
+
+	input = QRinput_new();
+	QRcode_splitStringToQRinput(string, input, version, hint);
+	return QRcode_encodeInput(input, version, level);
 }

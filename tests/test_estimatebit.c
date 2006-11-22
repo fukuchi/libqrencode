@@ -16,7 +16,7 @@ void test_numbit(void)
 	testStart("Estimation of Numeric stream (8 digits)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	bits = QRenc_estimateBitStreamSize(stream, 0);
+	bits = QRinput_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 41);
 
 	QRinput_append(gstream, QR_MODE_NUM, 8, (unsigned char *)num);
@@ -32,7 +32,7 @@ void test_numbit2(void)
 	testStart("Estimation of Numeric stream (16 digits)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 16, (unsigned char *)num);
-	bits = QRenc_estimateBitStreamSize(stream, 0);
+	bits = QRinput_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 68);
 
 	QRinput_append(gstream, QR_MODE_NUM, 16, (unsigned char *)num);
@@ -51,7 +51,7 @@ void test_numbit3(void)
 	memset(num, '1', 400);
 	num[400] = '\0';
 	QRinput_append(stream, QR_MODE_NUM, 400, (unsigned char *)num);
-	bits = QRenc_estimateBitStreamSize(stream, 0);
+	bits = QRinput_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 1362);
 
 	QRinput_append(gstream, QR_MODE_NUM, 400, (unsigned char *)num);
@@ -68,7 +68,7 @@ void test_an(void)
 	testStart("Estimation of Alphabet-Numeric stream (5 chars)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
-	bits = QRenc_estimateBitStreamSize(stream, 0);
+	bits = QRinput_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 41);
 
 	QRinput_append(gstream, QR_MODE_AN, 5, (unsigned char *)str);
@@ -84,7 +84,7 @@ void test_8(void)
 	testStart("Estimation of 8 bit data stream (8 bytes)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_8, 8, (unsigned char *)str);
-	bits = QRenc_estimateBitStreamSize(stream, 0);
+	bits = QRinput_estimateBitStreamSize(stream, 0);
 	testEndExp(bits == 76);
 
 	QRinput_append(gstream, QR_MODE_8, 8, (unsigned char *)str);
@@ -106,7 +106,7 @@ void test_kanji(void)
 		printf("Failed to add.\n");
 		testEnd(1);
 	} else {
-		bits = QRenc_estimateBitStreamSize(stream, 0);
+		bits = QRinput_estimateBitStreamSize(stream, 0);
 		testEndExp(bits == 38);
 		QRinput_append(gstream, QR_MODE_KANJI, 4, (unsigned char *)str);
 	}
@@ -119,7 +119,7 @@ void test_mix(void)
 	int bits;
 
 	testStart("Estimation of Mixed stream");
-	bits = QRenc_estimateBitStreamSize(gstream, 0);
+	bits = QRinput_estimateBitStreamSize(gstream, 0);
 	testEndExp(bits == (41 + 68 + 1362 + 41 + 76 + 38));
 	QRinput_free(gstream);
 }
