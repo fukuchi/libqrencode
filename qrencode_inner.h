@@ -38,6 +38,7 @@ typedef struct {
 } RSblock;
 
 typedef struct {
+	int version;
 	unsigned char *datacode;
 	int blocks;
 	RSblock *rsblock;

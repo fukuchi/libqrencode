@@ -92,7 +92,7 @@ extern QRencodeMode QRinput_identifyMode(const char *string);
 
 /**
  * Look up the alphabet-numeric convesion table (see JIS X0510:2004, pp.19).
- * @param c character
+ * @param __c__ character
  * @return value
  */
 #define QRinput_lookAnTable(__c__) \

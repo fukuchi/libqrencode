@@ -58,6 +58,7 @@ QRRawCode *QRraw_new(QRinput *input)
 	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
 	raw->datacode = QRinput_getByteStream(input);
 	spec = QRspec_getEccSpec(input->version, input->level);
+	raw->version = input->version;
 	raw->blocks = QRspec_rsBlockNum(spec);
 	raw->rsblock = (RSblock *)malloc(sizeof(RSblock) * raw->blocks);
 
@@ -565,8 +566,9 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 	QRinput_setVersion(input, version);
 	QRinput_setErrorCorrectionLevel(input, level);
 
-	width = QRspec_getWidth(version);
 	raw = QRraw_new(input);
+	version = raw->version;
+	width = QRspec_getWidth(version);
 	frame = QRspec_newFrame(version);
 	filler = FrameFiller_new(width, frame);
 

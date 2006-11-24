@@ -37,10 +37,9 @@ int eventloop(void)
 	return 0;
 }
 
-void view_simple(void)
+void view_simple(const char *str)
 {
 	QRinput *stream;
-	char num[9] = "01234567";
 	unsigned char *frame, *q;
 	int width;
 	int x, y;
@@ -56,8 +55,7 @@ void view_simple(void)
 	SDL_Rect rect;
 
 	stream = QRinput_new();
-
-	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+	QRcode_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI);
 
 	while(flag) {
 		qrcode = QRcode_encodeMask(stream, version, level, mask);
@@ -157,14 +155,18 @@ void view_simple(void)
 	QRinput_free(stream);
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	if(argc != 2) {
+		printf("Usage: view_qrcode string\n");
+		exit(1);
+	}
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
 		return -1;
 	}
 
-	view_simple();
+	view_simple(argv[1]);
 
 	SDL_Quit();
 

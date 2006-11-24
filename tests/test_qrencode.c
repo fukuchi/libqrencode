@@ -370,6 +370,17 @@ void test_encode(void)
 	testEnd(err);
 }
 
+void test_encode2(void)
+{
+	QRcode *qrcode;
+
+	testStart("Test encode (2-H)");
+	qrcode = QRcode_encodeString("abcdefghijkl123456789012", 0, QR_ECLEVEL_H, QR_MODE_8);
+	printf("%d\n", qrcode->version);
+	testEndExp(qrcode->version == 2);
+	QRcode_free(qrcode);
+}
+
 void print_encode(void)
 {
 	QRinput *stream;
@@ -426,6 +437,7 @@ void test_split2(void)
 	testEnd(err);
 	QRinput_free(input);
 
+	err = 0;
 	testStart("Split test 3: single typed strings (num2)");
 	input = QRinput_new();
 	QRcode_splitStringToQRinput("12345678901234567890", input, 0, QR_MODE_KANJI);
@@ -459,6 +471,7 @@ void test_split3(void)
 	testEnd(err);
 	QRinput_free(input);
 
+	err = 0;
 	testStart("Split test 5: num + an");
 	input = QRinput_new();
 	QRcode_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI);
@@ -472,6 +485,7 @@ void test_split3(void)
 	testEnd(err);
 	QRinput_free(input);
 
+	err = 0;
 	testStart("Split test 6: an + num + an");
 	input = QRinput_new();
 	QRcode_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI);
@@ -494,10 +508,10 @@ void test_split4(void)
 
 	testStart("Split test 7: an and num entries");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("abcde1234567890123", input, 0, QR_MODE_8);
+	QRcode_splitStringToQRinput("abcdefghijkl123456789012", input, 0, QR_MODE_8);
 	list = input->head;
-	if(list->mode != QR_MODE_AN || list->size != 5) {
-		printf("first item is not alnum.\n");
+	if(list->mode != QR_MODE_AN || list->size != 12) {
+		printf("first item is not alnum: %d %d\n", list->mode, list->size);
 		err++;
 	}
 	if(list->next == NULL) {
@@ -505,7 +519,7 @@ void test_split4(void)
 		err++;
 	} else {
 		list = list->next;
-		if(list->mode != QR_MODE_NUM || list->size != 13) {
+		if(list->mode != QR_MODE_NUM || list->size != 12) {
 			printf("second item is not number.: %d %d\n", list->mode, list->size);
 			err++;
 		}
@@ -517,6 +531,7 @@ void test_split4(void)
 	testEnd(err);
 	QRinput_free(input);
 
+	err = 0;
 	testStart("Split test 8: bit, an, bit, num");
 	input = QRinput_new();
 	QRcode_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_8);
@@ -632,13 +647,14 @@ int main(int argc, char **argv)
 	test_eval();
 	test_eval2();
 	test_eval3();
-	test_encode();
 //	print_encode();
 	test_split1();
 	test_split2();
 	test_split3();
 	test_split4();
 	test_split5();
+	test_encode();
+	test_encode2();
 
 	report();
 
