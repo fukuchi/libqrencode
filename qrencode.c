@@ -775,7 +775,7 @@ void QRcode_splitStringToQRinput(const char *string, QRinput *input,
 	QRcode_splitStringToQRinput(&string[length], input, hint, version);
 }
 
-extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint)
+QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint)
 {
 	QRinput *input;
 

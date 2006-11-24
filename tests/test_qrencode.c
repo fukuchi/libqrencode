@@ -566,6 +566,61 @@ EXIT:
 	QRinput_free(input);
 }
 
+void test_split5(void)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int err = 0;
+
+	testStart("Split test 9: kanji, an, kanji, num");
+	input = QRinput_new();
+	QRcode_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_KANJI);
+	list = input->head;
+	if(list->mode != QR_MODE_KANJI || list->size != 2) {
+		printf("first item is not kanji.\n");
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no second item.\n");
+		err++;
+		goto EXIT;
+	}
+	list = list->next;
+	if(list->mode != QR_MODE_AN || list->size != 11) {
+		printf("second item is not an: %d %d\n", list->mode, list->size);
+		printf("%s\n", list->data);
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no third item.\n");
+		err++;
+		goto EXIT;
+	}
+	list = list->next;
+	if(list->mode != QR_MODE_KANJI || list->size != 2) {
+		printf("third item is not kanji.\n");
+		err++;
+	}
+	if(list->next == NULL) {
+		printf("no fourth item.\n");
+		err++;
+		goto EXIT;
+	}
+	list = list->next;
+	if(list->mode != QR_MODE_NUM || list->size != 6) {
+		printf("fourth item is not num.\n");
+		err++;
+	}
+	if(list->next != NULL) {
+		printf("not terminated.\n");
+		err++;
+		goto EXIT;
+	}
+EXIT:
+	testEnd(err);
+	QRinput_free(input);
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
@@ -583,6 +638,7 @@ int main(int argc, char **argv)
 	test_split2();
 	test_split3();
 	test_split4();
+	test_split5();
 
 	report();
 
