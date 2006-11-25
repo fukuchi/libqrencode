@@ -102,7 +102,27 @@ void test_encodeNumericPadded(void)
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	bstream = QRinput_getBitStream(stream);
 	flag = strncmp(correct, bstream->data, 48);
-	printf("%s\n", bstream->data);
+	if(strlen(bstream->data) != 19 * 8)
+		flag |= 0x80;
+	testEnd(flag);
+
+	QRinput_free(stream);
+	BitStream_free(bstream);
+}
+
+void test_encodeNumericPadded2(void)
+{
+	QRinput *stream;
+	char num[8] = "0123456";
+	char correct[] = "000100000001110000001100010101100101100000000000";
+	BitStream *bstream;
+	int flag;
+
+	testStart("Encoding numeric stream. (7 digits)(padded)");
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 7, (unsigned char *)num);
+	bstream = QRinput_getBitStream(stream);
+	flag = strncmp(correct, bstream->data, 48);
 	if(strlen(bstream->data) != 19 * 8)
 		flag |= 0x80;
 	testEnd(flag);
@@ -121,6 +141,24 @@ void test_encodeNumeric2(void)
 	testStart("Encoding numeric stream. (16 digits)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 16, (unsigned char *)num);
+	bstream = QRinput_mergeBitStream(stream);
+	printf("%s\n", correct);
+	printf("%s\n", bstream->data);
+	testEnd(strcmp(correct, bstream->data));
+	QRinput_free(stream);
+	BitStream_free(bstream);
+}
+
+void test_encodeNumeric3(void)
+{
+	QRinput *stream;
+	char num[9] = "0123456";
+	char correct[] = "0001""0000000111""0000001100""0101011001""0110";
+	BitStream *bstream;
+
+	testStart("Encoding numeric stream. (7 digits)");
+	stream = QRinput_new();
+	QRinput_append(stream, QR_MODE_NUM, 7, (unsigned char *)num);
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
@@ -156,16 +194,42 @@ void test_encode82(void)
 	free(data);
 }
 
+void test_encodeAnNum(void)
+{
+	QRinput *input;
+	BitStream *bstream;
+
+	testStart("Bit length check of alpha-numeric stream. (11 + 12)");
+	input = QRinput_new();
+	QRinput_append(input, QR_MODE_AN, 11, (unsigned char *)"abcdefghijk");
+	QRinput_append(input, QR_MODE_NUM, 12, (unsigned char *)"123456789012");
+	bstream = QRinput_mergeBitStream(input);
+	testEndExp(strlen(bstream->data) == 128);
+	QRinput_free(input);
+	BitStream_free(bstream);
+
+	testStart("Bit length check of alphabet stream. (23)");
+	input = QRinput_new();
+	QRinput_append(input, QR_MODE_AN, 23, (unsigned char *)"abcdefghijk123456789012");
+	bstream = QRinput_mergeBitStream(input);
+	testEndExp(strlen(bstream->data) == 140);
+	QRinput_free(input);
+	BitStream_free(bstream);
+}
+
 int main(int argc, char **argv)
 {
 	test_encodeNumeric();
 	test_encodeNumeric2();
+	test_encodeNumeric3();
 	test_encode8();
 //	test_encode82();
 	test_encodeAn();
 	test_encodeAn2();
 	test_encodeKanji();
 	test_encodeNumericPadded();
+	test_encodeNumericPadded2();
+	test_encodeAnNum();
 
 	report();
 

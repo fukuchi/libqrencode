@@ -649,18 +649,13 @@ static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencod
 {
 	const char *p, *q;
 	int run;
-	int range, rangeN;
+	int b1, b2;
+	int la, ln, l8;
 
-	if(version <= 9) {
-		range = 6;
-		rangeN = 13;
-	} else if(version <= 26) {
-		range = 7;
-		rangeN = 15;
-	} else {
-		range = 8;
-		rangeN = 17;
-	}
+	la = QRspec_lengthIndicator(QR_MODE_AN, version);
+	ln = QRspec_lengthIndicator(QR_MODE_NUM, version);
+	l8 = QRspec_lengthIndicator(QR_MODE_8, version);
+
 	p = string;
 	while(isalnum(*p)) {
 		if(isdigit(*p)) {
@@ -668,7 +663,10 @@ static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencod
 			while(isdigit(*q)) {
 				q++;
 			}
-			if(q - p >= rangeN) {
+			b1 = 4 + la + QRinput_estimateBitsModeAn(p - string)
+			   + 4 + ln + QRinput_estimateBitsModeNum(q - p);
+			b2 = 4 + la + QRinput_estimateBitsModeAn(q - string);
+			if(b2 > b1) {
 				break;
 			} else {
 				p = q;
@@ -678,8 +676,13 @@ static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencod
 		}
 	}
 	run = p - string;
-	if(run < range && (*p & 0x80)) {
-		return QRcode_eat8(string, input, version, hint);
+	if(*p & 0x80) {
+		b1 = 4 + la + QRinput_estimateBitsModeAn(run)
+		   + 4 + l8 + QRinput_estimateBitsMode8(1);
+		b2 = 4 + l8 + QRinput_estimateBitsMode8(run + 1);
+		if(b1 > b2) {
+			return QRcode_eat8(string, input, version, hint);
+		}
 	}
 
 	QRinput_append(input, QR_MODE_AN, run, (unsigned char *)string);
@@ -780,6 +783,7 @@ void QRcode_splitStringToQRinput(const char *string, QRinput *input,
 QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint)
 {
 	QRinput *input;
+	QRcode *code;
 
 	if(hint != QR_MODE_8 && hint != QR_MODE_KANJI) {
 		return NULL;
@@ -787,5 +791,8 @@ QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QR
 
 	input = QRinput_new();
 	QRcode_splitStringToQRinput(string, input, version, hint);
-	return QRcode_encodeInput(input, version, level);
+	code = QRcode_encodeInput(input, version, level);
+	QRinput_free(input);
+
+	return code;
 }

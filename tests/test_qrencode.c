@@ -374,11 +374,27 @@ void test_encode2(void)
 {
 	QRcode *qrcode;
 
-	testStart("Test encode (2-H)");
-	qrcode = QRcode_encodeString("abcdefghijkl123456789012", 0, QR_ECLEVEL_H, QR_MODE_8);
-	printf("%d\n", qrcode->version);
+	testStart("Test encode (2-H) (no padding test)");
+	qrcode = QRcode_encodeString("abcdefghijk123456789012", 0, QR_ECLEVEL_H, QR_MODE_8);
 	testEndExp(qrcode->version == 2);
 	QRcode_free(qrcode);
+}
+
+void test_encode3(void)
+{
+	QRcode *code1, *code2;
+	QRinput *input;
+
+	testStart("Compare encodeString and encodeInput");
+	code1 = QRcode_encodeString("0123456", 0, QR_ECLEVEL_L, QR_MODE_8);
+	input = QRinput_new();
+	QRinput_append(input, QR_MODE_NUM, 7, (unsigned char *)"0123456");
+	code2 = QRcode_encodeInput(input, 0, QR_ECLEVEL_L);
+	testEnd(memcmp(code1->data, code2->data, code1->width * code1->width));
+
+	QRcode_free(code1);
+	QRcode_free(code2);
+	QRinput_free(input);
 }
 
 void print_encode(void)
@@ -508,9 +524,10 @@ void test_split4(void)
 
 	testStart("Split test 7: an and num entries");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("abcdefghijkl123456789012", input, 0, QR_MODE_8);
+	QRcode_splitStringToQRinput("abcdefghijk123456789012", input, 0, QR_MODE_8);
+
 	list = input->head;
-	if(list->mode != QR_MODE_AN || list->size != 12) {
+	if(list->mode != QR_MODE_AN || list->size != 11) {
 		printf("first item is not alnum: %d %d\n", list->mode, list->size);
 		err++;
 	}
@@ -655,6 +672,7 @@ int main(int argc, char **argv)
 	test_split5();
 	test_encode();
 	test_encode2();
+	test_encode3();
 
 	report();
 

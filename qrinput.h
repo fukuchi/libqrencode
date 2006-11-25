@@ -83,6 +83,11 @@ extern void QRinput_setVersion(QRinput *input, int version);
  */
 extern unsigned char *QRinput_getByteStream(QRinput *input);
 
+extern int QRinput_estimateBitsModeNum(int size);
+extern int QRinput_estimateBitsModeAn(int size);
+extern int QRinput_estimateBitsMode8(int size);
+extern int QRinput_estimateBitsModeKanji(int size);
+
 extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
 extern BitStream *QRinput_mergeBitStream(QRinput *input);
 extern BitStream *QRinput_getBitStream(QRinput *input);

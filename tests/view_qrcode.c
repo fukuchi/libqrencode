@@ -5,6 +5,7 @@
 #include "common.h"
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
+#include "../qrinput.h"
 
 SDL_Surface *screen = NULL;
 
@@ -56,6 +57,7 @@ void view_simple(const char *str)
 
 	stream = QRinput_new();
 	QRcode_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI);
+
 
 	while(flag) {
 		qrcode = QRcode_encodeMask(stream, version, level, mask);

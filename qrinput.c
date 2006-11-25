@@ -158,17 +158,17 @@ static int QRinput_checkModeNum(int size, const char *data)
 
 /**
  * Estimates the length of the encoded bit stream of numeric data.
- * @param entry
+ * @param size
  * @return number of bits
  */
-static int QRinput_estimateBitsModeNum(QRinput_List *entry)
+int QRinput_estimateBitsModeNum(int size)
 {
 	int w;
 	int bits;
 
-	w = entry->size / 3;
+	w = size / 3;
 	bits = w * 10;
-	switch(entry->size - w * 3) {
+	switch(size - w * 3) {
 		case 1:
 			bits += 4;
 			break;
@@ -254,17 +254,17 @@ static int QRinput_checkModeAn(int size, const char *data)
 
 /**
  * Estimates the length of the encoded bit stream of alphabet-numeric data.
- * @param entry
+ * @param size
  * @return number of bits
  */
-static int QRinput_estimateBitsModeAn(QRinput_List *entry)
+int QRinput_estimateBitsModeAn(int size)
 {
 	int w;
 	int bits;
 
-	w = entry->size / 2;
+	w = size / 2;
 	bits = w * 11;
-	if(entry->size & 1) {
+	if(size & 1) {
 		bits += 6;
 	}
 
@@ -310,12 +310,12 @@ static void QRinput_encodeModeAn(QRinput_List *entry, int version)
 
 /**
  * Estimates the length of the encoded bit stream of 8 bit data.
- * @param entry
+ * @param size
  * @return number of bits
  */
-static int QRinput_estimateBitsMode8(QRinput_List *entry)
+int QRinput_estimateBitsMode8(int size)
 {
-	return entry->size * 8;
+	return size * 8;
 }
 
 /**
@@ -347,12 +347,12 @@ static void QRinput_encodeMode8(QRinput_List *entry, int version)
 
 /**
  * Estimates the length of the encoded bit stream of kanji data.
- * @param entry
+ * @param size
  * @return number of bits
  */
-static int QRinput_estimateBitsModeKanji(QRinput_List *entry)
+int QRinput_estimateBitsModeKanji(int size)
 {
-	return (entry->size / 2) * 13;
+	return (size / 2) * 13;
 }
 
 /**
@@ -479,16 +479,16 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 
 	switch(entry->mode) {
 		case QR_MODE_NUM:
-			bits = QRinput_estimateBitsModeNum(entry);
+			bits = QRinput_estimateBitsModeNum(entry->size);
 			break;
 		case QR_MODE_AN:
-			bits = QRinput_estimateBitsModeAn(entry);
+			bits = QRinput_estimateBitsModeAn(entry->size);
 			break;
 		case QR_MODE_8:
-			bits = QRinput_estimateBitsMode8(entry);
+			bits = QRinput_estimateBitsMode8(entry->size);
 			break;
 		case QR_MODE_KANJI:
-			bits = QRinput_estimateBitsModeKanji(entry);
+			bits = QRinput_estimateBitsModeKanji(entry->size);
 			break;
 	}
 
@@ -663,7 +663,7 @@ static BitStream *QRinput_createPaddingBit(QRinput *input)
 
 	maxwords = QRspec_getDataLength(input->version, input->level);
 	maxbits = maxwords * 8;
-	
+
 	list = input->head;
 	bits = 0;
 	while(list != NULL) {
@@ -673,18 +673,23 @@ static BitStream *QRinput_createPaddingBit(QRinput *input)
 
 	words = (bits + 7) / 8;
 
-	if(bits == maxbits)
-		return NULL;
-
 	if(maxbits - bits < 5) {
-		bstream = BitStream_new();
-		BitStream_appendNum(bstream, maxbits - bits, 0);
-		return bstream;
+		if(maxbits == bits) {
+			return NULL;
+		} else {
+			bstream = BitStream_new();
+			BitStream_appendNum(bstream, maxbits - bits, 0);
+			return bstream;
+		}
 	}
 
-	bstream = BitStream_new();
-	BitStream_appendNum(bstream, words * 8 - bits, 0);
+	bits += 4;
+	words = (bits + 7) / 8;
 
+	bstream = BitStream_new();
+	BitStream_appendNum(bstream, words * 8 - bits + 4, 0);
+
+	/* FIXME: It would be able to add padding bits by more efficient way. */
 	for(i=0; i<maxwords - words; i++) {
 		if(i & 1) {
 			BitStream_appendNum(bstream, 8, 0x11);
@@ -737,8 +742,10 @@ BitStream *QRinput_getBitStream(QRinput *input)
 		return NULL;
 	}
 	padding = QRinput_createPaddingBit(input);
-	BitStream_append(bstream, padding);
-	BitStream_free(padding);
+	if(padding != NULL) {
+		BitStream_append(bstream, padding);
+		BitStream_free(padding);
+	}
 
 	return bstream;
 }
