@@ -39,7 +39,6 @@ enum {
 	O_VERSION,
 	O_LEVEL,
 	O_MARGIN,
-	O_INPUT,
 	O_KANJI
 };
 
@@ -50,23 +49,24 @@ const struct option options[] = {
 	{"s", required_argument, NULL, O_SIZE},
 	{"v", required_argument, NULL, O_VERSION},
 	{"m", required_argument, NULL, O_MARGIN},
-	{"i", required_argument, NULL, O_INPUT},
-	{"k", no_argument      , NULL, O_KANJI}
+	{"k", no_argument      , NULL, O_KANJI},
+	{NULL, 0, NULL, 0}
 };
 
 void usage(void)
 {
 	fprintf(stderr,
+"qrencode version %s\n"
 "Usage: qrencode [OPTION]...\n"
 "  -h           : display this message\n"
 "  -o <filename>: set the output file. If it is not specified, the result is\n"
 "                 output to standard output\n"
 "  -s <number>  : specify the size of a dot (pixel) (default=3)\n"
+"  -l {LMQH}    : specify error collectin level from L (lowest) to H (highest).\n"
 "  -v <number>  : specify the version of the symbol\n"
 "  -m <number>  : specify the width of margin (default=4)\n"
-"  -i <text>    : specify input text. If it s not specified, get input text\n"
-"                 from standard input\n"
-"  -k           : assume that the input text contains kanji (shift-jis)\n"
+"  -k           : assume that the input text contains kanji (shift-jis)\n",
+VERSION
 );
 }
 
@@ -265,9 +265,6 @@ int main(int argc, char **argv)
 					exit(1);
 				}
 				break;
-			case O_INPUT:
-				intext = optarg;
-				break;
 			case O_KANJI:
 				kanji = 1;
 				break;
@@ -278,6 +275,9 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if(optind < argc) {
+		intext = argv[optind];
+	}
 	if(intext == NULL) {
 		intext = readStdin();
 	}
