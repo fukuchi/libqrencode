@@ -442,7 +442,7 @@ int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 
 QRencodeMode QRinput_identifyMode(const char *string)
 {
-	unsigned char c;
+	unsigned char c, d;
 	unsigned int word;
 
 	c = string[0];
@@ -452,9 +452,12 @@ QRencodeMode QRinput_identifyMode(const char *string)
 	} else if((QRinput_lookAnTable(c)) >= 0) {
 		return QR_MODE_AN;
 	} else {
-		word = c << 8 | string[1];
-		if(word < 0x8140 || (word > 0x9ffc && word < 0xe040) || word > 0xebbf) {
-			return QR_MODE_KANJI;
+		d = string[1];
+		if(d != '\0') {
+			word = ((unsigned int)c << 8) | d;
+			if((word >= 0x8140 && word <= 0x9ffc) || (word >= 0xe040 && word <= 0xebbf)) {
+				return QR_MODE_KANJI;
+			}
 		}
 	}
 
@@ -762,6 +765,9 @@ unsigned char *QRinput_getByteStream(QRinput *input)
 	unsigned char *array;
 
 	bstream = QRinput_getBitStream(input);
+	if(bstream == NULL) {
+		return NULL;
+	}
 	array = BitStream_toByte(bstream);
 	BitStream_free(bstream);
 

@@ -571,7 +571,3 @@ unsigned char *QRspec_newFrame(int version)
 
 	return frame;
 }
-
-void QRspec_fillFormatInfo(unsigned char *frame, int version, int mask)
-{
-}

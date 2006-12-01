@@ -27,12 +27,20 @@ AC_PROG_LIBTOOL
 
 
 SDL_REQUIRED_VERSION=1.2.0
-AM_PATH_SDL($SDL_REQUIRED_VERSION,,AC_MSG_ERROR([*** SDL $SDL_REQUIRED_VERSION or better is required.]))
-AM_CONDITIONAL(HAVE_SDL, test SDL_CFLAGS)
+AM_PATH_SDL($SDL_REQUIRED_VERSION,,AC_MSG_WARN([*** SDL $SDL_REQUIRED_VERSION or better is required.]))
+AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
 
 CFLAGS="-Wall $CFLAGS"
 
-AC_CONFIG_FILES([Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile])
+
+AC_ARG_WITH([tools], [AC_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
+ [], [build_tools=yes])
+
+if test x$build_tools = xyes ; then
+	AM_PATH_LIBPNG
+fi
+AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
 
 AC_OUTPUT
 

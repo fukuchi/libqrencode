@@ -1,0 +1,9 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libqrencode
+Description: A QR Code encoding library
+Version: @VERSION@
+Libs: -L${libdir} -lqrencode

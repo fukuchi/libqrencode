@@ -55,8 +55,13 @@ QRRawCode *QRraw_new(QRinput *input)
 	RSblock *rsblock;
 	unsigned char *p;
 
+	p = QRinput_getByteStream(input);
+	if(p == NULL) {
+		return NULL;
+	}
+
 	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
-	raw->datacode = QRinput_getByteStream(input);
+	raw->datacode = p;
 	spec = QRspec_getEccSpec(input->version, input->level);
 	raw->version = input->version;
 	raw->blocks = QRspec_rsBlockNum(spec);
@@ -567,6 +572,9 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 	QRinput_setErrorCorrectionLevel(input, level);
 
 	raw = QRraw_new(input);
+	if(raw == NULL) {
+		return NULL;
+	}
 	version = raw->version;
 	width = QRspec_getWidth(version);
 	frame = QRspec_newFrame(version);
@@ -617,28 +625,31 @@ static int QRcode_eatNum(const char *string, QRinput *input, int version, QRenco
 {
 	const char *p;
 	int run;
-	int rangeA, range8;
+	int dif;
+	int ln;
 
-	if(version <= 9) {
-		range8 = 4;
-		rangeA = 7;
-	} else if(version <= 26) {
-		range8 = 4;
-		rangeA = 8;
-	} else {
-		range8 = 5;
-		rangeA = 9;
-	}
+	ln = QRspec_lengthIndicator(QR_MODE_NUM, version);
+
 	p = string;
 	while(isdigit(*p)) {
 		p++;
 	}
 	run = p - string;
-	if(run < range8 && (*p & 0x80)) {
-		return QRcode_eat8(string, input, version, hint);
+	if(*p & 0x80) {
+		dif = QRinput_estimateBitsModeNum(run) + 4 + ln
+			+ QRinput_estimateBitsMode8(1) /* + 4 + l8 */
+			- QRinput_estimateBitsMode8(run + 1) /* - 4 - l8 */;
+		if(dif > 0) {
+			return QRcode_eat8(string, input, version, hint);
+		}
 	}
-	if(run < rangeA && isalnum(*p)) {
-		return QRcode_eatAn(string, input, version, hint);
+	if(isalnum(*p)) {
+		dif = QRinput_estimateBitsModeNum(run) + 4 + ln
+			+ QRinput_estimateBitsModeAn(1) /* + 4 + la */
+			- QRinput_estimateBitsModeAn(run + 1) /* - 4 - la */;
+		if(dif > 0) {
+			return QRcode_eatAn(string, input, version, hint);
+		}
 	}
 
 	QRinput_append(input, QR_MODE_NUM, run, (unsigned char *)string);
@@ -649,12 +660,11 @@ static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencod
 {
 	const char *p, *q;
 	int run;
-	int b1, b2;
-	int la, ln, l8;
+	int dif;
+	int la, ln;
 
 	la = QRspec_lengthIndicator(QR_MODE_AN, version);
 	ln = QRspec_lengthIndicator(QR_MODE_NUM, version);
-	l8 = QRspec_lengthIndicator(QR_MODE_8, version);
 
 	p = string;
 	while(isalnum(*p)) {
@@ -663,10 +673,10 @@ static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencod
 			while(isdigit(*q)) {
 				q++;
 			}
-			b1 = 4 + la + QRinput_estimateBitsModeAn(p - string)
-			   + 4 + ln + QRinput_estimateBitsModeNum(q - p);
-			b2 = 4 + la + QRinput_estimateBitsModeAn(q - string);
-			if(b2 > b1) {
+			dif = QRinput_estimateBitsModeAn(p - string) /* + 4 + la */
+				+ QRinput_estimateBitsModeNum(q - p) + 4 + ln
+				- QRinput_estimateBitsModeAn(q - string) /* - 4 - la */;
+			if(dif < 0) {
 				break;
 			} else {
 				p = q;
@@ -675,12 +685,14 @@ static int QRcode_eatAn(const char *string, QRinput *input, int version, QRencod
 			p++;
 		}
 	}
+
 	run = p - string;
+
 	if(*p & 0x80) {
-		b1 = 4 + la + QRinput_estimateBitsModeAn(run)
-		   + 4 + l8 + QRinput_estimateBitsMode8(1);
-		b2 = 4 + l8 + QRinput_estimateBitsMode8(run + 1);
-		if(b1 > b2) {
+		dif = QRinput_estimateBitsModeAn(run) + 4 + la
+			+ QRinput_estimateBitsMode8(1) /* + 4 + l8 */
+			- QRinput_estimateBitsMode8(run + 1) /* - 4 - l8 */;
+		if(dif > 0) {
 			return QRcode_eat8(string, input, version, hint);
 		}
 	}
@@ -704,55 +716,52 @@ static int QRcode_eatKanji(const char *string, QRinput *input, int version, QRen
 static int QRcode_eat8(const char *string, QRinput *input, int version, QRencodeMode hint)
 {
 	const char *p, *q;
-	int rangeA, rangeN;
 	QRencodeMode mode;
+	int dif;
+	int la, ln;
 
-	if(version <= 9) {
-		rangeN = 6;
-		rangeA = 11;
-	} else if(version <= 26) {
-		rangeN = 8;
-		rangeA = 15;
-	} else {
-		rangeN = 9;
-		rangeA = 16;
-	}
+	la = QRspec_lengthIndicator(QR_MODE_AN, version);
+	ln = QRspec_lengthIndicator(QR_MODE_NUM, version);
+
 	p = string;
-	while(1) {
-		while(*p != '\0') {
-			mode = QRinput_identifyMode(p);
-			if(hint == QR_MODE_KANJI && mode == QR_MODE_KANJI) {
-				break;
+	while(*p != '\0') {
+		mode = QRinput_identifyMode(p);
+		if(hint == QR_MODE_KANJI && mode == QR_MODE_KANJI) {
+			break;
+		}
+		if(mode != QR_MODE_8 && mode != QR_MODE_KANJI) {
+			if(mode == QR_MODE_NUM) {
+				q = p;
+				while(isdigit(*q)) {
+					q++;
+				}
+				dif = QRinput_estimateBitsMode8(p - string) /* + 4 + l8 */
+					+ QRinput_estimateBitsModeNum(q - p) + 4 + ln
+					- QRinput_estimateBitsMode8(q - string) /* - 4 - l8 */;
+				if(dif < 0) {
+					break;
+				} else {
+					p = q;
+				}
+			} else {
+				q = p;
+				while(isalnum(*q)) {
+					q++;
+				}
+				dif = QRinput_estimateBitsMode8(p - string) /* + 4 + l8 */
+					+ QRinput_estimateBitsModeAn(q - p) + 4 + la
+					- QRinput_estimateBitsMode8(q - string) /* - 4 - l8 */;
+				if(dif < 0) {
+					break;
+				} else {
+					p = q;
+				}
 			}
-			if(mode != QR_MODE_8 && mode != QR_MODE_KANJI) {
-				break;
-			}
+		} else {
 			p++;
 		}
-		if(*p == '\0') {
-			break;
-		} else if(isdigit(*p)) {
-			q = p;
-			while(isdigit(*q)) {
-				q++;
-			}
-			if(q - p >= rangeN) {
-				break;
-			} else {
-				p = q;
-			}
-		} else if(isalnum(*p)) {
-			q = p;
-			while(isalnum(*q)) {
-				q++;
-			}
-			if(q - p >= rangeA) {
-				break;
-			} else {
-				p = q;
-			}
-		}
 	}
+
 	QRinput_append(input, QR_MODE_8, p - string, (unsigned char *)string);
 	return p - string;
 }

@@ -9,35 +9,6 @@
 
 SDL_Surface *screen = NULL;
 
-int eventloop(void)
-{
-	SDL_Event event;
-	int q = 1;
-
-	while(q) {
-		usleep(10000);
-		while(SDL_PollEvent(&event)) {
-			if(event.type == SDL_KEYDOWN) {
-				switch(event.key.keysym.sym) {
-				case SDLK_SPACE:
-					q = 0;
-					break;
-				case SDLK_ESCAPE:
-					q = 0;
-					break;
-				default:
-					break;
-				}
-			}
-			if(event.type == SDL_QUIT) {
-				return -1;
-			}
-		}
-	}
-
-	return 0;
-}
-
 void view_simple(const char *str)
 {
 	QRinput *stream;
@@ -64,6 +35,7 @@ void view_simple(const char *str)
 		width = qrcode->width;
 		frame = qrcode->data;
 		version = qrcode->version;
+		printf("Version %d, Leve %d, Mask %d.\n", version, level, mask);
 		screen = SDL_SetVideoMode((width + 8) * scale, (width + 8) * scale, 32, 0);
 		pitch = screen->pitch;
 		q = frame;

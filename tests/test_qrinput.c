@@ -167,30 +167,25 @@ void test_encodeNumeric3(void)
 	BitStream_free(bstream);
 }
 
-void test_encode82(void)
+void test_encodeTooLong(void)
 {
 	QRinput *stream;
 	unsigned char *data;
 	BitStream *bstream;
-	char c1[] = "010011111111";
-	char c2[] = "010000000010";
 	int flag = 0;
 
-	data = (unsigned char *)malloc(257);
-	memset(data, 0, 257);
-	testStart("Encoding byte stream. (257 bytes)");
+	data = (unsigned char *)malloc(7089);
+	memset(data, 'a', 7089);
+
+	testStart("Encoding long string. (7089 bytes)");
 	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_8, 257, data);
+	QRinput_append(stream, QR_MODE_AN, 7089, data);
 	bstream = QRinput_mergeBitStream(stream);
-	if(strncmp(c1, bstream->data, 12)) {
-		flag++;
-	}
-	if(strncmp(c2, bstream->data + 12 + 255*8, 12)) {
-		flag++;
-	}
-	testEnd(flag);
+	testEndExp(bstream == NULL);
 	QRinput_free(stream);
-	BitStream_free(bstream);
+	if(bstream != NULL) {
+		BitStream_free(bstream);
+	}
 	free(data);
 }
 
@@ -223,7 +218,7 @@ int main(int argc, char **argv)
 	test_encodeNumeric2();
 	test_encodeNumeric3();
 	test_encode8();
-//	test_encode82();
+	test_encodeTooLong();
 	test_encodeAn();
 	test_encodeAn2();
 	test_encodeKanji();
