@@ -24,10 +24,10 @@ INSTALL
 
 Requirements
 ------------
-Some test programs or utility tools requires SDL, but the library itself has no
-dependencies. You can skip compiling those tools when if you want not to
-install programs using SDL. If you are trying to compile this library on MS-
-Windows, cygwin or some kinds of UNIX-like environments will be needed.
+Some test programs or utility tools requires SDL or PNG, but the library itself
+has no dependencies. You can skip compiling those tools when if you want not to
+install programs using SDL or PNG. If you are trying to compile this library on
+MS-Windows, cygwin or some kinds of UNIX-like environments will be needed.
 
 Compile & install
 -----------------
@@ -42,8 +42,8 @@ directories. By default, /usr/local/lib and /usr/local/include. You can change
 the destination directory by passing some options to the configure script.
 Run "./configure --help" to see the list of options.
 
-Currently no program will be installed. If you want to install a binary
-(e.g. view_qrcode), please copy it manually.
+It also installs a binary "qrencode" to /usr/local/bin. If you want not to
+install it, give "--without-tools" option to the configure script.
 
 
 LICENSING INFORMATION

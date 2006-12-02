@@ -56,16 +56,20 @@ const struct option options[] = {
 void usage(void)
 {
 	fprintf(stderr,
-"qrencode version %s\n"
-"Usage: qrencode [OPTION]...\n"
-"  -h           : display this message\n"
-"  -o <filename>: set the output file. If it is not specified, the result is\n"
-"                 output to standard output\n"
-"  -s <number>  : specify the size of a dot (pixel) (default=3)\n"
-"  -l {LMQH}    : specify error collectin level from L (lowest) to H (highest).\n"
-"  -v <number>  : specify the version of the symbol\n"
-"  -m <number>  : specify the width of margin (default=4)\n"
-"  -k           : assume that the input text contains kanji (shift-jis)\n",
+"qrencode version %s\n\n"
+"Usage: qrencode [OPTION]... [STRING]\n"
+"Encode input data in a QR Code and save as a PNG image.\n\n"
+"  -h           display this message.\n"
+"  -o FILENAME  write PNG image to FILENAME. If '-' is specified, the result\n"
+"               will be output to standard output.\n"
+"  -s NUMBER    specify the size of dot (pixel). (default=3)\n"
+"  -l {LMQH}    specify error collectin level from L (lowest) to H (highest).\n"
+"               (default=L)\n"
+"  -v NUMBER    specify the version of the symbol. (default=auto)\n"
+"  -m NUMBER    specify the width of margin. (default=4)\n"
+"  -k           assume that the input text contains kanji (shift-jis).\n"
+"  [STRING]     input data. If it is not specified, data will be taken from\n"
+"               standard input.\n",
 VERSION
 );
 }
@@ -123,14 +127,14 @@ void qrencode(const char *intext, const char *outfile)
 	realwidth = (qrcode->width + margin * 2) * size;
 	row = (unsigned char *)malloc((realwidth + 7) / 8);
 
-	if(outfile != NULL) {
+	if(outfile[0] == '-' && outfile[1] == '\0') {
+		fp = stdout;
+	} else {
 		fp = fopen(outfile, "w");
 		if(fp == NULL) {
 			fprintf(stderr, "Failed to create file: %s\n", outfile);
 			exit(1);
 		}
-	} else {
-		fp = stdout;
 	}
 
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -203,6 +207,8 @@ void qrencode(const char *intext, const char *outfile)
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
 	fclose(fp);
+	free(row);
+	QRcode_free(qrcode);
 }
 
 int main(int argc, char **argv)
@@ -280,6 +286,10 @@ int main(int argc, char **argv)
 	}
 	if(intext == NULL) {
 		intext = readStdin();
+	}
+	if(outfile == NULL) {
+		fprintf(stderr, "No output filename is given.\n");
+		exit(1);
 	}
 
 	qrencode(intext, outfile);

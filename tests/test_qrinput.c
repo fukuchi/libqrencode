@@ -172,7 +172,6 @@ void test_encodeTooLong(void)
 	QRinput *stream;
 	unsigned char *data;
 	BitStream *bstream;
-	int flag = 0;
 
 	data = (unsigned char *)malloc(7089);
 	memset(data, 'a', 7089);
