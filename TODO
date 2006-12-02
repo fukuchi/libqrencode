@@ -1,6 +1,9 @@
+Thread unsafe.
+Only two functions, QRspec_newFrame() and init_rs() are thread unsafe.
+
 This package contains
 
-*.c and *.h files (total):  4364 lines, 104543 bytes.
-configure script         : 22488 lines, 729111 bytes.
+*.c and *.h files (total):  5379 lines, 129547 bytes.
+configure script         : 22866 lines, 740829 bytes.
 
 It's absolutely crazy.

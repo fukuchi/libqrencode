@@ -1,7 +1,7 @@
 /*
  * qrencode - QR Code encoder
  *
- * Reed solomon encoder. This file is taken from Phil Karn's libfec and
+ * Reed solomon encoder. This code is taken from Phil Karn's libfec then
  * editted and packed into a pair of .c and .h files.
  *
  * Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q

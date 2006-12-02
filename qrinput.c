@@ -223,7 +223,7 @@ static void QRinput_encodeModeNum(QRinput_List *entry, int version)
  * Alphabet-numeric data
  *****************************************************************************/
 
-signed char QRinput_anTable[] = {
+const signed char QRinput_anTable[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	36, -1, -1, -1, 37, 38, -1, -1, -1, -1, 39, 40, -1, 41, 42, 43,

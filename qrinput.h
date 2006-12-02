@@ -92,7 +92,7 @@ extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
 extern BitStream *QRinput_mergeBitStream(QRinput *input);
 extern BitStream *QRinput_getBitStream(QRinput *input);
 
-extern signed char QRinput_anTable[];
+extern const signed char QRinput_anTable[];
 extern QRencodeMode QRinput_identifyMode(const char *string);
 
 /**

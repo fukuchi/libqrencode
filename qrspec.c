@@ -46,7 +46,7 @@ typedef struct {
  * Table of the capacity of symbols
  * See Table 1 (pp.13) and Table 12-16 (pp.30-36), JIS X0510:2004.
  */
-QRspec_Capacity qrspecCapacity[QRSPEC_VERSION_MAX + 1] = {
+static const QRspec_Capacity qrspecCapacity[QRSPEC_VERSION_MAX + 1] = {
 	{  0,    0, 0, {   0,    0,    0,    0}},
 	{ 21,   26, 0, {   7,   10,   13,   17}}, // 1
 	{ 25,   44, 7, {  10,   16,   22,   28}},
@@ -127,7 +127,7 @@ int QRspec_getRemainder(int version)
  * Length indicator
  *****************************************************************************/
 
-static int lengthTableBits[4][3] = {
+static const int lengthTableBits[4][3] = {
 	{10, 12, 14},
 	{ 9, 11, 13},
 	{ 8, 16, 16},
@@ -180,7 +180,7 @@ int QRspec_maximumWords(QRencodeMode mode, int version)
  * Table of the error correction code (Reed-Solomon block)
  * See Table 12-16 (pp.30-36), JIS X0510:2004.
  */
-static int eccTable[QRSPEC_VERSION_MAX+1][4][2] = {
+static const int eccTable[QRSPEC_VERSION_MAX+1][4][2] = {
 	{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},
 	{{ 1,  0}, { 1,  0}, { 1,  0}, { 1,  0}}, // 1
 	{{ 1,  0}, { 1,  0}, { 1,  0}, { 1,  0}},
@@ -266,7 +266,7 @@ int *QRspec_getEccSpec(int version, QRecLevel level)
  *
  * See Table 1 in Appendix E (pp.71) of JIS X0510:2004.
  */
-static int alignmentPattern[QRSPEC_VERSION_MAX+1][2] = {
+static const int alignmentPattern[QRSPEC_VERSION_MAX+1][2] = {
 	{ 0,  0},
 	{ 0,  0}, {18,  0}, {22,  0}, {26,  0}, {30,  0}, // 1- 5
 	{34,  0}, {22, 38}, {24, 42}, {26, 46}, {28, 50}, // 6-10
@@ -362,7 +362,7 @@ void QRspec_freeAlignment(QRspec_Alignment *al)
  * Version information pattern (BCH coded).
  * See Table 1 in Appendix D (pp.68) of JIS X0510:2004.
  */
-static unsigned int versionPattern[QRSPEC_VERSION_MAX - 6] = {
+static const unsigned int versionPattern[QRSPEC_VERSION_MAX - 6] = {
 	0x07c94, 0x085bc, 0x09a99, 0x0a4d3, 0x0bbf6, 0x0c762, 0x0d847, 0x0e60d,
 	0x0f928, 0x10b78, 0x1145d, 0x12a17, 0x13532, 0x149a6, 0x15683, 0x168c9,
 	0x177ec, 0x18ec4, 0x191e1, 0x1afab, 0x1b08e, 0x1cc1a, 0x1d33f, 0x1ed75,
@@ -382,7 +382,7 @@ unsigned int QRspec_getVersionPattern(int version)
  *****************************************************************************/
 
 /* See calcFormatInfo in tests/test_qrspec.c */
-static unsigned int formatInfo[4][8] = {
+static const unsigned int formatInfo[4][8] = {
 	{0x77c4, 0x72f3, 0x7daa, 0x789d, 0x662f, 0x6318, 0x6c41, 0x6976},
 	{0x5412, 0x5125, 0x5e7c, 0x5b4b, 0x45f9, 0x40ce, 0x4f97, 0x4aa0},
 	{0x355f, 0x3068, 0x3f31, 0x3a06, 0x24b4, 0x2183, 0x2eda, 0x2bed},
@@ -403,8 +403,8 @@ unsigned int QRspec_getFormatInfo(int mask, QRecLevel level)
 /**
  * Cache of initial frames.
  */
-/* C99 says that static storage shall be initalized to a null pointer
- * by comipler. */
+/* C99 says that static storage shall be initialized to a null pointer
+ * by compiler. */
 static unsigned char *frames[QRSPEC_VERSION_MAX + 1];
 
 /**
@@ -415,7 +415,7 @@ static unsigned char *frames[QRSPEC_VERSION_MAX + 1];
  */
 static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
 {
-	static unsigned char finder[] = {
+	static const unsigned char finder[] = {
 		0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc1,
 		0xc1, 0xc0, 0xc0, 0xc0, 0xc0, 0xc0, 0xc1,
 		0xc1, 0xc0, 0xc1, 0xc1, 0xc1, 0xc0, 0xc1,
@@ -425,7 +425,7 @@ static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
 		0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc1,
 	};
 	int x, y;
-	unsigned char *s;
+	const unsigned char *s;
 
 	frame += oy * width + ox;
 	s = finder;
@@ -446,7 +446,7 @@ static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
  */
 static void putAlignmentPattern(unsigned char *frame, int width, int ox, int oy)
 {
-	static unsigned char finder[] = {
+	static const unsigned char finder[] = {
 		0xa1, 0xa1, 0xa1, 0xa1, 0xa1,
 		0xa1, 0xa0, 0xa0, 0xa0, 0xa1,
 		0xa1, 0xa0, 0xa1, 0xa0, 0xa1,
@@ -454,7 +454,7 @@ static void putAlignmentPattern(unsigned char *frame, int width, int ox, int oy)
 		0xa1, 0xa1, 0xa1, 0xa1, 0xa1,
 	};
 	int x, y;
-	unsigned char *s;
+	const unsigned char *s;
 
 	frame += (oy - 2) * width + ox - 2;
 	s = finder;

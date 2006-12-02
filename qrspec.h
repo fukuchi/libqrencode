@@ -181,6 +181,7 @@ extern unsigned int QRspec_getFormatInfo(int mask, QRecLevel level);
  * @param version
  * @return Array of unsigned char. You can free it by free().
  */
+/* WARNING: Thread unsafe!!! */
 extern unsigned char *QRspec_newFrame(int version);
 
 #endif /* __QRSPEC_H__ */

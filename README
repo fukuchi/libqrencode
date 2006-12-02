@@ -45,6 +45,12 @@ Run "./configure --help" to see the list of options.
 It also installs a binary "qrencode" to /usr/local/bin. If you want not to
 install it, give "--without-tools" option to the configure script.
 
+USAGE
+=====
+Basic usages of this library are written in the header file (qrencode.h).
+You can generate a manual of the library by using Doxygen.
+
+WARNING: This library is thread UNSAFE.
 
 LICENSING INFORMATION
 =====================
