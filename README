@@ -48,7 +48,7 @@ install it, give "--without-tools" option to the configure script.
 
 LICENSING INFORMATION
 =====================
-Copyright (C) 2006 Kentaro Fukuchi
+Copyright (C) 2006 Kentaro Fukuchi <fukuchi@megaui.net>
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -62,6 +62,11 @@ in this package for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+Lesser version
+--------------
+If you need a Lesser GPLed code in order to embed this to your closed-source
+software, please contact us.
 
 
 ACKNOWLEDGMENTS
