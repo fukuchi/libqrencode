@@ -18,6 +18,48 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+/** \mainpage
+ * Libqrencode is a library for encoding data in a QR Code symbol, a kind of 2D
+ * symbology.
+ *
+ * <h2>Encoding</h2>
+ * 
+ * There are two ways to encode data: <b>encoding a string</b> or 
+ * <b>encoding a structured data</b>.
+ *
+ * <h3>Encoding a string</h3>
+ * You can encode a string by calling QRcode_encodeString().
+ * The given string is parsed automatically and encoded. If you want to encode
+ * data that can be represented as a C string style (NUL terminated), you can
+ * simply use this way.
+ *
+ * If the input data contains Kanji (Shift-JIS) characters and you want to
+ * encode them as Kanji in QR Code, you should give QR_MODE_KANJI as a hint.
+ * Otherwise, all of non-alphanumeric characters are encoded as 8 bit data.
+ *
+ * Please note that a C string can not contain NUL character. If your data
+ * contains NUL, you should chose the second way.
+ *
+ * <h3>Encoding a structured data</h3>
+ * You can construct a structured input data manually. If the structure of the
+ * input data is known, you can use this way.
+ * At first, you must create a ::QRinput object by QRinput_new(). Then, you can
+ * add input data to the QRinput object by QRinput_append().
+ * Finally you can call QRcode_encodeInput() to encode the QRinput data.
+ * You can reuse the QRinput data again to encode it in other symbols with
+ * different parameters.
+ *
+ * <h2>Result</h2>
+ * The encoded symbol is resulted as a ::QRcode object. It will contain
+ * its version number, width of the symbol and an array represents the symbol.
+ * See ::QRcode for the details. You can free the object by QRcode_free().
+ *
+ * Please note that the version of the result may be larger than specified.
+ * In such cases, the input data would be too large to be encoded in the
+ * symbol of the specified version.
+ *
+ */
+
 #ifndef __QRENCODE_H__
 #define __QRENCODE_H__
 
@@ -92,7 +134,7 @@ extern int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
  * Symbol data is represented as an array contains width*width uchars.
  * Each uchar represents a module (dot). If the less significant bit of
  * the uchar is 1, the corresponding module is black. The other bits are
- * meaningless for usual application, but here the specification is described.
+ * meaningless for usual applications, but here the specification is described.
  *
  * <pre>
  * MSB 76543210 LSB
@@ -131,9 +173,10 @@ extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
  *                version for the input data.
  * @param level error correction level.
  * @param hint tell the library how non-alphanumerical characters should be
- *             encoded. If QR_MODE_KANJI is given, those characters will be
- *             encoded as Shif-JIS characters. If QR_MODE_8 is given, they wil
- *             be encoded as is. If you want to embed UTF-8 string, choose this.
+ *             encoded. If QR_MODE_KANJI is given, kanji characters will be
+ *             encoded as Shif-JIS characters. If QR_MODE_8 is given, all of
+ *             non-alphanumerical characters will be encoded as is. If you want
+ *             to embed UTF-8 string, choose this.
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version.
  */
