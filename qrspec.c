@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * QR Code specification in convenient format. 
- * Copyright (C) 2006 Kentaro Fukuchi
+ * Copyright (C) 2006 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)

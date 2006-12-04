@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * QR Code encoding tool
- * Copyright (C) 2006 Kentaro Fukuchi
+ * Copyright (C) 2006 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
