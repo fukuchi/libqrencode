@@ -133,6 +133,7 @@ void qrencode(const char *intext, const char *outfile)
 		fp = fopen(outfile, "w");
 		if(fp == NULL) {
 			fprintf(stderr, "Failed to create file: %s\n", outfile);
+			perror(NULL);
 			exit(1);
 		}
 	}
@@ -281,15 +282,16 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if(outfile == NULL) {
+		fprintf(stderr, "No output filename is given.\n");
+		exit(1);
+	}
+
 	if(optind < argc) {
 		intext = argv[optind];
 	}
 	if(intext == NULL) {
 		intext = readStdin();
-	}
-	if(outfile == NULL) {
-		fprintf(stderr, "No output filename is given.\n");
-		exit(1);
 	}
 
 	qrencode(intext, outfile);
