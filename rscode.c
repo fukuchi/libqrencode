@@ -86,7 +86,7 @@ static inline int modnn(RS *rs, int x){
  * nroots = RS code generator polynomial degree (number of roots)
  * pad = padding bytes at front of shortened block
  */
-RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
+static RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 {
   RS *rs;
 
@@ -170,6 +170,7 @@ RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad
   rs->fcr = fcr;
   rs->prim = prim;
   rs->nroots = nroots;
+  rs->gfpoly = gfpoly;
 
   /* Find prim-th root of 1, used in decoding */
   for(iprim=1;(iprim % prim) != 0;iprim += rs->nn)
@@ -214,12 +215,8 @@ RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 	}
 
 	rs = init_rs_char(symsize, gfpoly, fcr, prim, nroots, pad);
-	if(rslist == NULL) {
-		rslist = rs;
-	} else {
-		rs->next = rslist;
-		rslist = rs;
-	}
+	rs->next = rslist;
+	rslist = rs;
 
 	return rs;
 }
