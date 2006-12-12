@@ -436,11 +436,10 @@ int QRinput_evaluateSymbol(int width, unsigned char *frame)
 		runLength[0] = 1;
 		for(x=0; x<width; x++) {
 			if(x > 0 && y > 0) {
-				b22 = p[0] & p[-1] & p[-width] & p [-width-1] & 1;
-				w22 = (p[0] | p[-1] | p[-width] | p [-width-1] ) & 1;
-				if(b22 | (w22 ^ 1)) {
+				b22 = p[0] & p[-1] & p[-width] & p [-width-1];
+				w22 = p[0] | p[-1] | p[-width] | p [-width-1];
+				if((b22 | (w22 ^ 1))&1) {
 					demerit += N2;
-					//n2 += N2;
 				}
 			}
 			if(x == 0 && (p[0] & 1)) {
