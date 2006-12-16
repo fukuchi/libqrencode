@@ -116,11 +116,41 @@ void print_format(void)
 	}
 }
 
+/**
+ * See Table 7 of Appendix 1.
+ */
+int datalen[4][3] = {
+	{ 20,   0,  0},
+	{ 40,  32,  0},
+	{ 84,  68,  0},
+	{128, 112, 80},
+};
+
+void test_dataLength(void)
+{
+	int v, l;
+	int bits;
+	int err = 0;
+
+	testStart("Test dataLength");
+	for(v=0; v<4; v++) {
+		for(l=0; l<3; l++) {
+			bits = MQRspec_getDataLength(v+1, l);
+			if(bits != datalen[v][l]) {
+				printf("Error in version %d, level %d.\n", v, l);
+				err++;
+			}
+		}
+	}
+	testEnd(err);
+}
+
 int main(int argc, char **argv)
 {
 	test_newFrame();
 	//print_format();
 	test_format();
+	test_dataLength();
 
 	report();
 

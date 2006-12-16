@@ -86,7 +86,7 @@ extern int MQRspec_getRemainder(int version);
  * @param version
  * @return the size of the appropriate length indicator (bits).
  */
-extern int QRspec_lengthIndicator(QRencodeMode mode, int version);
+extern int MQRspec_lengthIndicator(QRencodeMode mode, int version);
 
 /**
  * Return the maximum length for the mode and version.
@@ -94,7 +94,7 @@ extern int QRspec_lengthIndicator(QRencodeMode mode, int version);
  * @param version
  * @return the maximum length (bytes)
  */
-extern int QRspec_maximumWords(QRencodeMode mode, int version);
+extern int MQRspec_maximumWords(QRencodeMode mode, int version);
 
 /******************************************************************************
  * Error correction code
@@ -109,15 +109,7 @@ extern int QRspec_maximumWords(QRencodeMode mode, int version);
  *  # of type2 blocks, # of data code, # of ecc code}
  * It can be freed by calling free().
  */
-int *QRspec_getEccSpec(int version, QRecLevel level);
-
-#define QRspec_rsBlockNum(__spec__) (__spec__[0] + __spec__[3])
-#define QRspec_rsBlockNum1(__spec__) (__spec__[0])
-#define QRspec_rsDataCodes1(__spec__) (__spec__[1])
-#define QRspec_rsEccCodes1(__spec__) (__spec__[2])
-#define QRspec_rsBlockNum2(__spec__) (__spec__[3])
-#define QRspec_rsDataCodes2(__spec__) (__spec__[4])
-#define QRspec_rsEccCodes2(__spec__) (__spec__[5])
+int *MQRspec_getEccSpec(int version, QRecLevel level);
 
 /******************************************************************************
  * Version information pattern

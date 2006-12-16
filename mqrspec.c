@@ -52,12 +52,19 @@ static const MQRspec_Capacity mqrspecCapacity[MQRSPEC_VERSION_MAX + 1] = {
 	{ 17, {8, 10, 14}}
 };
 
+/**
+ * Return data length of the symbol (bits)
+ */
 int MQRspec_getDataLength(int version, QRecLevel level)
 {
 	int w;
+	int ecc;
 
 	w = mqrspecCapacity[version].width - 1;
-	return w * w - 64 - mqrspecCapacity[version].ec[level] * 8;
+	ecc = mqrspecCapacity[version].ec[level];
+	if(ecc == 0) return 0;
+
+	return w * w - 64 - ecc * 8;
 }
 
 int MQRspec_getECCLength(int version, QRecLevel level)
