@@ -21,6 +21,6 @@ EXTRA_DIST = libqrencode.pc.in
 
 if BUILD_TOOLS
 bin_PROGRAMS = qrencode
-qrencode_SOURCES = qrenc.c
-qrencode_LDADD = -lqrencode -lpng
+qrencode_CFLAGS = $(png_CFLAGS)
+qrencode_LDADD = -lqrencode $(png_LIBS)
 endif

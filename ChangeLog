@@ -1,6 +1,8 @@
 2006.12.17 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode_inner.h, qrencode.c:
 	  - Removed unused member variable "b2" from QRRawCode.
+	* configure.ac, Makefile.am, acinclude.m4:
+	  - Better configuration of libpng. (now uses pkg-config correctly)
 
 2006.12.02 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Bumped version to 1.0.0.
