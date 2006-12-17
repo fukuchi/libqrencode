@@ -46,7 +46,6 @@ typedef struct {
 	int dataLength;
 	int eccLength;
 	int b1;
-	int b2;
 } QRRawCode;
 
 extern QRRawCode *QRraw_new(QRinput *input);

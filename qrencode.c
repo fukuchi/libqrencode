@@ -83,7 +83,6 @@ QRRawCode *QRraw_new(QRinput *input)
 	}
 
 	raw->b1 = QRspec_rsBlockNum1(spec);
-	raw->b2 = QRspec_rsBlockNum2(spec);
 	raw->dataLength = QRspec_rsBlockNum1(spec) * QRspec_rsDataCodes1(spec)
 					+ QRspec_rsBlockNum2(spec) * QRspec_rsDataCodes2(spec);
 	raw->eccLength = QRspec_rsBlockNum(spec) * QRspec_rsEccCodes1(spec);
