@@ -297,7 +297,7 @@ unsigned char *FrameFiller_fillerTest(int version)
  * Format information
  *****************************************************************************/
 
-void QRinput_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
+void QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned int format;
 	unsigned char v;
@@ -397,7 +397,7 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 		masked = Mask_mask(width, frame, level);
 	} else {
 		masked = Mask_makeMask(width, frame, mask);
-		QRinput_writeFormatInformation(width, masked, mask, QRinput_getErrorCorrectionLevel(input));
+		QRcode_writeFormatInformation(width, masked, mask, QRinput_getErrorCorrectionLevel(input));
 	}
 	qrcode = QRcode_new(version, width, masked);
 

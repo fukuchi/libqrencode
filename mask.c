@@ -251,7 +251,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		}
 	}
 
-	QRinput_writeFormatInformation(width, bestMask, bestMaskNum, level);
+	QRcode_writeFormatInformation(width, bestMask, bestMaskNum, level);
 
 	return bestMask;
 }

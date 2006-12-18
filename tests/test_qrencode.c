@@ -184,7 +184,7 @@ void test_format(void)
 	width = QRspec_getWidth(1);
 	frame = QRspec_newFrame(1);
 	format = QRspec_getFormatInfo(1, QR_ECLEVEL_L);
-	QRinput_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
+	QRcode_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
 	decode = 0;
 	for(i=0; i<8; i++) {
 		decode = decode << 1;
