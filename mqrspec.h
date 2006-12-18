@@ -39,10 +39,11 @@
 #define MQRSPEC_WIDTH_MAX 17
 
 /**
- * Return maximum data code length (bytes) for the version.
+ * Return maximum data code length (bits) for the version.
+ * Warning: unlike in QRSpec_getDataLength, return in BITS!
  * @param version
  * @param level
- * @return maximum size (bytes)
+ * @return maximum size (bits)
  */
 extern int MQRspec_getDataLength(int version, QRecLevel level);
 

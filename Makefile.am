@@ -9,6 +9,8 @@ libqrencode_la_SOURCES = qrencode.c qrencode_inner.h \
 						 bitstream.c bitstream.h \
 						 qrspec.c qrspec.h \
 						 rscode.c rscode.h \
+						 split.c split.h \
+						 mask.c mask.h \
 						 mqrspec.c mqrspec.h
 libqrencode_la_LDFLAGS = -version-number $(MAJOR_VERSION):$(MINOR_VERSION):$(MICRO_VERSION)
 
@@ -21,6 +23,7 @@ EXTRA_DIST = libqrencode.pc.in
 
 if BUILD_TOOLS
 bin_PROGRAMS = qrencode
+qrencode_SOURCES = qrenc.c
 qrencode_CFLAGS = $(png_CFLAGS)
 qrencode_LDADD = -lqrencode $(png_LIBS)
 endif

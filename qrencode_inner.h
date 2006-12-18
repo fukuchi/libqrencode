@@ -53,24 +53,31 @@ extern unsigned char QRraw_getCode(QRRawCode *raw);
 extern void QRraw_free(QRRawCode *raw);
 
 /******************************************************************************
+ * Raw code for Micro QR Code
+ *****************************************************************************/
+
+typedef struct {
+	int version;
+	unsigned char *datacode;
+	RSblock *rsblock;
+	int count;
+	int dataLength;
+	int eccLength;
+} MQRRawCode;
+
+extern MQRRawCode *MQRraw_new(QRinput *input);
+extern unsigned char MQRraw_getCode(MQRRawCode *raw);
+extern void MQRraw_free(MQRRawCode *raw);
+
+/******************************************************************************
  * Frame filling
  *****************************************************************************/
-extern unsigned char *QRinput_fillerTest(int version);
+extern unsigned char *FrameFiller_fillerTest(int version);
 
 /******************************************************************************
  * Format information
  *****************************************************************************/
 extern void QRinput_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
 
-/******************************************************************************
- * Masking
- *****************************************************************************/
-extern unsigned char *QRinput_makeMask(int width, unsigned char *frame, int mask);
-
-extern int QRinput_evaluateSymbol(int width, unsigned char *frame);
-
-QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask);
-
-void QRcode_splitStringToQRinput(const char *string, QRinput *input,
-		int version, QRencodeMode hint);
+extern QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask);
 #endif /* __QRENCODE_INNER_H__ */

@@ -6,6 +6,7 @@
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
+#include "../split.h"
 
 SDL_Surface *screen = NULL;
 
@@ -27,7 +28,7 @@ void view_simple(const char *str)
 	SDL_Rect rect;
 
 	stream = QRinput_new();
-	QRcode_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI);
 
 
 	while(flag) {

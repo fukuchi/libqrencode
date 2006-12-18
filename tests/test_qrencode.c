@@ -4,6 +4,8 @@
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
+#include "../mask.h"
+#include "../split.h"
 
 int inputSize(QRinput *input)
 {
@@ -98,7 +100,7 @@ void print_filler(void)
 	unsigned char *frame;
 
 	width = QRspec_getWidth(version);
-	frame = QRinput_fillerTest(version);
+	frame = FrameFiller_fillerTest(version);
 
 	for(y=0; y<width; y++) {
 		for(x=0; x<width; x++) {
@@ -117,7 +119,7 @@ void test_filler(void)
 
 	testStart("Frame fillter test");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
-		frame = QRinput_fillerTest(i);
+		frame = FrameFiller_fillerTest(i);
 		if(frame == NULL) {
 			printf("Something wrong in version %d\n", i);
 			err++;
@@ -150,7 +152,7 @@ void print_mask(void)
 	frame = (unsigned char *)malloc(width * width);
 	memset(frame, 0x20, width * width);
 	for(mask=0; mask<8; mask++) {
-		masked = QRinput_makeMask(width, frame, mask);
+		masked = Mask_makeMask(width, frame, mask);
 		p = masked;
 		printf("mask %d:\n", mask);
 		for(y=0; y<width; y++) {
@@ -234,12 +236,12 @@ void test_eval(void)
 
 	testStart("Test mask evaluation (all white)");
 	memset(frame, 0, w * w);
-	demerit = QRinput_evaluateSymbol(w, frame);
+	demerit = Mask_evaluateSymbol(w, frame);
 	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
 
 	testStart("Test mask evaluation (all black)");
 	memset(frame, 1, w * w);
-	demerit = QRinput_evaluateSymbol(w, frame);
+	demerit = Mask_evaluateSymbol(w, frame);
 	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
 
 	free(frame);
@@ -278,7 +280,7 @@ void test_eval2(void)
 		frame[w*8 + x] = (x / 5) & 1;
 		frame[w*9 + x] = ((x / 5) & 1) ^ 1;
 	}
-	demerit = QRinput_evaluateSymbol(w, frame);
+	demerit = Mask_evaluateSymbol(w, frame);
 	testEndExp(demerit == N1 * 4 + N2 * 4);
 
 	free(frame);
@@ -318,7 +320,7 @@ void test_eval3(void)
 			frame[w*(y*2+2) + x] = pattern[y][x]^1;
 		}
 	}
-	demerit = QRinput_evaluateSymbol(w, frame);
+	demerit = Mask_evaluateSymbol(w, frame);
 	testEndExp(demerit == N3 * 6 + (N1 + 1) * 4);
 
 	free(frame);
@@ -460,7 +462,7 @@ void test_split1(void)
 
 	testStart("Split test: null string");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("", input, 0, QR_MODE_8);
+	Split_splitStringToQRinput("", input, 0, QR_MODE_8);
 	stream = QRinput_mergeBitStream(input);
 	testEndExp(BitStream_size(stream) == 0);
 	QRinput_free(input);
@@ -475,7 +477,7 @@ void test_split2(void)
 
 	testStart("Split test: single typed strings (num)");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("0123", input, 0, QR_MODE_8);
+	Split_splitStringToQRinput("0123", input, 0, QR_MODE_8);
 	list = input->head;
 	if(list->mode != QR_MODE_NUM || list->size != 4) {
 		err++;
@@ -489,7 +491,7 @@ void test_split2(void)
 	err = 0;
 	testStart("Split test: single typed strings (num2)");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("12345678901234567890", input, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput("12345678901234567890", input, 0, QR_MODE_KANJI);
 	list = input->head;
 	if(list->mode != QR_MODE_NUM || list->size != 20) {
 		err++;
@@ -509,7 +511,7 @@ void test_split3(void)
 
 	testStart("Split test: single typed strings (an)");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8);
+	Split_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8);
 	list = input->head;
 	if(list->mode != QR_MODE_AN || list->size != 5) {
 		err++;
@@ -523,7 +525,7 @@ void test_split3(void)
 	err = 0;
 	testStart("Split test: num + an");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI);
 	list = input->head;
 	if(list->mode != QR_MODE_AN || list->size != 9) {
 		err++;
@@ -537,7 +539,7 @@ void test_split3(void)
 	err = 0;
 	testStart("Split test: an + num + an");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI);
 	list = input->head;
 	if(list->mode != QR_MODE_AN || list->size != 7) {
 		err++;
@@ -560,7 +562,7 @@ void test_split4(void)
 
 	testStart("Split test: an and num entries");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput(CHUNKA/**/CHUNKB, input, 0, QR_MODE_8);
+	Split_splitStringToQRinput(CHUNKA/**/CHUNKB, input, 0, QR_MODE_8);
 	i1 = QRinput_new();
 	QRinput_append(i1, QR_MODE_AN, 17, (unsigned char *)CHUNKA/**/CHUNKB);
 	i2 = QRinput_new();
@@ -577,7 +579,7 @@ void test_split4(void)
 
 	testStart("Split test: num and an entries");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput(CHUNKB/**/CHUNKA, input, 0, QR_MODE_8);
+	Split_splitStringToQRinput(CHUNKB/**/CHUNKA, input, 0, QR_MODE_8);
 	i1 = QRinput_new();
 	QRinput_append(i1, QR_MODE_AN, 17, (unsigned char *)CHUNKB/**/CHUNKA);
 	i2 = QRinput_new();
@@ -594,7 +596,7 @@ void test_split4(void)
 
 	testStart("Split test: num and an entries (should be splitted)");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput(CHUNKC/**/CHUNKA, input, 0, QR_MODE_8);
+	Split_splitStringToQRinput(CHUNKC/**/CHUNKA, input, 0, QR_MODE_8);
 	i1 = QRinput_new();
 	QRinput_append(i1, QR_MODE_AN, 18, (unsigned char *)CHUNKC/**/CHUNKA);
 	i2 = QRinput_new();
@@ -618,7 +620,7 @@ void test_split5(void)
 
 	testStart("Split test: bit, an, bit, num");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_8);
+	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_8);
 	list = input->head;
 	if(list->mode != QR_MODE_8 || list->size != 2) {
 		printf("first item is not 8bit.\n");
@@ -673,7 +675,7 @@ void test_split6(void)
 
 	testStart("Split test: kanji, an, kanji, num");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_KANJI);
 	list = input->head;
 	if(list->mode != QR_MODE_KANJI || list->size != 2) {
 		printf("first item is not kanji.\n");
@@ -728,7 +730,7 @@ void test_split7(void)
 
 	testStart("Split test: an and num as bits");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("\x82\xd9""abcde\x82\xb0""12345", input, 0, QR_MODE_8);
+	Split_splitStringToQRinput("\x82\xd9""abcde\x82\xb0""12345", input, 0, QR_MODE_8);
 	list = input->head;
 	if(list->mode != QR_MODE_8 || list->size != 9) {
 		printf("first item is not 8bit.\n");
@@ -762,7 +764,7 @@ void test_split8(void)
 
 	testStart("Split test: terminated with a half of kanji code");
 	input = QRinput_new();
-	QRcode_splitStringToQRinput("\x82\xd9""abcdefgh\x82", input, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput("\x82\xd9""abcdefgh\x82", input, 0, QR_MODE_KANJI);
 	list = input->head;
 	if(list->mode != QR_MODE_KANJI || list->size != 2) {
 		printf("first item is not kanji.\n");

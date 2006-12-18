@@ -52,9 +52,6 @@ static const MQRspec_Capacity mqrspecCapacity[MQRSPEC_VERSION_MAX + 1] = {
 	{ 17, {8, 10, 14}}
 };
 
-/**
- * Return data length of the symbol (bits)
- */
 int MQRspec_getDataLength(int version, QRecLevel level)
 {
 	int w;
@@ -114,19 +111,15 @@ int MQRspec_maximumWords(QRencodeMode mode, int version)
  * Error correction code
  *****************************************************************************/
 
-/**
- * Table of the error correction code (Reed-Solomon block)
- * See Table 8 (pp.113) of Appendix 1, JIS X0510:2004.
- */
-static const int eccTable[MQRSPEC_VERSION_MAX+1][3] = {
-	{2,  0,  0},
-	{5,  6,  0},
-	{6,  8,  0},
-	{8, 10, 14}
-};
-
 int *MQRspec_getEccSpec(int version, QRecLevel level)
 {
+#if 0
+	int data, ecc;
+	int *array;
+
+	data = MQRspec_getDataLength(version, level);
+	ecc = MQRspec_getECCLength(version, level);
+#endif
 	return NULL;
 }
 

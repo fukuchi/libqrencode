@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../qrinput.h"
 #include "../qrencode_inner.h"
+#include "../split.h"
 
 void test_encodeKanji(void)
 {
