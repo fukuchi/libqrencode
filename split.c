@@ -205,4 +205,3 @@ void Split_splitStringToQRinput(const char *string, QRinput *input,
 	/* Of course this tail recursion could be optimized! Believe gcc. */
 	Split_splitStringToQRinput(&string[length], input, hint, version);
 }
-

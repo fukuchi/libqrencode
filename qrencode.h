@@ -183,6 +183,12 @@ extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
 extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint);
 
 /**
+ * Same to QRcode_qncodeString, but case sensitive.
+ * FIXME: Currently this encodes data entirely in 8-bit mode.
+ */
+extern QRcode *QRcode_encodeStringCase(const char *string, int version, QRecLevel level);
+
+/**
  * Free the instance of QRcode class.
  * @param qrcode an instance of QRcode class.
  */
