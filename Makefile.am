@@ -19,7 +19,8 @@ include_HEADERS = qrencode.h
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libqrencode.pc
 
-EXTRA_DIST = libqrencode.pc.in
+EXTRA_DIST = libqrencode.pc.in autogen.sh configure.ac acinclude.m4 \
+			 Makefile.am tests/Makefile.am
 
 if BUILD_TOOLS
 bin_PROGRAMS = qrencode
