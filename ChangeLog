@@ -1,7 +1,30 @@
-2006.12.18 Kentaro FUKUCHI <fukuchi@megaui.net>
+2007.12.10 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Merged to main trunk.
 	* mask.[ch], split.[ch]:
 	  - Masking functions and splitString functions are separated from
 	    qrencode.c.
+	* mqrspec.[ch]:
+	  - Specification of Micro QR code has been added, but not used yet.
+
+2007.03.24 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Bumped version to 1.0.2.
+
+2007.03.24 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.c (QRcode_splitStringToQRinput):
+	  - a small bug fix. (Thanks to NANKI Haruo)
+	* qrencode.h:
+	  - "extern "C"" barrier has been added for C++.
+	* test/view_qrcode.c:
+	  - a typo fix.
+
+2006.12.27 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Bumped version to 1.0.1.
+
+2006.12.27 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c, qrencode.[ch]:
+	  - Added force 8-bit encoding mode.
+	* Makefile.am :
+	  - Automake/Autoconf files have been added to dist-package.
 
 2006.12.17 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode_inner.h, qrencode.c:

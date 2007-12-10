@@ -1,6 +1,16 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 1.0.2 (2007.03.24)
+--------------------------
+* A small bug fix. (Thanks to NANKI Haruo)
+* 'extern "C"' barrier has been added to qrencode.h.
+
+Version 1.0.1 (2006.12.27)
+--------------------------
+* Added "force 8-bit encoding mode".
+* Configure script finds libpng's header correctly.
+
 Version 1.0.0 (2006.12.12)
 --------------------------
 * The first public release.

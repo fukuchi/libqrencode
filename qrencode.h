@@ -63,6 +63,10 @@
 #ifndef __QRENCODE_H__
 #define __QRENCODE_H__
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 /**
  * Encoding mode.
  */
@@ -193,5 +197,9 @@ extern QRcode *QRcode_encodeStringCase(const char *string, int version, QRecLeve
  * @param qrcode an instance of QRcode class.
  */
 extern void QRcode_free(QRcode *qrcode);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif /* __QRENCODE_H__ */

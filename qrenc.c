@@ -71,8 +71,8 @@ void usage(void)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
-"  -c           distinguish between uppercase and lowercase of a letter. All\n"
-"               of Alphabet letters will be encoded in 8-bit mode.\n"
+"  -c           encode entire data in 8-bit mode. If your application is\n"
+"               case-sensitive, choose this.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n",
 VERSION
