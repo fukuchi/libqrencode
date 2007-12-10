@@ -22,6 +22,7 @@ AC_C_INLINE
 AC_HEADER_STDC
 
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG
@@ -32,7 +33,7 @@ AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
 
 CFLAGS="-Wall $CFLAGS"
 
-AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile])
+AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec])
 
 AC_ARG_WITH([tools], [AC_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
  [], [build_tools=yes])
