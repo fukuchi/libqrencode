@@ -33,12 +33,12 @@
 #define isdigit(__c__) ((unsigned char)((signed char)(__c__) - '0') < 10)
 #define isalnum(__c__) (QRinput_lookAnTable(__c__) >= 0)
 
-static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint);
-static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint);
-static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint);
-static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
+static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
+static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
+static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
 
-static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint)
+static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
 {
 	const char *p;
 	int run;
@@ -57,15 +57,15 @@ static int Split_eatNum(const char *string, QRinput *input, int version, QRencod
 			+ QRinput_estimateBitsMode8(1) /* + 4 + l8 */
 			- QRinput_estimateBitsMode8(run + 1) /* - 4 - l8 */;
 		if(dif > 0) {
-			return Split_eat8(string, input, version, hint);
+			return Split_eat8(string, input, version, hint, casesensitive);
 		}
 	}
-	if(isalnum(*p)) {
+	if(isalnum(*p) && !casesensitive) {
 		dif = QRinput_estimateBitsModeNum(run) + 4 + ln
 			+ QRinput_estimateBitsModeAn(1) /* + 4 + la */
 			- QRinput_estimateBitsModeAn(run + 1) /* - 4 - la */;
 		if(dif > 0) {
-			return Split_eatAn(string, input, version, hint);
+			return Split_eatAn(string, input, version, hint, casesensitive);
 		}
 	}
 
@@ -73,12 +73,16 @@ static int Split_eatNum(const char *string, QRinput *input, int version, QRencod
 	return run;
 }
 
-static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint)
+static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
 {
 	const char *p, *q;
 	int run;
 	int dif;
 	int la, ln;
+
+	if(casesensitive) {
+		return Split_eat8(string, input, version, hint, casesensitive);
+	}
 
 	la = QRspec_lengthIndicator(QR_MODE_AN, version);
 	ln = QRspec_lengthIndicator(QR_MODE_NUM, version);
@@ -110,7 +114,7 @@ static int Split_eatAn(const char *string, QRinput *input, int version, QRencode
 			+ QRinput_estimateBitsMode8(1) /* + 4 + l8 */
 			- QRinput_estimateBitsMode8(run + 1) /* - 4 - l8 */;
 		if(dif > 0) {
-			return Split_eat8(string, input, version, hint);
+			return Split_eat8(string, input, version, hint, casesensitive);
 		}
 	}
 
@@ -118,7 +122,7 @@ static int Split_eatAn(const char *string, QRinput *input, int version, QRencode
 	return run;
 }
 
-static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint)
+static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
 {
 	const char *p;
 
@@ -130,7 +134,7 @@ static int Split_eatKanji(const char *string, QRinput *input, int version, QRenc
 	return p - string;
 }
 
-static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint)
+static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
 {
 	const char *p, *q;
 	QRencodeMode mode;
@@ -160,7 +164,7 @@ static int Split_eat8(const char *string, QRinput *input, int version, QRencodeM
 				} else {
 					p = q;
 				}
-			} else {
+			} else if(!casesensitive) {
 				q = p;
 				while(isalnum(*q)) {
 					q++;
@@ -173,6 +177,8 @@ static int Split_eat8(const char *string, QRinput *input, int version, QRencodeM
 				} else {
 					p = q;
 				}
+			} else {
+				p++;
 			}
 		} else {
 			p++;
@@ -184,7 +190,7 @@ static int Split_eat8(const char *string, QRinput *input, int version, QRencodeM
 }
 
 void Split_splitStringToQRinput(const char *string, QRinput *input,
-		int version, QRencodeMode hint)
+		int version, QRencodeMode hint, int casesensitive)
 {
 	int length;
 	QRencodeMode mode;
@@ -193,15 +199,14 @@ void Split_splitStringToQRinput(const char *string, QRinput *input,
 
 	mode = QRinput_identifyMode(string);
 	if(mode == QR_MODE_NUM) {
-		length = Split_eatNum(string, input, version, hint);
-	} else if(mode == QR_MODE_AN) {
-		length = Split_eatAn(string, input, version, hint);
+		length = Split_eatNum(string, input, version, hint, casesensitive);
+	} else if(mode == QR_MODE_AN && !casesensitive) {
+		length = Split_eatAn(string, input, version, hint, casesensitive);
 	} else if(mode == QR_MODE_KANJI && hint == QR_MODE_KANJI) {
-		length = Split_eatKanji(string, input, version, hint);
+		length = Split_eatKanji(string, input, version, hint, casesensitive);
 	} else {
-		length = Split_eat8(string, input, version, hint);
+		length = Split_eat8(string, input, version, hint, casesensitive);
 	}
 	if(length == 0) return;
-	/* Of course this tail recursion could be optimized! Believe gcc. */
-	Split_splitStringToQRinput(&string[length], input, hint, version);
+	Split_splitStringToQRinput(&string[length], input, hint, version, casesensitive);
 }

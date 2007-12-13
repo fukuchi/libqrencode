@@ -5,7 +5,6 @@
 #include "../qrspec.h"
 #include "../qrinput.h"
 #include "../mask.h"
-#include "../split.h"
 
 int inputSize(QRinput *input)
 {
@@ -404,7 +403,7 @@ void test_encode2(void)
 	QRcode *qrcode;
 
 	testStart("Test encode (2-H) (no padding test)");
-	qrcode = QRcode_encodeString("abcdefghijk123456789012", 0, QR_ECLEVEL_H, QR_MODE_8);
+	qrcode = QRcode_encodeString("abcdefghijk123456789012", 0, QR_ECLEVEL_H, QR_MODE_8, 0);
 	testEndExp(qrcode->version == 2);
 	QRcode_free(qrcode);
 }
@@ -415,7 +414,7 @@ void test_encode3(void)
 	QRinput *input;
 
 	testStart("Compare encodeString and encodeInput");
-	code1 = QRcode_encodeString("0123456", 0, QR_ECLEVEL_L, QR_MODE_8);
+	code1 = QRcode_encodeString("0123456", 0, QR_ECLEVEL_L, QR_MODE_8, 0);
 	input = QRinput_new();
 	QRinput_append(input, QR_MODE_NUM, 7, (unsigned char *)"0123456");
 	code2 = QRcode_encodeInput(input, 0, QR_ECLEVEL_L);
@@ -437,7 +436,7 @@ void test_encodeTooLong(void)
 	memset(data + 4295, '0', 4);
 	data[4299] = '\0';
 
-	code = QRcode_encodeString(data, 0, QR_ECLEVEL_L, QR_MODE_8);
+	code = QRcode_encodeString(data, 0, QR_ECLEVEL_L, QR_MODE_8, 0);
 	testEndExp(code == NULL);
 
 	if(code != NULL) {
@@ -470,351 +469,6 @@ void print_encode(void)
 	QRcode_free(qrcode);
 }
 
-void test_split1(void)
-{
-	QRinput *input;
-	BitStream *stream;
-
-	testStart("Split test: null string");
-	input = QRinput_new();
-	Split_splitStringToQRinput("", input, 0, QR_MODE_8);
-	stream = QRinput_mergeBitStream(input);
-	testEndExp(BitStream_size(stream) == 0);
-	QRinput_free(input);
-	BitStream_free(stream);
-}
-
-void test_split2(void)
-{
-	QRinput *input;
-	QRinput_List *list;
-	int err = 0;
-
-	testStart("Split test: single typed strings (num)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("0123", input, 0, QR_MODE_8);
-	list = input->head;
-	if(list->mode != QR_MODE_NUM || list->size != 4) {
-		err++;
-	}
-	if(list->next != NULL) {
-		err++;
-	}
-	testEnd(err);
-	QRinput_free(input);
-
-	err = 0;
-	testStart("Split test: single typed strings (num2)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("12345678901234567890", input, 0, QR_MODE_KANJI);
-	list = input->head;
-	if(list->mode != QR_MODE_NUM || list->size != 20) {
-		err++;
-	}
-	if(list->next != NULL) {
-		err++;
-	}
-	testEnd(err);
-	QRinput_free(input);
-}
-
-void test_split3(void)
-{
-	QRinput *input;
-	QRinput_List *list;
-	int err = 0;
-
-	testStart("Split test: single typed strings (an)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8);
-	list = input->head;
-	if(list->mode != QR_MODE_AN || list->size != 5) {
-		err++;
-	}
-	if(list->next != NULL) {
-		err++;
-	}
-	testEnd(err);
-	QRinput_free(input);
-
-	err = 0;
-	testStart("Split test: num + an");
-	input = QRinput_new();
-	Split_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI);
-	list = input->head;
-	if(list->mode != QR_MODE_AN || list->size != 9) {
-		err++;
-	}
-	if(list->next != NULL) {
-		err++;
-	}
-	testEnd(err);
-	QRinput_free(input);
-
-	err = 0;
-	testStart("Split test: an + num + an");
-	input = QRinput_new();
-	Split_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI);
-	list = input->head;
-	if(list->mode != QR_MODE_AN || list->size != 7) {
-		err++;
-	}
-	if(list->next != NULL) {
-		err++;
-	}
-	testEnd(err);
-	QRinput_free(input);
-}
-
-void test_split4(void)
-{
-	QRinput *input;
-	QRinput *i1, *i2;
-	int s1, s2, size;
-#define CHUNKA "abcdefghijk"
-#define CHUNKB "123456"
-#define CHUNKC "1234567"
-
-	testStart("Split test: an and num entries");
-	input = QRinput_new();
-	Split_splitStringToQRinput(CHUNKA/**/CHUNKB, input, 0, QR_MODE_8);
-	i1 = QRinput_new();
-	QRinput_append(i1, QR_MODE_AN, 17, (unsigned char *)CHUNKA/**/CHUNKB);
-	i2 = QRinput_new();
-	QRinput_append(i2, QR_MODE_AN, 11, (unsigned char *)CHUNKA);
-	QRinput_append(i2, QR_MODE_NUM, 6, (unsigned char *)CHUNKB);
-
-	size = inputSize(input);
-	s1 = inputSize(i1);
-	s2 = inputSize(i2);
-	testEndExp(size == ((s1 < s2)?s1:s2));
-	QRinput_free(input);
-	QRinput_free(i1);
-	QRinput_free(i2);
-
-	testStart("Split test: num and an entries");
-	input = QRinput_new();
-	Split_splitStringToQRinput(CHUNKB/**/CHUNKA, input, 0, QR_MODE_8);
-	i1 = QRinput_new();
-	QRinput_append(i1, QR_MODE_AN, 17, (unsigned char *)CHUNKB/**/CHUNKA);
-	i2 = QRinput_new();
-	QRinput_append(i2, QR_MODE_NUM, 6, (unsigned char *)CHUNKB);
-	QRinput_append(i2, QR_MODE_AN, 11, (unsigned char *)CHUNKA);
-
-	size = inputSize(input);
-	s1 = inputSize(i1);
-	s2 = inputSize(i2);
-	testEndExp(size == ((s1 < s2)?s1:s2));
-	QRinput_free(input);
-	QRinput_free(i1);
-	QRinput_free(i2);
-
-	testStart("Split test: num and an entries (should be splitted)");
-	input = QRinput_new();
-	Split_splitStringToQRinput(CHUNKC/**/CHUNKA, input, 0, QR_MODE_8);
-	i1 = QRinput_new();
-	QRinput_append(i1, QR_MODE_AN, 18, (unsigned char *)CHUNKC/**/CHUNKA);
-	i2 = QRinput_new();
-	QRinput_append(i2, QR_MODE_NUM, 7, (unsigned char *)CHUNKC);
-	QRinput_append(i2, QR_MODE_AN, 11, (unsigned char *)CHUNKA);
-
-	size = inputSize(input);
-	s1 = inputSize(i1);
-	s2 = inputSize(i2);
-	testEndExp(size == ((s1 < s2)?s1:s2));
-	QRinput_free(input);
-	QRinput_free(i1);
-	QRinput_free(i2);
-}
-
-void test_split5(void)
-{
-	QRinput *input;
-	QRinput_List *list;
-	int err = 0;
-
-	testStart("Split test: bit, an, bit, num");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_8);
-	list = input->head;
-	if(list->mode != QR_MODE_8 || list->size != 2) {
-		printf("first item is not 8bit.\n");
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no second item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_AN || list->size != 11) {
-		printf("second item is not an: %d %d\n", list->mode, list->size);
-		printf("%s\n", list->data);
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no third item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_8 || list->size != 2) {
-		printf("third item is not an.\n");
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no fourth item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_NUM || list->size != 6) {
-		printf("fourth item is not num.\n");
-		err++;
-	}
-	if(list->next != NULL) {
-		printf("not terminated.\n");
-		err++;
-		goto EXIT;
-	}
-EXIT:
-	testEnd(err);
-	QRinput_free(input);
-}
-
-void test_split6(void)
-{
-	QRinput *input;
-	QRinput_List *list;
-	int err = 0;
-
-	testStart("Split test: kanji, an, kanji, num");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_KANJI);
-	list = input->head;
-	if(list->mode != QR_MODE_KANJI || list->size != 2) {
-		printf("first item is not kanji.\n");
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no second item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_AN || list->size != 11) {
-		printf("second item is not an: %d %d\n", list->mode, list->size);
-		printf("%s\n", list->data);
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no third item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_KANJI || list->size != 2) {
-		printf("third item is not kanji.\n");
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no fourth item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_NUM || list->size != 6) {
-		printf("fourth item is not num.\n");
-		err++;
-	}
-	if(list->next != NULL) {
-		printf("not terminated.\n");
-		err++;
-		goto EXIT;
-	}
-EXIT:
-	testEnd(err);
-	QRinput_free(input);
-}
-
-void test_split7(void)
-{
-	QRinput *input;
-	QRinput_List *list;
-	int err = 0;
-
-	testStart("Split test: an and num as bits");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcde\x82\xb0""12345", input, 0, QR_MODE_8);
-	list = input->head;
-	if(list->mode != QR_MODE_8 || list->size != 9) {
-		printf("first item is not 8bit.\n");
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no second item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_NUM || list->size != 5) {
-		printf("second item is not num: %d %d\n", list->mode, list->size);
-		err++;
-	}
-	if(list->next != NULL) {
-		printf("not terminated.\n");
-		err++;
-		goto EXIT;
-	}
-EXIT:
-	testEnd(err);
-	QRinput_free(input);
-}
-
-void test_split8(void)
-{
-	QRinput *input;
-	QRinput_List *list;
-	int err = 0;
-
-	testStart("Split test: terminated with a half of kanji code");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcdefgh\x82", input, 0, QR_MODE_KANJI);
-	list = input->head;
-	if(list->mode != QR_MODE_KANJI || list->size != 2) {
-		printf("first item is not kanji.\n");
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no second item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_AN || list->size != 8) {
-		printf("second item is not an: %d %d\n", list->mode, list->size);
-		err++;
-	}
-	if(list->next == NULL) {
-		printf("no third item.\n");
-		err++;
-		goto EXIT;
-	}
-	list = list->next;
-	if(list->mode != QR_MODE_8 || list->size != 1) {
-		printf("third item is not bits: %d %d\n", list->mode, list->size);
-		err++;
-	}
-	if(list->next != NULL) {
-		printf("not terminated.\n");
-		err++;
-		goto EXIT;
-	}
-EXIT:
-	testEnd(err);
-	QRinput_free(input);
-}
-
 int main(int argc, char **argv)
 {
 	test_iterate();
@@ -827,14 +481,6 @@ int main(int argc, char **argv)
 	test_eval2();
 	test_eval3();
 //	print_encode();
-	test_split1();
-	test_split2();
-	test_split3();
-	test_split4();
-	test_split5();
-	test_split6();
-	test_split7();
-	test_split8();
 	test_encode();
 	test_encode2();
 	test_encode3();

@@ -181,16 +181,16 @@ extern QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level);
  *             encoded as Shif-JIS characters. If QR_MODE_8 is given, all of
  *             non-alphanumerical characters will be encoded as is. If you want
  *             to embed UTF-8 string, choose this.
+ * @param casesensitive case-sensitive(1) or not(0).
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version.
  */
-extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint);
+extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
 
 /**
- * Same to QRcode_qncodeString, but case sensitive.
- * FIXME: Currently this encodes data entirely in 8-bit mode.
+ * Same to QRcode_qncodeString, but encode whole data in 8-bit mode.
  */
-extern QRcode *QRcode_encodeStringCase(const char *string, int version, QRecLevel level);
+extern QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level);
 
 /**
  * Free the instance of QRcode class.

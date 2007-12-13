@@ -30,7 +30,7 @@ void prof_ver1to10(void)
 	timerStart("Version 1 - 10");
 	for(i=0; i<500; i++) {
 		for(version = 0; version < 11; version++) {
-			code = QRcode_encodeString(data, version, QR_ECLEVEL_L, QR_MODE_8);
+			code = QRcode_encodeString(data, version, QR_ECLEVEL_L, QR_MODE_8, 0);
 			QRcode_free(code);
 		}
 	}

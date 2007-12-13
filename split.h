@@ -30,5 +30,5 @@
 
 #include "qrencode.h"
 void Split_splitStringToQRinput(const char *string, QRinput *input,
-		int version, QRencodeMode hint);
+		int version, QRencodeMode hint, int casesensitive);
 #endif /* __SPLIT_H__ */

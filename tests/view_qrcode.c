@@ -28,7 +28,7 @@ void view_simple(const char *str)
 	SDL_Rect rect;
 
 	stream = QRinput_new();
-	Split_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI);
+	Split_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI, 0);
 
 
 	while(flag) {

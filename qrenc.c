@@ -27,6 +27,7 @@
 #include "qrencode.h"
 
 static int casesensitive = 0;
+static int eightbit = 0;
 static int kanji = 0;
 static int version = 0;
 static int size = 3;
@@ -41,7 +42,8 @@ enum {
 	O_LEVEL,
 	O_MARGIN,
 	O_KANJI,
-	O_CASE
+	O_CASE,
+	O_8BIT,
 };
 
 const struct option options[] = {
@@ -53,6 +55,7 @@ const struct option options[] = {
 	{"m", required_argument, NULL, O_MARGIN},
 	{"k", no_argument      , NULL, O_KANJI},
 	{"c", no_argument      , NULL, O_CASE},
+	{"8", no_argument      , NULL, O_8BIT},
 	{NULL, 0, NULL, 0}
 };
 
@@ -71,8 +74,9 @@ void usage(void)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
-"  -c           encode entire data in 8-bit mode. If your application is\n"
-"               case-sensitive, choose this.\n"
+"  -c           encode alphabet characters in 8-bit mode. If your application\n"
+"               is case-sensitive, choose this.\n"
+"  -8           encode entire data in 8-bit mode. -c and -k will be ignored.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n",
 VERSION
@@ -112,10 +116,10 @@ QRcode *encode(const char *intext)
 		hint = QR_MODE_8;
 	}
 
-	if(casesensitive) {
-		code = QRcode_encodeStringCase(intext, version, level);
+	if(eightbit) {
+		code = QRcode_encodeString8bit(intext, version, level);
 	} else {
-		code = QRcode_encodeString(intext, version, level, hint);
+		code = QRcode_encodeString(intext, version, level, hint, casesensitive);
 	}
 
 	return code;
@@ -290,6 +294,9 @@ int main(int argc, char **argv)
 				break;
 			case O_CASE:
 				casesensitive = 1;
+				break;
+			case O_8BIT:
+				eightbit = 1;
 				break;
 			default:
 				usage();

@@ -424,7 +424,7 @@ QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level)
 	return QRcode_encodeMask(input, version, level, -1);
 }
 
-QRcode *QRcode_encodeStringCase(const char *string, int version, QRecLevel level)
+QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level)
 {
 	QRinput *input;
 	QRcode *code;
@@ -437,7 +437,7 @@ QRcode *QRcode_encodeStringCase(const char *string, int version, QRecLevel level
 	return code;
 }
 
-QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint)
+QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
 {
 	QRinput *input;
 	QRcode *code;
@@ -447,7 +447,7 @@ QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QR
 	}
 
 	input = QRinput_new();
-	Split_splitStringToQRinput(string, input, version, hint);
+	Split_splitStringToQRinput(string, input, version, hint, casesensitive);
 	code = QRcode_encodeInput(input, version, level);
 	QRinput_free(input);
 
