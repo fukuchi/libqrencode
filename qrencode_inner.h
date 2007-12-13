@@ -77,7 +77,7 @@ extern unsigned char *FrameFiller_fillerTest(int version);
 /******************************************************************************
  * Format information
  *****************************************************************************/
-extern void QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
+extern int QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
 
 extern QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask);
 #endif /* __QRENCODE_INNER_H__ */

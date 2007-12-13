@@ -179,20 +179,26 @@ void test_format(void)
 	int width;
 	int i;
 	unsigned int decode;
+	int blacks, b1 = 0, b2 = 0;
 
 	testStart("Test format information(level L,mask 0)");
 	width = QRspec_getWidth(1);
 	frame = QRspec_newFrame(1);
 	format = QRspec_getFormatInfo(1, QR_ECLEVEL_L);
-	QRcode_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
+	blacks = QRcode_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
 	decode = 0;
+	for(i=0; i<15; i++) {
+		if((1<<i) & format) b2 += 2;
+	}
 	for(i=0; i<8; i++) {
 		decode = decode << 1;
 		decode |= frame[width * 8 + i + (i > 5)] & 1;
+		if(decode & 1) b1++;
 	}
 	for(i=0; i<7; i++) {
 		decode = decode << 1;
 		decode |= frame[width * ((6 - i) + (i < 1)) + 8] & 1;
+		if(decode & 1) b1++;
 	}
 	if(decode != format) {
 		printf("Upper-left format information is invalid.\n");
@@ -204,14 +210,23 @@ void test_format(void)
 	for(i=0; i<7; i++) {
 		decode = decode << 1;
 		decode |= frame[width * (width - 1 - i) + 8] & 1;
+		if(decode & 1) b1++;
 	}
 	for(i=0; i<8; i++) {
 		decode = decode << 1;
 		decode |= frame[width * 8 + width - 8 + i] & 1;
+		if(decode & 1) b1++;
 	}
 	if(decode != format) {
 		printf("Bottom and right format information is invalid.\n");
 		printf("%08x, %08x\n", format, decode);
+		testEnd(1);
+		return;
+	}
+
+	if(b2 != blacks || b1 != b2) {
+		printf("Number of dark modules is incorrect.\n");
+		printf("Return value: %d, dark modules in frame: %d, should be: %d\n", blacks, b1, b2);
 		testEnd(1);
 		return;
 	}

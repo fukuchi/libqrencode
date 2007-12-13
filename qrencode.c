@@ -297,16 +297,22 @@ unsigned char *FrameFiller_fillerTest(int version)
  * Format information
  *****************************************************************************/
 
-void QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
+int QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned int format;
 	unsigned char v;
 	int i;
+	int blacks = 0;
 
 	format =  QRspec_getFormatInfo(mask, level);
 
 	for(i=0; i<8; i++) {
-		v = (unsigned char)(format & 1) | 0x84;
+		if(format & 1) {
+			blacks += 2;
+			v = 0x85;
+		} else {
+			v = 0x84;
+		}
 		frame[width * 8 + width - 1 - i] = v;
 		if(i < 6) {
 			frame[width * i + 8] = v;
@@ -316,7 +322,12 @@ void QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QR
 		format= format >> 1;
 	}
 	for(i=0; i<7; i++) {
-		v = (unsigned char)(format & 1) | 0x84;
+		if(format & 1) {
+			blacks += 2;
+			v = 0x85;
+		} else {
+			v = 0x84;
+		}
 		frame[width * (width - 7 + i) + 8] = v;
 		if(i == 0) {
 			frame[width * 8 + 7] = v;
@@ -325,6 +336,8 @@ void QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QR
 		}
 		format= format >> 1;
 	}
+
+	return blacks;
 }
 
 /******************************************************************************
