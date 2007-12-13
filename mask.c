@@ -230,6 +230,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		demerit = 0;
 		mask = (unsigned char *)malloc(width * width);
 		blacks = maskMakers[i](width, frame, mask);
+		blacks += QRcode_writeFormatInformation(width, mask, i, level);
 		blacks = 100 * blacks / (width * width);
 		demerit = (abs(blacks - 50) / 5) * N4;
 //		n4 = demerit;
@@ -250,8 +251,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 			free(mask);
 		}
 	}
-
-	QRcode_writeFormatInformation(width, bestMask, bestMaskNum, level);
 
 	return bestMask;
 }
