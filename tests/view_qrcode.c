@@ -253,7 +253,7 @@ int main(int argc, char **argv)
 				break;
 		}
 	}
-	if(argc == 2) {
+	if(argc == 1) {
 		usage();
 		exit(1);
 	}
