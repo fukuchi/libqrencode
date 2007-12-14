@@ -2,13 +2,66 @@
 #include <string.h>
 #include <unistd.h>
 #include <SDL.h>
+#include <getopt.h>
 #include "common.h"
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
 #include "../split.h"
 
-SDL_Surface *screen = NULL;
+enum {
+	O_HELP,
+	O_SIZE,
+	O_VERSION,
+	O_LEVEL,
+	O_MARGIN,
+	O_KANJI,
+	O_CASE,
+	O_8BIT,
+};
+
+const struct option options[] = {
+	{"h", no_argument      , NULL, O_HELP},
+	{"l", required_argument, NULL, O_LEVEL},
+	{"s", required_argument, NULL, O_SIZE},
+	{"v", required_argument, NULL, O_VERSION},
+	{"m", required_argument, NULL, O_MARGIN},
+	{"k", no_argument      , NULL, O_KANJI},
+	{"c", no_argument      , NULL, O_CASE},
+	{"8", no_argument      , NULL, O_8BIT},
+	{NULL, 0, NULL, 0}
+};
+
+static SDL_Surface *screen = NULL;
+static int casesensitive = 0;
+static int eightbit = 0;
+static int scale = 4;
+static int version = 1;
+static QRecLevel level = QR_ECLEVEL_L;
+static int margin = 4;
+static QRencodeMode hint = QR_MODE_8;
+
+static char levelChar[4] = {'L', 'M', 'Q', 'H'};
+static void usage(void)
+{
+	fprintf(stderr,
+"view_qrcode version %s\n\n"
+"Usage: qrencode [OPTION]... [STRING]\n"
+"Encode input data in a QR Code and save as a PNG image.\n\n"
+"  -h           display this message.\n"
+"  -s NUMBER    specify the size of dot (pixel). (default=3)\n"
+"  -l {LMQH}    specify error collectin level from L (lowest) to H (highest).\n"
+"               (default=L)\n"
+"  -v NUMBER    specify the version of the symbol. (default=auto)\n"
+"  -m NUMBER    specify the width of margin. (default=4)\n"
+"  -k           assume that the input text contains kanji (shift-jis).\n"
+"  -c           encode alphabet characters in 8-bit mode. If your application\n"
+"               is case-sensitive, choose this.\n"
+"  -8           encode entire data in 8-bit mode. -c and -k will be ignored.\n"
+"  [STRING]     input data. If it is not specified, data will be taken from\n"
+"               standard input.\n",
+	VERSION);
+}
 
 void view_simple(const char *str)
 {
@@ -18,33 +71,33 @@ void view_simple(const char *str)
 	int x, y;
 	int pitch;
 	int flag = 1;
-	int version = 1;
-	int mask = 0;
-	int scale = 4;
-	QRecLevel level = QR_ECLEVEL_L;
+	int mask = -1;
 	QRcode *qrcode;
 	SDL_Event event;
 	int loop;
 	SDL_Rect rect;
 
 	stream = QRinput_new();
-	Split_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI, 0);
-
+	if(eightbit) {
+		QRinput_append(stream, QR_MODE_8, strlen(str), (unsigned char *)str);
+	} else {
+		Split_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI, casesensitive);
+	}
 
 	while(flag) {
 		qrcode = QRcode_encodeMask(stream, version, level, mask);
 		width = qrcode->width;
 		frame = qrcode->data;
 		version = qrcode->version;
-		printf("Version %d, Leve %d, Mask %d.\n", version, level, mask);
-		screen = SDL_SetVideoMode((width + 8) * scale, (width + 8) * scale, 32, 0);
+		printf("Version %d, Leve %c, Mask %d.\n", version, levelChar[level], mask);
+		screen = SDL_SetVideoMode((width + margin*2) * scale, (width + margin*2) * scale, 32, 0);
 		pitch = screen->pitch;
 		q = frame;
 		SDL_FillRect(screen, NULL, 0xffffff);
 		for(y=0; y<width; y++) {
 			for(x=0; x<width; x++) {
-				rect.x = (4 + x) * scale;
-				rect.y = (4 + y) * scale;
+				rect.x = (margin + x) * scale;
+				rect.y = (margin + y) * scale;
 				rect.w = scale;
 				rect.h = scale;
 				SDL_FillRect(screen, &rect, (*q&1)?0:0xffffff);
@@ -132,18 +185,87 @@ void view_simple(const char *str)
 
 int main(int argc, char **argv)
 {
-	if(argc != 2) {
-		printf("Usage: view_qrcode string\n");
+	int opt;
+
+	while((opt = getopt_long_only(argc, argv, "", options, NULL)) != -1) {
+		switch(opt) {
+			case O_HELP:
+				usage();
+				exit(0);
+				break;
+			case O_SIZE:
+				scale= atoi(optarg);
+				if(scale <= 0) {
+					fprintf(stderr, "Invalid size: %d\n", scale);
+					exit(1);
+				}
+				break;
+			case O_VERSION:
+				version = atoi(optarg);
+				if(version < 0) {
+					fprintf(stderr, "Invalid version: %d\n", version);
+					exit(1);
+				}
+				break;
+			case O_LEVEL:
+				switch(*optarg) {
+					case 'l':
+					case 'L':
+						level = QR_ECLEVEL_L;
+						break;
+					case 'm':
+					case 'M':
+						level = QR_ECLEVEL_M;
+						break;
+					case 'q':
+					case 'Q':
+						level = QR_ECLEVEL_Q;
+						break;
+					case 'h':
+					case 'H':
+						level = QR_ECLEVEL_H;
+						break;
+					default:
+						fprintf(stderr, "Invalid level: %s\n", optarg);
+						exit(1);
+						break;
+				}
+				break;
+			case O_MARGIN:
+				margin = atoi(optarg);
+				if(margin < 0) {
+					fprintf(stderr, "Invalid margin: %d\n", margin);
+					exit(1);
+				}
+				break;
+			case O_KANJI:
+				hint = QR_MODE_KANJI;
+				break;
+			case O_CASE:
+				casesensitive = 1;
+				break;
+			case O_8BIT:
+				eightbit = 1;
+				break;
+			default:
+				usage();
+				exit(1);
+				break;
+		}
+	}
+	if(argc == 2) {
+		usage();
 		exit(1);
 	}
-	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
-		return -1;
+	if(optind < argc) {
+		if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+			fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
+			return -1;
+		}
+		view_simple(argv[optind]);
+
+		SDL_Quit();
 	}
-
-	view_simple(argv[1]);
-
-	SDL_Quit();
 
 	return 0;
 }

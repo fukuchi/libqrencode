@@ -1,6 +1,13 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 2.0.0 (2007.12.xx)
+--------------------------
+* Code cleanup.
+* The mask evaluation bug has been fixed. (Philippe Delcroix)
+* qrencode's case-sensitive encoding has been improved.
+* "-8" option has been added to qrencode to encode whole data in 8-bit mode.
+
 Version 1.0.2 (2007.03.24)
 --------------------------
 * A small bug fix. (Thanks to NANKI Haruo)

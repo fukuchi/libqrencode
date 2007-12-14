@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * QR Code encoding tool
- * Copyright (C) 2006 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006,2007 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,7 @@ enum {
 	O_8BIT,
 };
 
-const struct option options[] = {
+static const struct option options[] = {
 	{"h", no_argument      , NULL, O_HELP},
 	{"o", required_argument, NULL, O_OUTPUT},
 	{"l", required_argument, NULL, O_LEVEL},
@@ -59,7 +59,7 @@ const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-void usage(void)
+static void usage(void)
 {
 	fprintf(stderr,
 "qrencode version %s\n\n"
@@ -79,12 +79,11 @@ void usage(void)
 "  -8           encode entire data in 8-bit mode. -c and -k will be ignored.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n",
-VERSION
-);
+	VERSION);
 }
 
 #define MAX_DATA_SIZE 7090 /* from the specification */
-char *readStdin(void)
+static char *readStdin(void)
 {
 	char *buffer;
 	int ret;
@@ -105,7 +104,7 @@ char *readStdin(void)
 	return buffer;
 }
 
-QRcode *encode(const char *intext)
+static QRcode *encode(const char *intext)
 {
 	QRencodeMode hint;
 	QRcode *code;
@@ -125,7 +124,7 @@ QRcode *encode(const char *intext)
 	return code;
 }
 
-void qrencode(const char *intext, const char *outfile)
+static void qrencode(const char *intext, const char *outfile)
 {
 	FILE *fp;
 	QRcode *qrcode;

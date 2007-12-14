@@ -1,3 +1,23 @@
+2007.12.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* tests/test_qrencode.c:
+	  - New test has been added.
+	* tests/view_qrcode.c:
+	  - Options supported.
+	  - Default mask is now -1 (auto).
+
+2007.12.13 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.[ch]:
+	  - QRcode_writeFormatInformation now returns a number of dark modules.
+	* mask.c:
+	  - The mask evaluation function now writes format information before
+	    evaluation. (Philippe Delcroix)
+	* split.[ch]:
+	  - Case-sensitive mode has been added to QRcode_encodeString().
+	  - "-8" option has been added to qrenc.c.
+	  - "-c" now encodes in improved case-sensitive mode.
+	* tests/test_{split,qrencode}.c:
+	  - test_split*() have been moved to test_split.c.
+
 2007.12.10 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Merged to main trunk.
 	* mask.[ch], split.[ch]:
