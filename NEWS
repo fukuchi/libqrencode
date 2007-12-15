@@ -8,6 +8,11 @@ Version 2.0.0 (2007.12.xx)
 * qrencode's case-sensitive encoding has been improved.
 * "-8" option has been added to qrencode to encode whole data in 8-bit mode.
 
+* API changes
+  - QRcode_encodeString() now receives case-sensitive flag.
+  - QRcode_encodeStringCase() has been removed.
+  - QRcode_encodeString8bit() has been added.
+
 Version 1.0.2 (2007.03.24)
 --------------------------
 * A small bug fix. (Thanks to NANKI Haruo)
