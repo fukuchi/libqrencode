@@ -47,6 +47,7 @@
 	  - test_split*() have been moved to test_split.c.
 
 2007.12.10 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Bumped version to 2.0.0.
 	* Merged to main trunk.
 	* mask.[ch], split.[ch]:
 	  - Masking functions and splitString functions are separated from

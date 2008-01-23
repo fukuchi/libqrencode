@@ -1,7 +1,7 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 2.0.0 (2007.12.xx)
+Version 2.0.0 (2008.1.24)
 --------------------------
 Summary:
 * "-i" option to ignore case distinctions has been added to qrencode and
@@ -10,6 +10,7 @@ Summary:
   has been improved. See details in Release Note section.
 * "-8" option has been added to qrencode to encode whole data in 8-bit mode.
 * tests/view_qrcode now accepts various options like qrencode.
+* Man page has been added.
 * Code cleanup.
 * The mask evaluation bug has been fixed. (Philippe Delcroix)
 
