@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * QR Code encoding tool
- * Copyright (C) 2006,2007 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,13 @@
 
 #include "qrencode.h"
 
-static int casesensitive = 0;
+static int casesensitive = 1;
 static int eightbit = 0;
-static int kanji = 0;
 static int version = 0;
 static int size = 3;
 static int margin = 4;
 static QRecLevel level = QR_ECLEVEL_L;
+static QRencodeMode hint = QR_MODE_8;
 
 enum {
 	O_HELP,
@@ -43,6 +43,7 @@ enum {
 	O_MARGIN,
 	O_KANJI,
 	O_CASE,
+	O_IGNORECASE,
 	O_8BIT,
 };
 
@@ -55,6 +56,7 @@ static const struct option options[] = {
 	{"m", required_argument, NULL, O_MARGIN},
 	{"k", no_argument      , NULL, O_KANJI},
 	{"c", no_argument      , NULL, O_CASE},
+	{"i", no_argument      , NULL, O_IGNORECASE},
 	{"8", no_argument      , NULL, O_8BIT},
 	{NULL, 0, NULL, 0}
 };
@@ -62,7 +64,8 @@ static const struct option options[] = {
 static void usage(void)
 {
 	fprintf(stderr,
-"qrencode version %s\n\n"
+"qrencode version %s\n"
+"Copyright (C) 2008 Kentaro Fukuchi\n"
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG image.\n\n"
 "  -h           display this message.\n"
@@ -74,9 +77,9 @@ static void usage(void)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
-"  -c           encode alphabet characters in 8-bit mode. If your application\n"
-"               is case-sensitive, choose this.\n"
-"  -8           encode entire data in 8-bit mode. -c and -k will be ignored.\n"
+"  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
+"  -i           ignore case distinctions and use only upper-case characters.\n"
+"  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n",
 	VERSION);
@@ -106,14 +109,7 @@ static char *readStdin(void)
 
 static QRcode *encode(const char *intext)
 {
-	QRencodeMode hint;
 	QRcode *code;
-
-	if(kanji) {
-		hint = QR_MODE_KANJI;
-	} else {
-		hint = QR_MODE_8;
-	}
 
 	if(eightbit) {
 		code = QRcode_encodeString8bit(intext, version, level);
@@ -289,10 +285,13 @@ int main(int argc, char **argv)
 				}
 				break;
 			case O_KANJI:
-				kanji = 1;
+				hint = QR_MODE_KANJI;
 				break;
 			case O_CASE:
 				casesensitive = 1;
+				break;
+			case O_IGNORECASE:
+				casesensitive = 0;
 				break;
 			case O_8BIT:
 				eightbit = 1;

@@ -7,6 +7,7 @@
 #include "../qrinput.h"
 #include "../mask.h"
 #include "../split.h"
+#include "../bitstream.h"
 
 static int inputTest(QRinput_List *list, const char *fmt, ...)
 {
@@ -127,6 +128,7 @@ void test_split3(void)
 	Split_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "a", 5)) {
+		printQrinput(input);
 		err++;
 	}
 	testEnd(err);
@@ -160,7 +162,7 @@ void test_split4(void)
 	QRinput *input;
 	QRinput *i1, *i2;
 	int s1, s2, size;
-#define CHUNKA "abcdefghijk"
+#define CHUNKA "ABCDEFGHIJK"
 #define CHUNKB "123456"
 #define CHUNKC "1234567"
 
@@ -244,6 +246,7 @@ void test_split6(void)
 	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "kakn", 2, 11, 2, 6)) {
+		printQrinput(input);
 		err++;
 	}
 	testEnd(err);
@@ -317,6 +320,57 @@ void test_split3c(void)
 	Split_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI, 1);
 	list = input->head;
 	if(inputTest(list, "8", 7)) {
+		printQrinput(input);
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+}
+
+void test_toupper(void)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int err = 0;
+
+	testStart("Split test: check dupAndToUpper (lower->upper)");
+	input = QRinput_new();
+	Split_splitStringToQRinput("abcde", input, 0, QR_MODE_8, 0);
+	list = input->head;
+	if(inputTest(list, "a", 5)) {
+		err++;
+	}
+	if(strncmp((char *)list->data, "ABCDE", list->size)) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+
+	err = 0;
+	testStart("Split test: check dupAndToUpper (kanji)");
+	input = QRinput_new();
+	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, 0, QR_MODE_KANJI, 0);
+	list = input->head;
+	if(inputTest(list, "k", 10)) {
+		printQrinput(input);
+		err++;
+	}
+	if(strncmp((char *)list->data, "\x83n\x83q\x83t\x83w\x83z", list->size)) {
+		err++;
+	}
+	testEnd(err);
+	QRinput_free(input);
+
+	err = 0;
+	testStart("Split test: check dupAndToUpper (8bit)");
+	input = QRinput_new();
+	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, 0, QR_MODE_8, 0);
+	list = input->head;
+	if(inputTest(list, "8", 10)) {
+		printQrinput(input);
+		err++;
+	}
+	if(strncmp((char *)list->data, "\x83N\x83Q\x83T\x83W\x83Z", list->size)) {
 		err++;
 	}
 	testEnd(err);
@@ -334,6 +388,7 @@ int main(int argc, char **argv)
 	test_split7();
 	test_split8();
 	test_split3c();
+	test_toupper();
 
 	report();
 

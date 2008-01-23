@@ -3,15 +3,35 @@ libqrencode NEWS - Overview of changes
 
 Version 2.0.0 (2007.12.xx)
 --------------------------
+Summary:
+* "-i" option to ignore case distinctions has been added to qrencode and
+  view_qrcode.
+* "-c" option (case-sensitive mode) of qrencode is now enabled by default and
+  has been improved. See details in Release Note section.
+* "-8" option has been added to qrencode to encode whole data in 8-bit mode.
+* tests/view_qrcode now accepts various options like qrencode.
 * Code cleanup.
 * The mask evaluation bug has been fixed. (Philippe Delcroix)
-* qrencode's case-sensitive encoding has been improved.
-* "-8" option has been added to qrencode to encode whole data in 8-bit mode.
 
 * API changes
   - QRcode_encodeString() now receives case-sensitive flag.
   - QRcode_encodeStringCase() has been removed.
   - QRcode_encodeString8bit() has been added.
+
+Release Note:
+
+Previously libqrencode encodes lower-case alphabet characters in Alphabet-
+Numeric mode (upper-case alphabet and numeric) by default. According to the
+specification of QR code, however, it is clearly claimed that Alphabet-Numeric
+mode provides only upper-case alphabet (+ numeric and some symbol) characters.
+Since this version, libqrencode distinguishes lower-case and upper-case of
+alphabet characters by default. Because of that, "-c" option of qrencode
+is now deprecated, and "-i" option has been added. By giving "-i", qrencode
+converts lower-case characters to upper-case if possible, then encode a QR code
+symbol. Please read qrencode.h for the details about API changes if you are
+going to use this library.
+
+Many thanks to NANKI Haruo for his suggestions.
 
 Version 1.0.2 (2007.03.24)
 --------------------------

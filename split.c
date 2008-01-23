@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Input data splitter.
- * Copyright (C) 2006,2007 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)
@@ -25,6 +25,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include "qrencode.h"
 #include "qrinput.h"
 #include "qrspec.h"
@@ -33,12 +35,12 @@
 #define isdigit(__c__) ((unsigned char)((signed char)(__c__) - '0') < 10)
 #define isalnum(__c__) (QRinput_lookAnTable(__c__) >= 0)
 
-static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
-static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
-static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
-static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive);
+static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint);
+static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint);
 
-static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
+static int Split_eatNum(const char *string, QRinput *input, int version, QRencodeMode hint)
 {
 	const char *p;
 	int run;
@@ -57,15 +59,15 @@ static int Split_eatNum(const char *string, QRinput *input, int version, QRencod
 			+ QRinput_estimateBitsMode8(1) /* + 4 + l8 */
 			- QRinput_estimateBitsMode8(run + 1) /* - 4 - l8 */;
 		if(dif > 0) {
-			return Split_eat8(string, input, version, hint, casesensitive);
+			return Split_eat8(string, input, version, hint);
 		}
 	}
-	if(isalnum(*p) && !casesensitive) {
+	if(isalnum(*p)) {
 		dif = QRinput_estimateBitsModeNum(run) + 4 + ln
 			+ QRinput_estimateBitsModeAn(1) /* + 4 + la */
 			- QRinput_estimateBitsModeAn(run + 1) /* - 4 - la */;
 		if(dif > 0) {
-			return Split_eatAn(string, input, version, hint, casesensitive);
+			return Split_eatAn(string, input, version, hint);
 		}
 	}
 
@@ -73,16 +75,12 @@ static int Split_eatNum(const char *string, QRinput *input, int version, QRencod
 	return run;
 }
 
-static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
+static int Split_eatAn(const char *string, QRinput *input, int version, QRencodeMode hint)
 {
 	const char *p, *q;
 	int run;
 	int dif;
 	int la, ln;
-
-	if(casesensitive) {
-		return Split_eat8(string, input, version, hint, casesensitive);
-	}
 
 	la = QRspec_lengthIndicator(QR_MODE_AN, version);
 	ln = QRspec_lengthIndicator(QR_MODE_NUM, version);
@@ -109,12 +107,12 @@ static int Split_eatAn(const char *string, QRinput *input, int version, QRencode
 
 	run = p - string;
 
-	if(*p & 0x80) {
+	if(*p && !isalnum(*p)) {
 		dif = QRinput_estimateBitsModeAn(run) + 4 + la
 			+ QRinput_estimateBitsMode8(1) /* + 4 + l8 */
 			- QRinput_estimateBitsMode8(run + 1) /* - 4 - l8 */;
 		if(dif > 0) {
-			return Split_eat8(string, input, version, hint, casesensitive);
+			return Split_eat8(string, input, version, hint);
 		}
 	}
 
@@ -122,7 +120,7 @@ static int Split_eatAn(const char *string, QRinput *input, int version, QRencode
 	return run;
 }
 
-static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
+static int Split_eatKanji(const char *string, QRinput *input, int version, QRencodeMode hint)
 {
 	const char *p;
 
@@ -134,7 +132,7 @@ static int Split_eatKanji(const char *string, QRinput *input, int version, QRenc
 	return p - string;
 }
 
-static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint, int casesensitive)
+static int Split_eat8(const char *string, QRinput *input, int version, QRencodeMode hint)
 {
 	const char *p, *q;
 	QRencodeMode mode;
@@ -164,7 +162,7 @@ static int Split_eat8(const char *string, QRinput *input, int version, QRencodeM
 				} else {
 					p = q;
 				}
-			} else if(!casesensitive) {
+			} else {
 				q = p;
 				while(isalnum(*q)) {
 					q++;
@@ -177,8 +175,6 @@ static int Split_eat8(const char *string, QRinput *input, int version, QRencodeM
 				} else {
 					p = q;
 				}
-			} else {
-				p++;
 			}
 		} else {
 			p++;
@@ -189,8 +185,8 @@ static int Split_eat8(const char *string, QRinput *input, int version, QRencodeM
 	return p - string;
 }
 
-void Split_splitStringToQRinput(const char *string, QRinput *input,
-		int version, QRencodeMode hint, int casesensitive)
+static void Split_splitString(const char *string, QRinput *input,
+		int version, QRencodeMode hint)
 {
 	int length;
 	QRencodeMode mode;
@@ -199,14 +195,50 @@ void Split_splitStringToQRinput(const char *string, QRinput *input,
 
 	mode = QRinput_identifyMode(string);
 	if(mode == QR_MODE_NUM) {
-		length = Split_eatNum(string, input, version, hint, casesensitive);
-	} else if(mode == QR_MODE_AN && !casesensitive) {
-		length = Split_eatAn(string, input, version, hint, casesensitive);
+		length = Split_eatNum(string, input, version, hint);
+	} else if(mode == QR_MODE_AN) {
+		length = Split_eatAn(string, input, version, hint);
 	} else if(mode == QR_MODE_KANJI && hint == QR_MODE_KANJI) {
-		length = Split_eatKanji(string, input, version, hint, casesensitive);
+		length = Split_eatKanji(string, input, version, hint);
 	} else {
-		length = Split_eat8(string, input, version, hint, casesensitive);
+		length = Split_eat8(string, input, version, hint);
 	}
 	if(length == 0) return;
-	Split_splitStringToQRinput(&string[length], input, hint, version, casesensitive);
+	Split_splitString(&string[length], input, version, hint);
+}
+
+static char *dupAndToUpper(const char *str, QRencodeMode hint)
+{
+	char *newstr, *p;
+	QRencodeMode mode;
+
+	newstr = strdup(str);
+	p = newstr;
+	while(*p != '\0') {
+		mode = QRinput_identifyMode(p);
+		if(mode == QR_MODE_KANJI && hint == QR_MODE_KANJI) {
+			p += 2;
+		} else {
+			if (*p >= 'a' && *p <= 'z') {
+				*p = (char)((int)*p - 32);
+			}
+			p++;
+		}
+	}
+
+	return newstr;
+}
+
+void Split_splitStringToQRinput(const char *string, QRinput *input,
+		int version, QRencodeMode hint, int casesensitive)
+{
+	char *newstr;
+
+	if(!casesensitive) {
+		newstr = dupAndToUpper(string, hint);
+		Split_splitString(newstr, input, version, hint);
+		free(newstr);
+	} else {
+		Split_splitString(string, input, version, hint);
+	}
 }

@@ -33,7 +33,7 @@ AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
 
 CFLAGS="-Wall $CFLAGS"
 
-AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec])
+AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
 
 AC_ARG_WITH([tools], [AC_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
  [], [build_tools=yes])

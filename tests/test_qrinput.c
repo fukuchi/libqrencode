@@ -175,7 +175,7 @@ void test_encodeTooLong(void)
 	BitStream *bstream;
 
 	data = (unsigned char *)malloc(7089);
-	memset(data, 'a', 7089);
+	memset(data, 'A', 7089);
 
 	testStart("Encoding long string. (7089 bytes)");
 	stream = QRinput_new();
@@ -196,7 +196,7 @@ void test_encodeAnNum(void)
 
 	testStart("Bit length check of alpha-numeric stream. (11 + 12)");
 	input = QRinput_new();
-	QRinput_append(input, QR_MODE_AN, 11, (unsigned char *)"abcdefghijk");
+	QRinput_append(input, QR_MODE_AN, 11, (unsigned char *)"ABCDEFGHIJK");
 	QRinput_append(input, QR_MODE_NUM, 12, (unsigned char *)"123456789012");
 	bstream = QRinput_mergeBitStream(input);
 	testEndExp(strlen(bstream->data) == 128);
@@ -205,7 +205,7 @@ void test_encodeAnNum(void)
 
 	testStart("Bit length check of alphabet stream. (23)");
 	input = QRinput_new();
-	QRinput_append(input, QR_MODE_AN, 23, (unsigned char *)"abcdefghijk123456789012");
+	QRinput_append(input, QR_MODE_AN, 23, (unsigned char *)"ABCDEFGHIJK123456789012");
 	bstream = QRinput_mergeBitStream(input);
 	testEndExp(strlen(bstream->data) == 140);
 	QRinput_free(input);

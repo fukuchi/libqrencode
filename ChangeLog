@@ -1,3 +1,31 @@
+2008.01.23 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.1.in, Makefile.am, configure.ac:
+	  - Manpage of qrencode has been added.
+	* qrenc.c, tests/view_qrcode.c:
+	  - Usage message has been updated.
+
+2008.01.18 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* split.c:
+	  - Bug fixes.
+	* tests/test_split.c:
+	  - Followed recent API changes.
+	  - Added new test "test_toupper()".
+	* qrenc.c, tests/view_qrcode.c:
+	  - Source-level compatiblity has been improved.
+	  - view_qrcode now accepts stdin like qrencode.
+	  - Usage message has been updated/fixed.
+	* Copyright year has been updated.
+
+2008.01.16 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrinput.c, split.c:
+	  - Case-sensitive mode becomes now default mode.
+	  - Alphabet-Numeric mode now encodes only upper-case alphabet and
+	    numeric characters. If "-i" option is given, split.c converts
+		lower-case characters to upper-case characters at first.
+	* qrenc.c, tests/view_qrcode.c:
+	  - Case-sensitive mode becomes now default mode.
+	  - Option "-i" has been added.
+
 2007.12.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/test_qrencode.c:
 	  - New test has been added.

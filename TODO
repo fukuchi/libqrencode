@@ -1,11 +1,10 @@
 Thread unsafe.
-Only two functions, QRspec_newFrame() and init_rs(), are thread unsafe.
-
-view_qrcode should support various options like qrencode.
+Only two functions, QRspec_newFrame() and init_rs(), are thread unsafe, but
+all of qrencode functions are thread unsafe because of them.
 
 This package contains
 
-*.c and *.h files (total):  5422 lines, 131476 bytes.
-configure script         : 22866 lines, 740829 bytes.
+*.c and *.h files (total):  5916 lines, 146312 bytes.
+configure script         : 22510 lines, 724802 bytes.
 
 It's absolutely crazy.

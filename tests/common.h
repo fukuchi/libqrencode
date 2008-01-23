@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include "../qrencode.h"
+#include "../qrinput.h"
 #include "../bitstream.h"
 
 #define CHECK(_str_) (printf("_____%s\n",_str_))
@@ -82,5 +83,17 @@ char *sprintfBin(int size, unsigned char *data)
 	*p = '\0';
 
 	return str;
+}
+
+static char qrModeChar[4] = {'n', 'a', '8', 'k'};
+void printQrinput(QRinput *input)
+{
+	QRinput_List *list;
+
+	list = input->head;
+	while(list != NULL) {
+		printf("%c(%d)\n", qrModeChar[list->mode], list->size);
+		list = list->next;
+	}
 }
 #endif /* __COMMON_H__ */

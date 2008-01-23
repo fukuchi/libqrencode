@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Input data chunk class
- * Copyright (C) 2006,2007 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -230,8 +230,8 @@ const signed char QRinput_anTable[] = {
 	 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 44, -1, -1, -1, -1, -1,
 	-1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
 	25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1,
-	-1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-	25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
 
 /**
@@ -692,13 +692,8 @@ static BitStream *QRinput_createPaddingBit(QRinput *input)
 	bstream = BitStream_new();
 	BitStream_appendNum(bstream, words * 8 - bits + 4, 0);
 
-	/* FIXME: It would be able to add padding bits by more efficient way. */
 	for(i=0; i<maxwords - words; i++) {
-		if(i & 1) {
-			BitStream_appendNum(bstream, 8, 0x11);
-		} else {
-			BitStream_appendNum(bstream, 8, 0xec);
-		}
+		BitStream_appendNum(bstream, 8, (i&1)?0x11:0xec);
 	}
 
 	return bstream;

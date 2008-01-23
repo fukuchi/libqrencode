@@ -1,0 +1,58 @@
+.TH QRENCODE 1 "Jan. 23, 2008" "qrencode @VERSION@"
+.SH NAME
+qrencode \- Encode input data in a QR Code and save as a PNG image.
+.SH SYNOPSIS
+.B "qrencode"
+[OPTION]...
+[STRING]
+
+.SH DESCRIPTION
+Libqrencode is a library for encoding data in a QR Code symbol, a kind of 2D
+symbology that can be scanned by handy terminals such as a mobile phone with
+CCD. The capacity of QR Code is up to 7000 digits or 4000 characters, and has
+high robustness.
+
+Qrencode is a utility software using libqrencode to encode string data in
+a QR Code and save as a PNG image.
+
+.SH OPTIONS
+.TP
+.B \-h
+display help message.
+.TP
+.B \-o FILENAME
+write PNG image to FILENAME. If '-' is specified, the result will be output
+to standard output.
+.TP
+.B \-s NUMBER
+specify the size of dot (pixel). (default=3)
+.TP
+.B \-l {LMQH}
+specify error collectin level from L (lowest) to H (highest). (default=L)
+.TP
+.B \-v NUMBER
+specify the version of the symbol. (default=auto)
+.TP
+.B \-m NUMBER
+specify the width of margin. (default=4)
+.TP
+.B \-k
+assume that the input text contains kanji (shift-jis).
+.TP
+.B \-c
+encode lower-case alphabet characters in 8-bit mode. (default)
+.TP
+.B \-i
+ignore case distinctions and use only upper-case characters.
+.TP
+.B \-8
+encode entire data in 8-bit mode. -k, -c and -i will be ignored.
+.TP
+.B [STRING]
+input data. If it is not specified, data will be taken from standard input.
+
+.SH AUTHOR
+Written by Kentaro Fukuchi.
+
+.SH COPYRIGHT
+Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi.

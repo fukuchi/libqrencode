@@ -9,6 +9,15 @@
 #include "../qrinput.h"
 #include "../split.h"
 
+static SDL_Surface *screen = NULL;
+static int casesensitive = 1;
+static int eightbit = 0;
+static int version = 1;
+static int size = 4;
+static int margin = 4;
+static QRecLevel level = QR_ECLEVEL_L;
+static QRencodeMode hint = QR_MODE_8;
+
 enum {
 	O_HELP,
 	O_SIZE,
@@ -17,6 +26,7 @@ enum {
 	O_MARGIN,
 	O_KANJI,
 	O_CASE,
+	O_IGNORECASE,
 	O_8BIT,
 };
 
@@ -28,39 +38,55 @@ const struct option options[] = {
 	{"m", required_argument, NULL, O_MARGIN},
 	{"k", no_argument      , NULL, O_KANJI},
 	{"c", no_argument      , NULL, O_CASE},
+	{"i", no_argument      , NULL, O_IGNORECASE},
 	{"8", no_argument      , NULL, O_8BIT},
 	{NULL, 0, NULL, 0}
 };
 
-static SDL_Surface *screen = NULL;
-static int casesensitive = 0;
-static int eightbit = 0;
-static int scale = 4;
-static int version = 1;
-static QRecLevel level = QR_ECLEVEL_L;
-static int margin = 4;
-static QRencodeMode hint = QR_MODE_8;
 
 static char levelChar[4] = {'L', 'M', 'Q', 'H'};
 static void usage(void)
 {
 	fprintf(stderr,
-"view_qrcode version %s\n\n"
-"Usage: qrencode [OPTION]... [STRING]\n"
+"view_qrcode version %s\n"
+"Copyright (C) 2008 Kentaro Fukuchi\n"
+"Usage: view_qrcode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG image.\n\n"
 "  -h           display this message.\n"
-"  -s NUMBER    specify the size of dot (pixel). (default=3)\n"
+"  -s NUMBER    specify the size of dot (pixel). (default=4)\n"
 "  -l {LMQH}    specify error collectin level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
-"  -c           encode alphabet characters in 8-bit mode. If your application\n"
-"               is case-sensitive, choose this.\n"
-"  -8           encode entire data in 8-bit mode. -c and -k will be ignored.\n"
+"  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
+"  -i           ignore case distinctions and use only upper-case characters.\n"
+"  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n",
 	VERSION);
+}
+
+#define MAX_DATA_SIZE 7090 /* from the specification */
+static char *readStdin(void)
+{
+	char *buffer;
+	int ret;
+
+	buffer = (char *)malloc(MAX_DATA_SIZE);
+	ret = fread(buffer, 1, MAX_DATA_SIZE, stdin);
+	if(ret == 0) {
+		fprintf(stderr, "No input data.\n");
+		exit(1);
+	}
+	if(!feof(stdin)) {
+		fprintf(stderr, "Input data is too large.\n");
+		exit(1);
+	}
+
+	buffer[ret] = '\0';
+
+	return buffer;
 }
 
 void view_simple(const char *str)
@@ -90,16 +116,16 @@ void view_simple(const char *str)
 		frame = qrcode->data;
 		version = qrcode->version;
 		printf("Version %d, Leve %c, Mask %d.\n", version, levelChar[level], mask);
-		screen = SDL_SetVideoMode((width + margin*2) * scale, (width + margin*2) * scale, 32, 0);
+		screen = SDL_SetVideoMode((width + margin*2) * size, (width + margin*2) * size, 32, 0);
 		pitch = screen->pitch;
 		q = frame;
 		SDL_FillRect(screen, NULL, 0xffffff);
 		for(y=0; y<width; y++) {
 			for(x=0; x<width; x++) {
-				rect.x = (margin + x) * scale;
-				rect.y = (margin + y) * scale;
-				rect.w = scale;
-				rect.h = scale;
+				rect.x = (margin + x) * size;
+				rect.y = (margin + y) * size;
+				rect.w = size;
+				rect.h = size;
 				SDL_FillRect(screen, &rect, (*q&1)?0:0xffffff);
 				q++;
 			}
@@ -125,12 +151,12 @@ void view_simple(const char *str)
 						loop = 0;
 						break;
 					case SDLK_UP:
-						scale++;
+						size++;
 						loop = 0;
 						break;
 					case SDLK_DOWN:
-						scale--;
-						if(scale < 1) scale = 1;
+						size--;
+						if(size < 1) size = 1;
 						loop = 0;
 						break;
 					case SDLK_0:
@@ -186,6 +212,7 @@ void view_simple(const char *str)
 int main(int argc, char **argv)
 {
 	int opt;
+	char *intext = NULL;
 
 	while((opt = getopt_long_only(argc, argv, "", options, NULL)) != -1) {
 		switch(opt) {
@@ -194,9 +221,9 @@ int main(int argc, char **argv)
 				exit(0);
 				break;
 			case O_SIZE:
-				scale= atoi(optarg);
-				if(scale <= 0) {
-					fprintf(stderr, "Invalid size: %d\n", scale);
+				size = atoi(optarg);
+				if(size <= 0) {
+					fprintf(stderr, "Invalid size: %d\n", size);
 					exit(1);
 				}
 				break;
@@ -244,6 +271,9 @@ int main(int argc, char **argv)
 			case O_CASE:
 				casesensitive = 1;
 				break;
+			case O_IGNORECASE:
+				casesensitive = 0;
+				break;
 			case O_8BIT:
 				eightbit = 1;
 				break;
@@ -255,17 +285,23 @@ int main(int argc, char **argv)
 	}
 	if(argc == 1) {
 		usage();
-		exit(1);
+		exit(0);
 	}
-	if(optind < argc) {
-		if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-			fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
-			return -1;
-		}
-		view_simple(argv[optind]);
 
-		SDL_Quit();
+	if(optind < argc) {
+		intext = argv[optind];
 	}
+	if(intext == NULL) {
+		intext = readStdin();
+	}
+
+	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
+		return -1;
+	}
+	view_simple(intext);
+
+	SDL_Quit();
 
 	return 0;
 }
