@@ -52,7 +52,8 @@ void test_numbit3(void)
 	num[400] = '\0';
 	QRinput_append(stream, QR_MODE_NUM, 400, (unsigned char *)num);
 	bits = QRinput_estimateBitStreamSize(stream, 0);
-	testEndExp(bits == 1362);
+	/* 4 + 10 + 133*10 + 4 = 1348 */
+	testEndExp(bits == 1348);
 
 	QRinput_append(gstream, QR_MODE_NUM, 400, (unsigned char *)num);
 	QRinput_free(stream);
@@ -91,6 +92,21 @@ void test_8(void)
 	QRinput_free(stream);
 }
 
+void test_structure(void)
+{
+	QRinput *stream;
+	int bits;
+
+	testStart("Estimation of a structure-append header");
+	stream = QRinput_new();
+	QRinput_insertStructuredAppendHeader(stream, 10, 1, 0);
+	bits = QRinput_estimateBitStreamSize(stream, 1);
+	testEndExp(bits == 20);
+
+	QRinput_insertStructuredAppendHeader(gstream, 10, 1, 0);
+	QRinput_free(stream);
+}
+
 void test_kanji(void)
 {
 	int res;
@@ -120,7 +136,7 @@ void test_mix(void)
 
 	testStart("Estimation of Mixed stream");
 	bits = QRinput_estimateBitStreamSize(gstream, 0);
-	testEndExp(bits == (41 + 68 + 1362 + 41 + 76 + 38));
+	testEndExp(bits == (41 + 68 + 1348 + 41 + 76 + 38 + 20));
 	QRinput_free(gstream);
 }
 
@@ -134,6 +150,7 @@ int main(int argc, char **argv)
 	test_an();
 	test_8();
 	test_kanji();
+	test_structure();
 	test_mix();
 
 	report();

@@ -1,3 +1,80 @@
+2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Bumped version to 3.0.0.
+	* qrencode.[ch]:
+	  - QRcode_encodeInput() has changed the API. Previously it takes a
+	    QRinput, version and level, but now it takes only a QRinput, because
+		QRinput holds the version and level in it. From 3.0.0, you should set
+		them by calling QRinput_setVersion() and
+		QRinput_setErrorCorrectionLevel(), or use QRinput_new2() to
+		instantiate a QRinput object.
+
+2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrspe.c:
+	  - NULL check has been added.
+	* split.[ch]:
+	  - API changed.
+	* qrencode.c:
+	  - Arguments (version and level) are now checked in QRcode_encodeMask().
+	    Internal functions trust the arguments are valid.
+	  - Error checks improved.
+	* qrinput.c:
+	  - Error checks improved.
+	* qrencode.h:
+	  - Documentation improvements.
+
+2008.04.13 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.c, qrencode_innter.h, tests/view_qrcode.c:
+	  - Changed API of QRcode_encodeMask().
+	* qrencode.[ch], qrinput.[ch], split.[ch]:
+	  - Some functions now set errno appropriately.
+
+2008.04.09 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.h, qrinput.c:
+	  - QRinput_Struct_insertStructuredAppendHeaders() and
+	    QRinput_insertStructuredAppendHeader now returns error, when the input
+		contains too many structured inputs.
+	* qrencode.c:
+	  - QRcode_encodeInputToStructured() now returns NULL when
+	    QRinput_splitQRinputToStruct() fails.
+	* tests/view_qrcode.c:
+	  - Segmentation fault bug has been fixed. (see previous memo)
+
+2008.04.08 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrinput.c:
+	  - Fixed a bug in QRinput_estimateBitStreamSizeOfEntry(). It could over-
+	    estimate the size.
+	* rscode.c:
+	  - Optimized the order of the parameters equality test in init_rs().
+	* qrspec.c, qrspec.h:
+	  - Added QRspec_clearCache().
+	* tests/test_estimatebit.c:
+	  - Bug fixed in test_numbit3().
+
+2008.04.07 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Bumped version to 2.1.0.
+	* Structured append is now supported (patches from Yusuke Mihara):
+	  - Two new types, QRcode_List and QRinput_Struct, have been added.
+	  - Following functions have been added:
+	    - QRcode_encodeStructuredInput()
+	    - QRcode_encodeStringStructured()
+	    - QRcode_encodeString8bitStructured()
+	  - Some functions to handle structured append symbols have been added.
+	    See Doxygen-ized descriptions for the details.
+	* qrenc.c:
+	  - "-S" option has been added for structured append.
+	* split.h:
+	  - "extern" was dropped.
+	* qrinput.h, qrencode.h:
+	  - Moved declarations of QRinput_{get,set}{Version,ErrorCorrectionLevel}
+	    from qrinput.h to qrencode.h. Now they are publicly accessible.
+	* qrencode.h, qrinput.h, qrinput.c:
+	  - Added QRinput_new2().
+	  - QRinput_newEntry(), QRinput_freeEntry have been renamed to
+	    QRinput_List_newEntry(), QRinput_List_freeEntry().
+	* split.c:
+	  - Bug fix: Split_eat8() now eats at least 1 byte. Previously it could
+	    produce a 0-length input entry.
+
 2008.01.23 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.1.in, Makefile.am, configure.ac:
 	  - Manpage of qrencode has been added.
@@ -11,7 +88,7 @@
 	  - Followed recent API changes.
 	  - Added new test "test_toupper()".
 	* qrenc.c, tests/view_qrcode.c:
-	  - Source-level compatiblity has been improved.
+	  - Source-level compatibility has been improved.
 	  - view_qrcode now accepts stdin like qrencode.
 	  - Usage message has been updated/fixed.
 	* Copyright year has been updated.

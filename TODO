@@ -1,10 +1,15 @@
 Thread unsafe.
 Only two functions, QRspec_newFrame() and init_rs(), are thread unsafe, but
 all of qrencode functions are thread unsafe because of them.
+Version 3.0 of libqrencode will introduce semaphores to avoid this problem.
+It also requires, however, a kind of init function of libqrencode such as
+QRencode_init().
 
 This package contains
 
-*.c and *.h files (total):  5916 lines, 146312 bytes.
-configure script         : 22510 lines, 724802 bytes.
+*.c and *.h files (total):  7967 lines, 196078 bytes.
+configure script         : 22511 lines, 724922 bytes.
 
 It's absolutely crazy.
+
+This library does not return any error code (just returns NULL silently).

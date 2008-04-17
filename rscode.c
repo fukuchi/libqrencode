@@ -204,12 +204,12 @@ RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 	RS *rs;
 
 	for(rs = rslist; rs != NULL; rs = rs->next) {
+		if(rs->nroots != nroots) continue;
+		if(rs->pad != pad) continue;
 		if(rs->mm != symsize) continue;
 		if(rs->gfpoly != gfpoly) continue;
 		if(rs->fcr != fcr) continue;
 		if(rs->prim != prim) continue;
-		if(rs->nroots != nroots) continue;
-		if(rs->pad != pad) continue;
 
 		return rs;
 	}

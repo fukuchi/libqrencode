@@ -91,6 +91,7 @@ void test_iterate2()
 	testEnd(err);
 }
 
+#if 0
 void print_filler(void)
 {
 	int width;
@@ -138,6 +139,7 @@ void test_filler(void)
 	}
 	testEnd(err);
 }
+#endif
 
 void print_mask(void)
 {
@@ -381,7 +383,9 @@ void test_encode(void)
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	for(mask=0; mask<8; mask++) {
-		qrcode = QRcode_encodeMask(stream, 1, QR_ECLEVEL_M, mask);
+		QRinput_setVersion(stream, 1);
+		QRinput_setErrorCorrectionLevel(stream, QR_ECLEVEL_M);
+		qrcode = QRcode_encodeMask(stream, mask);
 		w = qrcode->width;
 		frame = qrcode->data;
 		for(y=0; y<w; y++) {
@@ -415,9 +419,9 @@ void test_encode3(void)
 
 	testStart("Compare encodeString and encodeInput");
 	code1 = QRcode_encodeString("0123456", 0, QR_ECLEVEL_L, QR_MODE_8, 0);
-	input = QRinput_new();
+	input = QRinput_new2(0, QR_ECLEVEL_L);
 	QRinput_append(input, QR_MODE_NUM, 7, (unsigned char *)"0123456");
-	code2 = QRcode_encodeInput(input, 0, QR_ECLEVEL_L);
+	code2 = QRcode_encodeInput(input);
 	testEnd(memcmp(code1->data, code2->data, code1->width * code1->width));
 
 	QRcode_free(code1);
@@ -476,9 +480,9 @@ void test_01234567(void)
 0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc1, 0xc0, 0x85, 0x03, 0x03, 0x03, 0x02, 0x03, 0x02, 0x02, 0x03, 0x02, 0x03, 0x02, 0x02};
 
 	testStart("Encode 01234567 in 1-M");
-	stream = QRinput_new();
+	stream = QRinput_new2(1, QR_ECLEVEL_M);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	qrcode = QRcode_encodeInput(stream, 1, QR_ECLEVEL_M);
+	qrcode = QRcode_encodeInput(stream);
 	for(i=0; i<qrcode->width * qrcode->width; i++) {
 		if(qrcode->data[i] != correct[i]) {
 			err++;
@@ -497,9 +501,9 @@ void print_01234567(void)
 	int x, y, w;
 	QRcode *qrcode;
 
-	stream = QRinput_new();
+	stream = QRinput_new2(1, QR_ECLEVEL_M);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	qrcode = QRcode_encodeInput(stream, 1, QR_ECLEVEL_M);
+	qrcode = QRcode_encodeInput(stream);
 	w = qrcode->width;
 	frame = qrcode->data;
 	for(y=0; y<w; y++) {
@@ -512,12 +516,88 @@ void print_01234567(void)
 	QRcode_free(qrcode);
 }
 
+void test_invalid_input(void)
+{
+	QRinput *input;
+	QRcode *code;
+
+	testStart("Testing invalid input.");
+	input = QRinput_new();
+	QRinput_append(input, QR_MODE_AN, 5, (unsigned char *)"TEST1");
+	input->version = -1;
+	input->level = QR_ECLEVEL_L;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid version(-1)  was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	input->version = 41;
+	input->level = QR_ECLEVEL_L;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid version(41) access was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	input->version = 1;
+	input->level = QR_ECLEVEL_H + 1;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid level(H+1) access was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	input->version = 1;
+	input->level = -1;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid level(-1) access was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	QRinput_free(input);
+
+	testFinish();
+}
+
+void test_struct_semilong(void)
+{
+	QRcode_List *codes, *list;
+	char *str = "asdfasdfasdfasdfasdfASDFASDASDFASDFAsdfasdfasdfasdASDFASDFADSADadsfasdf";
+	int num;
+
+	testStart("Testing semi-long structured-append symbols");
+	codes = QRcode_encodeString8bitStructured(str, 1, QR_ECLEVEL_L);
+	list = codes;
+	num = 0;
+	while(list != NULL) {
+		num++;
+		assert_equal(list->code->version, 1, "version number is %d (1 expected)\n", list->code->version);
+		list = list->next;
+	}
+	testFinish();
+	QRcode_List_free(codes);
+}
+
+void test_struct_example(void)
+{
+	QRcode_List *codes, *list;
+	char *str = "an example of four Structured Append symbols,";
+	int num;
+
+	testStart("Testing the example of structured-append symbols");
+	codes = QRcode_encodeString8bitStructured(str, 1, QR_ECLEVEL_M);
+	list = codes;
+	num = 0;
+	while(list != NULL) {
+		num++;
+		assert_equal(list->code->version, 1, "version number is %d (1 expected)\n", list->code->version);
+		list = list->next;
+	}
+	assert_equal(num, 4, "number of symbols is %d (4 expected).", num);
+	testFinish();
+	QRcode_List_free(codes);
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
 	test_iterate2();
 //	print_filler();
-	test_filler();
+//	test_filler();
 //	print_mask();
 	test_format();
 	test_eval();
@@ -528,8 +608,12 @@ int main(int argc, char **argv)
 	test_encode3();
 	test_encodeTooLong();
 	test_01234567();
+	test_invalid_input();
 //	print_01234567();
+	test_struct_example();
+	test_struct_semilong();
 
+	QRspec_clearCache();
 	report();
 
 	return 0;

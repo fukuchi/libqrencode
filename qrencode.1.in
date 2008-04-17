@@ -36,6 +36,9 @@ specify the version of the symbol. (default=auto)
 .B \-m NUMBER
 specify the width of margin. (default=4)
 .TP
+.B \-S
+make structured symbols. Version must be specified.
+.TP
 .B \-k
 assume that the input text contains kanji (shift-jis).
 .TP

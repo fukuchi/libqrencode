@@ -81,8 +81,8 @@ void test_split1(void)
 	BitStream *stream;
 
 	testStart("Split test: null string");
-	input = QRinput_new();
-	Split_splitStringToQRinput("", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("", input, QR_MODE_8, 0);
 	stream = QRinput_mergeBitStream(input);
 	testEndExp(BitStream_size(stream) == 0);
 	QRinput_free(input);
@@ -96,8 +96,8 @@ void test_split2(void)
 	int err = 0;
 
 	testStart("Split test: single typed strings (num)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("0123", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("0123", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "n", 4)) {
 		err++;
@@ -107,8 +107,8 @@ void test_split2(void)
 
 	err = 0;
 	testStart("Split test: single typed strings (num2)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("12345678901234567890", input, 0, QR_MODE_KANJI, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("12345678901234567890", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "n", 20)) {
 		err++;
@@ -124,8 +124,8 @@ void test_split3(void)
 	int err = 0;
 
 	testStart("Split test: single typed strings (an)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("ab:-E", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "a", 5)) {
 		printQrinput(input);
@@ -136,8 +136,8 @@ void test_split3(void)
 
 	err = 0;
 	testStart("Split test: num + an");
-	input = QRinput_new();
-	Split_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("0123abcde", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "a", 9)) {
 		err++;
@@ -147,8 +147,8 @@ void test_split3(void)
 
 	err = 0;
 	testStart("Split test: an + num + an");
-	input = QRinput_new();
-	Split_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("Ab345fg", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "a", 7)) {
 		err++;
@@ -167,8 +167,8 @@ void test_split4(void)
 #define CHUNKC "1234567"
 
 	testStart("Split test: an and num entries");
-	input = QRinput_new();
-	Split_splitStringToQRinput(CHUNKA/**/CHUNKB, input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(CHUNKA/**/CHUNKB, input, QR_MODE_8, 0);
 	i1 = QRinput_new();
 	QRinput_append(i1, QR_MODE_AN, 17, (unsigned char *)CHUNKA/**/CHUNKB);
 	i2 = QRinput_new();
@@ -184,8 +184,8 @@ void test_split4(void)
 	QRinput_free(i2);
 
 	testStart("Split test: num and an entries");
-	input = QRinput_new();
-	Split_splitStringToQRinput(CHUNKB/**/CHUNKA, input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(CHUNKB/**/CHUNKA, input, QR_MODE_8, 0);
 	i1 = QRinput_new();
 	QRinput_append(i1, QR_MODE_AN, 17, (unsigned char *)CHUNKB/**/CHUNKA);
 	i2 = QRinput_new();
@@ -201,8 +201,8 @@ void test_split4(void)
 	QRinput_free(i2);
 
 	testStart("Split test: num and an entries (should be splitted)");
-	input = QRinput_new();
-	Split_splitStringToQRinput(CHUNKC/**/CHUNKA, input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(CHUNKC/**/CHUNKA, input, QR_MODE_8, 0);
 	i1 = QRinput_new();
 	QRinput_append(i1, QR_MODE_AN, 18, (unsigned char *)CHUNKC/**/CHUNKA);
 	i2 = QRinput_new();
@@ -225,8 +225,8 @@ void test_split5(void)
 	int err = 0;
 
 	testStart("Split test: bit, an, bit, num");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "8a8n", 2, 11, 2, 6)) {
 		err++;
@@ -242,8 +242,8 @@ void test_split6(void)
 	int err = 0;
 
 	testStart("Split test: kanji, an, kanji, num");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, 0, QR_MODE_KANJI, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "kakn", 2, 11, 2, 6)) {
 		printQrinput(input);
@@ -260,8 +260,8 @@ void test_split7(void)
 	int err = 0;
 
 	testStart("Split test: an and num as bits");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcde\x82\xb0""12345", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("\x82\xd9""abcde\x82\xb0""12345", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "8n", 9, 5)) {
 		err++;
@@ -277,8 +277,8 @@ void test_split8(void)
 	int err = 0;
 
 	testStart("Split test: terminated with a half of kanji code");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x82\xd9""abcdefgh\x82", input, 0, QR_MODE_KANJI, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("\x82\xd9""abcdefgh\x82", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "ka8", 2, 8, 1)) {
 		err++;
@@ -294,8 +294,8 @@ void test_split3c(void)
 	int err = 0;
 
 	testStart("Split test: single typed strings (an, case-sensitive)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("ab:-E", input, 0, QR_MODE_8, 1);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("ab:-E", input, QR_MODE_8, 1);
 	list = input->head;
 	if(inputTest(list, "8", 5)) {
 		err++;
@@ -305,8 +305,8 @@ void test_split3c(void)
 
 	err = 0;
 	testStart("Split test: num + an");
-	input = QRinput_new();
-	Split_splitStringToQRinput("0123abcde", input, 0, QR_MODE_KANJI, 1);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("0123abcde", input, QR_MODE_KANJI, 1);
 	list = input->head;
 	if(inputTest(list, "n8", 4, 5)) {
 		err++;
@@ -316,8 +316,8 @@ void test_split3c(void)
 
 	err = 0;
 	testStart("Split test: an + num + an");
-	input = QRinput_new();
-	Split_splitStringToQRinput("Ab345fg", input, 0, QR_MODE_KANJI, 1);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("Ab345fg", input, QR_MODE_KANJI, 1);
 	list = input->head;
 	if(inputTest(list, "8", 7)) {
 		printQrinput(input);
@@ -334,8 +334,8 @@ void test_toupper(void)
 	int err = 0;
 
 	testStart("Split test: check dupAndToUpper (lower->upper)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("abcde", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("abcde", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "a", 5)) {
 		err++;
@@ -348,8 +348,8 @@ void test_toupper(void)
 
 	err = 0;
 	testStart("Split test: check dupAndToUpper (kanji)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, 0, QR_MODE_KANJI, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "k", 10)) {
 		printQrinput(input);
@@ -363,8 +363,8 @@ void test_toupper(void)
 
 	err = 0;
 	testStart("Split test: check dupAndToUpper (8bit)");
-	input = QRinput_new();
-	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, 0, QR_MODE_8, 0);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "8", 10)) {
 		printQrinput(input);

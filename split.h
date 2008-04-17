@@ -29,6 +29,16 @@
 #define __SPLIT_H__
 
 #include "qrencode.h"
-void Split_splitStringToQRinput(const char *string, QRinput *input,
-		int version, QRencodeMode hint, int casesensitive);
+
+/**
+ * Split the input string (null terminated) into QRinput.
+ * @param string input string
+ * @param hint give QR_MODE_KANJI if the input string contains Kanji character encoded in Shift-JIS. If not, give QR_MODE_8.
+ * @param casesensitive 0 for case-insensitive encoding (all alphabet characters are replaced to UPPER-CASE CHARACTERS.
+ * @retval 0 success.
+ * @retval -1 an error occurred.
+ */
+extern int Split_splitStringToQRinput(const char *string, QRinput *input,
+		QRencodeMode hint, int casesensitive);
+
 #endif /* __SPLIT_H__ */

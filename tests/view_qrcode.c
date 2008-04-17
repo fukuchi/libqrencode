@@ -3,10 +3,9 @@
 #include <unistd.h>
 #include <SDL.h>
 #include <getopt.h>
-#include "common.h"
-#include "../qrencode_inner.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
+#include "../qrencode_inner.h"
 #include "../split.h"
 
 static SDL_Surface *screen = NULL;
@@ -15,8 +14,12 @@ static int eightbit = 0;
 static int version = 1;
 static int size = 4;
 static int margin = 4;
+static int structured = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
+
+static char **textv;
+static int textc;
 
 enum {
 	O_HELP,
@@ -28,9 +31,10 @@ enum {
 	O_CASE,
 	O_IGNORECASE,
 	O_8BIT,
+	O_STRUCTURED,
 };
 
-const struct option options[] = {
+static const struct option options[] = {
 	{"h", no_argument      , NULL, O_HELP},
 	{"l", required_argument, NULL, O_LEVEL},
 	{"s", required_argument, NULL, O_SIZE},
@@ -40,6 +44,7 @@ const struct option options[] = {
 	{"c", no_argument      , NULL, O_CASE},
 	{"i", no_argument      , NULL, O_IGNORECASE},
 	{"8", no_argument      , NULL, O_8BIT},
+	{"S", no_argument      , NULL, O_STRUCTURED},
 	{NULL, 0, NULL, 0}
 };
 
@@ -58,6 +63,7 @@ static void usage(void)
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
+"  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
@@ -67,7 +73,7 @@ static void usage(void)
 	VERSION);
 }
 
-#define MAX_DATA_SIZE 7090 /* from the specification */
+#define MAX_DATA_SIZE (7090 * 16) /* from the specification */
 static char *readStdin(void)
 {
 	char *buffer;
@@ -89,49 +95,131 @@ static char *readStdin(void)
 	return buffer;
 }
 
-void view_simple(const char *str)
+static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 {
-	QRinput *stream;
-	unsigned char *frame, *q;
-	int width;
-	int x, y;
 	int pitch;
-	int flag = 1;
-	int mask = -1;
-	QRcode *qrcode;
-	SDL_Event event;
-	int loop;
+	int x, y, width;
+	unsigned char *p;
 	SDL_Rect rect;
 
-	stream = QRinput_new();
-	if(eightbit) {
-		QRinput_append(stream, QR_MODE_8, strlen(str), (unsigned char *)str);
-	} else {
-		Split_splitStringToQRinput(str, stream, 0, QR_MODE_KANJI, casesensitive);
+	ox += margin * size;
+	oy += margin * size;
+	width = qrcode->width;
+	p = qrcode->data;
+	pitch = screen->pitch;
+	for(y=0; y<width; y++) {
+		for(x=0; x<width; x++) {
+			rect.x = ox + x * size;
+			rect.y = oy + y * size;
+			rect.w = size;
+			rect.h = size;
+			SDL_FillRect(screen, &rect, (*p&1)?0:0xffffff);
+			p++;
+		}
 	}
+}
+
+void draw_singleQRcode(QRinput *stream, int mask)
+{
+	QRcode *qrcode;
+	int width;
+
+	QRinput_setVersion(stream, version);
+	QRinput_setErrorCorrectionLevel(stream, level);
+	qrcode = QRcode_encodeMask(stream, mask);
+	version = qrcode->version;
+	width = (qrcode->width + margin * 2) * size;
+
+	screen = SDL_SetVideoMode(width, width, 32, 0);
+	SDL_FillRect(screen, NULL, 0xffffff);
+	draw_QRcode(qrcode, 0, 0);
+	SDL_Flip(screen);
+	QRcode_free(qrcode);
+}
+
+void draw_structuredQRcode(QRinput_Struct *s, int mask)
+{
+	int i, w, h, n, x, y;
+	int swidth;
+	QRcode_List *qrcodes, *p;
+
+	qrcodes = QRcode_encodeStructuredInput(s);
+	swidth = (qrcodes->code->width + margin * 2) * size;
+	n = QRcode_List_size(qrcodes);
+	w = (n < 4)?n:4;
+	h = (n - 1) / 4 + 1;
+
+	screen = SDL_SetVideoMode(swidth * w, swidth * h, 32, 0);
+	SDL_FillRect(screen, NULL, 0xffffff);
+
+	p = qrcodes;
+	for(i=0; i<n; i++) {
+		x = (i % 4) * swidth;
+		y = (i / 4) * swidth;
+		draw_QRcode(p->code, x, y);
+		p = p->next;
+	}
+	SDL_Flip(screen);
+	QRcode_List_free(qrcodes);
+}
+
+void draw_structuredQRcodeFromText(int argc, char **argv, int mask)
+{
+	QRinput_Struct *s;
+	QRinput *input;
+	int i;
+
+	s = QRinput_Struct_new();
+	for(i=0; i<argc; i++) {
+		input = QRinput_new2(version, level);
+		if(eightbit) {
+			QRinput_append(input, QR_MODE_8, strlen(argv[i]), (unsigned char *)argv[i]);
+		} else {
+			Split_splitStringToQRinput(argv[i], input, hint, casesensitive);
+		}
+		QRinput_Struct_appendInput(s, input);
+	}
+	if(QRinput_Struct_insertStructuredAppendHeaders(s) == 0) {
+		draw_structuredQRcode(s, mask);
+		QRinput_Struct_free(s);
+	} else {
+		fprintf(stderr, "Too many inputs.\n");
+	}
+}
+
+void draw_structuredQRcodeFromQRinput(QRinput *stream, int mask)
+{
+	QRinput_Struct *s;
+
+	QRinput_setVersion(stream, version);
+	QRinput_setErrorCorrectionLevel(stream, level);
+	s = QRinput_splitQRinputToStruct(stream);
+	if(s != NULL) {
+		draw_structuredQRcode(s, mask);
+		QRinput_Struct_free(s);
+	} else {
+		fprintf(stderr, "Input data is too large for this setting.\n");
+	}
+}
+
+void view(int mode, QRinput *input)
+{
+	int flag = 1;
+	int mask = -1;
+	SDL_Event event;
+	int loop;
 
 	while(flag) {
-		qrcode = QRcode_encodeMask(stream, version, level, mask);
-		width = qrcode->width;
-		frame = qrcode->data;
-		version = qrcode->version;
-		printf("Version %d, Leve %c, Mask %d.\n", version, levelChar[level], mask);
-		screen = SDL_SetVideoMode((width + margin*2) * size, (width + margin*2) * size, 32, 0);
-		pitch = screen->pitch;
-		q = frame;
-		SDL_FillRect(screen, NULL, 0xffffff);
-		for(y=0; y<width; y++) {
-			for(x=0; x<width; x++) {
-				rect.x = (margin + x) * size;
-				rect.y = (margin + y) * size;
-				rect.w = size;
-				rect.h = size;
-				SDL_FillRect(screen, &rect, (*q&1)?0:0xffffff);
-				q++;
+		if(mode) {
+			draw_structuredQRcodeFromText(textc, textv, mask);
+		} else {
+			if(structured) {
+				draw_structuredQRcodeFromQRinput(input, mask);
+			} else {
+				draw_singleQRcode(input, mask);
 			}
 		}
-		SDL_Flip(screen);
-		QRcode_free(qrcode);
+		printf("Version %d, Level %c, Mask %d.\n", version, levelChar[level], mask);
 		loop = 1;
 		while(loop) {
 			usleep(10000);
@@ -205,8 +293,30 @@ void view_simple(const char *str)
 			}
 		}
 	}
+}
 
-	QRinput_free(stream);
+void view_simple(const char *str)
+{
+	QRinput *input;
+
+	input = QRinput_new2(version, level);
+	if(eightbit) {
+		QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
+	} else {
+		Split_splitStringToQRinput(str, input, hint, casesensitive);
+	}
+
+	view(0, input);
+
+	QRinput_free(input);
+}
+
+void view_multiText(char **argv, int argc)
+{
+	textc = argc;
+	textv = argv;
+
+	view(1, NULL);
 }
 
 int main(int argc, char **argv)
@@ -265,6 +375,8 @@ int main(int argc, char **argv)
 					exit(1);
 				}
 				break;
+			case O_STRUCTURED:
+				structured = 1;
 			case O_KANJI:
 				hint = QR_MODE_KANJI;
 				break;
@@ -299,7 +411,11 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
 		return -1;
 	}
-	view_simple(intext);
+	if(structured && (argc - optind > 1)) {
+		view_multiText(argv + optind, argc - optind);
+	} else {
+		view_simple(intext);
+	}
 
 	SDL_Quit();
 

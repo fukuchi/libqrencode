@@ -48,33 +48,35 @@ struct _QRinput {
 	QRinput_List *tail;
 };
 
-/**
- * Get current error correction level.
- * @param input input data.
- * @return Current error correcntion level.
- */
-extern QRecLevel QRinput_getErrorCorrectionLevel(QRinput *input);
+/******************************************************************************
+ * Structured append input data
+ *****************************************************************************/
+typedef struct _QRinput_InputList QRinput_InputList;
+
+struct _QRinput_InputList {
+	QRinput *input;
+	QRinput_InputList *next;
+};
+
+struct _QRinput_Struct {
+	int size;					///< number of structured symbols
+	int parity;
+	QRinput_InputList *head;
+	QRinput_InputList *tail;
+};
 
 /**
- * Set error correction level of the QR-code that is to be encoded.
+ * Insert a structured-append header to the head of the input data.
  * @param input input data.
- * @param level Error correction level.
+ * @param size number of structured symbols.
+ * @param index index number of the symbol. (1 <= index <= size)
+ * @param parity parity among input data. (NOTE: each symbol of a set of structured symbols has the same parity data)
+ * @retval 0 success.
+ * @retval -1 error occurred and errno is set to indeicate the error. See Execptions for the details.
+ * @throw EINVAL invalid parameter.
+ * @throw ENOMEM unable to allocate memory.
  */
-extern void QRinput_setErrorCorrectionLevel(QRinput *input, QRecLevel level);
-
-/**
- * Get current version.
- * @param input input data.
- * @return current version.
- */
-extern int QRinput_getVersion(QRinput *input);
-
-/**
- * Set version of the QR-code that is to be encoded.
- * @param input input data.
- * @param version version number (0 = auto)
- */
-extern void QRinput_setVersion(QRinput *input, int version);
+extern int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int index, unsigned char parity);
 
 /**
  * Pack all bit streams padding bits into a byte array.
@@ -82,6 +84,7 @@ extern void QRinput_setVersion(QRinput *input, int version);
  * @return padded merged byte stream
  */
 extern unsigned char *QRinput_getByteStream(QRinput *input);
+
 
 extern int QRinput_estimateBitsModeNum(int size);
 extern int QRinput_estimateBitsModeAn(int size);
@@ -91,6 +94,9 @@ extern int QRinput_estimateBitsModeKanji(int size);
 extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
 extern BitStream *QRinput_mergeBitStream(QRinput *input);
 extern BitStream *QRinput_getBitStream(QRinput *input);
+extern int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits);
+extern QRinput *QRinput_dup(QRinput *input);
+extern int QRinput_splitEntry(QRinput_List *entry, int bytes);
 
 extern const signed char QRinput_anTable[];
 extern QRencodeMode QRinput_identifyMode(const char *string);
@@ -102,5 +108,15 @@ extern QRencodeMode QRinput_identifyMode(const char *string);
  */
 #define QRinput_lookAnTable(__c__) \
 	((__c__ & 0x80)?-1:QRinput_anTable[(int)__c__])
+
+/**
+ * Length of a segment of structured-append header.
+ */
+#define STRUCTURE_HEADER_BITS 20
+
+/**
+ * Maximum number of symbols in a set of structured-appended symbols.
+ */
+#define MAX_STRUCTURED_SYMBOLS 16
 
 #endif /* __QRINPUT_H__ */

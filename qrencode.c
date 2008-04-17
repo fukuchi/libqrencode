@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "qrencode.h"
 #include "qrencode_inner.h"
@@ -65,6 +66,10 @@ QRRawCode *QRraw_new(QRinput *input)
 	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
 	raw->datacode = p;
 	spec = QRspec_getEccSpec(input->version, input->level);
+	if(spec == NULL) {
+		free(raw);
+		return NULL;
+	}
 	raw->version = input->version;
 	raw->blocks = QRspec_rsBlockNum(spec);
 	raw->rsblock = (RSblock *)malloc(sizeof(RSblock) * raw->blocks);
@@ -253,6 +258,7 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 	return &p[y * w + x];
 }
 
+#if 0
 unsigned char *FrameFiller_fillerTest(int version)
 {
 	int width, length;
@@ -292,6 +298,7 @@ unsigned char *FrameFiller_fillerTest(int version)
 
 	return frame;
 }
+#endif
 
 /******************************************************************************
  * Format information
@@ -366,22 +373,27 @@ void QRcode_free(QRcode *qrcode)
 	free(qrcode);
 }
 
-QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask)
+QRcode *QRcode_encodeMask(QRinput *input, int mask)
 {
-	int width;
+	int width, version;
 	QRRawCode *raw;
 	unsigned char *frame, *masked, *p, code, bit;
 	FrameFiller *filler;
 	int i, j;
 	QRcode *qrcode;
 
-	QRinput_setVersion(input, version);
-	QRinput_setErrorCorrectionLevel(input, level);
-
-	raw = QRraw_new(input);
-	if(raw == NULL) {
+	if(input->version < 0 || input->version > QRSPEC_VERSION_MAX) {
+		errno = EINVAL;
 		return NULL;
 	}
+	if(input->level < QR_ECLEVEL_L || input->level > QR_ECLEVEL_H) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	raw = QRraw_new(input);
+	if(raw == NULL) return NULL;
+
 	version = raw->version;
 	width = QRspec_getWidth(version);
 	frame = QRspec_newFrame(version);
@@ -407,10 +419,10 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 	free(filler);
 	/* masking */
 	if(mask < 0) {
-		masked = Mask_mask(width, frame, level);
+		masked = Mask_mask(width, frame, input->level);
 	} else {
 		masked = Mask_makeMask(width, frame, mask);
-		QRcode_writeFormatInformation(width, masked, mask, QRinput_getErrorCorrectionLevel(input));
+		QRcode_writeFormatInformation(width, masked, mask, input->level);
 	}
 	qrcode = QRcode_new(version, width, masked);
 
@@ -419,9 +431,9 @@ QRcode *QRcode_encodeMask(QRinput *input, int version, QRecLevel level, int mask
 	return qrcode;
 }
 
-QRcode *QRcode_encodeInput(QRinput *input, int version, QRecLevel level)
+QRcode *QRcode_encodeInput(QRinput *input)
 {
-	return QRcode_encodeMask(input, version, level, -1);
+	return QRcode_encodeMask(input, -1);
 }
 
 QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level)
@@ -429,9 +441,11 @@ QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level
 	QRinput *input;
 	QRcode *code;
 
-	input = QRinput_new();
+	input = QRinput_new2(version, level);
+	if(input == NULL) return NULL;
+
 	QRinput_append(input, QR_MODE_8, strlen(string), (unsigned char *)string);
-	code = QRcode_encodeInput(input, version, level);
+	code = QRcode_encodeInput(input);
 	QRinput_free(input);
 
 	return code;
@@ -441,15 +455,171 @@ QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QR
 {
 	QRinput *input;
 	QRcode *code;
+	int ret;
 
+	if(hint != QR_MODE_8 && hint != QR_MODE_KANJI) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	input = QRinput_new2(version, level);
+	if(input == NULL) return NULL;
+
+	ret = Split_splitStringToQRinput(string, input, hint, casesensitive);
+	if(ret < 0) {
+		QRinput_free(input);
+		return NULL;
+	}
+
+	code = QRcode_encodeInput(input);
+	QRinput_free(input);
+
+	return code;
+}
+
+/******************************************************************************
+ * Structured QR-code encoding
+ *****************************************************************************/
+
+static QRcode_List *QRcode_List_newEntry(void)
+{
+	QRcode_List *entry;
+
+	entry = (QRcode_List *)malloc(sizeof(QRcode_List));
+	if(entry == NULL) return NULL;
+
+	entry->next = NULL;
+	entry->code = NULL;
+
+	return entry;
+}
+
+static void QRcode_List_freeEntry(QRcode_List *entry)
+{
+	if(entry->code != NULL) QRcode_free(entry->code);
+	free(entry);
+}
+
+void QRcode_List_free(QRcode_List *qrlist)
+{
+	QRcode_List *list = qrlist, *next;
+
+	while(list != NULL) {
+		next = list->next;
+		QRcode_List_freeEntry(list);
+		list = next;
+	}
+}
+
+int QRcode_List_size(QRcode_List *qrlist)
+{
+	QRcode_List *list = qrlist;
+	int size = 0;
+
+	while(list != NULL) {
+		size++;
+		list = list->next;
+	}
+
+	return size;
+}
+
+#if 0
+static unsigned char QRcode_parity(const char *str, int size)
+{
+	unsigned char parity = 0;
+	int i;
+
+	for(i=0; i<size; i++) {
+		parity ^= str[i];
+	}
+
+	return parity;
+}
+#endif
+
+QRcode_List *QRcode_encodeStructuredInput(QRinput_Struct *s)
+{
+	QRcode_List *head = NULL;
+	QRcode_List *tail = NULL;
+	QRinput_InputList *list = s->head;
+
+	while(list != NULL) {
+		if(head == NULL) {
+			head = QRcode_List_newEntry();
+			tail = head;
+		} else {
+			tail->next = QRcode_List_newEntry();
+			tail = tail->next;
+		}
+		tail->code = QRcode_encodeInput(list->input);
+		if(tail->code == NULL) {
+			QRcode_List_free(head);
+			return NULL;
+		}
+		list = list->next;
+	}
+
+	return head;
+}
+
+static QRcode_List *QRcode_encodeInputToStructured(QRinput *input)
+{
+	QRinput_Struct *s;
+	QRcode_List *codes;
+
+	s = QRinput_splitQRinputToStruct(input);
+	if(s == NULL) return NULL;
+
+	codes = QRcode_encodeStructuredInput(s);
+	QRinput_Struct_free(s);
+
+	return codes;
+}
+
+QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, QRecLevel level)
+{
+	QRinput *input;
+	QRcode_List *codes;
+	int ret;
+
+	if(version <= 0) return NULL;
+
+	input = QRinput_new2(version, level);
+	if(input == NULL) return NULL;
+
+	ret = QRinput_append(input, QR_MODE_8, strlen(string), (unsigned char *)string);
+	if(ret < 0) {
+		QRinput_free(input);
+		return NULL;
+	}
+	codes = QRcode_encodeInputToStructured(input);
+	QRinput_free(input);
+
+	return codes;
+}
+
+QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
+{
+	QRinput *input;
+	QRcode_List *codes;
+	int ret;
+
+	if(version <= 0) return NULL;
 	if(hint != QR_MODE_8 && hint != QR_MODE_KANJI) {
 		return NULL;
 	}
 
-	input = QRinput_new();
-	Split_splitStringToQRinput(string, input, version, hint, casesensitive);
-	code = QRcode_encodeInput(input, version, level);
+	input = QRinput_new2(version, level);
+	if(input == NULL) return NULL;
+
+	ret = Split_splitStringToQRinput(string, input, hint, casesensitive);
+	if(ret < 0) {
+		QRinput_free(input);
+		return NULL;
+	}
+	codes = QRcode_encodeInputToStructured(input);
 	QRinput_free(input);
 
-	return code;
+	return codes;
 }

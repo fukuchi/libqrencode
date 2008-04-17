@@ -1,4 +1,4 @@
-libqrencode 2.0.0 - QR Code encoding library
+libqrencode 3.0.0 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -7,16 +7,27 @@ symbology that can be scanned by handy terminals such as a mobile phone with
 CCD. The capacity of QR Code is up to 7000 digits or 4000 characters, and has
 high robustness.
 
+Libqrencode accepts a string or a list of data chunks then encodes in a QR Code
+symbol as a bitmap array. While other QR Code applications generate image files,
+using libqrencode allows applications to render QR Code symbols from raw bitmap
+data directly. This library also contains a command-line utility outputs a QR
+Code symbol as a PNG image. It will help lightweight CGI programs.
+
 
 SPECIFICATION
 =============
 Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial
-Standards) X0510:2004 or ISO/IEC 18004. Currently the following features are
-not supported:
+Standards) X0510:2004 or ISO/IEC 18004. Most of features in the specification
+are implemented such as:
+- Numeric, alphabet, Japanese kanji (Shift-JIS) or any 8 bit code can be
+  embedded
+- Optimized encoding of a string
+- Structured-append of symbols
+
+Currently the following features are not supported:
 - ECI and FNC1 mode
-- Structured Append Feature
 - Micro QR Code
-- QR Code model 1
+- QR Code model 1 (deprecated)
 
 
 INSTALL
@@ -24,10 +35,9 @@ INSTALL
 
 Requirements
 ------------
-Some test programs or utility tools requires SDL or PNG, but the library itself
-has no dependencies. You can skip compiling those tools when if you want not to
-install programs using SDL or PNG. If you are trying to compile this library on
-MS-Windows, cygwin or some kinds of UNIX-like environments will be needed.
+Some test programs or utility tools uses SDL or PNG, but the library itself
+has no dependencies. You can skip compiling those tools if you want not to
+install programs using SDL or PNG.
 
 Compile & install
 -----------------
@@ -51,7 +61,7 @@ USAGE
 Basic usages of this library are written in the header file (qrencode.h).
 You can generate a manual of the library by using Doxygen.
 
-WARNING: This library is thread UNSAFE.
+WARNING: Some functions are THREAD UNSAFE. See qrencode.h for the details.
 
 
 LICENSING INFORMATION
@@ -91,3 +101,7 @@ countries.
 
 Reed-Solomon code encoder is written by Phil Karn, KA9Q.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
+
+NANKI Haruo       - improved lower-case characteres encoding
+Philippe Delcroix - improved mask evaluation
+Yusuke Mihara     - structured-append support
