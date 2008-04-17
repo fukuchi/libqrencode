@@ -20,7 +20,7 @@ test_qrspec_SOURCES = test_qrspec.c common.h
 test_qrspec_LDADD = ../libqrencode.la
 
 test_mqrspec_SOURCES = test_mqrspec.c common.h
-test_mqrspec_LDADD = ../mqrspec.o
+test_mqrspec_LDADD = ../libqrencode.la
 
 test_rs_SOURCES = test_rs.c common.h
 test_rs_LDADD = ../libqrencode.la
