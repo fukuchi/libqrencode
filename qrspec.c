@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "qrspec.h"
 
@@ -138,6 +139,7 @@ int QRspec_lengthIndicator(QRencodeMode mode, int version)
 {
 	int l;
 
+	if(mode == QR_MODE_STRUCTURE) return 0;
 	if(version <= 9) {
 		l = 0;
 	} else if(version <= 26) {
@@ -155,6 +157,7 @@ int QRspec_maximumWords(QRencodeMode mode, int version)
 	int bits;
 	int words;
 
+	if(mode == QR_MODE_STRUCTURE) return 3;
 	if(version <= 9) {
 		l = 0;
 	} else if(version <= 26) {
@@ -232,11 +235,11 @@ int *QRspec_getEccSpec(int version, QRecLevel level)
 
 	b1 = eccTable[version][level][0];
 	b2 = eccTable[version][level][1];
-
 	data = QRspec_getDataLength(version, level);
 	ecc  = QRspec_getECCLength(version, level);
 
 	array = (int *)malloc(sizeof(int) * 6);
+	if(array == NULL) return NULL;
 
 	if(b2 == 0) {
 		array[0] = b1;
@@ -570,4 +573,15 @@ unsigned char *QRspec_newFrame(int version)
 	memcpy(frame, frames[version], width * width);
 
 	return frame;
+}
+
+void QRspec_clearCache(void)
+{
+	int i;
+
+	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
+		if(frames[i] != NULL) {
+			free(frames[i]);
+		}
+	}
 }
