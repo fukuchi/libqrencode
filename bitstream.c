@@ -132,6 +132,7 @@ void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 
 unsigned int BitStream_size(BitStream *bstream)
 {
+	if(bstream == NULL) return 0;
 	if(bstream->data == NULL) return 0;
 
 	return strlen(bstream->data);
