@@ -1,3 +1,19 @@
+2008.04.20 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.h:
+	  - QR_MODE_NUL has been added to QRencodeMode. Basically it is used only
+	    by Split_identifyMode().
+	* qrinput.[ch], split.c]:
+	  - QRinput_identifyMode() has been moved to split.c, changed to static
+	    and now needs a hint.
+	* split.c:
+	  - Auto-splitting has been improved.
+	* qrinput.c:
+	  - A memory leak has been fixed.
+	* configure.ac:
+	  - The "--enable-gprof" and "--enable-gcov" options have been added.
+	* Makefile.am:
+	  - man1_MANS has been moved into the "if BUILD_TOOLS - endif" block.
+
 2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Bumped version to 3.0.0.
 	* qrencode.[ch]:

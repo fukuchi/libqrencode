@@ -377,6 +377,24 @@ void test_toupper(void)
 	QRinput_free(input);
 }
 
+void test_splitNum8(void)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int err = 0;
+
+	testStart("Split test: num and 8bit to 8bit");
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput("1abcdefg", input, QR_MODE_8, 1);
+	list = input->head;
+	if(inputTest(list, "8", 8)) {
+		err++;
+		printQRinput(input);
+	}
+	testEnd(err);
+	QRinput_free(input);
+}
+
 int main(int argc, char **argv)
 {
 	test_split1();
@@ -389,6 +407,7 @@ int main(int argc, char **argv)
 	test_split8();
 	test_split3c();
 	test_toupper();
+	test_splitNum8();
 
 	report();
 

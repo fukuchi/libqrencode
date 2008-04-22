@@ -99,7 +99,6 @@ extern QRinput *QRinput_dup(QRinput *input);
 extern int QRinput_splitEntry(QRinput_List *entry, int bytes);
 
 extern const signed char QRinput_anTable[];
-extern QRencodeMode QRinput_identifyMode(const char *string);
 
 /**
  * Look up the alphabet-numeric convesion table (see JIS X0510:2004, pp.19).

@@ -585,30 +585,6 @@ int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 	return -1;
 }
 
-QRencodeMode QRinput_identifyMode(const char *string)
-{
-	unsigned char c, d;
-	unsigned int word;
-
-	c = string[0];
-
-	if((unsigned char)((signed char)c - '0') < 10) {
-		return QR_MODE_NUM;
-	} else if((QRinput_lookAnTable(c)) >= 0) {
-		return QR_MODE_AN;
-	} else {
-		d = string[1];
-		if(d != '\0') {
-			word = ((unsigned int)c << 8) | d;
-			if((word >= 0x8140 && word <= 0x9ffc) || (word >= 0xe040 && word <= 0xebbf)) {
-				return QR_MODE_KANJI;
-			}
-		}
-	}
-
-	return QR_MODE_8;
-}
-
 /******************************************************************************
  * Estimation of the bit length
  *****************************************************************************/
@@ -640,6 +616,8 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 			break;
 		case QR_MODE_STRUCTURE:
 			return STRUCTURE_HEADER_BITS;
+		default:
+			return 0;
 	}
 
 	l = QRspec_lengthIndicator(entry->mode, version);
@@ -1153,11 +1131,6 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 				input->tail = prev;
 			}
 			QRinput_Struct_appendInput(s, input);
-			if(s->size > MAX_STRUCTURED_SYMBOLS) {
-				QRinput_Struct_free(s);
-				errno = ERANGE;
-				return NULL;
-			}
 			input = p;
 			bits = 0;
 		}

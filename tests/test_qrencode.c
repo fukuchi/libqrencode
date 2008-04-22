@@ -557,7 +557,7 @@ void test_struct_semilong(void)
 {
 	QRcode_List *codes, *list;
 	char *str = "asdfasdfasdfasdfasdfASDFASDASDFASDFAsdfasdfasdfasdASDFASDFADSADadsfasdf";
-	int num;
+	int num, size;
 
 	testStart("Testing semi-long structured-append symbols");
 	codes = QRcode_encodeString8bitStructured(str, 1, QR_ECLEVEL_L);
@@ -568,8 +568,23 @@ void test_struct_semilong(void)
 		assert_equal(list->code->version, 1, "version number is %d (1 expected)\n", list->code->version);
 		list = list->next;
 	}
-	testFinish();
+	size = QRcode_List_size(codes);
+	assert_equal(num, size, "QRcode_List_size returns wrong size?");
 	QRcode_List_free(codes);
+
+	codes = QRcode_encodeStringStructured(str, 1, QR_ECLEVEL_L, QR_MODE_8, 1);
+	list = codes;
+	num = 0;
+	while(list != NULL) {
+		num++;
+		assert_equal(list->code->version, 1, "version number is %d (1 expected)\n", list->code->version);
+		list = list->next;
+	}
+	size = QRcode_List_size(codes);
+	assert_equal(num, size, "QRcode_List_size returns wrong size?");
+	QRcode_List_free(codes);
+
+	testFinish();
 }
 
 void test_struct_example(void)

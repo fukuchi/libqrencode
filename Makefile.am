@@ -19,8 +19,6 @@ include_HEADERS = qrencode.h
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libqrencode.pc
 
-man1_MANS = qrencode.1
-
 EXTRA_DIST = libqrencode.pc.in autogen.sh configure.ac acinclude.m4 \
 			 Makefile.am tests/Makefile.am qrencode.spec.in qrencode.1.in
 
@@ -29,4 +27,5 @@ bin_PROGRAMS = qrencode
 qrencode_SOURCES = qrenc.c
 qrencode_CFLAGS = $(png_CFLAGS)
 qrencode_LDADD = -lqrencode $(png_LIBS)
+man1_MANS = qrencode.1
 endif

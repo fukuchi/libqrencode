@@ -36,12 +36,26 @@ CFLAGS="-Wall $CFLAGS"
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
 
 AC_ARG_WITH([tools], [AC_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
- [], [build_tools=yes])
+ [build_tools=$withval], [build_tools=yes])
 
 if test x$build_tools = xyes ; then
 	PKG_CHECK_MODULES(png, "libpng12")
 fi
 AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
+
+AC_ARG_ENABLE([gprof], [AC_HELP_STRING([--enable-gprof], [generate extra code to write profile information suitable for gprof [default=no]])],
+ [], [enable_gprof=no])
+
+AC_ARG_ENABLE([gcov], [AC_HELP_STRING([--enable-gcov], [generate extra code to write coverage information suitable for gcov [default=no]])],
+ [], [enable_gcov=no])
+
+if test $enable_gprof = yes; then
+	CFLAGS="$CFLAGS -g -pg"
+fi
+
+if test $enable_gcov = yes; then
+	CFLAGS="$CFLAGS --coverage"
+fi
 
 AC_OUTPUT
 

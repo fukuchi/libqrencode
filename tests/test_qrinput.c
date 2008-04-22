@@ -10,18 +10,22 @@ void test_encodeKanji(void)
 {
 	QRinput *stream;
 	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
+	unsigned char *buf;
 	char correct[] = "10000000001001101100111111101010101010";
 	BitStream *bstream;
 
 	testStart("Encoding kanji stream.");
+	buf = (unsigned char *)malloc(4);
+	memcpy(buf, str, 4);
 	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_KANJI, 4, (unsigned char *)str);
+	QRinput_append(stream, QR_MODE_KANJI, 4, buf);
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
 	testEnd(strcmp(correct, bstream->data));
 	QRinput_free(stream);
 	BitStream_free(bstream);
+	free(buf);
 }
 
 void test_encode8(void)

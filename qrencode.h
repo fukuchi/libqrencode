@@ -107,6 +107,7 @@ extern "C" {
  * Encoding mode.
  */
 typedef enum {
+	QR_MODE_NUL = -1,	///< Terminator (NUL character)
 	QR_MODE_NUM = 0,	///< Numeric mode
 	QR_MODE_AN,			///< Alphabet-numeric mode
 	QR_MODE_8,			///< 8-bit data mode
