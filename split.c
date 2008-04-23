@@ -43,9 +43,9 @@ static QRencodeMode Split_identifyMode(const char *string, QRencodeMode hint)
 	c = string[0];
 
 	if(c == '\0') return QR_MODE_NUL;
-	if((unsigned char)((signed char)c - '0') < 10) {
+	if(isdigit(c)) {
 		return QR_MODE_NUM;
-	} else if((QRinput_lookAnTable(c)) >= 0) {
+	} else if(isalnum(c)) {
 		return QR_MODE_AN;
 	} else if(hint == QR_MODE_KANJI) {
 		d = string[1];
