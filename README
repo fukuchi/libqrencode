@@ -61,7 +61,14 @@ USAGE
 Basic usages of this library are written in the header file (qrencode.h).
 You can generate a manual of the library by using Doxygen.
 
-WARNING: Some functions are THREAD UNSAFE. See qrencode.h for the details.
+
+WARNINGS
+========
+Some functions are THREAD UNSAFE. See qrencode.h for the details.
+
+Carefully use the qrencode command if it is used by a web application (CGI).
+For example, giving "-s" option with too large number to qrencode may cause DoS.
+You should limit the parameter by your application.
 
 
 LICENSING INFORMATION
