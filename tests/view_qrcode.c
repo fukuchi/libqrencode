@@ -146,7 +146,7 @@ void draw_structuredQRcode(QRinput_Struct *s, int mask)
 	int swidth;
 	QRcode_List *qrcodes, *p;
 
-	qrcodes = QRcode_encodeStructuredInput(s);
+	qrcodes = QRcode_encodeInputStructured(s);
 	if(qrcodes == NULL) return;
 
 	swidth = (qrcodes->code->width + margin * 2) * size;

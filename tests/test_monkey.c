@@ -224,7 +224,7 @@ void test_split_structure(void)
 		i++;
 		il = il->next;
 	}
-	codes = QRcode_encodeStructuredInput(s);
+	codes = QRcode_encodeInputStructured(s);
 	list = codes;
 	il = s->head;
 	c = 0;

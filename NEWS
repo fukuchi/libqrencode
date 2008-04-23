@@ -8,6 +8,8 @@ Summary:
 * Structured append support has been added. (patches from Yusuke Mihara)
 * The "-S" option for structured append has been added to qrencode and
   view_qrcode.
+* Some functions now set errno to indicate errors.
+* Some bug fixes.
 
 Release Note:
 

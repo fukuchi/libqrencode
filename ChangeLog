@@ -6,6 +6,9 @@
 	* qrenc.c, tests/view_qrcode.c:
 	  - Return value checks have been added.
 	  - Structured-append encode with version 0 now returns error.
+	* qrencode.[ch]:
+	  - QRencode_encodeStructuredInput() -> QRencode_encodeInputStructured()
+	    (for consistency with other QRencode_encode*Structured() functions)
 
 2008.04.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:

@@ -378,7 +378,7 @@ extern void QRcode_free(QRcode *qrcode);
  * @param s
  * @return a singly-linked list of QRcode.
  */
-extern QRcode_List *QRcode_encodeStructuredInput(QRinput_Struct *s);
+extern QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s);
 
 /**
  * Create structured symbols from the string. The library automatically parses
