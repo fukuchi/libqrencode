@@ -262,6 +262,10 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 	int i = 1;
 
 	base = strdup(outfile);
+	if(base == NULL) {
+		fprintf(stderr, "Failed to allocate memory.\n");
+		exit(1);
+	}
 	if(strlen(base) > 4) {
 		q = base + strlen(base) - 4;
 		if(strcasecmp(".png", q) == 0) {

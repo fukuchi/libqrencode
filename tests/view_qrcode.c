@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <SDL.h>
 #include <getopt.h>
+#include <errno.h>
 #include "../qrspec.h"
 #include "../qrinput.h"
 #include "../qrencode_inner.h"
@@ -61,7 +62,7 @@ static void usage(void)
 "  -s NUMBER    specify the size of dot (pixel). (default=4)\n"
 "  -l {LMQH}    specify error collectin level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
-"  -v NUMBER    specify the version of the symbol. (default=auto)\n"
+"  -v NUMBER    specify the version of the symbol. (default=1)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -127,6 +128,8 @@ void draw_singleQRcode(QRinput *stream, int mask)
 	QRinput_setVersion(stream, version);
 	QRinput_setErrorCorrectionLevel(stream, level);
 	qrcode = QRcode_encodeMask(stream, mask);
+	if(qrcode == NULL) return;
+
 	version = qrcode->version;
 	width = (qrcode->width + margin * 2) * size;
 
@@ -144,6 +147,8 @@ void draw_structuredQRcode(QRinput_Struct *s, int mask)
 	QRcode_List *qrcodes, *p;
 
 	qrcodes = QRcode_encodeStructuredInput(s);
+	if(qrcodes == NULL) return;
+
 	swidth = (qrcodes->code->width + margin * 2) * size;
 	n = QRcode_List_size(qrcodes);
 	w = (n < 4)?n:4;
@@ -167,24 +172,41 @@ void draw_structuredQRcodeFromText(int argc, char **argv, int mask)
 {
 	QRinput_Struct *s;
 	QRinput *input;
-	int i;
+	int i, ret;
 
 	s = QRinput_Struct_new();
+	if(s == NULL) {
+		fprintf(stderr, "Failed to allocate memory.\n");
+		exit(1);
+	}
 	for(i=0; i<argc; i++) {
 		input = QRinput_new2(version, level);
-		if(eightbit) {
-			QRinput_append(input, QR_MODE_8, strlen(argv[i]), (unsigned char *)argv[i]);
-		} else {
-			Split_splitStringToQRinput(argv[i], input, hint, casesensitive);
+		if(input == NULL) {
+			fprintf(stderr, "Failed to allocate memory.\n");
+			exit(1);
 		}
-		QRinput_Struct_appendInput(s, input);
+		if(eightbit) {
+			ret = QRinput_append(input, QR_MODE_8, strlen(argv[i]), (unsigned char *)argv[i]);
+		} else {
+			ret = Split_splitStringToQRinput(argv[i], input, hint, casesensitive);
+		}
+		if(ret < 0) {
+			perror("Encoding the input string:");
+			exit(1);
+		}
+		ret = QRinput_Struct_appendInput(s, input);
+		if(ret < 0) {
+			perror("Encoding the input string:");
+			exit(1);
+		}
 	}
-	if(QRinput_Struct_insertStructuredAppendHeaders(s) == 0) {
-		draw_structuredQRcode(s, mask);
-		QRinput_Struct_free(s);
-	} else {
+	ret = QRinput_Struct_insertStructuredAppendHeaders(s);
+	if(ret < 0) {
 		fprintf(stderr, "Too many inputs.\n");
 	}
+
+	draw_structuredQRcode(s, mask);
+	QRinput_Struct_free(s);
 }
 
 void draw_structuredQRcodeFromQRinput(QRinput *stream, int mask)
@@ -298,12 +320,21 @@ void view(int mode, QRinput *input)
 void view_simple(const char *str)
 {
 	QRinput *input;
+	int ret;
 
 	input = QRinput_new2(version, level);
+	if(input == NULL) {
+		fprintf(stderr, "Memory allocation error.\n");
+		exit(1);
+	}
 	if(eightbit) {
-		QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
+		ret = QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
 	} else {
-		Split_splitStringToQRinput(str, input, hint, casesensitive);
+		ret = Split_splitStringToQRinput(str, input, hint, casesensitive);
+	}
+	if(ret < 0) {
+		perror("Encoding the input string:");
+		exit(1);
 	}
 
 	view(0, input);
@@ -410,6 +441,10 @@ int main(int argc, char **argv)
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
 		return -1;
+	}
+	if(structured && version < 1) {
+		fprintf(stderr, "Version number must be larger than 0.\n");
+		exit(1);
 	}
 	if(structured && (argc - optind > 1)) {
 		view_multiText(argv + optind, argc - optind);

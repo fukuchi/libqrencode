@@ -1,6 +1,11 @@
 2008.04.23 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* split.c:
 	  - Split_identifyMode() now uses isdigit() and isalnum macros.
+	* qrinput.c:
+	  - Error checks have been improved.
+	* qrenc.c, tests/view_qrcode.c:
+	  - Return value checks have been added.
+	  - Structured-append encode with version 0 now returns error.
 
 2008.04.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:
