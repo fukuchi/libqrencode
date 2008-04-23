@@ -479,6 +479,28 @@ void test_struct_split_tooLarge(void)
 	free(str);
 }
 
+void test_struct_split_invalidVersion(void)
+{
+	QRinput *input;
+	QRinput_Struct *s;
+	char *str;
+	int errsv;
+
+	testStart("Testing structured-append symbols. (invalid version 0)");
+	str = (char *)malloc(128);
+	memset(str, 'a', 128);
+	input = QRinput_new2(0, QR_ECLEVEL_H);
+	QRinput_append(input, QR_MODE_8, 128, (unsigned char *)str);
+	s = QRinput_splitQRinputToStruct(input);
+	errsv = errno;
+	assert_null(s, "returns non-null.");
+	assert_equal(errsv, ERANGE, "did not return ERANGE.");
+	testFinish();
+	if(s != NULL) QRinput_Struct_free(s);
+	QRinput_free(input);
+	free(str);
+}
+
 void test_splitentry(void)
 {
 	QRinput *i1, *i2;
@@ -718,6 +740,7 @@ int main(int argc, char **argv)
 	test_splitentry3();
 	test_struct_split_example();
 	test_struct_split_tooLarge();
+	test_struct_split_invalidVersion();
 	test_parity();
 	test_parity2();
 

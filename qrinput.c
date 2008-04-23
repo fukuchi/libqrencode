@@ -601,6 +601,8 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 	int l, m;
 	int num;
 
+	if(version == 0) version = 1;
+
 	switch(entry->mode) {
 		case QR_MODE_NUM:
 			bits = QRinput_estimateBitsModeNum(entry->size);
@@ -1095,6 +1097,11 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 
 	QRinput_Struct_setParity(s, QRinput_calcParity(input));
 	maxbits = QRspec_getDataLength(input->version, input->level) * 8 - STRUCTURE_HEADER_BITS;
+
+	if(maxbits <= 0) {
+		QRinput_Struct_free(s);
+		return NULL;
+	}
 
 	bits = 0;
 	list = input->head;
