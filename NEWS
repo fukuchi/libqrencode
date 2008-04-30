@@ -1,10 +1,11 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.0.0 (2008.4.x)
-------------------------
+Version 3.0.0 (2008.4.30)
+-------------------------
 Summary:
-* A significant API change was made that requires to modify user applications.
+* The interface of QRencode_encodeInput() has been changed. User applications
+  using it must be modified.
 * Structured append support has been added. (patches from Yusuke Mihara)
 * The "-S" option for structured append has been added to qrencode and
   view_qrcode.

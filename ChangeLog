@@ -1,3 +1,10 @@
+2008.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Version 3.0.0 has been released.
+
+2008.04.23 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Version 3.0.0rc3 has been released.
+	  - This will probably be the final release candidate, if all goes well.
+
 2008.04.23 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* split.c:
 	  - Split_identifyMode() now uses isdigit() and isalnum macros.
@@ -9,6 +16,11 @@
 	* qrencode.[ch]:
 	  - QRencode_encodeStructuredInput() -> QRencode_encodeInputStructured()
 	    (for consistency with other QRencode_encode*Structured() functions)
+	* mask.c:
+	  - A code block never called has been eliminated.
+
+2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Version 3.0.0rc2 has been released.
 
 2008.04.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:
@@ -27,14 +39,17 @@
 	  - man1_MANS has been moved into the "if BUILD_TOOLS - endif" block.
 
 2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Version 3.0.0rc1 has been released.
+
+2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Bumped version to 3.0.0.
 	* qrencode.[ch]:
 	  - QRcode_encodeInput() has changed the API. Previously it takes a
 	    QRinput, version and level, but now it takes only a QRinput, because
-		QRinput holds the version and level in it. From 3.0.0, you should set
-		them by calling QRinput_setVersion() and
-		QRinput_setErrorCorrectionLevel(), or use QRinput_new2() to
-		instantiate a QRinput object.
+	    QRinput holds the version and level in it. From 3.0.0, you should set
+	    them by calling QRinput_setVersion() and
+	    QRinput_setErrorCorrectionLevel(), or use QRinput_new2() to
+	    instantiate a QRinput object.
 
 2008.04.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrspe.c:
@@ -60,7 +75,7 @@
 	* qrencode.h, qrinput.c:
 	  - QRinput_Struct_insertStructuredAppendHeaders() and
 	    QRinput_insertStructuredAppendHeader now returns error, when the input
-		contains too many structured inputs.
+	    contains too many structured inputs.
 	* qrencode.c:
 	  - QRcode_encodeInputToStructured() now returns NULL when
 	    QRinput_splitQRinputToStruct() fails.
@@ -126,7 +141,7 @@
 	  - Case-sensitive mode becomes now default mode.
 	  - Alphabet-Numeric mode now encodes only upper-case alphabet and
 	    numeric characters. If "-i" option is given, split.c converts
-		lower-case characters to upper-case characters at first.
+	    lower-case characters to upper-case characters at first.
 	* qrenc.c, tests/view_qrcode.c:
 	  - Case-sensitive mode becomes now default mode.
 	  - Option "-i" has been added.
