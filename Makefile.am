@@ -10,7 +10,9 @@ libqrencode_la_SOURCES = qrencode.c qrencode_inner.h \
 						 qrspec.c qrspec.h \
 						 rscode.c rscode.h \
 						 split.c split.h \
-						 mask.c mask.h
+						 mask.c mask.h \
+						 mqrspec.c mqrspec.h
+
 libqrencode_la_LDFLAGS = -version-number $(MAJOR_VERSION):$(MINOR_VERSION):$(MICRO_VERSION)
 
 include_HEADERS = qrencode.h
