@@ -1,3 +1,7 @@
+2008.05.01 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.spec.in:
+	  - Added the man page to the files section.
+
 2008.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Version 3.0.0 has been released.
 

@@ -53,6 +53,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING TODO ChangeLog NEWS README
 %{_libdir}/libqrencode.so.*
 %{_bindir}/qrencode
+%{_mandir}/man1/qrencode.1.gz
 
 %files devel
 %defattr(-,root,root,-)
