@@ -132,7 +132,7 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	if(outfile[0] == '-' && outfile[1] == '\0') {
 		fp = stdout;
 	} else {
-		fp = fopen(outfile, "w");
+		fp = fopen(outfile, "wb");
 		if(fp == NULL) {
 			fprintf(stderr, "Failed to create file: %s\n", outfile);
 			perror(NULL);

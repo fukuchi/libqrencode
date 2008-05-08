@@ -1,3 +1,11 @@
+2008.05.09 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c:
+	  - Now qrencode writes an image file in binary mode for non-POSIX
+	    platform, such as MS-Windows. (bug report from Paul Janssens)
+	* Makefile.am:
+	  - tests/test_all.sh has been added.
+	* Version 3.0.1 has been released.
+
 2008.05.01 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.spec.in:
 	  - Added the man page to the files section.

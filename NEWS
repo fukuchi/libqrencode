@@ -1,6 +1,11 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.0.1 (2008.5.9)
+------------------------
+* A bug fix for non-POSIX platform. (Thanks to Paul Janssens)
+* The RPM spec file now packages the man page correctly.
+
 Version 3.0.0 (2008.4.30)
 -------------------------
 Summary:

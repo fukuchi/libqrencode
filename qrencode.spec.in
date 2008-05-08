@@ -62,6 +62,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/libqrencode.pc
 
 %changelog
+* Fri May 01 2008 Kentaro Fukuchi <fukuchi at megaui.net> 3.0.1-1
+- The man page has been packaged correctly.
 * Tue May 15 2007 Kentaro Fukuchi <fukuchi at megaui.net> 1.0.2-2
 - Summary has been synchronized to README.
 * Thu May 09 2007 Katsumi Saito <katsumi at jo1upk.ymt.prug.or.jp> 1.0.2-1
