@@ -4,6 +4,8 @@
 	    platform, such as MS-Windows. (bug report from Paul Janssens)
 	* Makefile.am:
 	  - tests/test_all.sh has been added.
+	* tests/test_all.sh:
+	  - Now it exits immediately if any test fails.
 	* Version 3.0.1 has been released.
 
 2008.05.01 Kentaro FUKUCHI <fukuchi@megaui.net>

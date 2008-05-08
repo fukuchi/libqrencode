@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 ./test_bitstream
 ./test_estimatebit
 ./test_qrencode
