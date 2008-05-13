@@ -95,14 +95,14 @@ static RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, 
  * Copyright 2004 Phil Karn, KA9Q
  * May be used under the terms of the GNU Lesser General Public License (LGPL)
  */
-#undef NULL
-#define NULL ((void *)0)
+//#undef NULL
+//#define NULL ((void *)0)
 
   int i, j, sr,root,iprim;
 
   rs = NULL;
   /* Check parameter ranges */
-  if(symsize < 0 || symsize > 8*sizeof(data_t)){
+  if(symsize < 0 || symsize > (int)8*sizeof(data_t)){
     goto done;
   }
 

@@ -537,13 +537,13 @@ void test_invalid_input(void)
 	if(code != NULL) QRcode_free(code);
 
 	input->version = 1;
-	input->level = QR_ECLEVEL_H + 1;
+	input->level = (QRecLevel)(QR_ECLEVEL_H + 1);
 	code = QRcode_encodeInput(input);
 	assert_null(code, "invalid level(H+1) access was not checked.\n");
 	if(code != NULL) QRcode_free(code);
 
 	input->version = 1;
-	input->level = -1;
+	input->level = (QRecLevel)-1;
 	code = QRcode_encodeInput(input);
 	assert_null(code, "invalid level(-1) access was not checked.\n");
 	if(code != NULL) QRcode_free(code);
@@ -556,7 +556,7 @@ void test_invalid_input(void)
 void test_struct_semilong(void)
 {
 	QRcode_List *codes, *list;
-	char *str = "asdfasdfasdfasdfasdfASDFASDASDFASDFAsdfasdfasdfasdASDFASDFADSADadsfasdf";
+	const char *str = "asdfasdfasdfasdfasdfASDFASDASDFASDFAsdfasdfasdfasdASDFASDFADSADadsfasdf";
 	int num, size;
 
 	testStart("Testing semi-long structured-append symbols");
@@ -590,7 +590,7 @@ void test_struct_semilong(void)
 void test_struct_example(void)
 {
 	QRcode_List *codes, *list;
-	char *str = "an example of four Structured Append symbols,";
+	const char *str = "an example of four Structured Append symbols,";
 	int num;
 
 	testStart("Testing the example of structured-append symbols");

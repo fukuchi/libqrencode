@@ -81,7 +81,7 @@ void test_format(void)
 	for(version=1; version<4; version++) {
 		for(l=0; l<3; l++) {
 			for(mask=0; mask<4; mask++) {
-				format = MQRspec_getFormatInfo(mask, version, l);
+				format = MQRspec_getFormatInfo(mask, version, (QRecLevel)l);
 				type = typeTable[version - 1][l];
 				if(type == -1) {
 					if(format != 0) {
@@ -135,7 +135,7 @@ void test_dataLength(void)
 	testStart("Test dataLength");
 	for(v=0; v<4; v++) {
 		for(l=0; l<3; l++) {
-			bits = MQRspec_getDataLength(v+1, l);
+			bits = MQRspec_getDataLength(v+1, (QRecLevel)l);
 			if(bits != datalen[v][l]) {
 				printf("Error in version %d, level %d.\n", v, l);
 				err++;

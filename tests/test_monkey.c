@@ -10,7 +10,7 @@
 static char data[MAX_LENGTH];
 static char check[MAX_LENGTH];
 
-static char *AN = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
+static const char *AN = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 
 #define drand(__scale__) ((__scale__) * (double)rand() / ((double)RAND_MAX + 1.0))
 
@@ -201,7 +201,7 @@ void test_split_structure(void)
 	int len, c, i;
 
 	version = (int)drand(40) + 1;
-	level = (int)drand(4);
+	level = (QRecLevel)drand(4);
 
 	len = fill8bitData();
 

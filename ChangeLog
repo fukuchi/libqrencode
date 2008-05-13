@@ -1,3 +1,8 @@
+2008.05.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* various files:
+	  - Some compile-time warnings/erros with g++ have been fixed.
+	    (Thanks to wangsai)
+
 2008.05.09 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c:
 	  - Now qrencode writes an image file in binary mode for non-POSIX

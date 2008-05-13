@@ -659,19 +659,19 @@ int QRinput_estimateBitStreamSize(QRinput *input, int version)
 static int QRinput_estimateVersion(QRinput *input)
 {
 	int bits;
-	int new, prev;
+	int version, prev;
 
-	new = 0;
+	version = 0;
 	do {
-		prev = new;
+		prev = version;
 		bits = QRinput_estimateBitStreamSize(input, prev);
-		new = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
-		if (new < 0) {
+		version = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
+		if (version < 0) {
 			return -1;
 		}
-	} while (new > prev);
+	} while (version > prev);
 
-	return new;
+	return version;
 }
 
 /**

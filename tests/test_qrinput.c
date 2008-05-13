@@ -425,11 +425,7 @@ void test_struct_split_example(void)
 	QRinput_Struct *s;
 	QRinput_InputList *e;
 	QRinput_List *l;
-	char *str[4] = {
-		"an example ",
-		"of four Str",
-		"uctured Appe",
-		"nd symbols,"};
+	const char *str[4] = { "an example ", "of four Str", "uctured Appe", "nd symbols,"};
 	int i;
 	BitStream *bstream;
 
@@ -505,7 +501,7 @@ void test_splitentry(void)
 {
 	QRinput *i1, *i2;
 	QRinput_List *e;
-	char *str = "abcdefghij";
+	const char *str = "abcdefghij";
 	int size1, size2, i;
 	unsigned char *d1, *d2;
 
@@ -564,7 +560,7 @@ void test_splitentry2(void)
 {
 	QRinput *i1, *i2;
 	QRinput_List *e;
-	char *str = "abcdefghij";
+	const char *str = "abcdefghij";
 	int size1, size2, i;
 	unsigned char *d1, *d2;
 
@@ -626,7 +622,7 @@ void test_splitentry3(void)
 	QRinput_Struct *s;
 	QRinput_List *e00, *e01, *e10, *e11;
 	QRinput_InputList *list;
-	char *str = "abcdefghijklmno";
+	const char *str = "abcdefghijklmno";
 
 	testStart("Testing QRinput_splitEntry. (does not split an entry)");
 	/* version 1 symbol contains 152 bit (19 byte) data.
@@ -661,8 +657,8 @@ void test_parity(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
-	char *text = "an example of four Structured Append symbols,";
-	char *str[4] = {
+	const char *text = "an example of four Structured Append symbols,";
+	const char *str[4] = {
 		"an example ",
 		"of four Str",
 		"uctured Appe",
@@ -694,7 +690,7 @@ void test_parity2(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
-	char *text = "an example of four Structured Append symbols,";
+	const char *text = "an example of four Structured Append symbols,";
 	unsigned char p1, p2;
 	int i, len;
 

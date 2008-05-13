@@ -13,7 +13,7 @@ void print_eccTable(void)
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		printf("Version %2d\n", i);
 		for(j=0; j<4; j++) {
-			bl = QRspec_getEccSpec(i, j);
+			bl = QRspec_getEccSpec(i, (QRecLevel)j);
 			data = bl[0] * bl[1] + bl[3] * bl[4];
 			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
 			printf("%3d\t", ecc);
@@ -39,15 +39,15 @@ void test_eccTable(void)
 	testStart("Checking ECC table.");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		for(j=0; j<4; j++) {
-			bl = QRspec_getEccSpec(i, j);
+			bl = QRspec_getEccSpec(i, (QRecLevel)j);
 			data = bl[0] * bl[1] + bl[3] * bl[4];
 			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
-			if(data + ecc != QRspec_getDataLength(i, j) + QRspec_getECCLength(i, j)) {
+			if(data + ecc != QRspec_getDataLength(i, (QRecLevel)j) + QRspec_getECCLength(i, (QRecLevel)j)) {
 				printf("Error in version %d, level %d: invalid size\n", i, j);
 				printf("%d %d %d %d %d %d\n", bl[0], bl[1], bl[2], bl[3], bl[4], bl[5]);
 				err++;
 			}
-			if(ecc != QRspec_getECCLength(i, j)) {
+			if(ecc != QRspec_getECCLength(i, (QRecLevel)j)) {
 				printf("Error in version %d, level %d: invalid data\n", i, j);
 				printf("%d %d %d %d %d %d\n", bl[0], bl[1], bl[2], bl[3], bl[4], bl[5]);
 				err++;
@@ -79,7 +79,7 @@ void test_eccTable2(void)
 	testStart("Checking ECC table(2)");
 	for(i=0; i<7; i++) {
 		err = 0;
-		bl = QRspec_getEccSpec(correct[i][0], correct[i][1]);
+		bl = QRspec_getEccSpec(correct[i][0], (QRecLevel)correct[i][1]);
 		idx = correct[i][2] * 3;
 		if(bl[idx] != correct[i][3]) err++;
 		if(bl[idx+1] + bl[idx+2] != correct[i][4]) err++;
@@ -183,7 +183,7 @@ void test_verpat(void)
 
 	for(version=7; version <= QRSPEC_VERSION_MAX; version++) {
 		pattern = QRspec_getVersionPattern(version);
-		if((pattern >> 12) != version) {
+		if((pattern >> 12) != (unsigned int)version) {
 			printf("Error in version %d.\n", version);
 			err++;
 			continue;
@@ -266,9 +266,9 @@ void test_format(void)
 	testStart("Format info test");
 	for(i=0; i<4; i++) {
 		for(j=0; j<8; j++) {
-			format = calcFormatInfo(j, i);
+			format = calcFormatInfo(j, (QRecLevel)i);
 //			printf("0x%04x, ", format);
-			if(format != QRspec_getFormatInfo(j, i)) {
+			if(format != QRspec_getFormatInfo(j, (QRecLevel)i)) {
 				printf("Level %d, mask %x\n", i, j);
 				err++;
 			}

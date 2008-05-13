@@ -92,7 +92,7 @@ static BitStream *BitStream_newFromBytes(int size, unsigned char *data)
 void BitStream_append(BitStream *bstream, BitStream *arg)
 {
 	int l1, l2;
-	char *new;
+	char *data;
 
 	if(arg == NULL || arg->data == NULL) {
 		return;
@@ -104,12 +104,12 @@ void BitStream_append(BitStream *bstream, BitStream *arg)
 
 	l1 = strlen(bstream->data);
 	l2 = strlen(arg->data);
-	new = (char *)malloc(l1 + l2 + 1);
-	strcpy(new, bstream->data);
-	strcat(new, arg->data);
+	data = (char *)malloc(l1 + l2 + 1);
+	strcpy(data, bstream->data);
+	strcat(data, arg->data);
 
 	free(bstream->data);
-	bstream->data = new;
+	bstream->data = data;
 }
 
 void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)

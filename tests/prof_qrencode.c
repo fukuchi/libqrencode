@@ -25,7 +25,7 @@ void prof_ver1to10(void)
 	QRcode *code;
 	int i;
 	int version;
-	static char *data = "This is test.";
+	static const char *data = "This is test.";
 
 	timerStart("Version 1 - 10 (500 symbols for each)");
 	for(i=0; i<500; i++) {
@@ -42,7 +42,7 @@ void prof_ver31to40(void)
 	QRcode *code;
 	int i;
 	int version;
-	static char *data = "This is test.";
+	static const char *data = "This is test.";
 
 	timerStart("Version 31 - 40 (50 symbols for each)");
 	for(i=0; i<50; i++) {

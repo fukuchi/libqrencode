@@ -20,7 +20,7 @@ static int assertionNum = 0;
 static const char *testName = NULL;
 static const char *testFunc = NULL;
 char levelChar[4] = {'L', 'M', 'Q', 'H'};
-char *modeStr[5] = {"nm", "an", "8", "kj", "st"};
+const char *modeStr[5] = {"nm", "an", "8", "kj", "st"};
 
 void printQRinput(QRinput *input)
 {

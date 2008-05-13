@@ -128,7 +128,7 @@ int *MQRspec_getEccSpec(int version, QRecLevel level)
  *****************************************************************************/
 
 /* See calcFormatInfo in tests/test_mqrspec.c */
-static const unsigned int const formatInfo[4][8] = {
+static const unsigned int formatInfo[4][8] = {
 	{0x4445, 0x55ae, 0x6793, 0x7678, 0x06de, 0x1735, 0x2508, 0x34e3},
 	{0x4172, 0x5099, 0x62a4, 0x734f, 0x03e9, 0x1202, 0x203f, 0x31d4},
 	{0x4e2b, 0x5fc0, 0x6dfd, 0x7c16, 0x0cb0, 0x1d5b, 0x2f66, 0x3e8d},
@@ -136,7 +136,7 @@ static const unsigned int const formatInfo[4][8] = {
 };
 
 /* See Table 10 of Appendix 1. (pp.115) */
-static const int const typeTable[MQRSPEC_VERSION_MAX + 1][3] = {
+static const int typeTable[MQRSPEC_VERSION_MAX + 1][3] = {
 	{-1, -1, -1},
 	{ 0, -1, -1},
 	{ 1,  2, -1},
