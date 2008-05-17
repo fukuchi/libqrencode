@@ -102,7 +102,7 @@ static RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, 
 
   rs = NULL;
   /* Check parameter ranges */
-  if(symsize < 0 || symsize > (int)8*sizeof(data_t)){
+  if(symsize < 0 || symsize > (int)(8*sizeof(data_t))){
     goto done;
   }
 

@@ -234,10 +234,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		blacks = 100 * blacks / (width * width);
 		demerit = (abs(blacks - 50) / 5) * N4;
 //		n4 = demerit;
-		if(demerit > minDemerit) {
-			free(mask);
-			continue;
-		}
 		demerit += Mask_evaluateSymbol(width, mask);
 //		printf("(%d,%d,%d,%d)=%d\n", n1, n2, n3 ,n4, demerit);
 		if(demerit < minDemerit) {
