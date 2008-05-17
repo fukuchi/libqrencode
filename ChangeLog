@@ -1,11 +1,12 @@
 2008.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrspec.c:
-	  - The bit order of "Version information" has been corrected. (Thanks to
-	    Paul Janssesn)
+	  - The bit order of "Version information" has been corrected.
+	    (Thanks to Paul Janssesn)
 	* configure.ac, Makefile.am:
 	  - The "--without-tests" has been added to the configure script.
 	* qrencode.spec.in:
 	  - Uses "--without-tests".
+	* Version 3.0.2 has been released.
 
 2008.05.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* various files:
@@ -52,8 +53,8 @@
 
 2008.04.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:
-	  - QR_MODE_NUL has been added to QRencodeMode. Basically it is used only
-	    by Split_identifyMode().
+	  - QR_MODE_NUL has been added to QRencodeMode. Basically it is used
+	    only by Split_identifyMode().
 	* qrinput.[ch], split.c]:
 	  - QRinput_identifyMode() has been moved to split.c, changed to static
 	    and now needs a hint.
@@ -74,8 +75,8 @@
 	* qrencode.[ch]:
 	  - QRcode_encodeInput() has changed the API. Previously it takes a
 	    QRinput, version and level, but now it takes only a QRinput, because
-	    QRinput holds the version and level in it. From 3.0.0, you should set
-	    them by calling QRinput_setVersion() and
+	    QRinput holds the version and level in it. From 3.0.0, you should
+	    set them by calling QRinput_setVersion() and
 	    QRinput_setErrorCorrectionLevel(), or use QRinput_new2() to
 	    instantiate a QRinput object.
 
@@ -102,8 +103,8 @@
 2008.04.09 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h, qrinput.c:
 	  - QRinput_Struct_insertStructuredAppendHeaders() and
-	    QRinput_insertStructuredAppendHeader now returns error, when the input
-	    contains too many structured inputs.
+	    QRinput_insertStructuredAppendHeader now returns error, when the
+	    input contains too many structured inputs.
 	* qrencode.c:
 	  - QRcode_encodeInputToStructured() now returns NULL when
 	    QRinput_splitQRinputToStruct() fails.
@@ -112,8 +113,8 @@
 
 2008.04.08 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrinput.c:
-	  - Fixed a bug in QRinput_estimateBitStreamSizeOfEntry(). It could over-
-	    estimate the size.
+	  - Fixed a bug in QRinput_estimateBitStreamSizeOfEntry(). It could
+	    overestimate the size.
 	* rscode.c:
 	  - Optimized the order of the parameters equality test in init_rs().
 	* qrspec.c, qrspec.h:

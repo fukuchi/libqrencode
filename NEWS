@@ -1,10 +1,13 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.0.2 (2008.5.x)
-------------------------
-* Some compile-time warnings/erros with g++ have been fixed. (Thanks to wangsai)
+Version 3.0.2 (2008.5.18)
+-------------------------
+* Some compile-time warnings/erros with g++ have been fixed.
+  (Thanks to wangsai)
 * The bit order of "Version information" has been corrected.
+  Symbols greater than version 6 were affected. (Thanks to Paul Janssesn)
+* The "--without-tests" option has been added to the configure script.
 
 Version 3.0.1 (2008.5.9)
 ------------------------
