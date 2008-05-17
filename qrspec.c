@@ -475,7 +475,7 @@ static unsigned char *QRspec_createFrame(int version)
 	unsigned char *frame, *p, *q;
 	int width;
 	int x, y;
-	unsigned int verinfo, mask;
+	unsigned int verinfo, v;
 	QRspec_Alignment *alignment;
 
 	width = qrspecCapacity[version].width;
@@ -534,20 +534,20 @@ static unsigned char *QRspec_createFrame(int version)
 		verinfo = QRspec_getVersionPattern(version);
 
 		p = frame + width * (width - 11);
-		mask = 0x20000;
+		v = verinfo;
 		for(x=0; x<6; x++) {
 			for(y=0; y<3; y++) {
-				p[width * y + x] = 0x88 | ((mask & verinfo) != 0);
-				mask = mask >> 1;
+				p[width * y + x] = 0x88 | (v & 1);
+				v = v >> 1;
 			}
 		}
 
 		p = frame + width - 11;
-		mask = 0x20000;
+		v = verinfo;
 		for(y=0; y<6; y++) {
 			for(x=0; x<3; x++) {
-				p[x] = 0x88 | ((mask & verinfo) != 0);
-				mask = mask >> 1;
+				p[x] = 0x88 | (v & 1);
+				v = v >> 1;
 			}
 			p += width;
 		}

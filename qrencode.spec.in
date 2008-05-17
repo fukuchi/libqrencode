@@ -7,13 +7,13 @@ Release:        %{rel}%{?dist}
 Summary:        Libqrencode is a library for encoding data in a QR Code symbol, a kind of 2D symbology that can be scanned by handy terminals such as a mobile phone with CCD. The capacity of QR Code is up to 7000 digits or 4000 characters, and has high robustness.
 
 Group:          System Environment/Libraries
-License:        LGPL
+License:        LGPLv2+
 URL:            http://megaui.net/fukuchi/works/qrencode/
 Source0:        http://megaui.net/fukuchi/works/qrencode/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial Standards) X0510:2004 or ISO/IEC 18004. Currently the following features are not supported: ECI and FNC1 mode, Structured Append Feature, Micro QR Code, QR Code model 1.
+Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial Standards) X0510:2004 or ISO/IEC 18004. Currently the following features are not supported: ECI and FNC1 mode, Micro QR Code, QR Code model 1.
 
 %package        devel
 Summary:        Development files for libqrencode
@@ -21,7 +21,7 @@ Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description    devel
-Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial Standards) X0510:2004 or ISO/IEC 18004. Currently the following features are not supported: ECI and FNC1 mode, Structured Append Feature, Micro QR Code, QR Code model 1.
+Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial Standards) X0510:2004 or ISO/IEC 18004. Currently the following features are not supported: ECI and FNC1 mode, Micro QR Code, QR Code model 1.
 
 This package contains development files for libqrencode.
 
@@ -30,7 +30,7 @@ This package contains development files for libqrencode.
 
 
 %build
-%configure
+%configure --without-tests
 make %{?_smp_mflags}
 
 

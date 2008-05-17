@@ -2,7 +2,7 @@ AC_INIT(QRencode)
 
 MAJOR_VERSION=3
 MINOR_VERSION=0
-MICRO_VERSION=0
+MICRO_VERSION=2
 VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
@@ -27,27 +27,38 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG
 
-SDL_REQUIRED_VERSION=1.2.0
-AM_PATH_SDL($SDL_REQUIRED_VERSION,,AC_MSG_WARN([*** SDL $SDL_REQUIRED_VERSION or better is required.]))
-AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
-
-CFLAGS="-Wall $CFLAGS"
-
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
 
+dnl --with-tools
 AC_ARG_WITH([tools], [AC_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
  [build_tools=$withval], [build_tools=yes])
-
+AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
 if test x$build_tools = xyes ; then
 	PKG_CHECK_MODULES(png, "libpng12")
 fi
-AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
 
+dnl --with-tests
+AC_ARG_WITH([tests], [AC_HELP_STRING([--with-tests], [build tests [default=yes]])],
+ [build_tests=$withval], [build_tests=yes])
+AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes" ])
+
+if test x$build_tests = xyes ; then
+	SDL_REQUIRED_VERSION=1.2.0
+	AM_PATH_SDL($SDL_REQUIRED_VERSION,,AC_MSG_WARN([*** SDL $SDL_REQUIRED_VERSION or better is required.]))
+fi
+AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
+
+
+dnl --enable-gprof
 AC_ARG_ENABLE([gprof], [AC_HELP_STRING([--enable-gprof], [generate extra code to write profile information suitable for gprof [default=no]])],
  [], [enable_gprof=no])
 
+dnl --enable-gcov
 AC_ARG_ENABLE([gcov], [AC_HELP_STRING([--enable-gcov], [generate extra code to write coverage information suitable for gcov [default=no]])],
  [], [enable_gcov=no])
+
+dnl set CFLAGS
+CFLAGS="-Wall $CFLAGS"
 
 if test $enable_gprof = yes; then
 	CFLAGS="$CFLAGS -g -pg"

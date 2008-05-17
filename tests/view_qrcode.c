@@ -191,12 +191,12 @@ void draw_structuredQRcodeFromText(int argc, char **argv, int mask)
 			ret = Split_splitStringToQRinput(argv[i], input, hint, casesensitive);
 		}
 		if(ret < 0) {
-			perror("Encoding the input string:");
+			perror("Encoding the input string");
 			exit(1);
 		}
 		ret = QRinput_Struct_appendInput(s, input);
 		if(ret < 0) {
-			perror("Encoding the input string:");
+			perror("Encoding the input string");
 			exit(1);
 		}
 	}
@@ -333,7 +333,7 @@ void view_simple(const char *str)
 		ret = Split_splitStringToQRinput(str, input, hint, casesensitive);
 	}
 	if(ret < 0) {
-		perror("Encoding the input string:");
+		perror("Encoding the input string");
 		exit(1);
 	}
 

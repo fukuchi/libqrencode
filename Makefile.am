@@ -1,6 +1,10 @@
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS = . tests
+SUBDIRS = .
+
+if BUILD_TESTS
+SUBDIRS += tests
+endif
 
 lib_LTLIBRARIES = libqrencode.la
 
