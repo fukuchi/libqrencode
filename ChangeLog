@@ -1,3 +1,9 @@
+2008.05.26 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c:
+	  - getopt_long_only() has been replaced with getopt_long() which is
+	    widely available. (Thanks to Gavan Fantom)
+	  - Now it accepts long options.
+
 2008.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrspec.c:
 	  - The bit order of "Version information" has been corrected.

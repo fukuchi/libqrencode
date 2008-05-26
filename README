@@ -1,4 +1,4 @@
-libqrencode 3.0.0 - QR Code encoding library
+libqrencode 3.0.3 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -112,3 +112,4 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 NANKI Haruo       - improved lower-case characteres encoding
 Philippe Delcroix - improved mask evaluation
 Yusuke Mihara     - structured-append support
+Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom - bug report / suggestion

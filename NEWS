@@ -1,6 +1,12 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.0.3 (2008.5.x)
+-------------------------
+* Portability enhancement. (Thanks to Gavan Fantom)
+* The command line tool "qrencode" now accepts long options. See the man page
+  or give "--help" option to it.
+
 Version 3.0.2 (2008.5.18)
 -------------------------
 * Some compile-time warnings/erros with g++ have been fixed.
