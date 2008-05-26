@@ -35,40 +35,31 @@ static int structured = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 
-enum {
-	O_HELP,
-	O_OUTPUT,
-	O_SIZE,
-	O_VERSION,
-	O_LEVEL,
-	O_MARGIN,
-	O_KANJI,
-	O_CASE,
-	O_IGNORECASE,
-	O_8BIT,
-	O_STRUCTURED,
-};
-
 static const struct option options[] = {
-	{"h", no_argument      , NULL, O_HELP},
-	{"o", required_argument, NULL, O_OUTPUT},
-	{"l", required_argument, NULL, O_LEVEL},
-	{"s", required_argument, NULL, O_SIZE},
-	{"v", required_argument, NULL, O_VERSION},
-	{"m", required_argument, NULL, O_MARGIN},
-	{"k", no_argument      , NULL, O_KANJI},
-	{"c", no_argument      , NULL, O_CASE},
-	{"i", no_argument      , NULL, O_IGNORECASE},
-	{"8", no_argument      , NULL, O_8BIT},
-	{"S", no_argument      , NULL, O_STRUCTURED},
+	{"help"         , no_argument      , NULL, 'h'},
+	{"output"       , required_argument, NULL, 'o'},
+	{"level"        , required_argument, NULL, 'l'},
+	{"size"         , required_argument, NULL, 's'},
+	{"symversion"   , required_argument, NULL, 'v'},
+	{"margin"       , required_argument, NULL, 'm'},
+	{"structured"   , no_argument      , NULL, 'S'},
+	{"kanji"        , no_argument      , NULL, 'k'},
+	{"casesensitive", no_argument      , NULL, 'c'},
+	{"ignorecase"   , no_argument      , NULL, 'i'},
+	{"8bit"         , no_argument      , NULL, '8'},
+	{"version"      , no_argument      , NULL, 'V'},
 	{NULL, 0, NULL, 0}
 };
 
-static void usage(void)
+static char *optstring = "ho:l:s:v:m:Skci8V";
+
+static void usage(int help)
 {
 	fprintf(stderr,
 "qrencode version %s\n"
-"Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi\n"
+"Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi\n", VERSION);
+	if(help) {
+		fprintf(stderr,
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG image.\n\n"
 "  -h           display this message.\n"
@@ -87,8 +78,9 @@ static void usage(void)
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
-"               standard input.\n",
-	VERSION);
+"               standard input.\n"
+		);
+	}
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
@@ -308,30 +300,30 @@ int main(int argc, char **argv)
 	char *outfile = NULL;
 	char *intext = NULL;
 
-	while((opt = getopt_long_only(argc, argv, "", options, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, optstring, options, NULL)) != -1) {
 		switch(opt) {
-			case O_HELP:
-				usage();
+			case 'h':
+				usage(1);
 				exit(0);
 				break;
-			case O_OUTPUT:
+			case 'o':
 				outfile = optarg;
 				break;
-			case O_SIZE:
+			case 's':
 				size = atoi(optarg);
 				if(size <= 0) {
 					fprintf(stderr, "Invalid size: %d\n", size);
 					exit(1);
 				}
 				break;
-			case O_VERSION:
+			case 'v':
 				version = atoi(optarg);
 				if(version < 0) {
 					fprintf(stderr, "Invalid version: %d\n", version);
 					exit(1);
 				}
 				break;
-			case O_LEVEL:
+			case 'l':
 				switch(*optarg) {
 					case 'l':
 					case 'L':
@@ -355,36 +347,40 @@ int main(int argc, char **argv)
 						break;
 				}
 				break;
-			case O_MARGIN:
+			case 'm':
 				margin = atoi(optarg);
 				if(margin < 0) {
 					fprintf(stderr, "Invalid margin: %d\n", margin);
 					exit(1);
 				}
 				break;
-			case O_STRUCTURED:
+			case 'S':
 				structured = 1;
-			case O_KANJI:
+			case 'k':
 				hint = QR_MODE_KANJI;
 				break;
-			case O_CASE:
+			case 'c':
 				casesensitive = 1;
 				break;
-			case O_IGNORECASE:
+			case 'i':
 				casesensitive = 0;
 				break;
-			case O_8BIT:
+			case '8':
 				eightbit = 1;
 				break;
+			case 'V':
+				usage(0);
+				exit(0);
+				break;
 			default:
-				usage();
+				usage(1);
 				exit(1);
 				break;
 		}
 	}
 
 	if(argc == 1) {
-		usage();
+		usage(1);
 		exit(0);
 	}
 
