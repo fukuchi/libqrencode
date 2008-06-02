@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <getopt.h>
 #include <errno.h>
+#include "../config.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
 #include "../qrencode_inner.h"
@@ -22,56 +23,80 @@ static QRencodeMode hint = QR_MODE_8;
 static char **textv;
 static int textc;
 
-enum {
-	O_HELP,
-	O_SIZE,
-	O_VERSION,
-	O_LEVEL,
-	O_MARGIN,
-	O_KANJI,
-	O_CASE,
-	O_IGNORECASE,
-	O_8BIT,
-	O_STRUCTURED,
-};
-
 static const struct option options[] = {
-	{"h", no_argument      , NULL, O_HELP},
-	{"l", required_argument, NULL, O_LEVEL},
-	{"s", required_argument, NULL, O_SIZE},
-	{"v", required_argument, NULL, O_VERSION},
-	{"m", required_argument, NULL, O_MARGIN},
-	{"k", no_argument      , NULL, O_KANJI},
-	{"c", no_argument      , NULL, O_CASE},
-	{"i", no_argument      , NULL, O_IGNORECASE},
-	{"8", no_argument      , NULL, O_8BIT},
-	{"S", no_argument      , NULL, O_STRUCTURED},
+	{"help"         , no_argument      , NULL, 'h'},
+	{"level"        , required_argument, NULL, 'l'},
+	{"size"         , required_argument, NULL, 's'},
+	{"symversion"   , required_argument, NULL, 'v'},
+	{"margin"       , required_argument, NULL, 'm'},
+	{"structured"   , no_argument      , NULL, 'S'},
+	{"kanji"        , no_argument      , NULL, 'k'},
+	{"casesensitive", no_argument      , NULL, 'c'},
+	{"ignorecase"   , no_argument      , NULL, 'i'},
+	{"8bit"         , no_argument      , NULL, '8'},
+	{"version"      , no_argument      , NULL, 'V'},
 	{NULL, 0, NULL, 0}
 };
 
+static char *optstring = "ho:l:s:v:m:Skci8V";
 
 static char levelChar[4] = {'L', 'M', 'Q', 'H'};
-static void usage(void)
+static void usage(int help, int longopt)
 {
 	fprintf(stderr,
 "view_qrcode version %s\n"
-"Copyright (C) 2008 Kentaro Fukuchi\n"
+"Copyright (C) 2008 Kentaro Fukuchi\n", VERSION);
+	if(help) {
+		if(longopt) {
+			fprintf(stderr,
 "Usage: view_qrcode [OPTION]... [STRING]\n"
-"Encode input data in a QR Code and save as a PNG image.\n\n"
+"Encode input data in a QR Code and display.\n\n"
+"  -h, --help   display the help message. -h displays only the help of short\n"
+"               options.\n\n"
+"  -s NUMBER, --size=NUMBER\n"
+"               specify the size of dot (pixel). (default=3)\n\n"
+"  -l {LMQH}, --level={LMQH}\n"
+"               specify error collectin level from L (lowest) to H (highest).\n"
+"               (default=L)\n\n"
+"  -v NUMBER, --symversion=NUMBER\n"
+"               specify the version of the symbol. (default=auto)\n\n"
+"  -m NUMBER, --margin=NUMBER\n"
+"               specify the width of margin. (default=4)\n\n"
+"  -S, --structured\n"
+"               make structured symbols. Version must be specified.\n\n"
+"  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
+"  -c, --casesensitive\n"
+"               encode lower-case alphabet characters in 8-bit mode. (default)\n\n"
+"  -i, --ignorecase\n"
+"               ignore case distinctions and use only upper-case characters.\n\n"
+"  -8, -8bit    encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -V, --version\n"
+"               display the version number and copyrights of the qrencode.\n\n"
+"  [STRING]     input data. If it is not specified, data will be taken from\n"
+"               standard input.\n"
+			);
+		} else {
+			fprintf(stderr,
+"Usage: view_qrcode [OPTION]... [STRING]\n"
+"Encode input data in a QR Code and display.\n\n"
 "  -h           display this message.\n"
-"  -s NUMBER    specify the size of dot (pixel). (default=4)\n"
+"  --help       display the usage of long options.\n"
+"  -s NUMBER    specify the size of dot (pixel). (default=3)\n"
 "  -l {LMQH}    specify error collectin level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
-"  -v NUMBER    specify the version of the symbol. (default=1)\n"
+"  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of margin. (default=4)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
+"  -V           display the version number and copyrights of the qrencode.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
-"               standard input.\n",
-	VERSION);
+"               standard input.\n"
+			);
+		}
+	}
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
@@ -352,30 +377,34 @@ void view_multiText(char **argv, int argc)
 
 int main(int argc, char **argv)
 {
-	int opt;
+	int opt, lindex = -1;
 	char *intext = NULL;
 
-	while((opt = getopt_long_only(argc, argv, "", options, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
-			case O_HELP:
-				usage();
+			case 'h':
+				if(lindex == 0) {
+					usage(1, 1);
+				} else {
+					usage(1, 0);
+				}
 				exit(0);
 				break;
-			case O_SIZE:
+			case 's':
 				size = atoi(optarg);
 				if(size <= 0) {
 					fprintf(stderr, "Invalid size: %d\n", size);
 					exit(1);
 				}
 				break;
-			case O_VERSION:
+			case 'v':
 				version = atoi(optarg);
 				if(version < 0) {
 					fprintf(stderr, "Invalid version: %d\n", version);
 					exit(1);
 				}
 				break;
-			case O_LEVEL:
+			case 'l':
 				switch(*optarg) {
 					case 'l':
 					case 'L':
@@ -399,35 +428,39 @@ int main(int argc, char **argv)
 						break;
 				}
 				break;
-			case O_MARGIN:
+			case 'm':
 				margin = atoi(optarg);
 				if(margin < 0) {
 					fprintf(stderr, "Invalid margin: %d\n", margin);
 					exit(1);
 				}
 				break;
-			case O_STRUCTURED:
+			case 'S':
 				structured = 1;
-			case O_KANJI:
+			case 'k':
 				hint = QR_MODE_KANJI;
 				break;
-			case O_CASE:
+			case 'c':
 				casesensitive = 1;
 				break;
-			case O_IGNORECASE:
+			case 'i':
 				casesensitive = 0;
 				break;
-			case O_8BIT:
+			case '8':
 				eightbit = 1;
 				break;
+			case 'V':
+				usage(0, 0);
+				exit(0);
+				break;
 			default:
-				usage();
+				fprintf(stderr, "Try `view_qrcode --help' for more information.\n");
 				exit(1);
 				break;
 		}
 	}
 	if(argc == 1) {
-		usage();
+		usage(1, 0);
 		exit(0);
 	}
 

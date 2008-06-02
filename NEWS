@@ -1,11 +1,27 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.0.3 (2008.5.x)
--------------------------
+Version 3.0.3 (2008.6.1)
+------------------------
 * Portability enhancement. (Thanks to Gavan Fantom)
 * The command line tool "qrencode" now accepts long options. See the man page
-  or give "--help" option to it.
+  for the detailed instruction.
+
+Release Note:
+
+This release improves the portability of our command line tool "qrencode".
+The library is not changed so that any applications using libqrencode are not
+affected.
+
+From this release, qrencode accepts "long" options, such as "--help". See the
+manpage for the detailed instructions.
+
+Qrencode now uses getopt_long() instead of getopt_long_only() which is not
+available in some operating systems. If the getopt_long() is not provided or
+the implementation of it is not compatible with GNU's one, please try
+qrencode-3.0.3-gnulib, that contains the source code of the getopt_long().
+Gnulib version is a test release. If you feel happy with it, please let us know
+and the future releases will include gnulib.
 
 Version 3.0.2 (2008.5.18)
 -------------------------
@@ -22,7 +38,6 @@ Version 3.0.1 (2008.5.9)
 
 Version 3.0.0 (2008.4.30)
 -------------------------
-Summary:
 * The interface of QRencode_encodeInput() has been changed. User applications
   using it must be modified.
 * Structured append support has been added. (patches from Yusuke Mihara)

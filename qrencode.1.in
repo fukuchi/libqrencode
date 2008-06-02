@@ -17,42 +17,54 @@ a QR Code and save as a PNG image.
 
 .SH OPTIONS
 .TP
-.B \-h
+.B \-h, --help
 display help message.
 .TP
-.B \-o FILENAME
+.B \-o FILENAME, --output=FILENAME
 write PNG image to FILENAME. If '-' is specified, the result will be output
 to standard output.
 .TP
-.B \-s NUMBER
+.B \-s NUMBER, --size=NUMBER
 specify the size of dot (pixel). (default=3)
 .TP
-.B \-l {LMQH}
+.B \-l {LMQH}, --level={LMQH}
 specify error collectin level from L (lowest) to H (highest). (default=L)
 .TP
-.B \-v NUMBER
+.B \-v NUMBER, --symversion=NUMBER
 specify the version of the symbol. (default=auto)
 .TP
-.B \-m NUMBER
+.B \-m NUMBER, --margin=NUMBER
 specify the width of margin. (default=4)
 .TP
-.B \-S
+.B \-S, --structured
 make structured symbols. Version must be specified.
 .TP
-.B \-k
+.B \-k, --kanji
 assume that the input text contains kanji (shift-jis).
 .TP
-.B \-c
+.B \-c, --casesensitive
 encode lower-case alphabet characters in 8-bit mode. (default)
 .TP
-.B \-i
+.B \-i, --ignorecase
 ignore case distinctions and use only upper-case characters.
 .TP
-.B \-8
+.B \-8, --8bit
 encode entire data in 8-bit mode. -k, -c and -i will be ignored.
+.TP
+.B \-V, --version
+display the version number and copyrights of the qrencode.
 .TP
 .B [STRING]
 input data. If it is not specified, data will be taken from standard input.
+
+.SH EXAMPLES
+.TP
+.B qrencode -l L -v 1 -o output.png 'Hello, world!'
+encode into a symbol version 1, level L.
+.TP
+.B qrencode -iSv 1 --output=output.png
+read standard input and encode it into a structured-appended symbols in
+case-insensitive mode.
 
 .SH AUTHOR
 Written by Kentaro Fukuchi.

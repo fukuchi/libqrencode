@@ -13,6 +13,8 @@ if [ ! -d use ]; then
     mkdir use
 fi
 
+autoheader
+
 aclocal -I $ACLOCAL_DIR
 
 libtoolize --automake --copy

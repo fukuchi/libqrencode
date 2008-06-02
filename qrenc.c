@@ -24,6 +24,7 @@
 #include <png.h>
 #include <getopt.h>
 
+#include "config.h"
 #include "qrencode.h"
 
 static int casesensitive = 1;
@@ -53,16 +54,51 @@ static const struct option options[] = {
 
 static char *optstring = "ho:l:s:v:m:Skci8V";
 
-static void usage(int help)
+static void usage(int help, int longopt)
 {
 	fprintf(stderr,
 "qrencode version %s\n"
 "Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi\n", VERSION);
 	if(help) {
-		fprintf(stderr,
+		if(longopt) {
+			fprintf(stderr,
+"Usage: qrencode [OPTION]... [STRING]\n"
+"Encode input data in a QR Code and save as a PNG image.\n\n"
+"  -h, --help   display the help message. -h displays only the help of short\n"
+"               options.\n\n"
+"  -o FILENAME, --output=FILENAME\n"
+"               write PNG image to FILENAME. If '-' is specified, the result\n"
+"               will be output to standard output. If -S is given, structured\n"
+"               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
+"               if specified, remove a trailing '.png' from FILENAME.\n\n"
+"  -s NUMBER, --size=NUMBER\n"
+"               specify the size of dot (pixel). (default=3)\n\n"
+"  -l {LMQH}, --level={LMQH}\n"
+"               specify error collectin level from L (lowest) to H (highest).\n"
+"               (default=L)\n\n"
+"  -v NUMBER, --symversion=NUMBER\n"
+"               specify the version of the symbol. (default=auto)\n\n"
+"  -m NUMBER, --margin=NUMBER\n"
+"               specify the width of margin. (default=4)\n\n"
+"  -S, --structured\n"
+"               make structured symbols. Version must be specified.\n\n"
+"  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
+"  -c, --casesensitive\n"
+"               encode lower-case alphabet characters in 8-bit mode. (default)\n\n"
+"  -i, --ignorecase\n"
+"               ignore case distinctions and use only upper-case characters.\n\n"
+"  -8, -8bit    encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -V, --version\n"
+"               display the version number and copyrights of the qrencode.\n\n"
+"  [STRING]     input data. If it is not specified, data will be taken from\n"
+"               standard input.\n"
+			);
+		} else {
+			fprintf(stderr,
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG image.\n\n"
 "  -h           display this message.\n"
+"  --help       display the usage of long options.\n"
 "  -o FILENAME  write PNG image to FILENAME. If '-' is specified, the result\n"
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
@@ -77,9 +113,11 @@ static void usage(int help)
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
+"  -V           display the version number and copyrights of the qrencode.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n"
-		);
+			);
+		}
 	}
 }
 
@@ -296,14 +334,18 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 
 int main(int argc, char **argv)
 {
-	int opt;
+	int opt, lindex = -1;
 	char *outfile = NULL;
 	char *intext = NULL;
 
-	while((opt = getopt_long(argc, argv, optstring, options, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
 			case 'h':
-				usage(1);
+				if(lindex == 0) {
+					usage(1, 1);
+				} else {
+					usage(1, 0);
+				}
 				exit(0);
 				break;
 			case 'o':
@@ -369,18 +411,18 @@ int main(int argc, char **argv)
 				eightbit = 1;
 				break;
 			case 'V':
-				usage(0);
+				usage(0, 0);
 				exit(0);
 				break;
 			default:
-				usage(1);
+				fprintf(stderr, "Try `qrencode --help' for more information.\n");
 				exit(1);
 				break;
 		}
 	}
 
 	if(argc == 1) {
-		usage(1);
+		usage(1, 0);
 		exit(0);
 	}
 

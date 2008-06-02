@@ -1,8 +1,21 @@
-2008.05.26 Kentaro FUKUCHI <fukuchi@megaui.net>
+2008.06.03 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Merged to the main trunk.
+
+2008.06.01 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c:
+	  - Now it does not show the full usage when unrecognized options are
+	    given.
+	  - When "--help" is given, it displays the long usage.
+	* Version 3.0.3 has been released.
+
+2008.05.26 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c, tests/view_qrcode.c:
 	  - getopt_long_only() has been replaced with getopt_long() which is
 	    widely available. (Thanks to Gavan Fantom)
 	  - Now it accepts long options.
+	* qrencode.1.in:
+	  - followed the above changes.
+	* Bumped version to 3.0.3.
 
 2008.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrspec.c:
