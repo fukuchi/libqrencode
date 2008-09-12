@@ -123,7 +123,6 @@ static char *readStdin(void)
 
 static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 {
-	int pitch;
 	int x, y, width;
 	unsigned char *p;
 	SDL_Rect rect;
@@ -132,7 +131,6 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 	oy += margin * size;
 	width = qrcode->width;
 	p = qrcode->data;
-	pitch = screen->pitch;
 	for(y=0; y<width; y++) {
 		for(x=0; x<width; x++) {
 			rect.x = ox + x * size;
