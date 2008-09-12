@@ -1,3 +1,7 @@
+2008.09.12 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* tests/view_qrcode.c:
+	  - Unused variable 'pitch' has been removed from draw_QRcode().
+
 2008.06.03 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Merged to the main trunk.
 
