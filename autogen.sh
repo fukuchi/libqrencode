@@ -2,6 +2,12 @@
 
 set -e
 
+if [ `uname -s` = Darwin ]; then
+    LIBTOOLIZE=glibtoolize
+else
+    LIBTOOLIZE=libtoolize
+fi
+
 if [ -d /usr/local/share/aclocal ]; then
     ACLOCAL_DIR=/usr/local/share/aclocal
 else if [ -d /usr/share/aclocal ]; then
@@ -17,7 +23,7 @@ autoheader
 
 aclocal -I $ACLOCAL_DIR
 
-libtoolize --automake --copy
+$LIBTOOLIZE --automake --copy
 automake --add-missing --copy
 
 autoconf

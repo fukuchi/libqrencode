@@ -1,3 +1,7 @@
+2008.10.11 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* autogen.sh:
+	  - Darwin workaround.
+
 2008.09.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/view_qrcode.c:
 	  - Unused variable 'pitch' has been removed from draw_QRcode().
