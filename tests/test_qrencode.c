@@ -153,7 +153,7 @@ void print_mask(void)
 	frame = (unsigned char *)malloc(width * width);
 	memset(frame, 0x20, width * width);
 	for(mask=0; mask<8; mask++) {
-		masked = Mask_makeMask(width, frame, mask);
+		masked = Mask_makeMask(width, frame, mask, QR_ECLEVEL_L);
 		p = masked;
 		printf("mask %d:\n", mask);
 		for(y=0; y<width; y++) {
@@ -186,7 +186,7 @@ void test_format(void)
 	width = QRspec_getWidth(1);
 	frame = QRspec_newFrame(1);
 	format = QRspec_getFormatInfo(1, QR_ECLEVEL_L);
-	blacks = QRcode_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
+	blacks = Mask_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
 	decode = 0;
 	for(i=0; i<15; i++) {
 		if((1<<i) & format) b2 += 2;
