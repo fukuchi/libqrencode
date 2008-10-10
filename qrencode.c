@@ -23,8 +23,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "config.h"
 #include "qrencode.h"
-#include "qrencode_inner.h"
 #include "qrspec.h"
 #include "mqrspec.h"
 #include "bitstream.h"
@@ -36,6 +36,24 @@
 /******************************************************************************
  * Raw code
  *****************************************************************************/
+
+typedef struct {
+	int dataLength;
+	unsigned char *data;
+	int eccLength;
+	unsigned char *ecc;
+} RSblock;
+
+typedef struct {
+	int version;
+	unsigned char *datacode;
+	int blocks;
+	RSblock *rsblock;
+	int count;
+	int dataLength;
+	int eccLength;
+	int b1;
+} QRRawCode;
 
 static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
 {
@@ -50,7 +68,7 @@ static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
 	encode_rs_char(rs, data, block->ecc);
 }
 
-QRRawCode *QRraw_new(QRinput *input)
+__STATIC QRRawCode *QRraw_new(QRinput *input)
 {
 	QRRawCode *raw;
 	int *spec;
@@ -106,7 +124,7 @@ QRRawCode *QRraw_new(QRinput *input)
  * @param raw raw code.
  * @return code
  */
-unsigned char QRraw_getCode(QRRawCode *raw)
+__STATIC unsigned char QRraw_getCode(QRRawCode *raw)
 {
 	int col, row;
 	unsigned char ret;
@@ -129,7 +147,7 @@ unsigned char QRraw_getCode(QRRawCode *raw)
 	return ret;
 }
 
-void QRraw_free(QRRawCode *raw)
+__STATIC void QRraw_free(QRRawCode *raw)
 {
 	int i;
 
@@ -146,6 +164,15 @@ void QRraw_free(QRRawCode *raw)
  *****************************************************************************/
 
 #if 0
+typedef struct {
+	int version;
+	unsigned char *datacode;
+	RSblock *rsblock;
+	int count;
+	int dataLength;
+	int eccLength;
+} MQRRawCode;
+
 MQRRawCode *MQRraw_new(QRinput *input)
 {
 	MQRRawCode *raw;
@@ -300,52 +327,6 @@ unsigned char *FrameFiller_fillerTest(int version)
 }
 #endif
 
-/******************************************************************************
- * Format information
- *****************************************************************************/
-
-int QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
-{
-	unsigned int format;
-	unsigned char v;
-	int i;
-	int blacks = 0;
-
-	format =  QRspec_getFormatInfo(mask, level);
-
-	for(i=0; i<8; i++) {
-		if(format & 1) {
-			blacks += 2;
-			v = 0x85;
-		} else {
-			v = 0x84;
-		}
-		frame[width * 8 + width - 1 - i] = v;
-		if(i < 6) {
-			frame[width * i + 8] = v;
-		} else {
-			frame[width * (i + 1) + 8] = v;
-		}
-		format= format >> 1;
-	}
-	for(i=0; i<7; i++) {
-		if(format & 1) {
-			blacks += 2;
-			v = 0x85;
-		} else {
-			v = 0x84;
-		}
-		frame[width * (width - 7 + i) + 8] = v;
-		if(i == 0) {
-			frame[width * 8 + 7] = v;
-		} else {
-			frame[width * 8 + 6 - i] = v;
-		}
-		format= format >> 1;
-	}
-
-	return blacks;
-}
 
 /******************************************************************************
  * QR-code encoding
@@ -373,7 +354,7 @@ void QRcode_free(QRcode *qrcode)
 	free(qrcode);
 }
 
-QRcode *QRcode_encodeMask(QRinput *input, int mask)
+__STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 {
 	int width, version;
 	QRRawCode *raw;
@@ -421,8 +402,7 @@ QRcode *QRcode_encodeMask(QRinput *input, int mask)
 	if(mask < 0) {
 		masked = Mask_mask(width, frame, input->level);
 	} else {
-		masked = Mask_makeMask(width, frame, mask);
-		QRcode_writeFormatInformation(width, masked, mask, input->level);
+		masked = Mask_makeMask(width, frame, mask, input->level);
 	}
 	qrcode = QRcode_new(version, width, masked);
 

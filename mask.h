@@ -24,8 +24,7 @@
 
 #include "qrinput.h"
 
-extern unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask);
-extern int Mask_evaluateSymbol(int width, unsigned char *frame);
+extern unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level);
 extern unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level);
 
 #endif /* __MASK_H__ */

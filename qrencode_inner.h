@@ -1,7 +1,7 @@
 /**
  * qrencode - QR Code encoder
  *
- * Header for internal use
+ * Header for test use
  * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 #define __QRENCODE_INNER_H__
 
 /**
- * This header file includes definitions for inner use.
+ * This header file includes definitions for test use.
  */
 
 /******************************************************************************
@@ -75,9 +75,15 @@ extern void MQRraw_free(MQRRawCode *raw);
 extern unsigned char *FrameFiller_fillerTest(int version);
 
 /******************************************************************************
- * Format information
+ * QR-code encoding
  *****************************************************************************/
-extern int QRcode_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
-
 extern QRcode *QRcode_encodeMask(QRinput *input, int mask);
+
+/******************************************************************************
+ * Mask
+ *****************************************************************************/
+
+extern int Mask_evaluateSymbol(int width, unsigned char *frame);
+extern int Mask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
+
 #endif /* __QRENCODE_INNER_H__ */

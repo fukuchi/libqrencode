@@ -21,10 +21,53 @@
 
 #include <stdlib.h>
 #include <limits.h>
+#include "config.h"
 #include "qrencode.h"
-#include "qrencode_inner.h"
 #include "qrspec.h"
 #include "mask.h"
+
+__STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
+{
+	unsigned int format;
+	unsigned char v;
+	int i;
+	int blacks = 0;
+
+	format =  QRspec_getFormatInfo(mask, level);
+
+	for(i=0; i<8; i++) {
+		if(format & 1) {
+			blacks += 2;
+			v = 0x85;
+		} else {
+			v = 0x84;
+		}
+		frame[width * 8 + width - 1 - i] = v;
+		if(i < 6) {
+			frame[width * i + 8] = v;
+		} else {
+			frame[width * (i + 1) + 8] = v;
+		}
+		format= format >> 1;
+	}
+	for(i=0; i<7; i++) {
+		if(format & 1) {
+			blacks += 2;
+			v = 0x85;
+		} else {
+			v = 0x84;
+		}
+		frame[width * (width - 7 + i) + 8] = v;
+		if(i == 0) {
+			frame[width * 8 + 7] = v;
+		} else {
+			frame[width * 8 + 6 - i] = v;
+		}
+		format= format >> 1;
+	}
+
+	return blacks;
+}
 
 /**
  * Demerit coefficients.
@@ -98,13 +141,14 @@ static MaskMaker *maskMakers[] = {
 	Mask_mask4, Mask_mask5, Mask_mask6, Mask_mask7
 };
 
-unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask)
+unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned char *masked;
 
 	masked = (unsigned char *)malloc(width * width);
 
 	maskMakers[mask](width, frame, masked);
+	Mask_writeFormatInformation(width, masked, mask, level);
 
 	return masked;
 }
@@ -149,7 +193,7 @@ static int Mask_calcN1N3(int length, int *runLength)
 	return demerit;
 }
 
-int Mask_evaluateSymbol(int width, unsigned char *frame)
+__STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
 {
 	int x, y;
 	unsigned char *p;
@@ -227,7 +271,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		demerit = 0;
 		mask = (unsigned char *)malloc(width * width);
 		blacks = maskMakers[i](width, frame, mask);
-		blacks += QRcode_writeFormatInformation(width, mask, i, level);
+		blacks += Mask_writeFormatInformation(width, mask, i, level);
 		blacks = 100 * blacks / (width * width);
 		demerit = (abs(blacks - 50) / 5) * N4;
 //		n4 = demerit;

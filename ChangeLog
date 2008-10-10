@@ -1,4 +1,18 @@
 2008.10.11 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode_inner.h:
+	  - Now this header is called only by test programs.
+	* qrencode.c, qrencode_inner.h:
+	  - Some definitions and declares written in qrencode_inner.h have been
+	    moved into qrencode.c:
+	  - QRraw_*() have been declared as __STATIC.
+	* mask.[ch], qrencode.c, qrencode_inner.h:
+	  - Mask_makeMask() now requires QRecLevel.
+	  - QRencode_writeFormatInformation() has been renamed and moved to
+	    Mask_writeFormatInformation(), and become __STATIC.
+	* tests/*.c:
+	  - Unneeded #include "qrencode_inner.h" have been removed.
+
+2008.10.11 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* autogen.sh:
 	  - Darwin workaround.
 	* configure.ac:
