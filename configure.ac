@@ -42,6 +42,16 @@ dnl --with-tests
 AC_ARG_WITH([tests], [AC_HELP_STRING([--with-tests], [build tests [default=yes]])],
  [build_tests=$withval], [build_tests=yes])
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes" ])
+AH_VERBATIM([tests],
+[/* Define to 'static' if no test programs will be compiled. */
+   #define __STATIC static
+   ])
+if test x$build_tests = xyes ; then
+echo "#define __STATIC" >>confdefs.h
+else
+echo "#define __STATIC static" >>confdefs.h
+fi
+
 
 if test x$build_tests = xyes ; then
 	SDL_REQUIRED_VERSION=1.2.0

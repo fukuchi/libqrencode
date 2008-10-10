@@ -24,6 +24,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "config.h"
 #include "qrencode.h"
 #include "qrspec.h"
 #include "bitstream.h"
@@ -832,34 +833,25 @@ static int QRinput_convertData(QRinput *input)
 /**
  * Create padding bits for the input data.
  * @param input input data.
+ * @param size size of merged input bit stream.
  * @return padding bit stream.
  */
-static BitStream *QRinput_createPaddingBit(QRinput *input)
+__STATIC BitStream *QRinput_createPaddingBit(QRinput *input, int bits)
 {
-	int bits, maxbits, words, maxwords, i;
-	QRinput_List *list;
+	int maxbits, words, maxwords, i;
 	BitStream *bstream;
 
 	maxwords = QRspec_getDataLength(input->version, input->level);
 	maxbits = maxwords * 8;
 
-	list = input->head;
-	bits = 0;
-	while(list != NULL) {
-		bits += BitStream_size(list->bstream);
-		list = list->next;
+	if(maxbits == bits) {
+		return NULL;
 	}
 
-	words = (bits + 7) / 8;
-
 	if(maxbits - bits < 5) {
-		if(maxbits == bits) {
-			return NULL;
-		} else {
-			bstream = BitStream_new();
-			BitStream_appendNum(bstream, maxbits - bits, 0);
-			return bstream;
-		}
+		bstream = BitStream_new();
+		BitStream_appendNum(bstream, maxbits - bits, 0);
+		return bstream;
 	}
 
 	bits += 4;
@@ -917,7 +909,7 @@ BitStream *QRinput_getBitStream(QRinput *input)
 	if(bstream == NULL) {
 		return NULL;
 	}
-	padding = QRinput_createPaddingBit(input);
+	padding = QRinput_createPaddingBit(input, BitStream_size(bstream));
 	if(padding != NULL) {
 		BitStream_append(bstream, padding);
 		BitStream_free(padding);

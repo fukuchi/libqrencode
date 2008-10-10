@@ -1,6 +1,12 @@
 2008.10.11 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* autogen.sh:
 	  - Darwin workaround.
+	* configure.ac:
+	  - Now config.h offers "__STATIC" macro becomes "static" when
+	    "--without-tests" is specified. This macro is useful for functions
+		that are called from test programs but not from other library codes.
+	* qrinput.c:
+	  - Very little performance improvement.
 
 2008.09.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/view_qrcode.c:
