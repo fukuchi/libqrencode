@@ -7,8 +7,8 @@
 #include "../config.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
-#include "../qrencode_inner.h"
 #include "../split.h"
+#include "../qrencode_inner.h"
 
 static SDL_Surface *screen = NULL;
 static int casesensitive = 1;

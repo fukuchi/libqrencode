@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include "common.h"
-#include "../qrencode_inner.h"
 #include "../qrspec.h"
 #include "../qrinput.h"
 #include "../mask.h"

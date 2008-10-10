@@ -2,7 +2,6 @@
 #include <string.h>
 #include "common.h"
 #include "../qrinput.h"
-#include "../qrencode_inner.h"
 #include "../split.h"
 #include "../qrspec.h"
 

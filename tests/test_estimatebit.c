@@ -3,7 +3,6 @@
 #include <string.h>
 #include "common.h"
 #include "../qrinput.h"
-#include "../qrencode_inner.h"
 
 QRinput *gstream;
 
