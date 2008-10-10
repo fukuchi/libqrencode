@@ -7,6 +7,8 @@
 		that are called from test programs but not from other library codes.
 	* qrinput.c:
 	  - Very little performance improvement.
+	* mask.c:
+	  - Code cleanups.
 
 2008.09.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/view_qrcode.c:

@@ -154,12 +154,10 @@ int Mask_evaluateSymbol(int width, unsigned char *frame)
 	int x, y;
 	unsigned char *p;
 	unsigned char b22, w22;
-	unsigned int i;
 	int head;
 	int demerit = 0;
 
 	p = frame;
-	i = 0;
 	for(y=0; y<width; y++) {
 		head = 0;
 		runLength[0] = 1;
@@ -188,7 +186,6 @@ int Mask_evaluateSymbol(int width, unsigned char *frame)
 		demerit += Mask_calcN1N3(head+1, runLength);
 	}
 
-	i = 0;
 	for(x=0; x<width; x++) {
 		head = 0;
 		runLength[0] = 1;
