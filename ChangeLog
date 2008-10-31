@@ -1,3 +1,8 @@
+2008.10.31 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* tests/commo.h:
+	  - __FUNCTION__ has been replaced with __func__, to follow the C99
+	    standard.
+
 2008.10.11 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode_inner.h:
 	  - Now this header is called only by test programs.

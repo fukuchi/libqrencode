@@ -10,7 +10,7 @@
 #include "../qrinput.h"
 #include "../bitstream.h"
 
-#define testStart(__arg__) (testStartReal(__FUNCTION__, __arg__))
+#define testStart(__arg__) (testStartReal(__func__, __arg__))
 #define testEndExp(__arg__) (testEnd(!(__arg__)))
 
 static int tests = 0;
