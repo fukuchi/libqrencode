@@ -72,15 +72,15 @@ void testEnd(int result)
 	}
 }
 
-#define assert_exp(__exp__, __msg__...) \
-(void)({assertionNum++;if(!(__exp__)) {assertionFailed++; printf(__msg__);}})
+#define assert_exp(__exp__, ...) \
+(void)({assertionNum++;if(!(__exp__)) {assertionFailed++; printf(__VA_ARGS__);}})
 
-#define assert_zero(__exp__, __msg__...) assert_exp((__exp__) == 0, __msg__)
-#define assert_nonzero(__exp__, __msg__...) assert_exp((__exp__) != 0, __msg__)
-#define assert_null(__ptr__, __msg__...) assert_exp((__ptr__) == NULL, __msg__)
-#define assert_nonnull(__ptr__, __msg__...) assert_exp((__ptr__) != NULL, __msg__)
-#define assert_equal(__e1__, __e2__, __msg__...) assert_exp((__e1__) == (__e2__), __msg__)
-#define assert_notequal(__e1__, __e2__, __msg__...) assert_exp((__e1__) != (__e2__), __msg__)
+#define assert_zero(__exp__, ...) assert_exp((__exp__) == 0, __VA_ARGS__)
+#define assert_nonzero(__exp__, ...) assert_exp((__exp__) != 0, __VA_ARGS__)
+#define assert_null(__ptr__, ...) assert_exp((__ptr__) == NULL, __VA_ARGS__)
+#define assert_nonnull(__ptr__, ...) assert_exp((__ptr__) != NULL, __VA_ARGS__)
+#define assert_equal(__e1__, __e2__, ...) assert_exp((__e1__) == (__e2__), __VA_ARGS__)
+#define assert_notequal(__e1__, __e2__, ...) assert_exp((__e1__) != (__e2__), __VA_ARGS__)
 
 void testFinish(void)
 {
