@@ -80,7 +80,7 @@ __STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int ma
 
 #define MASKMAKER(__exp__) \
 	int x, y;\
-	unsigned int b = 0;\
+	int b = 0;\
 \
 	for(y=0; y<width; y++) {\
 		for(x=0; x<width; x++) {\
@@ -89,7 +89,7 @@ __STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int ma
 			} else {\
 				*d = *s ^ ((__exp__) == 0);\
 			}\
-			b += (*d & 1);\
+			b += (int)(*d & 1);\
 			s++; d++;\
 		}\
 	}\
@@ -146,6 +146,7 @@ unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLeve
 	unsigned char *masked;
 
 	masked = (unsigned char *)malloc(width * width);
+	if(masked == NULL) return NULL;
 
 	maskMakers[mask](width, frame, masked);
 	Mask_writeFormatInformation(width, masked, mask, level);
