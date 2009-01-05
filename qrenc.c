@@ -128,14 +128,18 @@ static char *readStdin(void)
 	int ret;
 
 	buffer = (char *)malloc(MAX_DATA_SIZE);
+	if(buffer == NULL) {
+		fprintf(stderr, "Memory allocation failed.\n");
+		exit(EXIT_FAILURE);
+	}
 	ret = fread(buffer, 1, MAX_DATA_SIZE, stdin);
 	if(ret == 0) {
 		fprintf(stderr, "No input data.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
-	if(!feof(stdin)) {
+	if(feof(stdin) == 0) {
 		fprintf(stderr, "Input data is too large.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	buffer[ret] = '\0';
@@ -156,7 +160,7 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	row = (unsigned char *)malloc((realwidth + 7) / 8);
 	if(row == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	if(outfile[0] == '-' && outfile[1] == '\0') {
@@ -166,7 +170,7 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 		if(fp == NULL) {
 			fprintf(stderr, "Failed to create file: %s\n", outfile);
 			perror(NULL);
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 
@@ -174,21 +178,21 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	if(png_ptr == NULL) {
 		fclose(fp);
 		fprintf(stderr, "Failed to initialize PNG writer.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
 	if(info_ptr == NULL) {
 		fclose(fp);
 		fprintf(stderr, "Failed to initialize PNG write.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	if(setjmp(png_jmpbuf(png_ptr))) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		fclose(fp);
 		fprintf(stderr, "Failed to write PNG image.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	png_init_io(png_ptr, fp);
@@ -265,7 +269,7 @@ static void qrencode(const char *intext, const char *outfile)
 	qrcode = encode(intext);
 	if(qrcode == NULL) {
 		fprintf(stderr, "Failed to encode the input data.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	writePNG(qrcode, outfile);
 	QRcode_free(qrcode);
@@ -294,7 +298,7 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 	base = strdup(outfile);
 	if(base == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	if(strlen(base) > 4) {
 		q = base + strlen(base) - 4;
@@ -307,13 +311,13 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 	qrlist = encodeStructured(intext);
 	if(qrlist == NULL) {
 		fprintf(stderr, "Failed to encode the input data.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	for(p = qrlist; p != NULL; p = p->next) {
 		if(p->code == NULL) {
 			fprintf(stderr, "Failed to encode the input data.\n");
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 		if(suffix) {
 			snprintf(filename, FILENAME_MAX, "%s-%02d%s", base, i, suffix);
@@ -355,14 +359,14 @@ int main(int argc, char **argv)
 				size = atoi(optarg);
 				if(size <= 0) {
 					fprintf(stderr, "Invalid size: %d\n", size);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case 'v':
 				version = atoi(optarg);
 				if(version < 0) {
 					fprintf(stderr, "Invalid version: %d\n", version);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case 'l':
@@ -385,7 +389,7 @@ int main(int argc, char **argv)
 						break;
 					default:
 						fprintf(stderr, "Invalid level: %s\n", optarg);
-						exit(1);
+						exit(EXIT_FAILURE);
 						break;
 				}
 				break;
@@ -393,7 +397,7 @@ int main(int argc, char **argv)
 				margin = atoi(optarg);
 				if(margin < 0) {
 					fprintf(stderr, "Invalid margin: %d\n", margin);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case 'S':
@@ -416,7 +420,7 @@ int main(int argc, char **argv)
 				break;
 			default:
 				fprintf(stderr, "Try `qrencode --help' for more information.\n");
-				exit(1);
+				exit(EXIT_FAILURE);
 				break;
 		}
 	}
@@ -428,7 +432,7 @@ int main(int argc, char **argv)
 
 	if(outfile == NULL) {
 		fprintf(stderr, "No output filename is given.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	if(optind < argc) {
@@ -441,7 +445,7 @@ int main(int argc, char **argv)
 	if(structured) {
 		if(version == 0) {
 			fprintf(stderr, "Version must be specified to encode structured symbols.\n");
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 		qrencodeStructured(intext, outfile);
 	} else {
