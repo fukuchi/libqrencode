@@ -30,6 +30,8 @@ BitStream *BitStream_new(void)
 	BitStream *bstream;
 
 	bstream = (BitStream *)malloc(sizeof(BitStream));
+	if(bstream == NULL) return NULL;
+
 	bstream->data = NULL;
 
 	return bstream;
@@ -43,7 +45,13 @@ static BitStream *BitStream_newFromNum(int bits, unsigned int num)
 	BitStream *bstream;
 
 	bstream = BitStream_new();
+	if(bstream == NULL) return NULL;
+
 	bstream->data = (char *)malloc(bits + 1);
+	if(bstream->data == NULL) {
+		BitStream_free(bstream);
+		return NULL;
+	}
 
 	p = bstream->data;
 	mask = 1 << (bits - 1);
@@ -69,7 +77,13 @@ static BitStream *BitStream_newFromBytes(int size, unsigned char *data)
 	BitStream *bstream;
 
 	bstream = BitStream_new();
+	if(bstream == NULL) return NULL;
+
 	bstream->data = (char *)malloc(size * 8 + 1);
+	if(bstream->data == NULL) {
+		BitStream_free(bstream);
+		return NULL;
+	}
 
 	p = bstream->data;
 	for(i=0; i<size; i++) {
@@ -89,45 +103,67 @@ static BitStream *BitStream_newFromBytes(int size, unsigned char *data)
 	return bstream;
 }
 
-void BitStream_append(BitStream *bstream, BitStream *arg)
+int BitStream_append(BitStream *bstream, BitStream *arg)
 {
-	int l1, l2;
+	size_t l1, l2;
 	char *data;
 
 	if(arg == NULL || arg->data == NULL) {
-		return;
+		return -1;
 	}
 	if(bstream->data == NULL) {
 		bstream->data = strdup(arg->data);
-		return;
+		if(bstream->data == NULL) {
+			return -1;
+		}
+		return 0;
 	}
 
 	l1 = strlen(bstream->data);
 	l2 = strlen(arg->data);
 	data = (char *)malloc(l1 + l2 + 1);
+	if(data == NULL) {
+		return -1;
+	}
 	strcpy(data, bstream->data);
 	strcat(data, arg->data);
 
 	free(bstream->data);
 	bstream->data = data;
+
+	return 0;
 }
 
-void BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
+int BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
 {
 	BitStream *b;
+	int ret;
+
+	if(bits == 0) return -1;
 
 	b = BitStream_newFromNum(bits, num);
-	BitStream_append(bstream, b);
+	if(b == NULL) return -1;
+
+	ret = BitStream_append(bstream, b);
 	BitStream_free(b);
+
+	return ret;
 }
 
-void BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
+int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 {
 	BitStream *b;
+	int ret;
+
+	if(size == 0) return -1;
 
 	b = BitStream_newFromBytes(size, data);
-	BitStream_append(bstream, b);
+	if(b == NULL) return -1;
+
+	ret = BitStream_append(bstream, b);
 	BitStream_free(b);
+
+	return ret;
 }
 
 unsigned int BitStream_size(BitStream *bstream)
@@ -135,7 +171,7 @@ unsigned int BitStream_size(BitStream *bstream)
 	if(bstream == NULL) return 0;
 	if(bstream->data == NULL) return 0;
 
-	return strlen(bstream->data);
+	return (int)strlen(bstream->data);
 }
 
 unsigned char *BitStream_toByte(BitStream *bstream)
@@ -146,6 +182,10 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 
 	size = BitStream_size(bstream);
 	data = (unsigned char *)malloc((size + 7) / 8);
+	if(data == NULL) {
+		return NULL;
+	}
+
 	bytes = size  / 8;
 
 	p = bstream->data;
