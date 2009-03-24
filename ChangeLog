@@ -1,3 +1,7 @@
+2009.03.25 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* configure.ac:
+	  - Test codes are not compiled by default.
+
 2008.10.31 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/commo.h:
 	  - __FUNCTION__ has been replaced with __func__, to follow the C99
