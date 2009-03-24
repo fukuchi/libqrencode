@@ -39,8 +39,8 @@ if test x$build_tools = xyes ; then
 fi
 
 dnl --with-tests
-AC_ARG_WITH([tests], [AC_HELP_STRING([--with-tests], [build tests [default=yes]])],
- [build_tests=$withval], [build_tests=yes])
+AC_ARG_WITH([tests], [AC_HELP_STRING([--with-tests], [build tests [default=no]])],
+ [build_tests=$withval], [build_tests=no])
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes" ])
 AH_VERBATIM([tests],
 [/* Define to 'static' if no test programs will be compiled. */
