@@ -45,9 +45,9 @@
  * \subsection encoding-input Encoding a structured data
  * You can construct a structured input data manually. If the structure of the
  * input data is known, you can use this way.
- * At first, you must create a ::QRinput object by QRinput_new(). Then, you can
- * add input data to the QRinput object by QRinput_append().
- * Finally you can call QRcode_encodeInput() to encode the QRinput data.
+ * At first, create a ::QRinput object by QRinput_new(). Then add input data
+ * to the QRinput object by QRinput_append(). Finally call QRcode_encodeInput()
+ * to encode the QRinput data.
  * You can reuse the QRinput data again to encode it in other symbols with
  * different parameters.
  *
@@ -57,7 +57,7 @@
  * See ::QRcode for the details. You can free the object by QRcode_free().
  *
  * Please note that the version of the result may be larger than specified.
- * In such cases, the input data would be too large to be encoded in the
+ * In such cases, the input data would be too large to be encoded in a
  * symbol of the specified version.
  *
  * \section structured Structured append
