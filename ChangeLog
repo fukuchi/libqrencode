@@ -1,6 +1,9 @@
 2009.03.25 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac:
 	  - Test codes are not compiled by default.
+	* bitstream.[ch]:
+	  - Now functions strictly check return value from malloc() and return
+	    error if it fails.
 
 2008.10.31 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/commo.h:
