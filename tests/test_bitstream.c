@@ -12,7 +12,7 @@ void test_num(void)
 	testStart("New from num");
 	bstream = BitStream_new();
 	BitStream_appendNum(bstream, 31, data);
-	testEnd(strncmp(correct, bstream->data, 31));
+	testEnd(cmpBin(correct, bstream));
 
 	BitStream_free(bstream);
 }
@@ -26,7 +26,7 @@ void test_bytes(void)
 	testStart("New from bytes");
 	bstream = BitStream_new();
 	BitStream_appendBytes(bstream, 1, data);
-	testEnd(strncmp(correct, bstream->data, 8));
+	testEnd(cmpBin(correct, bstream));
 	BitStream_free(bstream);
 }
 
@@ -52,7 +52,8 @@ void test_appendBytes(void)
 	data[3] = 0x78;
 	BitStream_appendBytes(bstream, 4, data);
 
-	testEnd(strncmp(correct, bstream->data, 64));
+	testEnd(cmpBin(correct, bstream));
+
 
 	BitStream_free(bstream);
 }

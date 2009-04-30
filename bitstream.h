@@ -23,14 +23,15 @@
 #define __BITSTREAM_H__
 
 typedef struct {
-	char *data;
+	int length;
+	unsigned char *data;
 } BitStream;
 
 extern BitStream *BitStream_new(void);
 extern int BitStream_append(BitStream *bstream, BitStream *arg);
 extern int BitStream_appendNum(BitStream *bstream, int bits, unsigned int num);
 extern int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data);
-extern unsigned int BitStream_size(BitStream *bstream);
+#define BitStream_size(__bstream__) (__bstream__->length)
 extern unsigned char *BitStream_toByte(BitStream *bstream);
 extern void BitStream_free(BitStream *bstream);
 

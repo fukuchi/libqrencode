@@ -22,7 +22,7 @@ void test_encodeKanji(void)
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
-	testEnd(strcmp(correct, bstream->data));
+	testEnd(cmpBin(correct, bstream));
 	QRinput_free(stream);
 	BitStream_free(bstream);
 	free(buf);
@@ -41,7 +41,7 @@ void test_encode8(void)
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
-	testEnd(strcmp(correct, bstream->data));
+	testEnd(cmpBin(correct, bstream));
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }
@@ -80,7 +80,7 @@ void test_encodeAn(void)
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
-	testEnd(strcmp(correct, bstream->data));
+	testEnd(cmpBin(correct, bstream));
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }
@@ -111,7 +111,7 @@ void test_encodeNumeric(void)
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
-	testEnd(strcmp(correct, bstream->data));
+	testEnd(cmpBin(correct, bstream));
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }
@@ -141,17 +141,22 @@ void test_encodeNumericPadded(void)
 {
 	QRinput *stream;
 	char num[9] = "01234567";
-	char correct[] = "000100000010000000001100010101100110000110000000";
+	char *correct;
+	char *correctHead = "000100000010000000001100010101100110000110000000";
 	BitStream *bstream;
-	int flag;
+	int flag, i;
 
 	testStart("Encoding numeric stream. (8 digits)(padded)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	bstream = QRinput_getBitStream(stream);
-	flag = strncmp(correct, bstream->data, 48);
-	if(strlen(bstream->data) != 19 * 8)
-		flag |= 0x80;
+	correct = (char *)malloc(19 * 8 + 1);
+	correct[0] = '\0';
+	strcat(correct, correctHead);
+	for(i=0; i<13; i++) {
+		strcat(correct, (i&1)?"00010001":"11101100");
+	}
+	flag = cmpBin(correct, bstream);
 	testEnd(flag);
 
 	QRinput_free(stream);
@@ -162,17 +167,22 @@ void test_encodeNumericPadded2(void)
 {
 	QRinput *stream;
 	char num[8] = "0123456";
-	char correct[] = "000100000001110000001100010101100101100000000000";
+	char *correct;
+	char *correctHead = "000100000001110000001100010101100101100000000000";
 	BitStream *bstream;
-	int flag;
+	int flag, i;
 
 	testStart("Encoding numeric stream. (7 digits)(padded)");
 	stream = QRinput_new();
 	QRinput_append(stream, QR_MODE_NUM, 7, (unsigned char *)num);
 	bstream = QRinput_getBitStream(stream);
-	flag = strncmp(correct, bstream->data, 48);
-	if(strlen(bstream->data) != 19 * 8)
-		flag |= 0x80;
+	correct = (char *)malloc(19 * 8 + 1);
+	correct[0] = '\0';
+	strcat(correct, correctHead);
+	for(i=0; i<13; i++) {
+		strcat(correct, (i&1)?"00010001":"11101100");
+	}
+	flag = cmpBin(correct, bstream);
 	testEnd(flag);
 
 	QRinput_free(stream);
@@ -192,7 +202,7 @@ void test_encodeNumeric2(void)
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
-	testEnd(strcmp(correct, bstream->data));
+	testEnd(cmpBin(correct, bstream));
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }
@@ -210,7 +220,7 @@ void test_encodeNumeric3(void)
 	bstream = QRinput_mergeBitStream(stream);
 	printf("%s\n", correct);
 	printf("%s\n", bstream->data);
-	testEnd(strcmp(correct, bstream->data));
+	testEnd(cmpBin(correct, bstream));
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }
@@ -246,7 +256,7 @@ void test_encodeAnNum(void)
 	QRinput_append(input, QR_MODE_AN, 11, (unsigned char *)"ABCDEFGHIJK");
 	QRinput_append(input, QR_MODE_NUM, 12, (unsigned char *)"123456789012");
 	bstream = QRinput_mergeBitStream(input);
-	testEndExp(strlen(bstream->data) == 128);
+	testEndExp(BitStream_size(bstream) == 128);
 	QRinput_free(input);
 	BitStream_free(bstream);
 
@@ -254,7 +264,7 @@ void test_encodeAnNum(void)
 	input = QRinput_new();
 	QRinput_append(input, QR_MODE_AN, 23, (unsigned char *)"ABCDEFGHIJK123456789012");
 	bstream = QRinput_mergeBitStream(input);
-	testEndExp(strlen(bstream->data) == 140);
+	testEndExp(BitStream_size(bstream) == 140);
 	QRinput_free(input);
 	BitStream_free(bstream);
 }
@@ -306,7 +316,7 @@ void test_insertStructuredAppendHeader(void)
 	assert_zero(ret, "QRinput_insertStructuredAppendHeader() returns nonzero.\n");
 	bstream = QRinput_mergeBitStream(stream);
 	assert_nonnull(bstream->data, "Bstream->data is null.");
-	assert_zero(strcmp(correct, bstream->data), "bitstream is wrong.");
+	assert_zero(cmpBin(correct, bstream), "bitstream is wrong.");
 	testFinish();
 
 	QRinput_free(stream);

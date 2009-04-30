@@ -1,3 +1,10 @@
+2009.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* bistream.[ch]:
+	  - Internal representation of BitStream has been changed from
+	    NUL-terminated to unsigned char array.
+	* tests/common.h, tests/test_{bitstream,qrinput}.c:
+	  - Some test sequences have been updated (see above).
+
 2009.03.25 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac:
 	  - Test codes are not compiled by default.
