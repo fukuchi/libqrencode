@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Binary sequence class.
- * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -140,7 +140,7 @@ int BitStream_append(BitStream *bstream, BitStream *arg)
 		return 0;
 	}
 
-	data = (char *)malloc(bstream->length + arg->length);
+	data = (unsigned char *)malloc(bstream->length + arg->length);
 	if(data == NULL) {
 		return -1;
 	}

@@ -1,6 +1,22 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.1.0 (2009.5.x)
+------------------------
+* Various code cleanups and performance improves.
+* Strict error checks have been added.
+* "--without-tests" has become default setting. Specify "--with-tests" to
+  compile test programs.
+
+Release Note:
+
+This release focuses on the code cleanup and performance improve. Encoding time
+has been improved, drastically in large symbols. Basically this update only
+changes its internal code. The API is not changed, no need to recompile user
+applications that includes only qrencode.h. If your application refers the
+internal data representation (not recommended), see ChangeLog for further
+information.
+
 Version 3.0.3 (2008.6.1)
 ------------------------
 * Portability enhancement. (Thanks to Gavan Fantom)

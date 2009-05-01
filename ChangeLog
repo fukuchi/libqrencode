@@ -1,3 +1,6 @@
+2009.05.01 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Bumped vertion to 3.1.0.
+
 2009.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bistream.[ch]:
 	  - Internal representation of BitStream has been changed from
@@ -7,7 +10,7 @@
 
 2009.03.25 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac:
-	  - Test codes are not compiled by default.
+	  - "--without-tests" has become default setting.
 	* bitstream.[ch]:
 	  - Now functions strictly check return value from malloc() and return
 	    error if it fails.
@@ -39,7 +42,7 @@
 	* configure.ac:
 	  - Now config.h offers "__STATIC" macro becomes "static" when
 	    "--without-tests" is specified. This macro is useful for functions
-		that are called from test programs but not from other library codes.
+		called from test programs but not from other library codes.
 	* qrinput.c:
 	  - Very little performance improvement.
 	* mask.c:
