@@ -3,6 +3,20 @@
 #include "common.h"
 #include "../bitstream.h"
 
+void test_null(void)
+{
+	BitStream *bstream;
+
+	testStart("Empty stream");
+	bstream = BitStream_new();
+	assert_zero(BitStream_size(bstream), "Size of empty BitStream is not 0.");
+	assert_null(BitStream_toByte(bstream), "BitStream_toByte returned non-NULL.");
+
+	testFinish();
+
+	BitStream_free(bstream);
+}
+
 void test_num(void)
 {
 	BitStream *bstream;
@@ -82,6 +96,7 @@ void test_toByte(void)
 
 int main(int argc, char **argv)
 {
+	test_null();
 	test_num();
 	test_bytes();
 	test_appendBytes();

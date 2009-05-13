@@ -7,6 +7,7 @@ Version 3.1.0 (2009.5.x)
 * Strict error checks have been added.
 * "--without-tests" has become default setting. Specify "--with-tests" to
   compile test programs.
+* Some minor bugs have been fixed.
 
 Release Note:
 

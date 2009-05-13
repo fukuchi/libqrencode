@@ -1092,6 +1092,7 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 
 	if(maxbits <= 0) {
 		QRinput_Struct_free(s);
+		QRinput_free(input);
 		return NULL;
 	}
 

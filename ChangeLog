@@ -1,3 +1,14 @@
+2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* bitstream.c:
+	  - BitStream_toByte() had returned non-NULL for an empty BitStream.
+	* tests/test_bitstream.c:
+	  - test_null() has been added.
+	* qrinput.c:
+	  - A possible memory leak has been eliminated. It happend when a wrong
+	    version number was given.
+	* tests/test_qriput.c:
+	  - Memory leaks have been eliminated.
+
 2009.05.01 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Bumped vertion to 3.1.0.
 
@@ -109,7 +120,7 @@
 
 2008.04.23 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* split.c:
-	  - Split_identifyMode() now uses isdigit() and isalnum macros.
+	  - Split_identifyMode() now uses isdigit() and isalnum() macros.
 	* qrinput.c:
 	  - Error checks have been improved.
 	* qrenc.c, tests/view_qrcode.c:
@@ -128,7 +139,7 @@
 	* qrencode.h:
 	  - QR_MODE_NUL has been added to QRencodeMode. Basically it is used
 	    only by Split_identifyMode().
-	* qrinput.[ch], split.c]:
+	* qrinput.[ch], split.c:
 	  - QRinput_identifyMode() has been moved to split.c, changed to static
 	    and now needs a hint.
 	* split.c:

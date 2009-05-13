@@ -159,6 +159,7 @@ void test_encodeNumericPadded(void)
 	flag = cmpBin(correct, bstream);
 	testEnd(flag);
 
+	free(correct);
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }
@@ -185,6 +186,7 @@ void test_encodeNumericPadded2(void)
 	flag = cmpBin(correct, bstream);
 	testEnd(flag);
 
+	free(correct);
 	QRinput_free(stream);
 	BitStream_free(bstream);
 }

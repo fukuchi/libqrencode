@@ -186,16 +186,6 @@ int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 	return ret;
 }
 
-/*
-unsigned int BitStream_size(BitStream *bstream)
-{
-	if(bstream == NULL) return 0;
-	if(bstream->data == NULL) return 0;
-
-	return (int)strlen(bstream->data);
-}
-*/
-
 unsigned char *BitStream_toByte(BitStream *bstream)
 {
 	int i, j, size, bytes;
@@ -203,6 +193,9 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	unsigned char *p;
 
 	size = BitStream_size(bstream);
+	if(size == 0) {
+		return NULL;
+	}
 	data = (unsigned char *)malloc((size + 7) / 8);
 	if(data == NULL) {
 		return NULL;
