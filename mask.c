@@ -271,6 +271,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 //		n1 = n2 = n3 = n4 = 0;
 		demerit = 0;
 		mask = (unsigned char *)malloc(width * width);
+		if(mask == NULL) break;
 		blacks = maskMakers[i](width, frame, mask);
 		blacks += Mask_writeFormatInformation(width, mask, i, level);
 		blacks = 100 * blacks / (width * width);
