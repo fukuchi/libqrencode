@@ -5,6 +5,7 @@
 #include "../qrspec.h"
 #include "../qrinput.h"
 #include "../mask.h"
+#include "../rscode.h"
 
 int inputSize(QRinput *input)
 {
@@ -629,6 +630,8 @@ int main(int argc, char **argv)
 	test_struct_semilong();
 
 	QRspec_clearCache();
+	free_rs_cache();
+
 	report();
 
 	return 0;

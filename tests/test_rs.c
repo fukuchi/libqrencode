@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../qrencode_inner.h"
 #include "../qrinput.h"
+#include "../rscode.h"
 
 /* See pp. 73 of JIS X0510:2004 */
 void test_rscode1(void)
@@ -30,6 +31,7 @@ int main(int argc, char **argv)
 {
 	test_rscode1();
 
+	free_rs_cache();
 	report();
 
 	return 0;

@@ -10,6 +10,8 @@
 	  - Added "--enable-mudflap" option.
 	* rscode.[ch]:
 	  - Added free_rs_cache() for debug purpose.
+	* tests/test_{monkey,qrencode,rs}.c:
+	  - Call free_rs_cache() at the end of the tests.
 
 2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bitstream.c:
