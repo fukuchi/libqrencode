@@ -12,6 +12,9 @@
 	  - Added free_rs_cache() for debug purpose.
 	* tests/test_{monkey,qrencode,rs}.c:
 	  - Call free_rs_cache() at the end of the tests.
+	* qrencode.c:
+	  - QRraw_new() and RSblock_init() have been improved.
+	  - Eliminated unnecessary calls of init_rs().
 
 2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bitstream.c:

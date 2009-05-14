@@ -55,53 +55,73 @@ typedef struct {
 	int b1;
 } QRRawCode;
 
-static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
+static int RSblock_initBlock(RSblock *block, int dl, unsigned char *data, int el, RS *rs)
 {
-	RS *rs;
-
 	block->dataLength = dl;
 	block->data = data;
 	block->eccLength = el;
 	block->ecc = (unsigned char *)malloc(el);
+	if(block->ecc == NULL) return -1;
 
-	rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
 	encode_rs_char(rs, data, block->ecc);
+
+	return 0;
+}
+
+static void RSblock_init(RSblock *blocks, int spec[6], unsigned char *data)
+{
+	int i;
+	RSblock *block;
+	unsigned char *p;
+	RS *rs;
+	int el, dl;
+
+	dl = QRspec_rsDataCodes1(spec);
+	el = QRspec_rsEccCodes1(spec);
+	rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
+	block = blocks;
+	p = data;
+	for(i=0; i<QRspec_rsBlockNum1(spec); i++) {
+		RSblock_initBlock(block, dl, p, el, rs);
+		p += dl;
+		block++;
+	}
+
+	dl = QRspec_rsDataCodes2(spec);
+	el = QRspec_rsEccCodes2(spec);
+	rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
+	for(i=0; i<QRspec_rsBlockNum2(spec); i++) {
+		RSblock_initBlock(block, dl, p, el, rs);
+		p += dl;
+		block++;
+	}
 }
 
 __STATIC QRRawCode *QRraw_new(QRinput *input)
 {
 	QRRawCode *raw;
 	int spec[6];
-	int i;
-	RSblock *rsblock;
-	unsigned char *p;
 
-	p = QRinput_getByteStream(input);
-	if(p == NULL) {
+	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
+	if(raw == NULL) return NULL;
+
+	raw->datacode = QRinput_getByteStream(input);
+	if(raw->datacode == NULL) {
+		free(raw);
 		return NULL;
 	}
 
-	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
-	raw->datacode = p;
 	QRspec_getEccSpec(input->version, input->level, spec);
+
 	raw->version = input->version;
 	raw->blocks = QRspec_rsBlockNum(spec);
 	raw->rsblock = (RSblock *)malloc(sizeof(RSblock) * raw->blocks);
-
-	rsblock = raw->rsblock;
-	p = raw->datacode;
-	for(i=0; i<QRspec_rsBlockNum1(spec); i++) {
-		RSblock_init(rsblock, QRspec_rsDataCodes1(spec), p,
-						QRspec_rsEccCodes1(spec));
-		p += QRspec_rsDataCodes1(spec);
-		rsblock++;
+	if(raw->rsblock == NULL) {
+		free(raw->datacode);
+		free(raw);
+		return NULL;
 	}
-	for(i=0; i<QRspec_rsBlockNum2(spec); i++) {
-		RSblock_init(rsblock, QRspec_rsDataCodes2(spec), p,
-						QRspec_rsEccCodes2(spec));
-		p += QRspec_rsDataCodes2(spec);
-		rsblock++;
-	}
+	RSblock_init(raw->rsblock, spec, raw->datacode);
 
 	raw->b1 = QRspec_rsBlockNum1(spec);
 	raw->dataLength = QRspec_rsBlockNum1(spec) * QRspec_rsDataCodes1(spec)
