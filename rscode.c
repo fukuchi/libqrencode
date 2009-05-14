@@ -52,7 +52,7 @@ struct _RS {
 	struct _RS *next;
 };
 
-RS *rslist = NULL;
+static RS *rslist = NULL;
 
 static inline int modnn(RS *rs, int x){
 	while (x >= rs->nn) {
@@ -211,13 +211,15 @@ RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 		if(rs->fcr != fcr) continue;
 		if(rs->prim != prim) continue;
 
-		return rs;
+		goto DONE;
 	}
 
 	rs = init_rs_char(symsize, gfpoly, fcr, prim, nroots, pad);
+	if(rs == NULL) goto DONE;
 	rs->next = rslist;
 	rslist = rs;
 
+DONE:
 	return rs;
 }
 
@@ -228,6 +230,18 @@ void free_rs_char(RS *rs)
 	free(rs->index_of);
 	free(rs->genpoly);
 	free(rs);
+}
+
+void free_rs_cache(void)
+{
+	RS *rs, *next;
+
+	rs = rslist;
+	while(rs != NULL) {
+		next = rs->next;
+		free_rs_char(rs);
+		rs = next;
+	}
 }
 
 /* The guts of the Reed-Solomon encoder, meant to be #included
