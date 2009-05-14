@@ -227,35 +227,29 @@ static const int eccTable[QRSPEC_VERSION_MAX+1][4][2] = {
 	{{19,  6}, {18, 31}, {34, 34}, {20, 61}},//40
 };
 
-int *QRspec_getEccSpec(int version, QRecLevel level)
+void QRspec_getEccSpec(int version, QRecLevel level, int spec[6])
 {
 	int b1, b2;
 	int data, ecc;
-	int *array;
 
 	b1 = eccTable[version][level][0];
 	b2 = eccTable[version][level][1];
 	data = QRspec_getDataLength(version, level);
 	ecc  = QRspec_getECCLength(version, level);
 
-	array = (int *)malloc(sizeof(int) * 6);
-	if(array == NULL) return NULL;
-
 	if(b2 == 0) {
-		array[0] = b1;
-		array[1] = data / b1;
-		array[2] = ecc / b1;
-		array[3] = array[4] = array[5] = 0;
+		spec[0] = b1;
+		spec[1] = data / b1;
+		spec[2] = ecc / b1;
+		spec[3] = spec[4] = spec[5] = 0;
 	} else {
-		array[0] = b1;
-		array[1] = data / (b1 + b2);
-		array[2] = ecc  / (b1 + b2);
-		array[3] = b2;
-		array[4] = array[1] + 1;
-		array[5] = (ecc - (array[2] * b1)) / b2;
+		spec[0] = b1;
+		spec[1] = data / (b1 + b2);
+		spec[2] = ecc  / (b1 + b2);
+		spec[3] = b2;
+		spec[4] = spec[1] + 1;
+		spec[5] = (ecc - (spec[2] * b1)) / b2;
 	}
-
-	return array;
 }
 
 /******************************************************************************

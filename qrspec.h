@@ -104,12 +104,11 @@ extern int QRspec_maximumWords(QRencodeMode mode, int version);
  * Return an array of ECC specification.
  * @param version
  * @param level
- * @return an array of ECC specification contains as following:
+ * @param spec an array of ECC specification contains as following:
  * {# of type1 blocks, # of data code, # of ecc code,
  *  # of type2 blocks, # of data code, # of ecc code}
- * It can be freed by calling free().
  */
-int *QRspec_getEccSpec(int version, QRecLevel level);
+void QRspec_getEccSpec(int version, QRecLevel level, int spec[6]);
 
 #define QRspec_rsBlockNum(__spec__) (__spec__[0] + __spec__[3])
 #define QRspec_rsBlockNum1(__spec__) (__spec__[0])

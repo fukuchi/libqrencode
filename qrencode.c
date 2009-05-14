@@ -71,7 +71,7 @@ static void RSblock_init(RSblock *block, int dl, unsigned char *data, int el)
 __STATIC QRRawCode *QRraw_new(QRinput *input)
 {
 	QRRawCode *raw;
-	int *spec;
+	int spec[6];
 	int i;
 	RSblock *rsblock;
 	unsigned char *p;
@@ -83,11 +83,7 @@ __STATIC QRRawCode *QRraw_new(QRinput *input)
 
 	raw = (QRRawCode *)malloc(sizeof(QRRawCode));
 	raw->datacode = p;
-	spec = QRspec_getEccSpec(input->version, input->level);
-	if(spec == NULL) {
-		free(raw);
-		return NULL;
-	}
+	QRspec_getEccSpec(input->version, input->level, spec);
 	raw->version = input->version;
 	raw->blocks = QRspec_rsBlockNum(spec);
 	raw->rsblock = (RSblock *)malloc(sizeof(RSblock) * raw->blocks);
@@ -112,8 +108,6 @@ __STATIC QRRawCode *QRraw_new(QRinput *input)
 					+ QRspec_rsBlockNum2(spec) * QRspec_rsDataCodes2(spec);
 	raw->eccLength = QRspec_rsBlockNum(spec) * QRspec_rsEccCodes1(spec);
 	raw->count = 0;
-
-	free(spec);
 
 	return raw;
 }

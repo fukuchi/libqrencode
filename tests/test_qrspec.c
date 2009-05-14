@@ -8,22 +8,21 @@ void print_eccTable(void)
 	int i, j;
 	int ecc;
 	int data;
-	int *bl;
+	int spec[6];
 
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		printf("Version %2d\n", i);
 		for(j=0; j<4; j++) {
-			bl = QRspec_getEccSpec(i, (QRecLevel)j);
-			data = bl[0] * bl[1] + bl[3] * bl[4];
-			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
+			QRspec_getEccSpec(i, (QRecLevel)j, spec);
+			data = spec[0] * spec[1] + spec[3] * spec[4];
+			ecc  = spec[0] * spec[2] + spec[3] * spec[5];
 			printf("%3d\t", ecc);
-			printf("%2d\t", bl[0]);
-			printf("(%3d, %3d)\n", bl[1]+bl[2], bl[1]);
-			if(bl[3]>0) {
-				printf("\t%2d\t", bl[3]);
-				printf("(%3d, %3d)\n", bl[4]+bl[5], bl[4]);
+			printf("%2d\t", spec[0]);
+			printf("(%3d, %3d)\n", spec[1]+spec[2], spec[1]);
+			if(spec[3]>0) {
+				printf("\t%2d\t", spec[3]);
+				printf("(%3d, %3d)\n", spec[4]+spec[5], spec[4]);
 			}
-			free(bl);
 		}
 	}
 }
@@ -34,25 +33,24 @@ void test_eccTable(void)
 	int ecc;
 	int data;
 	int err = 0;
-	int *bl;
+	int spec[6];
 
 	testStart("Checking ECC table.");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		for(j=0; j<4; j++) {
-			bl = QRspec_getEccSpec(i, (QRecLevel)j);
-			data = bl[0] * bl[1] + bl[3] * bl[4];
-			ecc  = bl[0] * bl[2] + bl[3] * bl[5];
+			QRspec_getEccSpec(i, (QRecLevel)j, spec);
+			data = spec[0] * spec[1] + spec[3] * spec[4];
+			ecc  = spec[0] * spec[2] + spec[3] * spec[5];
 			if(data + ecc != QRspec_getDataLength(i, (QRecLevel)j) + QRspec_getECCLength(i, (QRecLevel)j)) {
 				printf("Error in version %d, level %d: invalid size\n", i, j);
-				printf("%d %d %d %d %d %d\n", bl[0], bl[1], bl[2], bl[3], bl[4], bl[5]);
+				printf("%d %d %d %d %d %d\n", spec[0], spec[1], spec[2], spec[3], spec[4], spec[5]);
 				err++;
 			}
 			if(ecc != QRspec_getECCLength(i, (QRecLevel)j)) {
 				printf("Error in version %d, level %d: invalid data\n", i, j);
-				printf("%d %d %d %d %d %d\n", bl[0], bl[1], bl[2], bl[3], bl[4], bl[5]);
+				printf("%d %d %d %d %d %d\n", spec[0], spec[1], spec[2], spec[3], spec[4], spec[5]);
 				err++;
 			}
-			free(bl);
 		}
 	}
 	testEnd(err);
@@ -64,7 +62,7 @@ void test_eccTable2(void)
 	int idx;
 	int err;
 	int terr = 0;
-	int *bl;
+	int spec[6];
 
 	const int correct[7][6] = {
 		{ 8,  1, 0,  2, 60, 38},
@@ -79,17 +77,16 @@ void test_eccTable2(void)
 	testStart("Checking ECC table(2)");
 	for(i=0; i<7; i++) {
 		err = 0;
-		bl = QRspec_getEccSpec(correct[i][0], (QRecLevel)correct[i][1]);
+		QRspec_getEccSpec(correct[i][0], (QRecLevel)correct[i][1], spec);
 		idx = correct[i][2] * 3;
-		if(bl[idx] != correct[i][3]) err++;
-		if(bl[idx+1] + bl[idx+2] != correct[i][4]) err++;
-		if(bl[idx+1] != correct[i][5]) err++;
+		if(spec[idx] != correct[i][3]) err++;
+		if(spec[idx+1] + spec[idx+2] != correct[i][4]) err++;
+		if(spec[idx+1] != correct[i][5]) err++;
 		if(err) {
 			printf("Error in version %d, level %d: invalid data\n",
 					correct[i][0], correct[i][1]);
 			terr++;
 		}
-		free(bl);
 	}
 	testEnd(terr);
 }
