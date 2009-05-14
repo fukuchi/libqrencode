@@ -68,6 +68,10 @@ dnl --enable-gcov
 AC_ARG_ENABLE([gcov], [AC_HELP_STRING([--enable-gcov], [generate extra code to write coverage information suitable for gcov [default=no]])],
  [], [enable_gcov=no])
 
+dnl --enable-mudflap
+AC_ARG_ENABLE([mudflap], [AC_HELP_STRING([--enable-mudflap], [generate extra code to check memory leaks [default=no]])],
+ [], [enable_mudflap=no])
+
 dnl set CFLAGS
 CFLAGS="-Wall $CFLAGS"
 
@@ -77,6 +81,11 @@ fi
 
 if test $enable_gcov = yes; then
 	CFLAGS="$CFLAGS --coverage"
+fi
+
+if test $enable_mudflap = yes; then
+	CFLAGS="$CFLAGS -fmudflap"
+	LDFLAGS="$LDFLAGS -lmudflap"
 fi
 
 AC_OUTPUT

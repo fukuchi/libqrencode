@@ -6,6 +6,8 @@
 	    values instead of returning dynamic allocated array.
 	* mask.c:
 	  - More return value checks from malloc().
+	* configure.ac:
+	  - Added "--enable-mudflap" option.
 
 2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bitstream.c:
