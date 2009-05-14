@@ -4,6 +4,8 @@
 	* qrspe.[ch], qrencode.c, tests/test_qrspec.c:
 	  - QRspec_getEccSpec() now accepts an int array instead to return multiple
 	    values instead of returning dynamic allocated array.
+	* mask.c:
+	  - More return value checks from malloc().
 
 2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bitstream.c:
