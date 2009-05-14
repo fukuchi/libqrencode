@@ -1,3 +1,7 @@
+2009.05.14 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrinput.c, qrencode.c, qrspe.c:
+	  - More return value checks. Mainly for ENOMEM error.
+
 2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bitstream.c:
 	  - BitStream_toByte() had returned non-NULL for an empty BitStream.

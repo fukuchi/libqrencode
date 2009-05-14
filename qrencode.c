@@ -218,6 +218,7 @@ static FrameFiller *FrameFiller_new(int width, unsigned char *frame)
 	FrameFiller *filler;
 
 	filler = (FrameFiller *)malloc(sizeof(FrameFiller));
+	if(filler == NULL) return NULL;
 	filler->width = width;
 	filler->frame = frame;
 	filler->x = width - 1;
@@ -348,9 +349,7 @@ void QRcode_free(QRcode *qrcode)
 {
 	if(qrcode == NULL) return;
 
-	if(qrcode->data != NULL) {
-		free(qrcode->data);
-	}
+	free(qrcode->data);
 	free(qrcode);
 }
 
@@ -378,7 +377,16 @@ __STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 	version = raw->version;
 	width = QRspec_getWidth(version);
 	frame = QRspec_newFrame(version);
+	if(frame == NULL) {
+		QRraw_free(raw);
+		return NULL;
+	}
 	filler = FrameFiller_new(width, frame);
+	if(filler == NULL) {
+		QRraw_free(raw);
+		free(frame);
+		return NULL;
+	}
 
 	/* inteleaved data and ecc codes */
 	for(i=0; i<raw->dataLength + raw->eccLength; i++) {
@@ -403,6 +411,10 @@ __STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 		masked = Mask_mask(width, frame, input->level);
 	} else {
 		masked = Mask_makeMask(width, frame, mask, input->level);
+	}
+	if(masked == NULL) {
+		free(frame);
+		return NULL;
 	}
 	qrcode = QRcode_new(version, width, masked);
 

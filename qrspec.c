@@ -291,6 +291,7 @@ QRspec_Alignment *QRspec_getAlignmentPattern(int version)
 	if(version < 2) return NULL;
 
 	al = (QRspec_Alignment *)malloc(sizeof(QRspec_Alignment));
+	if(al == NULL) return NULL;
 
 	width = qrspecCapacity[version].width;
 	d = alignmentPattern[version][1] - alignmentPattern[version][0];
@@ -302,6 +303,10 @@ QRspec_Alignment *QRspec_getAlignmentPattern(int version)
 
 	al->n = w * w - 3;
 	al->pos = (int *)malloc(sizeof(int) * al->n * 2);
+	if(al->pos == NULL) {
+		free(al);
+		return NULL;
+	}
 
 	if(al->n == 1) {
 		al->pos[0] = alignmentPattern[version][0];
@@ -480,6 +485,8 @@ static unsigned char *QRspec_createFrame(int version)
 
 	width = qrspecCapacity[version].width;
 	frame = (unsigned char *)malloc(width * width);
+	if(frame == NULL) return NULL;
+
 	memset(frame, 0, width * width);
 	/* Finder pattern */
 	putFinderPattern(frame, width, 0, 0);
@@ -522,7 +529,10 @@ static unsigned char *QRspec_createFrame(int version)
 	}
 	/* Alignment pattern */
 	alignment = QRspec_getAlignmentPattern(version);
-	if(alignment != NULL) {
+	if(version >= 2) {
+		if(alignment == NULL) {
+			goto ABORT;
+		}
 		for(x=0; x<alignment->n; x++) {
 			putAlignmentPattern(frame, width,
 					alignment->pos[x*2], alignment->pos[x*2+1]);
@@ -556,6 +566,9 @@ static unsigned char *QRspec_createFrame(int version)
 	frame[width * (width - 8) + 8] = 0x81;
 
 	return frame;
+ABORT:
+	free(frame);
+	return NULL;
 }
 
 unsigned char *QRspec_newFrame(int version)
@@ -568,8 +581,11 @@ unsigned char *QRspec_newFrame(int version)
 	if(frames[version] == NULL) {
 		frames[version] = QRspec_createFrame(version);
 	}
+	if(frames[version] == NULL) return NULL;
+
 	width = qrspecCapacity[version].width;
 	frame = (unsigned char *)malloc(width * width);
+	if(frame == NULL) return NULL;
 	memcpy(frame, frames[version], width * width);
 
 	return frame;
@@ -580,8 +596,6 @@ void QRspec_clearCache(void)
 	int i;
 
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
-		if(frames[i] != NULL) {
-			free(frames[i]);
-		}
+		free(frames[i]);
 	}
 }
