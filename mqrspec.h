@@ -105,12 +105,11 @@ extern int MQRspec_maximumWords(QRencodeMode mode, int version);
  * Return an array of ECC specification.
  * @param version
  * @param level
- * @return an array of ECC specification contains as following:
+ * @param spec an array of ECC specification contains as following:
  * {# of type1 blocks, # of data code, # of ecc code,
  *  # of type2 blocks, # of data code, # of ecc code}
- * It can be freed by calling free().
  */
-int *MQRspec_getEccSpec(int version, QRecLevel level);
+void MQRspec_getEccSpec(int version, QRecLevel level);
 
 /******************************************************************************
  * Version information pattern
@@ -145,10 +144,16 @@ extern unsigned int MQRspec_getFormatInfo(int mask, int version, QRecLevel level
  * Return a copy of initialized frame.
  * When the same version is requested twice or more, a copy of cached frame
  * is returned.
+ * WARNING: Thread unsafe!!!
  * @param version
  * @return Array of unsigned char. You can free it by free().
  */
-/* WARNING: Thread unsafe!!! */
 extern unsigned char *MQRspec_newFrame(int version);
+
+/**
+ * Clear the frame cache. Typically for debug.
+ * WARNING: Thread unsafe!!!
+ */
+extern void QRspec_clearCache(void);
 
 #endif /* __QRSPEC_H__ */

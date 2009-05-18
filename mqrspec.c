@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Micor QR Code specification in convenient format. 
- * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)
@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "mqrspec.h"
 
@@ -111,7 +112,7 @@ int MQRspec_maximumWords(QRencodeMode mode, int version)
  * Error correction code
  *****************************************************************************/
 
-int *MQRspec_getEccSpec(int version, QRecLevel level)
+void MQRspec_getEccSpec(int version, QRecLevel level)
 {
 #if 0
 	int data, ecc;
@@ -120,7 +121,6 @@ int *MQRspec_getEccSpec(int version, QRecLevel level)
 	data = MQRspec_getDataLength(version, level);
 	ecc = MQRspec_getECCLength(version, level);
 #endif
-	return NULL;
 }
 
 /******************************************************************************
@@ -207,6 +207,8 @@ static unsigned char *MQRspec_createFrame(int version)
 
 	width = mqrspecCapacity[version].width;
 	frame = (unsigned char *)malloc(width * width);
+	if(frame == NULL) return NULL;
+
 	memset(frame, 0, width * width);
 	/* Finder pattern */
 	putFinderPattern(frame, width, 0, 0);
@@ -247,9 +249,21 @@ unsigned char *MQRspec_newFrame(int version)
 	if(frames[version] == NULL) {
 		frames[version] = MQRspec_createFrame(version);
 	}
+	if(frames[version] == NULL) return NULL;
+
 	width = mqrspecCapacity[version].width;
 	frame = (unsigned char *)malloc(width * width);
+	if(frame == NULL) return NULL;
 	memcpy(frame, frames[version], width * width);
 
 	return frame;
+}
+
+void MQRspec_clearCache(void)
+{
+	int i;
+
+	for(i=1; i<=MQRSPEC_VERSION_MAX; i++) {
+		free(frames[i]);
+	}
 }
