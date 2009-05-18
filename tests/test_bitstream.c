@@ -44,6 +44,28 @@ void test_bytes(void)
 	BitStream_free(bstream);
 }
 
+void test_appendNum(void)
+{
+	BitStream *bstream;
+	char correct[] = "10001010111111111111111100010010001101000101011001111000";
+
+	testStart("Append Num");
+	bstream = BitStream_new();
+
+	BitStream_appendNum(bstream,  8, 0x0000008a);
+	assert_zero(ncmpBin(correct, bstream, 8), "Internal data is incorrect.");
+
+	BitStream_appendNum(bstream, 16, 0x0000ffff);
+	assert_zero(ncmpBin(correct, bstream, 24), "Internal data is incorrect.");
+
+	BitStream_appendNum(bstream, 32, 0x12345678);
+
+	assert_zero(cmpBin(correct, bstream), "Internal data is incorrect.");
+	testFinish();
+
+	BitStream_free(bstream);
+}
+
 void test_appendBytes(void)
 {
 	BitStream *bstream;
@@ -55,10 +77,12 @@ void test_appendBytes(void)
 
 	data[0] = 0x8a;
 	BitStream_appendBytes(bstream,  1, data);
+	assert_zero(ncmpBin(correct, bstream, 8), "Internal data is incorrect.");
 
 	data[0] = 0xff;
 	data[1] = 0xff;
 	BitStream_appendBytes(bstream, 2, data);
+	assert_zero(ncmpBin(correct, bstream, 24), "Internal data is incorrect.");
 
 	data[0] = 0x12;
 	data[1] = 0x34;
@@ -66,8 +90,8 @@ void test_appendBytes(void)
 	data[3] = 0x78;
 	BitStream_appendBytes(bstream, 4, data);
 
-	testEnd(cmpBin(correct, bstream));
-
+	assert_zero(cmpBin(correct, bstream), "Internal data is incorrect.");
+	testFinish();
 
 	BitStream_free(bstream);
 }
@@ -80,7 +104,7 @@ void test_toByte(void)
 	};
 	unsigned char *result;
 
-	testStart("Convert to  byte array");
+	testStart("Convert to a byte array");
 	bstream = BitStream_new();
 
 	BitStream_appendBytes(bstream, 1, &correct[0]);
@@ -94,13 +118,31 @@ void test_toByte(void)
 	free(result);
 }
 
+void test_size(void)
+{
+	BitStream *bstream;
+
+	testStart("size check");
+	bstream = BitStream_new();
+	assert_equal(BitStream_size(bstream), 0, "Initialized BitStream is not 0 length");
+	BitStream_appendNum(bstream, 1, 0);
+	assert_equal(BitStream_size(bstream), 1, "Size incorrect. (first append)");
+	BitStream_appendNum(bstream, 2, 0);
+	assert_equal(BitStream_size(bstream), 3, "Size incorrect. (second append)");
+	testFinish();
+
+	BitStream_free(bstream);
+}
+
 int main(int argc, char **argv)
 {
 	test_null();
 	test_num();
 	test_bytes();
+	test_appendNum();
 	test_appendBytes();
 	test_toByte();
+	test_size();
 
 	report();
 

@@ -99,11 +99,10 @@ void report()
 	if(failed) exit(-1);
 }
 
-int cmpBin(char *correct, BitStream *bstream)
+int ncmpBin(char *correct, BitStream *bstream, int len)
 {
-	int len, i, bit;
+	int i, bit;
 
-	len = strlen(correct);
 	if(len != BitStream_size(bstream)) {
 		printf("Length is not match: %d, %d expected.\n", BitStream_size(bstream), len);
 		return -1;
@@ -115,6 +114,14 @@ int cmpBin(char *correct, BitStream *bstream)
 	}
 
 	return 0;
+}
+
+int cmpBin(char *correct, BitStream *bstream)
+{
+	int len;
+
+	len = strlen(correct);
+	return ncmpBin(correct, bstream, len);
 }
 
 char *sprintfBin(int size, unsigned char *data)
