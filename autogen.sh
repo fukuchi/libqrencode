@@ -10,9 +10,10 @@ fi
 
 if [ -d /usr/local/share/aclocal ]; then
     ACLOCAL_DIR=/usr/local/share/aclocal
-else if [ -d /usr/share/aclocal ]; then
+elif [ -d /opt/local/share/aclocal ]; then
+    ACLOCAL_DIR=/opt/local/share/aclocal
+elif [ -d /usr/share/aclocal ]; then
     ACLOCAL_DIR=/usr/share/aclocal
-    fi
 fi
 
 if [ ! -d use ]; then

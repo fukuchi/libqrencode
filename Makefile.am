@@ -25,8 +25,8 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libqrencode.pc
 
 EXTRA_DIST = libqrencode.pc.in autogen.sh configure.ac acinclude.m4 \
-			 Makefile.am tests/Makefile.am qrencode.spec.in qrencode.1.in \
-			 Doxyfile tests/test_all.sh
+			 Makefile.am tests/Makefile.am qrencode.spec.in qrencode.spec \
+			 qrencode.1.in Doxyfile tests/test_all.sh
 
 if BUILD_TOOLS
 bin_PROGRAMS = qrencode

@@ -107,12 +107,12 @@ extern "C" {
  * Encoding mode.
  */
 typedef enum {
-	QR_MODE_NUL = -1,	///< Terminator (NUL character)
-	QR_MODE_NUM = 0,	///< Numeric mode
-	QR_MODE_AN,			///< Alphabet-numeric mode
-	QR_MODE_8,			///< 8-bit data mode
-	QR_MODE_KANJI,		///< Kanji (shift-jis) mode
-	QR_MODE_STRUCTURE,	///< Internal use only
+	QR_MODE_NUL = -1,  ///< Terminator (NUL character)
+	QR_MODE_NUM = 0,   ///< Numeric mode
+	QR_MODE_AN,        ///< Alphabet-numeric mode
+	QR_MODE_8,         ///< 8-bit data mode
+	QR_MODE_KANJI,     ///< Kanji (shift-jis) mode
+	QR_MODE_STRUCTURE, ///< Internal use only
 } QRencodeMode;
 
 /**
@@ -308,8 +308,8 @@ extern int QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct *s);
  * </pre>
  */
 typedef struct {
-	int version;	///< version of the symbol
-	int width;		///< width of the symbol
+	int version;         ///< version of the symbol
+	int width;           ///< width of the symbol
 	unsigned char *data; ///< symbol data
 } QRcode;
 

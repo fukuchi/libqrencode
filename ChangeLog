@@ -1,9 +1,18 @@
+2009.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Merged from 3.1.0 branch.
+
+2009.05.16 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.h:
+	  - Indenting improvement.
+	* Makefile.am:
+	  - qrencode.spec has been added to EXTRA_DIST.
+
 2009.05.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrinput.c, qrencode.c, qrspe.c:
 	  - More return value checks. Mainly for ENOMEM error.
 	* qrspe.[ch], qrencode.c, tests/test_qrspec.c:
-	  - QRspec_getEccSpec() now accepts an int array instead to return multiple
-	    values instead of returning dynamic allocated array.
+	  - QRspec_getEccSpec() now accepts an int array instead to return
+	    multiple values instead of returning dynamic allocated array.
 	* mask.c, rscode.c:
 	  - More return value checks from malloc().
 	* configure.ac:
@@ -15,6 +24,10 @@
 	* qrencode.c:
 	  - QRraw_new() and RSblock_init() have been improved.
 	  - Eliminated unnecessary calls of init_rs().
+	* autogen.sh, configure.ac:
+	  - Darwin workarounds.
+	* tests/common.h, tests/test_bitstream.c:
+	  - New tests have been added.
 
 2009.05.12 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bitstream.c:
