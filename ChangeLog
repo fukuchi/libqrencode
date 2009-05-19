@@ -1,3 +1,7 @@
+2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* tests/create_frame_pattern.c, tests/Makefile.am:
+	  - New test tool "create_frame_pattern" has been added.
+
 2009.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Merged from 3.1.0 branch.
 

@@ -4,7 +4,7 @@ endif
 
 noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_qrspec test_rs test_qrencode prof_qrencode \
-				  test_mqrspec test_split test_monkey\
+				  test_mqrspec test_split test_monkey create_frame_pattern \
 				  $(sdlPROGRAMS)
 
 test_qrinput_SOURCES = test_qrinput.c common.h
@@ -36,6 +36,10 @@ test_monkey_LDADD = ../libqrencode.la
 
 prof_qrencode_SOURCES = prof_qrencode.c
 prof_qrencode_LDADD = ../libqrencode.la
+
+create_frame_pattern_SOURCES = create_frame_pattern.c
+create_frame_pattern_CFLAGS = $(png_CFLAGS)
+create_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
 
 if HAVE_SDL
 view_qrcode_SOURCES = view_qrcode.c common.h
