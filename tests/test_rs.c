@@ -27,7 +27,7 @@ void test_rscode1(void)
 	QRraw_free(code);
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
 	test_rscode1();
 
