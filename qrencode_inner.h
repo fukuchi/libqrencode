@@ -87,12 +87,16 @@ extern unsigned char *FrameFiller_fillerTest(int version);
  *****************************************************************************/
 extern QRcode *QRcode_encodeMask(QRinput *input, int mask);
 
-
 /******************************************************************************
  * Mask
  *****************************************************************************/
 
 extern int Mask_evaluateSymbol(int width, unsigned char *frame);
 extern int Mask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
+extern unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask);
+
+extern int MMask_evaluateSymbol(int width, unsigned char *frame);
+extern int MMask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
+extern unsigned char *MMask_makeMaskedFrame(int width, unsigned char *frame, int mask);
 
 #endif /* __QRENCODE_INNER_H__ */

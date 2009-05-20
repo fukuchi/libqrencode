@@ -4,6 +4,12 @@
 	  - MQRspec_getEccSpec() has been deleted.
 	* tests/create_mqr_frame_pattern.c, tests/Makefile.am:
 	  - Newly added.
+	* mask.[ch], tests/test_mask.c, qrencode_inner.h:
+	  - Code cleanups.
+	  - Unnecessary memcpy has been eliminated.
+	  - New test program has been added.
+	* mmask.[ch], qrencode_inner.h, tests/test_mmask.c, Makefile.am, tests/Makefile.am:
+	  - Mask module for Micro QR Code has been added.
 
 2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c, qrinput.c, qrencode.c:
