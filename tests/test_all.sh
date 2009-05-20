@@ -6,4 +6,7 @@
 ./test_qrspec
 ./test_rs
 ./test_split
+./test_mask
+./test_mqrspec
+./test_mmask
 ./test_monkey
