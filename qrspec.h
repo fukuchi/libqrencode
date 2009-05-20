@@ -106,9 +106,9 @@ extern int QRspec_maximumWords(QRencodeMode mode, int version);
  * @param level
  * @param spec an array of ECC specification contains as following:
  * {# of type1 blocks, # of data code, # of ecc code,
- *  # of type2 blocks, # of data code, # of ecc code}
+ *  # of type2 blocks, # of data code}
  */
-void QRspec_getEccSpec(int version, QRecLevel level, int spec[6]);
+void QRspec_getEccSpec(int version, QRecLevel level, int spec[5]);
 
 #define QRspec_rsBlockNum(__spec__) (__spec__[0] + __spec__[3])
 #define QRspec_rsBlockNum1(__spec__) (__spec__[0])
@@ -116,34 +116,13 @@ void QRspec_getEccSpec(int version, QRecLevel level, int spec[6]);
 #define QRspec_rsEccCodes1(__spec__) (__spec__[2])
 #define QRspec_rsBlockNum2(__spec__) (__spec__[3])
 #define QRspec_rsDataCodes2(__spec__) (__spec__[4])
-#define QRspec_rsEccCodes2(__spec__) (__spec__[5])
+#define QRspec_rsEccCodes2(__spec__) (__spec__[2])
 
-/******************************************************************************
- * Alignment pattern
- *****************************************************************************/
-
-/**
- * Array of positions of alignment patterns.
- * X and Y coordinates are interleaved into 'pos'.
- */
-typedef struct {
-	int n;		//< Number of patterns
-	int *pos;
-} QRspec_Alignment;
-
-/**
- * Return positions of alignment patterns.
- * @param version
- * @return a QRspec_Alignment object that contains all of positions of alignment
- * patterns.
- */
-extern QRspec_Alignment *QRspec_getAlignmentPattern(int version);
-
-/**
- * Free QRspec_Alignment instance.
- * @param al QRspec_Alignment instance.
- */
-extern void QRspec_freeAlignment(QRspec_Alignment *al);
+#define QRspec_rsDataLength(__spec__) \
+	((QRspec_rsBlockNum1(__spec__) * QRspec_rsDataCodes1(__spec__)) + \
+	 (QRspec_rsBlockNum2(__spec__) * QRspec_rsDataCodes2(__spec__)))
+#define QRspec_rsEccLength(__spec__) \
+	(QRspec_rsBlockNum(__spec__) * QRspec_rsEccCodes1(__spec__))
 
 /******************************************************************************
  * Version information pattern

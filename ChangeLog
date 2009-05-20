@@ -1,20 +1,103 @@
 2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Merged from 3.1.0 branch. (rev 2248:HEAD)
+
+2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c, qrinput.c, qrencode.c:
+	  - Some compile warnings cleared.
+	* qrencode.c, tests/test_qrencode.c:
+	  - NULL check of an input arg has been added to
+	    QRcode_encodeString8bit().
+	  - NULL check test and empty string test have been added for
+	    QRcode_encodeString8bit().
+	* qrinput.h, qrencode_inner.h, split.c:
+	  - Copyright year updates.
+	* split.[ch]:
+	  - Split_splitStringToQRinput() set errno EINVAL if input string is
+	    NULL or empty.
+	  - Documentation improved.
+	* qrenc.c:
+	  - perror() is now used to show the details of some errors.
+	* qrencode.[ch]:
+	  - Some functions now set errno appropriately.
+	  - Typo fixes.
+
+2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/create_frame_pattern.c, tests/Makefile.am:
 	  - New test tool "create_frame_pattern" has been added.
+	* tests/test_qrspec.c:
+	  - test_alignment1() has been replaced with test_newframe().
+	    test_newframe() compares newly created frames with frame pattern
+		data created by create_frame_pattern.
+	* tests/frame, tests/Makefile.am:
+	  - Pattern file "frame" has been added to EXTRA_DIST.
+	* mask.c:
+	  - Very small improvement. Unnecessary malloc()s are reduced.
+	* tests/test_qrencode.c:
+	  - Two new tests have been added.
+	* split.c:
+	  - NULL check and string length check have been added.
+	* qrspec.c, tests/test_qrinput.c:
+	  - Forgotten padding bits bug has been fixed. (enbugged at 2009.5.18)
+	  - New test for the bug above has been added.
+	* qrspec.[ch], qrencode_inner.h:
+	  - Some function becomes __STATIC and their declarations have been
+	    moved to qrencode_inner.h.
+	* tests/prof_qrencode.c:
+	  - Now liberates all heap at the end of the program.
+
+2009.05.19 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.c, qrencode_inner.h:
+	  - calloc() is now used to initialize rsblock.
+	  - Number of malloc()s in RSblock_initBlock() has been integrated to
+	    one malloc() in QRraw_new().
+	* rscode.c:
+	  - A very small code improvement. 
+	* qrinput.[ch]:
+	  - More return value checks.
+	  - Code cleanups.
+	* tests/common.h, tests/test_{split,monkey,qrinput}.c:
+	  - Tests improved.
+	* qrspec.[ch], tests/test_qrspec.c:
+	  - Code cleanups.
+	  - QRspec_rs{Data,Ecc}Length() have been added.
+	* tests/view_qrcode.c:
+	  - Code cleanups.
+	  - Disabled mask setting in structured mode.
+	* tests/common.h:
+	  - assert_nothing() has been added.
+	* qrinput.c, qrencode.c, tests/test_*.c:
+	  - Various *_free() now allow NULL pointer. (nothing performed)
+	* qrspec.[ch]:
+	  - Alignment pattern is now put by QRspec_putAlignmentPattern().
+	    QRspec_getAlignmentPattern() and QRspec_freeAlignment() have been
+		removed.
+
+2009.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.c:
+	  - More return value checks.
+	* bitstream.c:
+	  - BitStream_free() allows NULL pointer (nothing performed).
+	* qrinput.c:
+	  - QRinput_List_freeEntry() and QRinput_free() allow NULL pointer.
+	  - QRinput_createPaddingBit() has been replaced with
+	    QRinput_appendPaddingBit().
+	  - QRinput_convertData() now sets errno to EINVAL when input is too
+	    large.
+	  - More return value checks. Mainly for ENOMEM error.
 
 2009.05.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Merged from 3.1.0 branch.
 
 2009.05.16 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:
-	  - Indenting improvement.
+	  - Indent improvement.
 	* Makefile.am:
 	  - qrencode.spec has been added to EXTRA_DIST.
 
 2009.05.14 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrinput.c, qrencode.c, qrspe.c:
 	  - More return value checks. Mainly for ENOMEM error.
-	* qrspe.[ch], qrencode.c, tests/test_qrspec.c:
+	* qrspec.[ch], qrencode.c, tests/test_qrspec.c:
 	  - QRspec_getEccSpec() now accepts an int array instead to return
 	    multiple values instead of returning dynamic allocated array.
 	* mask.c, rscode.c:
@@ -50,7 +133,7 @@
 2009.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bistream.[ch]:
 	  - Internal representation of BitStream has been changed from
-	    NUL-terminated to unsigned char array.
+	    NUL-terminated string to unsigned char array.
 	* tests/common.h, tests/test_{bitstream,qrinput}.c:
 	  - Some test sequences have been updated (see above).
 

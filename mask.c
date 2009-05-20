@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <limits.h>
 #include "config.h"
 #include "qrencode.h"
@@ -265,13 +266,13 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 	int blacks;
 	int demerit;
 
+	mask = (unsigned char *)malloc(width * width);
+	if(mask == NULL) return NULL;
 	bestMask = NULL;
 
 	for(i=0; i<8; i++) {
 //		n1 = n2 = n3 = n4 = 0;
 		demerit = 0;
-		mask = (unsigned char *)malloc(width * width);
-		if(mask == NULL) break;
 		blacks = maskMakers[i](width, frame, mask);
 		blacks += Mask_writeFormatInformation(width, mask, i, level);
 		blacks = 100 * blacks / (width * width);
@@ -285,11 +286,11 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 			if(bestMask != NULL) {
 				free(bestMask);
 			}
-			bestMask = mask;
-		} else {
-			free(mask);
+			bestMask = (unsigned char *)malloc(width * width);
+			if(bestMask == NULL) break;
+			memcpy(bestMask, mask, width * width);
 		}
 	}
-
+	free(mask);
 	return bestMask;
 }

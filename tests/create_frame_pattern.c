@@ -1,3 +1,12 @@
+/*
+ * This tool creates a frame pattern data for debug purpose used by
+ * test_qrspec. test_qrspec and create_frame_pattern uses the same function
+ * of libqrencode. This means the test is meaningless if test_qrspec is run
+ * with a pattern data created by create_frame_pattern of the same version.
+ * In order to test it correctly, create a pattern data by the tool of the
+ * previous version, or use the frame data attached to the package.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <png.h>
@@ -11,13 +20,13 @@ void append_pattern(int version, FILE *fp)
 
 	frame = QRspec_newFrame(version);
 	width = QRspec_getWidth(version);
-	fwrite(frame, width * width, 1, fp);
+	fwrite(frame, 1, width * width, fp);
 	free(frame);
 }
 
 static int writePNG(unsigned char *frame, int width, const char *outfile)
 {
-	FILE *fp;
+	static FILE *fp;
 	png_structp png_ptr;
 	png_infop info_ptr;
 	unsigned char *row, *p, *q;

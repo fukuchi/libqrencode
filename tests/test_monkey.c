@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "common.h"
 #include "../qrinput.h"
 #include "../split.h"
@@ -40,7 +41,16 @@ void test_split_an(int num)
 	data[len] = '\0';
 
 	input = QRinput_new2(0, QR_ECLEVEL_L);
-	Split_splitStringToQRinput(data, input, QR_MODE_8, 1);
+	if(input == NULL) {
+		perror("test_split_an aborted at QRinput_new2():");
+		return;
+	}
+	ret = Split_splitStringToQRinput(data, input, QR_MODE_8, 1);
+	if(ret < 0) {
+		perror("test_split_an aborted at Split_splitStringToQRinput():");
+		QRinput_free(input);
+		return;
+	}
 	list = input->head;
 	i = 0;
 	while(list != NULL) {
@@ -93,7 +103,16 @@ void test_split_8(int num)
 	len = fill8bitData();
 
 	input = QRinput_new2(0, QR_ECLEVEL_L);
-	Split_splitStringToQRinput(data, input, QR_MODE_8, 1);
+	if(input == NULL) {
+		perror("test_split_8 aborted at QRinput_new2():");
+		return;
+	}
+	ret = Split_splitStringToQRinput(data, input, QR_MODE_8, 1);
+	if(ret < 0) {
+		perror("test_split_8 aborted at Split_splitStringToQRinput():");
+		QRinput_free(input);
+		return;
+	}
 	list = input->head;
 	i = 0;
 	while(list != NULL) {
@@ -146,7 +165,16 @@ void test_split_kanji(int num)
 	len = fill8bitData();
 
 	input = QRinput_new2(0, QR_ECLEVEL_L);
-	Split_splitStringToQRinput(data, input, QR_MODE_KANJI, 1);
+	if(input == NULL) {
+		perror("test_split_kanji aborted at QRinput_new2():");
+		return;
+	}
+	ret = Split_splitStringToQRinput(data, input, QR_MODE_KANJI, 1);
+	if(ret < 0) {
+		perror("test_split_kanji aborted at Split_splitStringToQRinput():");
+		QRinput_free(input);
+		return;
+	}
 	list = input->head;
 	i = 0;
 	while(list != NULL) {
@@ -190,7 +218,7 @@ void monkey_split_kanji(int loop)
 	}
 }
 
-void test_split_structure(void)
+void test_split_structure(int num)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -198,7 +226,7 @@ void test_split_structure(void)
 	QRinput_InputList *il;
 	int version;
 	QRecLevel level;
-	int len, c, i;
+	int len, c, i, ret;
 
 	version = (int)drand(40) + 1;
 	level = (QRecLevel)drand(4);
@@ -206,9 +234,21 @@ void test_split_structure(void)
 	len = fill8bitData();
 
 	input = QRinput_new2(version, level);
-	Split_splitStringToQRinput(data, input, QR_MODE_KANJI, 1);
+	if(input == NULL) {
+		perror("test_split_structure aborted at QRinput_new2():");
+		return;
+	}
+	ret = Split_splitStringToQRinput(data, input, QR_MODE_KANJI, 1);
+	if(ret < 0) {
+		perror("test_split_structure aborted at Split_splitStringToQRinput():");
+		QRinput_free(input);
+		return;
+	}
 	s = QRinput_splitQRinputToStruct(input);
 	if(s == NULL) {
+		if(errno != 0 && errno != ERANGE) {
+			perror("test_split_structure aborted at QRinput_splitQRinputToStruct():");
+		}
 		QRinput_free(input);
 		return;
 	}
@@ -218,23 +258,31 @@ void test_split_structure(void)
 		if(il->input->version != version) {
 			printf("Test: version %d, level %c\n", version, levelChar[level]);
 			printf("wrong version number.\n");
-			printQRinput(il->input);
+			printQRinputInfo(il->input);
 			exit(1);
 		}
 		i++;
 		il = il->next;
 	}
 	codes = QRcode_encodeInputStructured(s);
+	if(codes == NULL) {
+		perror("test_split_structure aborted at QRcode_encodeInputStructured():");
+		QRinput_free(input);
+		QRinput_Struct_free(s);
+		return;
+	}
 	list = codes;
 	il = s->head;
 	c = 0;
 	while(list != NULL) {
 		if(list->code->version != version) {
+			printf("#%d: data mismatched.\n", num);
 			printf("Test: version %d, level %c\n", version, levelChar[level]);
 			printf("code #%d\n", c);
 			printf("Version mismatch: %d should be %d\n", list->code->version, version);
 			printf("max bits: %d\n", QRspec_getDataLength(version, level) * 8 - 20);
-			printQRinput(il->input);
+			printQRinputInfo(il->input);
+			printQRinput(input);
 			exit(1);
 		}
 		list = list->next;
@@ -254,7 +302,7 @@ void monkey_split_structure(int loop)
 	puts("Monkey test: QRinput_splitQRinputToStruct.");
 	srand(0);
 	for(i=0; i<loop; i++) {
-		test_split_structure();
+		test_split_structure(i);
 	}
 }
 

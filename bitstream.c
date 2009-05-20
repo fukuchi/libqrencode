@@ -228,8 +228,8 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 
 void BitStream_free(BitStream *bstream)
 {
-	if(bstream->data != NULL) {
+	if(bstream != NULL) {
 		free(bstream->data);
+		free(bstream);
 	}
-	free(bstream);
 }

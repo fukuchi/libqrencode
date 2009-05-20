@@ -388,7 +388,7 @@ void test_splitNum8(void)
 	list = input->head;
 	if(inputTest(list, "8", 8)) {
 		err++;
-		printQRinput(input);
+		printQRinputInfo(input);
 	}
 	testEnd(err);
 	QRinput_free(input);

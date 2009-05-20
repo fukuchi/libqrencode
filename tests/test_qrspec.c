@@ -8,20 +8,28 @@ void print_eccTable(void)
 	int i, j;
 	int ecc;
 	int data;
-	int spec[6];
+	int spec[5];
 
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		printf("Version %2d\n", i);
 		for(j=0; j<4; j++) {
 			QRspec_getEccSpec(i, (QRecLevel)j, spec);
-			data = spec[0] * spec[1] + spec[3] * spec[4];
-			ecc  = spec[0] * spec[2] + spec[3] * spec[5];
+			data = QRspec_rsBlockNum1(spec) * QRspec_rsDataCodes1(spec)
+			     + QRspec_rsBlockNum2(spec) * QRspec_rsDataCodes2(spec);
+			ecc  = QRspec_rsBlockNum1(spec) * QRspec_rsEccCodes1(spec)
+			     + QRspec_rsBlockNum2(spec) * QRspec_rsEccCodes2(spec);
 			printf("%3d\t", ecc);
-			printf("%2d\t", spec[0]);
-			printf("(%3d, %3d)\n", spec[1]+spec[2], spec[1]);
-			if(spec[3]>0) {
-				printf("\t%2d\t", spec[3]);
-				printf("(%3d, %3d)\n", spec[4]+spec[5], spec[4]);
+			printf("%2d\t", QRspec_rsBlockNum1(spec));
+			printf("(%3d, %3d, %3d)\n",
+				   QRspec_rsDataCodes1(spec) + QRspec_rsEccCodes1(spec),
+				   QRspec_rsDataCodes1(spec),
+				   QRspec_rsEccCodes1(spec));
+			if(QRspec_rsBlockNum2(spec) > 0) {
+				printf("\t%2d\t", QRspec_rsBlockNum2(spec));
+				printf("(%3d, %3d, %3d)\n",
+					   QRspec_rsDataCodes2(spec) + QRspec_rsEccCodes2(spec),
+					   QRspec_rsDataCodes2(spec),
+					   QRspec_rsEccCodes2(spec));
 			}
 		}
 	}
@@ -33,22 +41,24 @@ void test_eccTable(void)
 	int ecc;
 	int data;
 	int err = 0;
-	int spec[6];
+	int spec[5];
 
 	testStart("Checking ECC table.");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		for(j=0; j<4; j++) {
 			QRspec_getEccSpec(i, (QRecLevel)j, spec);
-			data = spec[0] * spec[1] + spec[3] * spec[4];
-			ecc  = spec[0] * spec[2] + spec[3] * spec[5];
+			data = QRspec_rsBlockNum1(spec) * QRspec_rsDataCodes1(spec)
+			     + QRspec_rsBlockNum2(spec) * QRspec_rsDataCodes2(spec);
+			ecc  = QRspec_rsBlockNum1(spec) * QRspec_rsEccCodes1(spec)
+			     + QRspec_rsBlockNum2(spec) * QRspec_rsEccCodes2(spec);
 			if(data + ecc != QRspec_getDataLength(i, (QRecLevel)j) + QRspec_getECCLength(i, (QRecLevel)j)) {
 				printf("Error in version %d, level %d: invalid size\n", i, j);
-				printf("%d %d %d %d %d %d\n", spec[0], spec[1], spec[2], spec[3], spec[4], spec[5]);
+				printf("%d %d %d %d %d %d\n", spec[0], spec[1], spec[2], spec[3], spec[4], spec[2]);
 				err++;
 			}
 			if(ecc != QRspec_getECCLength(i, (QRecLevel)j)) {
 				printf("Error in version %d, level %d: invalid data\n", i, j);
-				printf("%d %d %d %d %d %d\n", spec[0], spec[1], spec[2], spec[3], spec[4], spec[5]);
+				printf("%d %d %d %d %d %d\n", spec[0], spec[1], spec[2], spec[3], spec[4], spec[2]);
 				err++;
 			}
 		}
@@ -59,10 +69,7 @@ void test_eccTable(void)
 void test_eccTable2(void)
 {
 	int i;
-	int idx;
-	int err;
-	int terr = 0;
-	int spec[6];
+	int spec[5];
 
 	const int correct[7][6] = {
 		{ 8,  1, 0,  2, 60, 38},
@@ -76,97 +83,103 @@ void test_eccTable2(void)
 
 	testStart("Checking ECC table(2)");
 	for(i=0; i<7; i++) {
-		err = 0;
 		QRspec_getEccSpec(correct[i][0], (QRecLevel)correct[i][1], spec);
-		idx = correct[i][2] * 3;
-		if(spec[idx] != correct[i][3]) err++;
-		if(spec[idx+1] + spec[idx+2] != correct[i][4]) err++;
-		if(spec[idx+1] != correct[i][5]) err++;
-		if(err) {
-			printf("Error in version %d, level %d: invalid data\n",
-					correct[i][0], correct[i][1]);
-			terr++;
-		}
-	}
-	testEnd(terr);
-}
-
-void test_alignment1(void)
-{
-	QRspec_Alignment *al;
-	int i;
-	int err = 0;
-	int rbpos;
-
-	testStart("Checking alignment pattern table(1)");
-	rbpos = 14;
-	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
-		al = QRspec_getAlignmentPattern(i);
-		if(i == 1) {
-			if(al != NULL) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
-		} else if(i < 7) {
-			if(al->n != 1) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
-			if(al->pos[al->n*2-1] != rbpos) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
-		} else if(i < 14) {
-			if(al->n != 6) {
-				printf("Error in version %d.(%d)\n", i, al->n);
-				err++;
-			}
-			if(al->pos[al->n*2-1] != rbpos) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
-		} else if(i < 21) {
-			if(al->n != 13) {
-				printf("Error in version %d.(%d)\n", i, al->n);
-				err++;
-			}
-			if(al->pos[al->n*2-1] != rbpos) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
-		} else if(i < 28) {
-			if(al->n != 22) {
-				printf("Error in version %d.(%d)\n", i, al->n);
-				err++;
-			}
-			if(al->pos[al->n*2-1] != rbpos) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
-		} else if(i < 35) {
-			if(al->n != 33) {
-				printf("Error in version %d.(%d)\n", i, al->n);
-				err++;
-			}
-			if(al->pos[al->n*2-1] != rbpos) {
-				printf("Error in version %d.\n", i);
-				err++;
-			}
+		if(correct[i][2] == 0) {
+			assert_equal(QRspec_rsBlockNum1(spec), correct[i][3],
+				"Error in version %d, level %d. rsBlockNum1 was %d, expected %d.\n",
+				correct[i][0], correct[i][1],
+				QRspec_rsBlockNum1(spec), correct[i][3]);
+			assert_equal(QRspec_rsDataCodes1(spec) + QRspec_rsEccCodes1(spec), correct[i][4],
+				"Error in version %d, level %d. rsDataCodes1 + rsEccCodes1 was %d, expected %d.\n",
+				correct[i][0], correct[i][1],
+				QRspec_rsDataCodes1(spec) + QRspec_rsEccCodes1(spec), correct[i][4]);
+			assert_equal(QRspec_rsDataCodes1(spec), correct[i][5],
+				"Error in version %d, level %d. rsDataCodes1 was %d, expected %d.\n",
+				correct[i][0], correct[i][1],
+				QRspec_rsDataCodes1(spec), correct[i][5]);
 		} else {
-			if(al->n != 46) {
-				printf("Error in version %d.(%d)\n", i, al->n);
-				err++;
-			}
-			if(al->pos[al->n*2-1] != rbpos) {
-				printf("Error in version %d.\n", i);
-				err++;
+			assert_equal(QRspec_rsBlockNum2(spec), correct[i][3],
+				"Error in version %d, level %d. rsBlockNum2 was %d, expected %d.\n",
+				correct[i][0], correct[i][1],
+				QRspec_rsBlockNum2(spec), correct[i][3]);
+			assert_equal(QRspec_rsDataCodes2(spec) + QRspec_rsEccCodes2(spec), correct[i][4],
+				"Error in version %d, level %d. rsDataCodes2 + rsEccCodes2 was %d, expected %d.\n",
+				correct[i][0], correct[i][1],
+				QRspec_rsDataCodes2(spec) + QRspec_rsEccCodes2(spec), correct[i][4]);
+			assert_equal(QRspec_rsDataCodes2(spec), correct[i][5],
+				"Error in version %d, level %d. rsDataCodes2 was %d, expected %d.\n",
+				correct[i][0], correct[i][1],
+				QRspec_rsDataCodes2(spec), correct[i][5]);
+		}
+	}
+	testFinish();
+}
+
+void test_newframe(void)
+{
+	unsigned char buf[QRSPEC_WIDTH_MAX * QRSPEC_WIDTH_MAX];
+	int i, width;
+	size_t len;
+	FILE *fp;
+	unsigned char *frame;
+
+	testStart("Checking newly created frame.");
+	fp = fopen("frame", "rb");
+	if(fp == NULL) {
+		perror("Failed to open \"frame\":");
+		abort();
+	}
+	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
+		frame = QRspec_newFrame(i);
+		width = QRspec_getWidth(i);
+		len = fread(buf, 1, width * width, fp);
+		if((int)len != width * width) {
+			perror("Failed to read the pattern file:");
+			abort();
+		}
+		assert_zero(memcmp(frame, buf, len), "frame pattern mismatch (version %d)\n", i);
+		free(frame);
+	}
+
+	testFinish();
+	fclose(fp);
+}
+
+#if 0
+/* This test is used to check positions of alignment pattern. See Appendix E
+ * (pp.71) of JIS X0510:2004 and compare to the output. Before comment out
+ * this test, change the value of the pattern marker's center dot from 0xa1
+ * to 0xb1 (QRspec_putAlignmentMarker() : finder).
+ */
+void test_alignment(void)
+{
+	unsigned char *frame;
+	int i, x, y, width, c;
+
+	testStart("Checking alignment pattern.");
+	for(i=2; i<=QRSPEC_VERSION_MAX; i++) {
+		printf("%2d", i);
+		frame = QRspec_newFrame(i);
+		width = QRspec_getWidth(i);
+		c = 0;
+		for(x=0; x<width * width; x++) {
+			if(frame[x] == 0xb1) {
+				c++;
 			}
 		}
-		QRspec_freeAlignment(al);
-		rbpos += 4;
+		printf("|%2d|   6", c);
+		y = width - 7;
+		for(x=0; x < width; x++) {
+			if(frame[y * width + x] == 0xb1) {
+				printf(", %3d", x);
+			}
+		}
+		printf("\n");
+		free(frame);
 	}
-	testEnd(err);
+	testFinish();
 }
+#endif
 
 void test_verpat(void)
 {
@@ -279,11 +292,14 @@ int main(int argc, char **argv)
 {
 	test_eccTable();
 	test_eccTable2();
-//	print_eccTable();
-	test_alignment1();
+	//print_eccTable();
+	test_newframe();
+	//test_alignment();
 	test_verpat();
-	print_newFrame();
+	//print_newFrame();
 	test_format();
+
+	QRspec_clearCache();
 
 	report();
 

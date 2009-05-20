@@ -191,6 +191,31 @@ void test_encodeNumericPadded2(void)
 	BitStream_free(bstream);
 }
 
+void test_padding(void)
+{
+	QRinput *input;
+	BitStream *bstream;
+	int i, size;
+	char data[] = "0123456789ABCDeFG";
+	unsigned char c;
+
+	testStart("Padding bit check. (less than 5 bits)");
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	QRinput_append(input, QR_MODE_8, 17, (unsigned char *)data);
+	bstream = QRinput_getBitStream(input);
+	size = BitStream_size(bstream);
+	assert_equal(size, 152, "# of bit is incorrect (%d != 152).\n", size);
+	c = 0;
+	for(i=0; i<4; i++) {
+		c += bstream->data[size - i - 1];
+	}
+	assert_zero(c, "Padding bits are not zero.");
+	testFinish();
+
+	QRinput_free(input);
+	BitStream_free(bstream);
+}
+
 void test_encodeNumeric2(void)
 {
 	QRinput *stream;
@@ -421,11 +446,11 @@ void test_lengthOfCode_num(void)
 void test_lengthOfCode_kanji(void)
 {
 	int i, bytes;
-	char str[4]= {0x93, 0x5f,0xe4, 0xaa};
+	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
 
 	testStart("Checking length of code (kanji)");
 	for(i=2; i<=4; i+=2) {
-		bytes = check_lengthOfCode(QR_MODE_KANJI, str, i, 1);
+		bytes = check_lengthOfCode(QR_MODE_KANJI, (char *)str, i, 1);
 		assert_equal(i, bytes, "lengthOfCode failed. (QR_MODE_KANJI, version:1, size:%d)\n", i);
 	}
 	testFinish();
@@ -723,6 +748,14 @@ void test_parity2(void)
 	QRinput_Struct_free(s);
 }
 
+void test_null_free(void)
+{
+	testStart("Testing free NULL pointers");
+	assert_nothing(QRinput_free(NULL), "Check QRinput_free(NULL).\n");
+	assert_nothing(QRinput_Struct_free(NULL), "Check QRinput_Struct_free(NULL).\n");
+	testFinish();
+}
+
 int main(int argc, char **argv)
 {
 	test_encodeNumeric();
@@ -738,6 +771,7 @@ int main(int argc, char **argv)
 	test_encodeNumericPadded();
 	test_encodeNumericPadded2();
 	test_encodeAnNum();
+	test_padding();
 	test_struct_listop();
 	test_insertStructuredAppendHeader();
 	test_insertStructuredAppendHeader_error();
@@ -751,6 +785,7 @@ int main(int argc, char **argv)
 	test_struct_split_invalidVersion();
 	test_parity();
 	test_parity2();
+	test_null_free();
 
 	report();
 

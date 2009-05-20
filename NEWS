@@ -4,10 +4,10 @@ libqrencode NEWS - Overview of changes
 Version 3.1.0 (2009.5.x)
 ------------------------
 * Various code cleanups and performance improves.
-* Strict error checks have been added.
+* Strict internal error checks have been added.
 * "--without-tests" has become default setting. Specify "--with-tests" to
   compile test programs.
-* Some minor bugs have been fixed.
+* Some memory leak bugs have been fixed.
 
 Release Note:
 

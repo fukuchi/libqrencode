@@ -3,6 +3,8 @@
 #include <sys/time.h>
 #include <time.h>
 #include "../qrencode.h"
+#include "../qrspec.h"
+#include "../rscode.h"
 
 struct timeval tv;
 void timerStart(const char *str)
@@ -58,6 +60,9 @@ int main()
 {
 	prof_ver1to10();
 	prof_ver31to40();
+
+	QRspec_clearCache();
+	free_rs_cache();
 
 	return 0;
 }

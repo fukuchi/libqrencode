@@ -9,6 +9,7 @@
 #include "../qrencode.h"
 #include "../qrinput.h"
 #include "../bitstream.h"
+#include "../qrencode_inner.h"
 
 #define testStart(__arg__) (testStartReal(__func__, __arg__))
 #define testEndExp(__arg__) (testEnd(!(__arg__)))
@@ -25,6 +26,23 @@ const char *modeStr[5] = {"nm", "an", "8", "kj", "st"};
 void printQRinput(QRinput *input)
 {
 	QRinput_List *list;
+	unsigned char *p;
+	int i;
+
+	list = input->head;
+	while(list != NULL) {
+		p = list->data;
+		for(i=0; i<list->size; i++) {
+			printf("0x%02x,", list->data[i]);
+		}
+		list = list->next;
+	}
+	printf("\n");
+}
+
+void printQRinputInfo(QRinput *input)
+{
+	QRinput_List *list;
 	BitStream *b;
 	int i;
 
@@ -39,8 +57,10 @@ void printQRinput(QRinput *input)
 	}
 	printf("  chunks: %d\n", i);
 	b = QRinput_mergeBitStream(input);
-	printf("  bitstream-size: %d\n", BitStream_size(b));
-	BitStream_free(b);
+	if(b != NULL) {
+		printf("  bitstream-size: %d\n", BitStream_size(b));
+		BitStream_free(b);
+	}
 
 	list = input->head;
 	i = 0;
@@ -73,7 +93,7 @@ void testEnd(int result)
 }
 
 #define assert_exp(__exp__, ...) \
-(void)({assertionNum++;if(!(__exp__)) {assertionFailed++; printf(__VA_ARGS__);}})
+{assertionNum++;if(!(__exp__)) {assertionFailed++; printf(__VA_ARGS__);}}
 
 #define assert_zero(__exp__, ...) assert_exp((__exp__) == 0, __VA_ARGS__)
 #define assert_nonzero(__exp__, ...) assert_exp((__exp__) != 0, __VA_ARGS__)
@@ -81,6 +101,7 @@ void testEnd(int result)
 #define assert_nonnull(__ptr__, ...) assert_exp((__ptr__) != NULL, __VA_ARGS__)
 #define assert_equal(__e1__, __e2__, ...) assert_exp((__e1__) == (__e2__), __VA_ARGS__)
 #define assert_notequal(__e1__, __e2__, ...) assert_exp((__e1__) != (__e2__), __VA_ARGS__)
+#define assert_nothing(__exp__, ...) {printf(__VA_ARGS__); __exp__;}
 
 void testFinish(void)
 {

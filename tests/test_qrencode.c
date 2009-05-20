@@ -430,6 +430,52 @@ void test_encode3(void)
 	QRinput_free(input);
 }
 
+void test_encodeNull(void)
+{
+	QRcode *qrcode;
+
+	testStart("Test encode NULL.");
+	qrcode = QRcode_encodeString(NULL, 0, QR_ECLEVEL_H, QR_MODE_8, 0);
+	assert_null(qrcode, "QRcode_encodeString() returned something.\n");
+	testFinish();
+	if(qrcode != NULL) QRcode_free(qrcode);
+}
+
+
+void test_encodeEmpty(void)
+{
+	QRcode *qrcode;
+
+	testStart("Test encode an empty string.");
+	qrcode = QRcode_encodeString("", 0, QR_ECLEVEL_H, QR_MODE_8, 0);
+	assert_null(qrcode, "QRcode_encodeString() returned something.\n");
+	testFinish();
+	if(qrcode != NULL) QRcode_free(qrcode);
+}
+
+void test_encodeNull8(void)
+{
+	QRcode *qrcode;
+
+	testStart("Test encode NULL.");
+	qrcode = QRcode_encodeString8bit(NULL, 0, QR_ECLEVEL_H);
+	assert_null(qrcode, "QRcode_encodeString8bit() returned something.\n");
+	testFinish();
+	if(qrcode != NULL) QRcode_free(qrcode);
+}
+
+
+void test_encodeEmpty8(void)
+{
+	QRcode *qrcode;
+
+	testStart("Test encode an empty string.");
+	qrcode = QRcode_encodeString8bit("", 0, QR_ECLEVEL_H);
+	assert_null(qrcode, "QRcode_encodeString8bit() returned something.\n");
+	testFinish();
+	if(qrcode != NULL) QRcode_free(qrcode);
+}
+
 void test_encodeTooLong(void)
 {
 	QRcode *code;
@@ -608,6 +654,15 @@ void test_struct_example(void)
 	QRcode_List_free(codes);
 }
 
+void test_null_free(void)
+{
+	testStart("Testing free NULL pointers");
+	assert_nothing(QRcode_free(NULL), "Check QRcode_free(NULL).\n");
+	assert_nothing(QRcode_List_free(NULL), "Check QRcode_List_free(NULL).\n");
+	assert_nothing(QRraw_free(NULL), "Check QRraw_free(NULL).\n");
+	testFinish();
+}
+
 int main(int argc, char **argv)
 {
 	test_iterate();
@@ -622,12 +677,17 @@ int main(int argc, char **argv)
 	test_encode();
 	test_encode2();
 	test_encode3();
+	test_encodeNull();
+	test_encodeEmpty();
+	test_encodeNull8();
+	test_encodeEmpty8();
 	test_encodeTooLong();
 	test_01234567();
 	test_invalid_input();
 //	print_01234567();
 	test_struct_example();
 	test_struct_semilong();
+	test_null_free();
 
 	QRspec_clearCache();
 	free_rs_cache();

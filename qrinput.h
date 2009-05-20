@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Input data chunk class
- * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,19 +66,6 @@ struct _QRinput_Struct {
 };
 
 /**
- * Insert a structured-append header to the head of the input data.
- * @param input input data.
- * @param size number of structured symbols.
- * @param index index number of the symbol. (1 <= index <= size)
- * @param parity parity among input data. (NOTE: each symbol of a set of structured symbols has the same parity data)
- * @retval 0 success.
- * @retval -1 error occurred and errno is set to indeicate the error. See Execptions for the details.
- * @throw EINVAL invalid parameter.
- * @throw ENOMEM unable to allocate memory.
- */
-extern int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int index, unsigned char parity);
-
-/**
  * Pack all bit streams padding bits into a byte array.
  * @param input input data.
  * @return padded merged byte stream
@@ -91,14 +78,9 @@ extern int QRinput_estimateBitsModeAn(int size);
 extern int QRinput_estimateBitsMode8(int size);
 extern int QRinput_estimateBitsModeKanji(int size);
 
-extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
-extern BitStream *QRinput_mergeBitStream(QRinput *input);
-extern BitStream *QRinput_getBitStream(QRinput *input);
-extern int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits);
 extern QRinput *QRinput_dup(QRinput *input);
-extern int QRinput_splitEntry(QRinput_List *entry, int bytes);
 
-extern const signed char QRinput_anTable[];
+extern const signed char QRinput_anTable[128];
 
 /**
  * Look up the alphabet-numeric convesion table (see JIS X0510:2004, pp.19).

@@ -7,6 +7,8 @@ noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_mqrspec test_split test_monkey create_frame_pattern \
 				  $(sdlPROGRAMS)
 
+EXTRA_DIST = frame
+
 test_qrinput_SOURCES = test_qrinput.c common.h
 test_qrinput_LDADD = ../libqrencode.la
 

@@ -107,7 +107,7 @@ extern "C" {
  * Encoding mode.
  */
 typedef enum {
-	QR_MODE_NUL = -1,  ///< Terminator (NUL character)
+	QR_MODE_NUL = -1,  ///< Terminator (NUL character). Internal use only
 	QR_MODE_NUM = 0,   ///< Numeric mode
 	QR_MODE_AN,        ///< Alphabet-numeric mode
 	QR_MODE_8,         ///< 8-bit data mode
@@ -244,7 +244,7 @@ extern void QRinput_Struct_setParity(QRinput_Struct *s, unsigned char parity);
 
 /**
  * Append a QRinput object to the set.
- * @warning never append the same QRinput object twice.
+ * @warning never append the same QRinput object twice or more.
  * @param s structured input object.
  * @param input an input object.
  * @retval >0 number of input objects in the structure.
@@ -361,7 +361,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
 extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
 
 /**
- * Same to ::QRcode_qncodeString, but encode whole data in 8-bit mode.
+ * Same to QRcode_encodeString(), but encode whole data in 8-bit mode.
  * @warning This function is THREAD UNSAFE.
  */
 extern QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level);
@@ -393,12 +393,15 @@ extern QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s);
  *             non-alphanumerical characters will be encoded as is. If you want
  *             to embed UTF-8 string, choose this.
  * @param casesensitive case-sensitive(1) or not(0).
- * @return a singly-linked list of QRcode.
+ * @return a singly-linked list of QRcode. On error, NULL is returned, and
+ *         errno is set to indicate the error. See Exceptions for the details.
+ * @throw EINVAL invalid input object.
+ * @throw ENOMEM unable to allocate memory for input objects.
  */
 extern QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
 
 /**
- * Same to QRcode_qncodeStringStructured, but encode whole data in 8-bit mode.
+ * Same to QRcode_encodeStringStructured(), but encode whole data in 8-bit mode.
  * @warning This function is THREAD UNSAFE.
  */
 extern QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, QRecLevel level);

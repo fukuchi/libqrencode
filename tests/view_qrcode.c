@@ -45,7 +45,7 @@ static void usage(int help, int longopt)
 {
 	fprintf(stderr,
 "view_qrcode version %s\n"
-"Copyright (C) 2008 Kentaro Fukuchi\n", VERSION);
+"Copyright (C) 2008, 2009 Kentaro Fukuchi\n", VERSION);
 	if(help) {
 		if(longopt) {
 			fprintf(stderr,
@@ -163,7 +163,7 @@ void draw_singleQRcode(QRinput *stream, int mask)
 	QRcode_free(qrcode);
 }
 
-void draw_structuredQRcode(QRinput_Struct *s, int mask)
+void draw_structuredQRcode(QRinput_Struct *s)
 {
 	int i, w, h, n, x, y;
 	int swidth;
@@ -191,7 +191,7 @@ void draw_structuredQRcode(QRinput_Struct *s, int mask)
 	QRcode_List_free(qrcodes);
 }
 
-void draw_structuredQRcodeFromText(int argc, char **argv, int mask)
+void draw_structuredQRcodeFromText(int argc, char **argv)
 {
 	QRinput_Struct *s;
 	QRinput *input;
@@ -228,11 +228,11 @@ void draw_structuredQRcodeFromText(int argc, char **argv, int mask)
 		fprintf(stderr, "Too many inputs.\n");
 	}
 
-	draw_structuredQRcode(s, mask);
+	draw_structuredQRcode(s);
 	QRinput_Struct_free(s);
 }
 
-void draw_structuredQRcodeFromQRinput(QRinput *stream, int mask)
+void draw_structuredQRcodeFromQRinput(QRinput *stream)
 {
 	QRinput_Struct *s;
 
@@ -240,7 +240,7 @@ void draw_structuredQRcodeFromQRinput(QRinput *stream, int mask)
 	QRinput_setErrorCorrectionLevel(stream, level);
 	s = QRinput_splitQRinputToStruct(stream);
 	if(s != NULL) {
-		draw_structuredQRcode(s, mask);
+		draw_structuredQRcode(s);
 		QRinput_Struct_free(s);
 	} else {
 		fprintf(stderr, "Input data is too large for this setting.\n");
@@ -256,15 +256,19 @@ void view(int mode, QRinput *input)
 
 	while(flag) {
 		if(mode) {
-			draw_structuredQRcodeFromText(textc, textv, mask);
+			draw_structuredQRcodeFromText(textc, textv);
 		} else {
 			if(structured) {
-				draw_structuredQRcodeFromQRinput(input, mask);
+				draw_structuredQRcodeFromQRinput(input);
 			} else {
 				draw_singleQRcode(input, mask);
 			}
 		}
-		printf("Version %d, Level %c, Mask %d.\n", version, levelChar[level], mask);
+		if(mode || structured) {
+			printf("Version %d, Level %c.\n", version, levelChar[level]);
+		} else {
+			printf("Version %d, Level %c, Mask %d.\n", version, levelChar[level], mask);
+		}
 		loop = 1;
 		while(loop) {
 			usleep(10000);
@@ -300,12 +304,16 @@ void view(int mode, QRinput *input)
 					case SDLK_5:
 					case SDLK_6:
 					case SDLK_7:
-						mask = (event.key.keysym.sym - SDLK_0);
-						loop = 0;
+						if(!mode && !structured) {
+							mask = (event.key.keysym.sym - SDLK_0);
+							loop = 0;
+						}
 						break;
 					case SDLK_8:
-						mask = -1;
-						loop = 0;
+						if(!mode && !structured) {
+							mask = -1;
+							loop = 0;
+						}
 						break;
 					case SDLK_l:
 						level = QR_ECLEVEL_L;
@@ -474,7 +482,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	if(structured && version < 1) {
-		fprintf(stderr, "Version number must be larger than 0.\n");
+		fprintf(stderr, "Version number must be greater than 0 to encode structured symbols.\n");
 		exit(1);
 	}
 	if(structured && (argc - optind > 1)) {

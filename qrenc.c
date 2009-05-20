@@ -149,7 +149,7 @@ static char *readStdin(void)
 
 static int writePNG(QRcode *qrcode, const char *outfile)
 {
-	FILE *fp;
+	static FILE *fp; // avoid clobbering by setjmp.
 	png_structp png_ptr;
 	png_infop info_ptr;
 	unsigned char *row, *p, *q;
@@ -176,21 +176,18 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if(png_ptr == NULL) {
-		fclose(fp);
 		fprintf(stderr, "Failed to initialize PNG writer.\n");
 		exit(EXIT_FAILURE);
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
 	if(info_ptr == NULL) {
-		fclose(fp);
 		fprintf(stderr, "Failed to initialize PNG write.\n");
 		exit(EXIT_FAILURE);
 	}
 
 	if(setjmp(png_jmpbuf(png_ptr))) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
-		fclose(fp);
 		fprintf(stderr, "Failed to write PNG image.\n");
 		exit(EXIT_FAILURE);
 	}
@@ -268,7 +265,7 @@ static void qrencode(const char *intext, const char *outfile)
 	
 	qrcode = encode(intext);
 	if(qrcode == NULL) {
-		fprintf(stderr, "Failed to encode the input data.\n");
+		perror("Failed to encode the input data:");
 		exit(EXIT_FAILURE);
 	}
 	writePNG(qrcode, outfile);
@@ -310,7 +307,7 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 	
 	qrlist = encodeStructured(intext);
 	if(qrlist == NULL) {
-		fprintf(stderr, "Failed to encode the input data.\n");
+		perror("Failed to encode the input data:");
 		exit(EXIT_FAILURE);
 	}
 

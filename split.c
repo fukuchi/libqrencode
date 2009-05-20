@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Input data splitter.
- * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)
@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "qrencode.h"
 #include "qrinput.h"
 #include "qrspec.h"
@@ -279,6 +280,10 @@ int Split_splitStringToQRinput(const char *string, QRinput *input,
 	char *newstr;
 	int ret;
 
+	if(string == NULL || *string == '\0') {
+		errno = EINVAL;
+		return -1;
+	}
 	if(!casesensitive) {
 		newstr = dupAndToUpper(string, hint);
 		if(newstr == NULL) return -1;
