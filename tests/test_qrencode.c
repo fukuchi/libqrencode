@@ -663,7 +663,7 @@ void test_null_free(void)
 	testFinish();
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
 	test_iterate();
 	test_iterate2();

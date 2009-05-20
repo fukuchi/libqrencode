@@ -134,7 +134,7 @@ void test_size(void)
 	BitStream_free(bstream);
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
 	test_null();
 	test_num();

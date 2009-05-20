@@ -145,12 +145,14 @@ void test_dataLength(void)
 	testEnd(err);
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
 	test_newFrame();
 	//print_format();
 	test_format();
 	test_dataLength();
+
+	MQRspec_clearCache();
 
 	report();
 

@@ -56,7 +56,7 @@ void prof_ver31to40(void)
 	timerStop();
 }
 
-int main()
+int main(void)
 {
 	prof_ver1to10();
 	prof_ver31to40();

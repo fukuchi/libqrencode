@@ -1,5 +1,9 @@
 2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Merged from 3.1.0 branch. (rev 2248:HEAD)
+	* mqrspec.[ch], tests/create_mqr_frame_pattern.c:
+	  - MQRspec_getEccSpec() has been deleted.
+	* tests/create_mqr_frame_pattern.c, tests/Makefile.am:
+	  - Newly added.
 
 2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c, qrinput.c, qrencode.c:

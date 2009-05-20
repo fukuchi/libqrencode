@@ -756,7 +756,7 @@ void test_null_free(void)
 	testFinish();
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
 	test_encodeNumeric();
 	test_encodeNumeric2();
