@@ -4,7 +4,7 @@ endif
 
 noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_qrspec test_rs test_qrencode prof_qrencode \
-				  test_mqrspec test_split test_monkey \
+				  test_mqrspec test_split test_monkey test_mask test_mmask \
 				  create_frame_pattern create_mqr_frame_pattern \
 				  $(sdlPROGRAMS)
 
@@ -36,6 +36,12 @@ test_split_LDADD = ../libqrencode.la
 
 test_monkey_SOURCES = test_monkey.c common.h
 test_monkey_LDADD = ../libqrencode.la
+
+test_mask_SOURCES = test_mask.c common.h
+test_mask_LDADD = ../libqrencode.la
+
+test_mmask_SOURCES = test_mmask.c common.h
+test_mmask_LDADD = ../libqrencode.la
 
 prof_qrencode_SOURCES = prof_qrencode.c
 prof_qrencode_LDADD = ../libqrencode.la
