@@ -34,7 +34,7 @@ __STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int ma
 	int i;
 	int blacks = 0;
 
-	format =  QRspec_getFormatInfo(mask, level);
+	format = QRspec_getFormatInfo(mask, level);
 
 	for(i=0; i<8; i++) {
 		if(format & 1) {
@@ -136,11 +136,24 @@ static int Mask_mask7(int width, const unsigned char *s, unsigned char *d)
 	MASKMAKER((((x*y)%3)+((x+y)&1))&1)
 }
 
+#define maskNum (8)
 typedef int MaskMaker(int, const unsigned char *, unsigned char *);
-static MaskMaker *maskMakers[] = {
+static MaskMaker *maskMakers[maskNum] = {
 	Mask_mask0, Mask_mask1, Mask_mask2, Mask_mask3,
 	Mask_mask4, Mask_mask5, Mask_mask6, Mask_mask7
 };
+
+__STATIC unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask)
+{
+	unsigned char *masked;
+
+	masked = (unsigned char *)malloc(width * width);
+	if(masked == NULL) return NULL;
+
+	maskMakers[mask](width, frame, masked);
+
+	return masked;
+}
 
 unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level)
 {
@@ -270,7 +283,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 	if(mask == NULL) return NULL;
 	bestMask = NULL;
 
-	for(i=0; i<8; i++) {
+	for(i=0; i<maskNum; i++) {
 //		n1 = n2 = n3 = n4 = 0;
 		demerit = 0;
 		blacks = maskMakers[i](width, frame, mask);
@@ -283,12 +296,10 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		if(demerit < minDemerit) {
 			minDemerit = demerit;
 			bestMaskNum = i;
-			if(bestMask != NULL) {
-				free(bestMask);
-			}
-			bestMask = (unsigned char *)malloc(width * width);
-			if(bestMask == NULL) break;
-			memcpy(bestMask, mask, width * width);
+			free(bestMask);
+			bestMask = mask;
+			mask = (unsigned char *)malloc(width * width);
+			if(mask == NULL) break;
 		}
 	}
 	free(mask);
