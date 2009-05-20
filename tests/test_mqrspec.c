@@ -25,14 +25,19 @@ unsigned char v4frame[] = {
 
 void test_newFrame(void)
 {
-	int width;
+	int width, i, y;
 	unsigned char *frame;
 
-	testStart("Test Version 4 frame");
-	frame = MQRspec_newFrame(4);
-	width = MQRspec_getWidth(4);
-	testEnd(memcmp(frame, v4frame, width * width));
-	free(frame);
+	testStart("Test empty frames");
+	for(i=1; i<MQRSPEC_VERSION_MAX; i++) {
+		frame = MQRspec_newFrame(i);
+		width = MQRspec_getWidth(i);
+		for(y=0; y<width; y++) {
+			assert_zero(memcmp(&frame[y * width], &v4frame[y * MQRSPEC_WIDTH_MAX], width), "Mismatch found in version %d, line %d.\n", i, y);
+		}
+		free(frame);
+	}
+	testFinish();
 }
 
 /* See Table 10 (pp.115) of Appendix 1, JIS X0510:2004 */
