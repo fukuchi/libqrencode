@@ -46,14 +46,14 @@ typedef struct {
 
 typedef struct {
 	int version;
+	int dataLength;
+	int eccLength;
 	unsigned char *datacode;
 	unsigned char *ecccode;
+	int b1;
 	int blocks;
 	RSblock *rsblock;
 	int count;
-	int dataLength;
-	int eccLength;
-	int b1;
 } QRRawCode;
 
 extern QRRawCode *QRraw_new(QRinput *input);
@@ -66,11 +66,12 @@ extern void QRraw_free(QRRawCode *raw);
 
 typedef struct {
 	int version;
-	unsigned char *datacode;
-	RSblock *rsblock;
-	int count;
 	int dataLength;
 	int eccLength;
+	unsigned char *datacode;
+	unsigned char *ecccode;
+	RSblock *rsblock;
+	int count;
 } MQRRawCode;
 
 extern MQRRawCode *MQRraw_new(QRinput *input);

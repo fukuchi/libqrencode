@@ -19,6 +19,43 @@ int inputSize(QRinput *input)
 	return size;
 }
 
+void test_qrraw_new(void)
+{
+	int i;
+	QRinput *stream;
+	char num[9] = "01234567";
+	QRRawCode *raw;
+
+	testStart("Test QRRaw_new()");
+	stream = QRinput_new();
+	QRinput_setVersion(stream, 10);
+	QRinput_setErrorCorrectionLevel(stream, QR_ECLEVEL_Q);
+	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
+
+	raw = QRraw_new(stream);
+	assert_nonnull(raw, "Failed QRraw_new().\n");
+	assert_zero(raw->count, "QRraw.count = %d != 0\n", raw->count);
+	assert_equal(raw->version, 10, "QRraw.version was not expected.\n");
+	assert_equal(raw->dataLength, 19 * 6 + 20 * 2, "QRraw.dataLength was not expected.\n");
+	assert_equal(raw->eccLength, 24 * 8, "QRraw.dataLength was not expected.\n");
+	assert_equal(raw->b1, 6, "QRraw.b1 was not expected.\n");
+	assert_equal(raw->blocks, 8, "QRraw.blocks was not expected.\n");
+
+	for(i=0; i<raw->b1; i++) {
+		assert_equal(raw->rsblock[i].dataLength, 19, "QRraw.rsblock[].dataLength was not expected.\n");
+	}
+	for(i=raw->b1; i<raw->blocks; i++) {
+		assert_equal(raw->rsblock[i].dataLength, 20, "QRraw.rsblock[].dataLength was not expected.\n");
+	}
+	for(i=0; i<raw->blocks; i++) {
+		assert_equal(raw->rsblock[i].eccLength, 24, "QRraw.rsblock[].eccLength was not expected.\n");
+	}
+
+	QRinput_free(stream);
+	QRraw_free(raw);
+	testFinish();
+}
+
 void test_iterate()
 {
 	int i;
@@ -688,6 +725,7 @@ int main(void)
 	test_struct_example();
 	test_struct_semilong();
 	test_null_free();
+	test_qrraw_new();
 
 	QRspec_clearCache();
 	free_rs_cache();

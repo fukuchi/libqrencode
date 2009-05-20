@@ -46,14 +46,14 @@ typedef struct {
 
 typedef struct {
 	int version;
+	int dataLength;
+	int eccLength;
 	unsigned char *datacode;
 	unsigned char *ecccode;
+	int b1;
 	int blocks;
 	RSblock *rsblock;
 	int count;
-	int dataLength;
-	int eccLength;
-	int b1;
 } QRRawCode;
 
 static void RSblock_initBlock(RSblock *block, int dl, unsigned char *data, int el, unsigned char *ecc, RS *rs)
@@ -184,9 +184,7 @@ __STATIC void QRraw_free(QRRawCode *raw)
 	if(raw != NULL) {
 		free(raw->datacode);
 		free(raw->ecccode);
-		if(raw->rsblock != NULL) {
-			free(raw->rsblock);
-		}
+		free(raw->rsblock);
 		free(raw);
 	}
 }
@@ -195,42 +193,83 @@ __STATIC void QRraw_free(QRRawCode *raw)
  * Raw code for Micro QR Code
  *****************************************************************************/
 
-#if 0
 typedef struct {
 	int version;
-	unsigned char *datacode;
-	RSblock *rsblock;
-	int count;
 	int dataLength;
 	int eccLength;
+	unsigned char *datacode;
+	unsigned char *ecccode;
+	RSblock *rsblock;
+	int count;
 } MQRRawCode;
 
-MQRRawCode *MQRraw_new(QRinput *input)
+__STATIC void MQRraw_free(MQRRawCode *raw);
+__STATIC MQRRawCode *MQRraw_new(QRinput *input)
 {
 	MQRRawCode *raw;
-	int i;
-	RSblock *rsblock;
-	unsigned char *p;
+	RS *rs;
 
-	p = QRinput_getByteStream(input);
-	if(p == NULL) {
+	raw = (MQRRawCode *)malloc(sizeof(MQRRawCode));
+	if(raw == NULL) return NULL;
+
+	raw->version = input->version;
+	raw->dataLength = MQRspec_getDataLength(input->version, input->level);
+	raw->eccLength = MQRspec_getECCLength(input->version, input->level);
+	raw->datacode = QRinput_getByteStream(input);
+	if(raw->datacode == NULL) {
+		free(raw);
+		return NULL;
+	}
+	raw->ecccode = (unsigned char *)malloc(raw->eccLength);
+	if(raw->ecccode == NULL) {
+		free(raw->datacode);
+		free(raw);
 		return NULL;
 	}
 
-	raw = (MQRRawCode *)malloc(sizeof(MQRRawCode));
-	raw->datacode = p;
-	raw->version = input->version;
-	raw->rsblock = (RSblock *)malloc(sizeof(RSblock));
-	RSblock_init(raw->rsblock, hoge, p, moge);
+	rs = init_rs(8, 0x11d, 0, 1, raw->eccLength, 255 - raw->dataLength - raw->eccLength);
+	if(rs == NULL) {
+		MQRraw_free(raw);
+		return NULL;
+	}
 
+	RSblock_initBlock(raw->rsblock, raw->dataLength, raw->datacode, raw->eccLength, raw->ecccode, rs);
 
-	raw->dataLength = ;
-	raw->eccLength = ;
 	raw->count = 0;
 
 	return raw;
 }
-#endif
+
+/**
+ * Return a code (byte).
+ * This function can be called iteratively.
+ * @param raw raw code.
+ * @return code
+ */
+__STATIC unsigned char MQRraw_getCode(MQRRawCode *raw)
+{
+	unsigned char ret;
+
+	if(raw->count < raw->dataLength) {
+		ret = raw->datacode[raw->count];
+	} else if(raw->count < raw->dataLength + raw->eccLength) {
+		ret = raw->ecccode[raw->count - raw->dataLength];
+	} else {
+		return 0;
+	}
+	raw->count++;
+	return ret;
+}
+
+__STATIC void MQRraw_free(MQRRawCode *raw)
+{
+	if(raw != NULL) {
+		free(raw->datacode);
+		free(raw->ecccode);
+		free(raw->rsblock);
+		free(raw);
+	}
+}
 
 
 /******************************************************************************

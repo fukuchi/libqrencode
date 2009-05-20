@@ -1,3 +1,10 @@
+2009.05.21 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.c, qrencode_inner.h:
+	  - MQRraw_* has been implemented.
+	  - Code cleanups. Struct QRRaw_code is slightly changed.
+	* tests/test_qrencode.c:
+	  - Added new test.
+
 2009.05.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* Merged from 3.1.0 branch. (rev 2248:HEAD)
 	* mqrspec.[ch], tests/create_mqr_frame_pattern.c:
