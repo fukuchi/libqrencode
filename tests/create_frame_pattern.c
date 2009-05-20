@@ -143,7 +143,7 @@ void write_pattern(const char *filename)
 		perror("Failed to open a file to write:");
 		abort();
 	}
-	for(i=1; i<QRSPEC_VERSION_MAX; i++) {
+	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		append_pattern(i, fp);
 		write_pattern_image(i, filename);
 	}
