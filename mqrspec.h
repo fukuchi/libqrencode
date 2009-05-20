@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Micro QR Code specification in convenient format. 
- * Copyright (C) 2006, 2007, 2008 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -98,20 +98,6 @@ extern int MQRspec_lengthIndicator(QRencodeMode mode, int version);
 extern int MQRspec_maximumWords(QRencodeMode mode, int version);
 
 /******************************************************************************
- * Error correction code
- *****************************************************************************/
-
-/**
- * Return an array of ECC specification.
- * @param version
- * @param level
- * @param spec an array of ECC specification contains as following:
- * {# of type1 blocks, # of data code, # of ecc code,
- *  # of type2 blocks, # of data code, # of ecc code}
- */
-void MQRspec_getEccSpec(int version, QRecLevel level);
-
-/******************************************************************************
  * Version information pattern
  *****************************************************************************/
 
@@ -154,6 +140,6 @@ extern unsigned char *MQRspec_newFrame(int version);
  * Clear the frame cache. Typically for debug.
  * WARNING: Thread unsafe!!!
  */
-extern void QRspec_clearCache(void);
+extern void MQRspec_clearCache(void);
 
-#endif /* __QRSPEC_H__ */
+#endif /* __MQRSPEC_H__ */

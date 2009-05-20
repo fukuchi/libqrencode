@@ -109,21 +109,6 @@ int MQRspec_maximumWords(QRencodeMode mode, int version)
 }
 
 /******************************************************************************
- * Error correction code
- *****************************************************************************/
-
-void MQRspec_getEccSpec(int version, QRecLevel level)
-{
-#if 0
-	int data, ecc;
-	int *array;
-
-	data = MQRspec_getDataLength(version, level);
-	ecc = MQRspec_getECCLength(version, level);
-#endif
-}
-
-/******************************************************************************
  * Format information
  *****************************************************************************/
 
