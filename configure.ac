@@ -31,6 +31,10 @@ PKG_PROG_PKG_CONFIG
 
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
 
+dnl --enable-thread-safety
+AC_ARG_ENABLE([thread-safety], [AC_HELP_STRING([--enable-thread-safety], [make the library thread-safe. [default=yes]])],
+ [], [enable_thread_safety=yes])
+
 dnl --with-tools
 AC_ARG_WITH([tools], [AC_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
  [build_tools=$withval], [build_tools=yes])
@@ -75,6 +79,12 @@ AC_ARG_ENABLE([mudflap], [AC_HELP_STRING([--enable-mudflap], [generate extra cod
 
 dnl set CFLAGS
 CFLAGS="-Wall $CFLAGS"
+
+if test $enable_thread_safety = yes; then
+	AC_CHECK_LIB([pthread], [pthread_mutex_init])
+	LIBPTHREAD=-lpthread
+fi
+AC_SUBST(LIBPTHREAD)
 
 if test $enable_gprof = yes; then
 	CFLAGS="$CFLAGS -g -pg"

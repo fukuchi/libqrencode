@@ -1,3 +1,8 @@
+2009.05.30 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* configure.ac, libqrencode.pc.in:
+	  - New option "--enable-thread-safety" has been added. This option is
+	    enabled by default.
+
 2009.05.21 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.c, qrencode_inner.h:
 	  - MQRraw_* has been implemented.
