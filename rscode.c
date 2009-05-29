@@ -28,6 +28,10 @@
 #include <string.h>
 #include "rscode.h"
 
+#ifdef HAVE_LIBPTHREAD
+#  include <pthread.h>
+#endif
+
 /* Stuff specific to the 8-bit symbol version of the general purpose RS codecs
  *
  */
@@ -53,6 +57,9 @@ struct _RS {
 };
 
 static RS *rslist = NULL;
+#ifdef HAVE_LIBPTHREAD
+static pthread_mutex_t rslist_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
 
 static inline int modnn(RS *rs, int x){
 	while (x >= rs->nn) {
@@ -203,6 +210,9 @@ RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 {
 	RS *rs;
 
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&rslist_mutex);
+#endif
 	for(rs = rslist; rs != NULL; rs = rs->next) {
 		if(rs->pad != pad) continue;
 		if(rs->nroots != nroots) continue;
@@ -220,6 +230,9 @@ RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 	rslist = rs;
 
 DONE:
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&rslist_mutex);
+#endif
 	return rs;
 }
 

@@ -2,6 +2,8 @@
 	* configure.ac, libqrencode.pc.in:
 	  - New option "--enable-thread-safety" has been added. This option is
 	    enabled by default.
+	* rscode.c, qrspec.c:
+	  - libqrencode has become thread-safe! (probably)
 
 2009.05.21 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.c, qrencode_inner.h:
