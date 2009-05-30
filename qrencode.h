@@ -158,6 +158,18 @@ extern QRinput *QRinput_new(void);
 extern QRinput *QRinput_new2(int version, QRecLevel level);
 
 /**
+ * Instantiate an input data object. Object's Micro QR Code flag is set.
+ * Unlike with full-sized QR Code, version number must be specified (>0).
+ * @param version version number (1--4).
+ * @param level Error correction level.
+ * @return an input object (initialized). On error, NULL is returned and errno
+ *         is set to indicate the error.
+ * @throw ENOMEM unable to allocate memory for input objects.
+ * @throw EINVAL invalid arguments.
+ */
+extern QRinput *QRinput_newMQR(int version, QRecLevel level);
+
+/**
  * Append data to an input object.
  * The data is copied and appended to the input object.
  * @param input input object.
@@ -182,6 +194,7 @@ extern int QRinput_getVersion(QRinput *input);
 
 /**
  * Set version of the QR-code that is to be encoded.
+ * This function cannot be applied to Micro QR Code.
  * @param input input object.
  * @param version version number (0 = auto)
  * @retval 0 success.
@@ -198,6 +211,7 @@ extern QRecLevel QRinput_getErrorCorrectionLevel(QRinput *input);
 
 /**
  * Set error correction level of the QR-code that is to be encoded.
+ * This function cannot be applied to Micro QR Code.
  * @param input input object.
  * @param level Error correction level.
  * @retval 0 success.

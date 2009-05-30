@@ -6,44 +6,67 @@
 #include "../qrencode_inner.h"
 #include "../split.h"
 
+int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mode, char *data, char *correct)
+{
+	QRinput *input;
+	BitStream *bstream;
+	int ret;
+
+	if(mqr) {
+		input = QRinput_newMQR(version, level);
+	} else {
+		input = QRinput_new2(version, level);
+	}
+	QRinput_append(input, mode, strlen(data), (unsigned char *)data);
+	bstream = QRinput_getBitStream(input);
+	ret = cmpBin(correct, bstream);
+	if(ret) {
+		printf("result : ");
+		printBstream(bstream);
+		printf("correct: %s\n", correct);
+	}
+	QRinput_free(input);
+	BitStream_free(bstream);
+
+	return ret;
+}
+
+int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
+{
+	QRinput *input;
+	BitStream *bstream;
+	int ret;
+
+	if(mqr) {
+		input = QRinput_newMQR(1, QR_ECLEVEL_L);
+	} else {
+		input = QRinput_new();
+	}
+	QRinput_append(input, mode, strlen(data), (unsigned char *)data);
+	bstream = QRinput_mergeBitStream(input);
+	ret = cmpBin(correct, bstream);
+	QRinput_free(input);
+	BitStream_free(bstream);
+
+	return ret;
+}
+
 void test_encodeKanji(void)
 {
-	QRinput *stream;
-	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
-	unsigned char *buf;
-	char correct[] = "10000000001001101100111111101010101010";
-	BitStream *bstream;
+	char str[5]= {0x93, 0x5f,0xe4, 0xaa, 0x00};
+	char *correct = "10000000001001101100111111101010101010";
 
 	testStart("Encoding kanji stream.");
-	buf = (unsigned char *)malloc(4);
-	memcpy(buf, str, 4);
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_KANJI, 4, buf);
-	bstream = QRinput_mergeBitStream(stream);
-	printf("%s\n", correct);
-	printf("%s\n", bstream->data);
-	testEnd(cmpBin(correct, bstream));
-	QRinput_free(stream);
-	BitStream_free(bstream);
-	free(buf);
+	testEnd(mergeAndCheckBStream(0, QR_MODE_KANJI, str, correct));
 }
 
 void test_encode8(void)
 {
-	QRinput *stream;
 	char str[] = "AC-42";
 	char correct[] = "0100000001010100000101000011001011010011010000110010";
-	BitStream *bstream;
 
 	testStart("Encoding 8bit stream.");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_8, 5, (unsigned char *)str);
-	bstream = QRinput_mergeBitStream(stream);
-	printf("%s\n", correct);
-	printf("%s\n", bstream->data);
-	testEnd(cmpBin(correct, bstream));
-	QRinput_free(stream);
-	BitStream_free(bstream);
+	testEnd(mergeAndCheckBStream(0, QR_MODE_8, str, correct));
 }
 
 void test_encode8_versionup(void)
@@ -69,20 +92,11 @@ void test_encode8_versionup(void)
 
 void test_encodeAn(void)
 {
-	QRinput *stream;
-	char str[] = "AC-42";
+	char *str = "AC-42";
 	char correct[] = "00100000001010011100111011100111001000010";
-	BitStream *bstream;
 
 	testStart("Encoding alphabet-numeric stream.");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_AN, 5, (unsigned char *)str);
-	bstream = QRinput_mergeBitStream(stream);
-	printf("%s\n", correct);
-	printf("%s\n", bstream->data);
-	testEnd(cmpBin(correct, bstream));
-	QRinput_free(stream);
-	BitStream_free(bstream);
+	testEnd(mergeAndCheckBStream(0, QR_MODE_AN, str, correct));
 }
 
 void test_encodeAn2(void)
@@ -100,20 +114,11 @@ void test_encodeAn2(void)
 
 void test_encodeNumeric(void)
 {
-	QRinput *stream;
-	char num[9] = "01234567";
+	char *str = "01234567";
 	char correct[] = "00010000001000000000110001010110011000011";
-	BitStream *bstream;
 
 	testStart("Encoding numeric stream. (8 digits)");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	bstream = QRinput_mergeBitStream(stream);
-	printf("%s\n", correct);
-	printf("%s\n", bstream->data);
-	testEnd(cmpBin(correct, bstream));
-	QRinput_free(stream);
-	BitStream_free(bstream);
+	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
 void test_encodeNumeric_versionup(void)
@@ -139,56 +144,42 @@ void test_encodeNumeric_versionup(void)
 
 void test_encodeNumericPadded(void)
 {
-	QRinput *stream;
-	char num[9] = "01234567";
+	char *str = "01234567";
 	char *correct;
 	char *correctHead = "000100000010000000001100010101100110000110000000";
-	BitStream *bstream;
-	int flag, i;
+	int i, ret;
 
 	testStart("Encoding numeric stream. (8 digits)(padded)");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
-	bstream = QRinput_getBitStream(stream);
 	correct = (char *)malloc(19 * 8 + 1);
 	correct[0] = '\0';
 	strcat(correct, correctHead);
 	for(i=0; i<13; i++) {
 		strcat(correct, (i&1)?"00010001":"11101100");
 	}
-	flag = cmpBin(correct, bstream);
-	testEnd(flag);
+	ret = encodeAndCheckBStream(0, 0, QR_ECLEVEL_L, QR_MODE_NUM, str, correct);
+	testEnd(ret);
 
 	free(correct);
-	QRinput_free(stream);
-	BitStream_free(bstream);
 }
 
 void test_encodeNumericPadded2(void)
 {
-	QRinput *stream;
-	char num[8] = "0123456";
+	char *str = "0123456";
 	char *correct;
 	char *correctHead = "000100000001110000001100010101100101100000000000";
-	BitStream *bstream;
-	int flag, i;
+	int i, ret;
 
 	testStart("Encoding numeric stream. (7 digits)(padded)");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_NUM, 7, (unsigned char *)num);
-	bstream = QRinput_getBitStream(stream);
 	correct = (char *)malloc(19 * 8 + 1);
 	correct[0] = '\0';
 	strcat(correct, correctHead);
 	for(i=0; i<13; i++) {
 		strcat(correct, (i&1)?"00010001":"11101100");
 	}
-	flag = cmpBin(correct, bstream);
-	testEnd(flag);
+	ret = encodeAndCheckBStream(0, 0, QR_ECLEVEL_L, QR_MODE_NUM, str, correct);
+	testEnd(ret);
 
 	free(correct);
-	QRinput_free(stream);
-	BitStream_free(bstream);
 }
 
 void test_padding(void)
@@ -200,7 +191,7 @@ void test_padding(void)
 	unsigned char c;
 
 	testStart("Padding bit check. (less than 5 bits)");
-	input = QRinput_new2(0, QR_ECLEVEL_L);
+	input = QRinput_new2(1, QR_ECLEVEL_L);
 	QRinput_append(input, QR_MODE_8, 17, (unsigned char *)data);
 	bstream = QRinput_getBitStream(input);
 	size = BitStream_size(bstream);
@@ -216,40 +207,77 @@ void test_padding(void)
 	BitStream_free(bstream);
 }
 
+void test_padding2(void)
+{
+	QRinput *input;
+	BitStream *bstream;
+	int i, size, ret;
+	char data[] = "0123456789ABCDeF";
+	char correct[153];
+	unsigned char c;
+
+	testStart("Padding bit check. (1 or 2 padding bytes)");
+
+	/* 16 byte data (4 bit terminator and 1 byte padding) */
+	memset(correct, 0, 153);
+	memcpy(correct, "010000010000", 12);
+	for(size=0; size<16; size++) {
+		c = 0x80;
+		for(i=0; i<8; i++) {
+			correct[size * 8 + i + 12] = (data[size]&c)?'1':'0';
+			c = c >> 1;
+		}
+	}
+	memcpy(correct + 140, "000011101100", 12);
+
+	input = QRinput_new2(1, QR_ECLEVEL_L);
+	QRinput_append(input, QR_MODE_8, 16, (unsigned char *)data);
+	bstream = QRinput_getBitStream(input);
+	size = BitStream_size(bstream);
+	assert_equal(size, 152, "16byte: # of bit is incorrect (%d != 152).\n", size);
+	ret = ncmpBin(correct, bstream, 152);
+	assert_zero(ret, "Padding bits incorrect.\n");
+	printBstream(bstream);
+
+	QRinput_free(input);
+	BitStream_free(bstream);
+
+	/* 15 byte data (4 bit terminator and 2 byte paddings) */
+
+	memcpy(correct, "010000001111", 12);
+	memcpy(correct + 132, "00001110110000010001", 20);
+
+	input = QRinput_new2(1, QR_ECLEVEL_L);
+	QRinput_append(input, QR_MODE_8, 15, (unsigned char *)data);
+	bstream = QRinput_getBitStream(input);
+	size = BitStream_size(bstream);
+	assert_equal(size, 152, "15byte: # of bit is incorrect (%d != 152).\n", size);
+	ret = ncmpBin(correct, bstream, 152);
+	assert_zero(ret, "Padding bits incorrect.\n");
+	printBstream(bstream);
+
+	testFinish();
+
+	QRinput_free(input);
+	BitStream_free(bstream);
+}
+
 void test_encodeNumeric2(void)
 {
-	QRinput *stream;
-	char num[] = "0123456789012345";
-	char correct[] = "00010000010000000000110001010110011010100110111000010100111010100101";
-	BitStream *bstream;
+	char *str = "0123456789012345";
+	char *correct = "00010000010000000000110001010110011010100110111000010100111010100101";
 
 	testStart("Encoding numeric stream. (16 digits)");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_NUM, 16, (unsigned char *)num);
-	bstream = QRinput_mergeBitStream(stream);
-	printf("%s\n", correct);
-	printf("%s\n", bstream->data);
-	testEnd(cmpBin(correct, bstream));
-	QRinput_free(stream);
-	BitStream_free(bstream);
+	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
 void test_encodeNumeric3(void)
 {
-	QRinput *stream;
-	char num[9] = "0123456";
-	char correct[] = "0001""0000000111""0000001100""0101011001""0110";
-	BitStream *bstream;
+	char *str = "0123456";
+	char *correct = "0001 0000000111 0000001100 0101011001 0110";
 
 	testStart("Encoding numeric stream. (7 digits)");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_NUM, 7, (unsigned char *)num);
-	bstream = QRinput_mergeBitStream(stream);
-	printf("%s\n", correct);
-	printf("%s\n", bstream->data);
-	testEnd(cmpBin(correct, bstream));
-	QRinput_free(stream);
-	BitStream_free(bstream);
+	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
 void test_encodeTooLong(void)
@@ -756,6 +784,104 @@ void test_null_free(void)
 	testFinish();
 }
 
+void test_mqr_new(void)
+{
+	QRinput *input;
+	testStart("Testing QRinput_newMQR().");
+
+	input = QRinput_newMQR(0, QR_ECLEVEL_L);
+	assert_null(input, "Version 0 passed.\n");
+	QRinput_free(input);
+
+	input = QRinput_newMQR(5, QR_ECLEVEL_L);
+	assert_null(input, "Version 5 passed.\n");
+	QRinput_free(input);
+
+	input = QRinput_newMQR(1, QR_ECLEVEL_M);
+	assert_null(input, "Invalid ECLEVEL passed.\n");
+	QRinput_free(input);
+
+	input = QRinput_newMQR(1, QR_ECLEVEL_L);
+	assert_equal(input->version, 1, "QRinput.version was not as expected.\n");
+	assert_equal(input->level, QR_ECLEVEL_L, "QRinput.version was not as expected.\n");
+	QRinput_free(input);
+
+	testFinish();
+}
+
+void test_mqr_setversion(void)
+{
+	QRinput *input;
+	int ret;
+	testStart("Testing QRinput_setVersion() for MQR.");
+
+	input = QRinput_newMQR(1, QR_ECLEVEL_L);
+	ret = QRinput_setVersion(input, 2);
+	assert_exp((ret < 0), "QRinput_setVersion should be denied.\n");
+	QRinput_free(input);
+
+	testFinish();
+}
+
+void test_mqr_setlevel(void)
+{
+	QRinput *input;
+	int ret;
+	testStart("Testing QRinput_setErrorCorrectionLevel() for MQR.");
+
+	input = QRinput_newMQR(1, QR_ECLEVEL_L);
+	ret = QRinput_setErrorCorrectionLevel(input, QR_ECLEVEL_M);
+	assert_exp((ret < 0), "QRinput_setErrorCorrectionLevel should be denied.\n");
+	QRinput_free(input);
+
+	testFinish();
+}
+
+void test_paddingMQR(void)
+{
+	char *dataM1[] = {"65", "513", "5139", "51365"};
+	char *correctM1[] = {"01010000010000000000",
+						 "01110000000010000000",
+						 "10010000000011001000",
+						 "10110000000011000001"};
+	char *dataM2[] = {"513513", "51351365"};
+	char *correctM2[] = {"0 0110 1000000001 1000000001 0000000",
+						 "0 1000 1000000001 1000000001 1000001"};
+	int i, ret;
+
+	testStart("Padding bit check of MQR. (only 0 padding)");
+	for(i=0; i<4; i++) {
+		ret = encodeAndCheckBStream(1, 1, QR_ECLEVEL_L, QR_MODE_NUM, dataM1[i], correctM1[i]);
+		assert_zero(ret, "Number %s incorrectly encoded.\n", dataM1[i]);
+	}
+	for(i=0; i<2; i++) {
+		ret = encodeAndCheckBStream(1, 2, QR_ECLEVEL_M, QR_MODE_NUM, dataM2[i], correctM2[i]);
+		assert_zero(ret, "Number %s incorrectly encoded.\n", dataM2[i]);
+	}
+	testFinish();
+}
+
+void test_padding2MQR(void)
+{
+	char *data[] = {"9", "513513", "513", "513"};
+	int ver[] = {1, 2, 2, 3};
+	char *correct[] = {"00110010 00000000 0000",
+					   "0 0110 1000000001 1000000001 0000000 11101100",
+					   "0 0011 1000000001 000000000 11101100 00010001",
+					   "00 00011 1000000001 0000000 11101100 00010001 11101100 00010001 11101100 00010001 11101100 0000"
+					   };
+	int i, ret;
+
+	testStart("Padding bit check. (1 or 2 padding bytes)");
+
+	for(i=0; i<4; i++) {
+		ret = encodeAndCheckBStream(1, ver[i], QR_ECLEVEL_L, QR_MODE_NUM, data[i], correct[i]);
+		assert_zero(ret, "Number %s incorrectly encoded.\n", data[i]);
+	}
+	testFinish();
+}
+
+
 int main(void)
 {
 	test_encodeNumeric();
@@ -772,6 +898,7 @@ int main(void)
 	test_encodeNumericPadded2();
 	test_encodeAnNum();
 	test_padding();
+	test_padding2();
 	test_struct_listop();
 	test_insertStructuredAppendHeader();
 	test_insertStructuredAppendHeader_error();
@@ -786,6 +913,12 @@ int main(void)
 	test_parity();
 	test_parity2();
 	test_null_free();
+
+	test_mqr_new();
+	test_mqr_setversion();
+	test_mqr_setlevel();
+	test_paddingMQR();
+	test_padding2MQR();
 
 	report();
 

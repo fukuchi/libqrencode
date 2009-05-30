@@ -46,6 +46,7 @@ struct _QRinput {
 	QRecLevel level;
 	QRinput_List *head;
 	QRinput_List *tail;
+	int mqr;
 };
 
 /******************************************************************************

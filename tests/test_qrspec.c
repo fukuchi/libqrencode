@@ -145,6 +145,18 @@ void test_newframe(void)
 	fclose(fp);
 }
 
+void test_newframe_invalid(void)
+{
+	unsigned char *frame;
+
+	testStart("Checking QRspec_newFrame with invalid version.");
+	frame = QRspec_newFrame(0);
+	assert_null(frame, "QRspec_newFrame(0) returns non-NULL.");
+	frame = QRspec_newFrame(QRSPEC_VERSION_MAX+1);
+	assert_null(frame, "QRspec_newFrame(0) returns non-NULL.");
+	testFinish();
+}
+
 #if 0
 /* This test is used to check positions of alignment pattern. See Appendix E
  * (pp.71) of JIS X0510:2004 and compare to the output. Before comment out
@@ -294,6 +306,7 @@ int main(void)
 	test_eccTable2();
 	//print_eccTable();
 	test_newframe();
+	test_newframe_invalid();
 	//test_alignment();
 	test_verpat();
 	//print_newFrame();

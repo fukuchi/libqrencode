@@ -40,6 +40,18 @@ void test_newFrame(void)
 	testFinish();
 }
 
+void test_newframe_invalid(void)
+{
+	unsigned char *frame;
+
+	testStart("Checking MQRspec_newFrame with invalid version.");
+	frame = MQRspec_newFrame(0);
+	assert_null(frame, "MQRspec_newFrame(0) returns non-NULL.");
+	frame = MQRspec_newFrame(MQRSPEC_VERSION_MAX+1);
+	assert_null(frame, "MQRspec_newFrame(0) returns non-NULL.");
+	testFinish();
+}
+
 /* See Table 10 (pp.115) of Appendix 1, JIS X0510:2004 */
 static unsigned int calcFormatInfo(int type, int mask)
 {
@@ -153,6 +165,7 @@ void test_dataLength(void)
 int main(void)
 {
 	test_newFrame();
+	test_newframe_invalid();
 	//print_format();
 	test_format();
 	test_dataLength();

@@ -4,6 +4,22 @@
 	    enabled by default.
 	* rscode.c, qrspec.c:
 	  - libqrencode has become thread-safe! (probably)
+	* tests/common.h:
+	  - sprintfBin() removed, printBstream() added.
+	* qrinput.[ch], qrencode.[ch], mqrspec.c:
+	  - Functions for Micro QR Code encoding have been added.
+	* tests/common.h:
+	  - Utility functions improved.
+	* tests/*.c:
+	  - Code cleanups.
+	  - Tests for Micro QR Code added.
+
+2009.05.30 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrinput.c:
+	  - padlen check was wrong in QRinput_appendPaddingBit().
+	* tests/test_qrinput.c:
+	  - Stop printing bstream->data.
+	  - test_padding2() has been added.
 
 2009.05.21 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.c, qrencode_inner.h:

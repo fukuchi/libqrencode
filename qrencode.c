@@ -208,6 +208,7 @@ __STATIC MQRRawCode *MQRraw_new(QRinput *input)
 {
 	MQRRawCode *raw;
 	RS *rs;
+	int dl;
 
 	raw = (MQRRawCode *)malloc(sizeof(MQRRawCode));
 	if(raw == NULL) return NULL;
@@ -227,13 +228,14 @@ __STATIC MQRRawCode *MQRraw_new(QRinput *input)
 		return NULL;
 	}
 
-	rs = init_rs(8, 0x11d, 0, 1, raw->eccLength, 255 - raw->dataLength - raw->eccLength);
+	dl = (raw->dataLength + 4)/ 8; // M1 and M3 has 4 bit length data code.
+	rs = init_rs(8, 0x11d, 0, 1, raw->eccLength, 255 - dl - raw->eccLength);
 	if(rs == NULL) {
 		MQRraw_free(raw);
 		return NULL;
 	}
 
-	RSblock_initBlock(raw->rsblock, raw->dataLength, raw->datacode, raw->eccLength, raw->ecccode, rs);
+	RSblock_initBlock(raw->rsblock, dl, raw->datacode, raw->eccLength, raw->ecccode, rs);
 
 	raw->count = 0;
 
@@ -245,6 +247,7 @@ __STATIC MQRRawCode *MQRraw_new(QRinput *input)
  * This function can be called iteratively.
  * @param raw raw code.
  * @return code
+ * FIXME: M1 and M3 has 4bit-length data code!
  */
 __STATIC unsigned char MQRraw_getCode(MQRRawCode *raw)
 {

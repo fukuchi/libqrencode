@@ -123,15 +123,23 @@ void report()
 int ncmpBin(char *correct, BitStream *bstream, int len)
 {
 	int i, bit;
+	char *p;
 
 	if(len != BitStream_size(bstream)) {
 		printf("Length is not match: %d, %d expected.\n", BitStream_size(bstream), len);
 		return -1;
 	}
 
-	for(i=0; i<len; i++) {
-		bit = (correct[i] == '1')?1:0;
+	p = correct;
+	i = 0;
+	while(*p != '\0') {
+		while(*p == ' ') {
+			p++;
+		}
+		bit = (*p == '1')?1:0;
 		if(bstream->data[i] != bit) return -1;
+		i++;
+		p++;
 	}
 
 	return 0;
@@ -139,50 +147,25 @@ int ncmpBin(char *correct, BitStream *bstream, int len)
 
 int cmpBin(char *correct, BitStream *bstream)
 {
-	int len;
+	int len = 0;
+	char *p;
 
-	len = strlen(correct);
+
+	for(p = correct; *p != '\0'; p++) {
+		if(*p != ' ') len++;
+	}
 	return ncmpBin(correct, bstream, len);
 }
 
-char *sprintfBin(int size, unsigned char *data)
+void printBstream(BitStream *bstream)
 {
-	int i, j;
-	unsigned char mask;
-	int b, r;
-	char *str, *p;
+	int i, size;
 
-	str = (char *)malloc(size + 1);
-	p = str;
-	b = size / 8;
-	for(i=0; i<b; i++) {
-		mask = 0x80;
-		for(j=0; j<8; j++) {
-			if(data[i] & mask) {
-				*p = '1';
-			} else {
-				*p = '0';
-			}
-			p++;
-			mask = mask >> 1;
-		}
+	size = BitStream_size(bstream);
+	for(i=0; i<size; i++) {
+		printf(bstream->data[i]?"1":"0");
 	}
-	r = size - b * 8;
-	if(r) {
-		mask = 1 << (r - 1);
-		for(i=0; i<r; i++) {
-			if(data[b] & mask) {
-				*p = '1';
-			} else {
-				*p = '0';
-			}
-			p++;
-			mask = mask >> 1;
-		}
-	}
-	*p = '\0';
-
-	return str;
+	printf("\n");
 }
 
 static char qrModeChar[4] = {'n', 'a', '8', 'k'};
