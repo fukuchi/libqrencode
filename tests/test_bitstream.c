@@ -118,6 +118,32 @@ void test_toByte(void)
 	free(result);
 }
 
+void test_toByte_4bitpadding(void)
+{
+	BitStream *bstream;
+	unsigned char *result;
+
+	testStart("Convert to a byte array");
+
+	bstream = BitStream_new();
+	BitStream_appendNum(bstream, 4, 0xb);
+	result = BitStream_toByte(bstream);
+	assert_equal(result[0], 0xb, "incorrect paddings\n");
+	BitStream_free(bstream);
+	free(result);
+
+	bstream = BitStream_new();
+	BitStream_appendNum(bstream, 12, 0x335);
+	result = BitStream_toByte(bstream);
+	assert_equal(result[0], 0x33, "incorrect paddings\n");
+	assert_equal(result[1], 0x05, "incorrect paddings\n");
+	BitStream_free(bstream);
+	free(result);
+
+	testFinish();
+
+}
+
 void test_size(void)
 {
 	BitStream *bstream;
@@ -142,6 +168,7 @@ int main(void)
 	test_appendNum();
 	test_appendBytes();
 	test_toByte();
+	test_toByte_4bitpadding();
 	test_size();
 
 	report();

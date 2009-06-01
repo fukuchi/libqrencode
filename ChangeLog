@@ -6,6 +6,8 @@
 	* qrinput.c, qrencode.h:
 	  - QRinput_Struct_appendInput() and QRinput_splitQRinputToStruct() now
 	    checks mqr flag.
+	* tests/test_bitstream.c:
+	  - New test of 4bit padding of _toByte().
 
 2009.05.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac, libqrencode.pc.in:
