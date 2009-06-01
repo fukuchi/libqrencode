@@ -140,6 +140,7 @@ int ncmpBin(char *correct, BitStream *bstream, int len)
 		if(bstream->data[i] != bit) return -1;
 		i++;
 		p++;
+		if(i == len) break;
 	}
 
 	return 0;

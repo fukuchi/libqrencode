@@ -9,8 +9,8 @@ void test_null(void)
 
 	testStart("Empty stream");
 	bstream = BitStream_new();
-	assert_zero(BitStream_size(bstream), "Size of empty BitStream is not 0.");
-	assert_null(BitStream_toByte(bstream), "BitStream_toByte returned non-NULL.");
+	assert_zero(BitStream_size(bstream), "Size of empty BitStream is not 0.\n");
+	assert_null(BitStream_toByte(bstream), "BitStream_toByte returned non-NULL.\n");
 	assert_nothing(BitStream_free(NULL), "Check BitStream_free(NULL).\n");
 	testFinish();
 
@@ -47,20 +47,20 @@ void test_bytes(void)
 void test_appendNum(void)
 {
 	BitStream *bstream;
-	char correct[] = "10001010111111111111111100010010001101000101011001111000";
+	char correct[] = "10001010 11111111 11111111 00010010001101000101011001111000";
 
 	testStart("Append Num");
 	bstream = BitStream_new();
 
 	BitStream_appendNum(bstream,  8, 0x0000008a);
-	assert_zero(ncmpBin(correct, bstream, 8), "Internal data is incorrect.");
+	assert_zero(ncmpBin(correct, bstream, 8), "Internal data is incorrect.\n");
 
 	BitStream_appendNum(bstream, 16, 0x0000ffff);
-	assert_zero(ncmpBin(correct, bstream, 24), "Internal data is incorrect.");
+	assert_zero(ncmpBin(correct, bstream, 24), "Internal data is incorrect.\n");
 
 	BitStream_appendNum(bstream, 32, 0x12345678);
 
-	assert_zero(cmpBin(correct, bstream), "Internal data is incorrect.");
+	assert_zero(cmpBin(correct, bstream), "Internal data is incorrect.\n");
 	testFinish();
 
 	BitStream_free(bstream);
@@ -82,7 +82,7 @@ void test_appendBytes(void)
 	data[0] = 0xff;
 	data[1] = 0xff;
 	BitStream_appendBytes(bstream, 2, data);
-	assert_zero(ncmpBin(correct, bstream, 24), "Internal data is incorrect.");
+	assert_zero(ncmpBin(correct, bstream, 24), "Internal data is incorrect.\n");
 
 	data[0] = 0x12;
 	data[1] = 0x34;
@@ -90,7 +90,7 @@ void test_appendBytes(void)
 	data[3] = 0x78;
 	BitStream_appendBytes(bstream, 4, data);
 
-	assert_zero(cmpBin(correct, bstream), "Internal data is incorrect.");
+	assert_zero(cmpBin(correct, bstream), "Internal data is incorrect.\n");
 	testFinish();
 
 	BitStream_free(bstream);
