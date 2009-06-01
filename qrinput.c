@@ -1291,6 +1291,11 @@ int QRinput_Struct_appendInput(QRinput_Struct *s, QRinput *input)
 {
 	QRinput_InputList *e;
 
+	if(input->mqr) {
+		errno = EINVAL;
+		return -1;
+	}
+
 	e = QRinput_InputList_newEntry(input);
 	if(e == NULL) return -1;
 
@@ -1380,6 +1385,11 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 	QRinput_Struct *s;
 	int bits, maxbits, nextbits, bytes, ret;
 	QRinput_List *list, *next, *prev;
+
+	if(input->mqr) {
+		errno = EINVAL;
+		return NULL;
+	}
 
 	s = QRinput_Struct_new();
 	if(s == NULL) return NULL;

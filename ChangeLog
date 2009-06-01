@@ -3,6 +3,9 @@
 	  - Error check has been added.
 	* tests/common.h:
 	  - Bug fixed.
+	* qrinput.c, qrencode.h:
+	  - QRinput_Struct_appendInput() and QRinput_splitQRinputToStruct() now
+	    checks mqr flag.
 
 2009.05.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac, libqrencode.pc.in:

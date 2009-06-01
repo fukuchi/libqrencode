@@ -257,13 +257,15 @@ extern QRinput_Struct *QRinput_Struct_new(void);
 extern void QRinput_Struct_setParity(QRinput_Struct *s, unsigned char parity);
 
 /**
- * Append a QRinput object to the set.
+ * Append a QRinput object to the set. QRinput created by QRinput_newMQR()
+ * will be rejected.
  * @warning never append the same QRinput object twice or more.
  * @param s structured input object.
  * @param input an input object.
  * @retval >0 number of input objects in the structure.
  * @retval -1 an error occurred. See Exceptions for the details.
  * @throw ENOMEM unable to allocate memory.
+ * @throw EINVAL invalid arguments.
  */
 extern int QRinput_Struct_appendInput(QRinput_Struct *s, QRinput *input);
 
@@ -275,7 +277,8 @@ extern void QRinput_Struct_free(QRinput_Struct *s);
 
 /**
  * Split a QRinput to QRinput_Struct. It calculates a parity, set it, then
- * insert structured-append headers.
+ * insert structured-append headers. QRinput created by QRinput_newMQR() will
+ * be rejected.
  * @param input input object. Version number and error correction level must be
  *        set.
  * @return a set of input data. On error, NULL is returned, and errno is set
