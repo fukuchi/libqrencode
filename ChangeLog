@@ -1,3 +1,9 @@
+2009.06.01 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* tests/prof_qrencode.c:
+	  - Error check has been added.
+	* tests/common.h:
+	  - Bug fixed.
+
 2009.05.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac, libqrencode.pc.in:
 	  - New option "--enable-thread-safety" has been added. This option is
