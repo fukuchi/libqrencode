@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
+#include <errno.h>
 #include "../qrencode.h"
 #include "../qrspec.h"
 #include "../rscode.h"
@@ -33,7 +34,11 @@ void prof_ver1to10(void)
 	for(i=0; i<500; i++) {
 		for(version = 0; version < 11; version++) {
 			code = QRcode_encodeString(data, version, QR_ECLEVEL_L, QR_MODE_8, 0);
-			QRcode_free(code);
+			if(code == NULL) {
+				perror("Failed to encode:");
+			} else {
+				QRcode_free(code);
+			}
 		}
 	}
 	timerStop();
@@ -50,7 +55,11 @@ void prof_ver31to40(void)
 	for(i=0; i<50; i++) {
 		for(version = 31; version < 41; version++) {
 			code = QRcode_encodeString(data, version, QR_ECLEVEL_L, QR_MODE_8, 0);
-			QRcode_free(code);
+			if(code == NULL) {
+				perror("Failed to encode:");
+			} else {
+				QRcode_free(code);
+			}
 		}
 	}
 	timerStop();
