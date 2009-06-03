@@ -997,7 +997,7 @@ static int QRinput_convertData(QRinput *input)
 	if(input->mqr) {
 		bits = QRinput_createBitStream(input);
 		if(bits < 0) return -1;
-		if(bits > MQRspec_getDataLength(input->version, input->level)) {
+		if(bits > MQRspec_getDataLengthBit(input->version, input->level)) {
 			errno = EINVAL;
 			return -1;
 		}
@@ -1094,7 +1094,6 @@ DONE:
  * @retval -1 an error occurred and errno is set to indeicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
- * FIXME: Finished? Unit tests are needed.
  */
 static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 {
@@ -1104,7 +1103,7 @@ static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 	int padlen;
 
 	bits = BitStream_size(bstream);
-	maxbits = MQRspec_getDataLength(input->version, input->level);
+	maxbits = MQRspec_getDataLengthBit(input->version, input->level);
 	maxwords = maxbits / 8;
 
 	if(maxbits == bits) {
