@@ -95,7 +95,7 @@ void test_format(void)
 	int err = 0;
 
 	testStart("Format info test");
-	for(version=1; version<4; version++) {
+	for(version=1; version<=4; version++) {
 		for(l=0; l<3; l++) {
 			for(mask=0; mask<4; mask++) {
 				format = MQRspec_getFormatInfo(mask, version, (QRecLevel)l);
@@ -152,7 +152,7 @@ void test_dataLength(void)
 	testStart("Test dataLength");
 	for(v=0; v<4; v++) {
 		for(l=0; l<3; l++) {
-			bits = MQRspec_getDataLength(v+1, (QRecLevel)l);
+			bits = MQRspec_getDataLengthBit(v+1, (QRecLevel)l);
 			if(bits != datalen[v][l]) {
 				printf("Error in version %d, level %d.\n", v, l);
 				err++;
