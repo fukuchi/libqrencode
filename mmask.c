@@ -19,10 +19,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "config.h"
+#include <errno.h>
 #include "qrencode.h"
 #include "mqrspec.h"
 #include "mmask.h"
@@ -37,13 +38,13 @@ __STATIC void MMask_writeFormatInformation(int version, int width, unsigned char
 
 	for(i=0; i<8; i++) {
 		v = 0x84 | (format & 1);
-		frame[width * (i + 1)+ 8] = v;
-		format= format >> 1;
+		frame[width * (i + 1) + 8] = v;
+		format = format >> 1;
 	}
 	for(i=0; i<7; i++) {
 		v = 0x84 | (format & 1);
-		frame[width * 8 + 8 - i] = v;
-		format= format >> 1;
+		frame[width * 8 + 7 - i] = v;
+		format = format >> 1;
 	}
 }
 
@@ -103,6 +104,11 @@ unsigned char *MMask_makeMask(int version, unsigned char *frame, int mask, QRecL
 {
 	unsigned char *masked;
 	int width;
+
+	if(mask < 0 || mask >= maskNum) {
+		errno = EINVAL;
+		return NULL;
+	}
 
 	width = MQRspec_getWidth(version);
 	masked = (unsigned char *)malloc(width * width);
