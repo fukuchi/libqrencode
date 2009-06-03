@@ -19,10 +19,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "config.h"
+#include <errno.h>
 #include "qrencode.h"
 #include "qrspec.h"
 #include "mask.h"
@@ -158,6 +159,11 @@ __STATIC unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, in
 unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned char *masked;
+
+	if(mask < 0 || mask >= maskNum) {
+		errno = EINVAL;
+		return NULL;
+	}
 
 	masked = (unsigned char *)malloc(width * width);
 	if(masked == NULL) return NULL;
