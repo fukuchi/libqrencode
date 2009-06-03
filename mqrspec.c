@@ -58,7 +58,7 @@ static const MQRspec_Capacity mqrspecCapacity[MQRSPEC_VERSION_MAX + 1] = {
 	{ 17, {8, 10, 14, 0}}
 };
 
-int MQRspec_getDataLength(int version, QRecLevel level)
+int MQRspec_getDataLengthBit(int version, QRecLevel level)
 {
 	int w;
 	int ecc;
@@ -66,8 +66,12 @@ int MQRspec_getDataLength(int version, QRecLevel level)
 	w = mqrspecCapacity[version].width - 1;
 	ecc = mqrspecCapacity[version].ec[level];
 	if(ecc == 0) return 0;
-/* Warning again: unlike in QRSpec_getDataLength, return in BITS! */
 	return w * w - 64 - ecc * 8;
+}
+
+int MQRspec_getDataLength(int version, QRecLevel level)
+{
+	return (MQRspec_getDataLengthBit(version, level) + 4) / 8;
 }
 
 int MQRspec_getECCLength(int version, QRecLevel level)
