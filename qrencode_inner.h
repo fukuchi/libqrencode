@@ -87,6 +87,7 @@ extern unsigned char *FrameFiller_fillerTest(int version);
  * QR-code encoding
  *****************************************************************************/
 extern QRcode *QRcode_encodeMask(QRinput *input, int mask);
+extern QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask);
 
 /******************************************************************************
  * Mask

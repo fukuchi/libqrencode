@@ -384,6 +384,18 @@ extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel le
 extern QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level);
 
 /**
+ * Micro QR Code version of QRcode_encodeString().
+ * @warning This function is THREAD UNSAFE.
+ */
+extern QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
+
+/**
+ * Micro QR Code version of QRcode_encodeString8bit().
+ * @warning This function is THREAD UNSAFE.
+ */
+extern QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level);
+
+/**
  * Free the instance of QRcode class.
  * @param qrcode an instance of QRcode class.
  */
