@@ -33,6 +33,6 @@ if BUILD_TOOLS
 bin_PROGRAMS = qrencode
 qrencode_SOURCES = qrenc.c
 qrencode_CFLAGS = $(png_CFLAGS)
-qrencode_LDADD = -lqrencode $(png_LIBS)
+qrencode_LDADD = libqrencode.la $(png_LIBS)
 man1_MANS = qrencode.1
 endif
