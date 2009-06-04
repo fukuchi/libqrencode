@@ -338,21 +338,20 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 			y = 0;
 			x -= 2;
 			filler->dir = 1;
-//			FIXME: _nextMQR is needed?
-//			if(x == 6) {
-//				x--;
-//				y = 9;
-//			}
+			if(x == 6) {
+				x--;
+				y = 9;
+			}
 		}
 	} else {
 		if(y == w) {
 			y = w - 1;
 			x -= 2;
 			filler->dir = -1;
-//			if(x == 6) {
-//				x--;
-//				y -= 8;
-//			}
+			if(x == 6) {
+				x--;
+				y -= 8;
+			}
 		}
 	}
 	if(x < 0 || y < 0) return NULL;
@@ -363,6 +362,63 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 	if(p[y * w + x] & 0x80) {
 		// This tail recursion could be optimized.
 		return FrameFiller_next(filler);
+	}
+	return &p[y * w + x];
+}
+
+static unsigned char *FrameFiller_nextMQR(FrameFiller *filler)
+{
+	unsigned char *p;
+	int x, y, w;
+
+	if(filler->bit == -1) {
+		filler->bit = 0;
+		return filler->frame + filler->y * filler->width + filler->x;
+	}
+
+	x = filler->x;
+	y = filler->y;
+	p = filler->frame;
+	w = filler->width;
+
+	if(filler->bit == 0) {
+		x--;
+		filler->bit++;
+	} else {
+		x++;
+		y += filler->dir;
+		filler->bit--;
+	}
+
+	if(filler->dir < 0) {
+		if(y < 0) {
+			y = 0;
+			x -= 2;
+			filler->dir = 1;
+			if(x == 6) {
+				x--;
+				y = 9;
+			}
+		}
+	} else {
+		if(y == w) {
+			y = w - 1;
+			x -= 2;
+			filler->dir = -1;
+			if(x == 6) {
+				x--;
+				y -= 8;
+			}
+		}
+	}
+	if(x < 0 || y < 0) return NULL;
+
+	filler->x = x;
+	filler->y = y;
+
+	if(p[y * w + x] & 0x80) {
+		// This tail recursion could be optimized.
+		return FrameFiller_nextMQR(filler);
 	}
 	printf("%d,%d\n", x, y);
 	return &p[y * w + x];
@@ -556,14 +612,14 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		if(raw->oddbits && i == raw->dataLength - 1) {
 			bit = 1 << raw->oddbits;
 			for(j=0; j<raw->oddbits; j++) {
-				p = FrameFiller_next(filler);
+				p = FrameFiller_nextMQR(filler);
 				*p = 0x02 | ((bit & code) != 0);
 				bit = bit >> 1;
 			}
 		} else {
 			bit = 0x80;
 			for(j=0; j<8; j++) {
-				p = FrameFiller_next(filler);
+				p = FrameFiller_nextMQR(filler);
 				*p = 0x02 | ((bit & code) != 0);
 				bit = bit >> 1;
 			}
