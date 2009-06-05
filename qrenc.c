@@ -277,7 +277,7 @@ static void qrencode(const char *intext, const char *outfile)
 	
 	qrcode = encode(intext);
 	if(qrcode == NULL) {
-		perror("Failed to encode the input data:");
+		perror("Failed to encode the input data");
 		exit(EXIT_FAILURE);
 	}
 	writePNG(qrcode, outfile);
@@ -319,7 +319,7 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 	
 	qrlist = encodeStructured(intext);
 	if(qrlist == NULL) {
-		perror("Failed to encode the input data:");
+		perror("Failed to encode the input data");
 		exit(EXIT_FAILURE);
 	}
 
@@ -452,6 +452,14 @@ int main(int argc, char **argv)
 	}
 	if(intext == NULL) {
 		intext = readStdin();
+	}
+
+	if(micro && version > MQRSPEC_VERSION_MAX) {
+		fprintf(stderr, "Version should be less or equal to %d.\n", MQRSPEC_VERSION_MAX);
+		exit(EXIT_FAILURE);
+	} else if(!micro && version > QRSPEC_VERSION_MAX) {
+		fprintf(stderr, "Version should be less or equal to %d.\n", QRSPEC_VERSION_MAX);
+		exit(EXIT_FAILURE);
 	}
 
 	if(margin < 0) {
