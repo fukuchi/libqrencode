@@ -71,6 +71,7 @@ typedef struct {
 	unsigned char *datacode;
 	unsigned char *ecccode;
 	RSblock *rsblock;
+	int oddbits;
 	int count;
 } MQRRawCode;
 
