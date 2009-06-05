@@ -5,6 +5,18 @@
 	  - FrameFiller_test() FrameFiller_testMQR() have been added.
 	  - Tests of FrameFiller added and improved.
 
+2009.06.04 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* Makefile.am:
+	  - Dependency check was incorrect because of misconfiguration.
+	* mask.c, mmask.c:
+	  - Error check has been added to {Mask,MMask}_makeMask().
+	* mqrspec.[ch], qrinput.c:
+	  - MQRspec_getDataLength() now returns in byte.
+	  - MQRspec_getDataLengthBit() returns in bit instead.
+	* qrencode.[ch], qrencode_inner.h:
+	  - QRencode_encodeStringMQR() and its 8bit version are added.
+	  - QRcode_encodeMaskMQR() has been added.
+
 2009.06.01 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/prof_qrencode.c:
 	  - Error check has been added.
