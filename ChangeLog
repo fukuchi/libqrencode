@@ -8,6 +8,12 @@
 	  - printFrame() and printQRcode() have been added.
 	* tests/test_qrencode.c:
 	  - Some tests have been added.
+	* Bumped vertion to 3.9.0.
+	  - Next public release will be 4.0.0.
+
+2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
+	[3.1.0]
+	* Version 3.1.0 has been released.
 
 2009.06.05 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h, qrencode_inner.h, tests/test_qrencode.c:
