@@ -1,3 +1,10 @@
+2009.06.05 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.h, qrencode_inner.h, tests/test_qrencode.c:
+	  - FrameFiller_next() has improved.
+	  - FrameFiller_nextMQR() has been added.
+	  - FrameFiller_test() FrameFiller_testMQR() have been added.
+	  - Tests of FrameFiller added and improved.
+
 2009.06.01 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/prof_qrencode.c:
 	  - Error check has been added.

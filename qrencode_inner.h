@@ -81,7 +81,8 @@ extern void MQRraw_free(MQRRawCode *raw);
 /******************************************************************************
  * Frame filling
  *****************************************************************************/
-extern unsigned char *FrameFiller_fillerTest(int version);
+extern unsigned char *FrameFiller_test(int version);
+extern unsigned char *FrameFiller_testMQR(int version);
 
 /******************************************************************************
  * QR-code encoding

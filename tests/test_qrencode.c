@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
+#include "../mqrspec.h"
 #include "../qrinput.h"
 #include "../mask.h"
 #include "../rscode.h"
@@ -129,16 +130,16 @@ void test_iterate2()
 	testEnd(err);
 }
 
-#if 0
 void print_filler(void)
 {
 	int width;
 	int x, y;
-	int version = 5;
+	int version = 7;
 	unsigned char *frame;
 
 	width = QRspec_getWidth(version);
-	frame = FrameFiller_fillerTest(version);
+	frame = FrameFiller_test(version);
+	if(frame == NULL) abort();
 
 	for(y=0; y<width; y++) {
 		for(x=0; x<width; x++) {
@@ -146,38 +147,90 @@ void print_filler(void)
 		}
 		printf("\n");
 	}
+	free(frame);
 }
 
 void test_filler(void)
 {
-	int i;
 	unsigned char *frame;
-	int err = 0;
-	int j, w, e;
+	int i, j, w, e, length;
 
-	testStart("Frame fillter test");
+	testStart("Frame filler test");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
-		frame = FrameFiller_fillerTest(i);
+		length = QRspec_getDataLength(i, QR_ECLEVEL_L) * 8
+		       + QRspec_getECCLength(i, QR_ECLEVEL_L) * 8
+			   + QRspec_getRemainder(i);
+		frame = FrameFiller_test(i);
 		if(frame == NULL) {
-			printf("Something wrong in version %d\n", i);
-			err++;
+			assert_nonnull(frame, "Something wrong in version %d\n", i);
 		} else {
 			w = QRspec_getWidth(i);
 			e = 0;
 			for(j=0; j<w*w; j++) {
 				if(frame[j] == 0) e++;
 			}
+			assert_zero(e, "Not filled bit is found. (%d,%d)\n", j%w,j/w);
+			e = w * (w - 9 - ((i > 6)?3:0));
+			assert_equal(frame[e], (unsigned char)((length - 1) & 127) | 0x80,
+			"Number of cell does not match.\n");
 			free(frame);
-			if(e) {
-				printf("Non-filled bit was found in version %d\n", i);
-				err++;
-			}
 		}
-
 	}
-	testEnd(err);
+	testFinish();
 }
-#endif
+
+void print_fillerMQR(void)
+{
+	int width;
+	int x, y;
+	int version = 3;
+	unsigned char *frame;
+
+	for(version = 1; version <= MQRSPEC_VERSION_MAX; version++) {
+		width = MQRspec_getWidth(version);
+		frame = FrameFiller_testMQR(version);
+		if(frame == NULL) abort();
+
+		for(y=0; y<width; y++) {
+			for(x=0; x<width; x++) {
+				printf("%02x ", *frame++);
+			}
+			printf("\n");
+		}
+	}
+}
+
+void test_fillerMQR(void)
+{
+	unsigned char *frame;
+	int i, j, w, e, length;
+
+	testStart("Micro QR Code Frame filler test");
+	for(i=1; i<=MQRSPEC_VERSION_MAX; i++) {
+		length = MQRspec_getDataLengthBit(i, QR_ECLEVEL_L)
+		       + MQRspec_getECCLength(i, QR_ECLEVEL_L) * 8;
+		frame = FrameFiller_testMQR(i);
+		if(frame == NULL) {
+			assert_nonnull(frame, "Something wrong in version %d\n", i);
+		} else {
+			w = MQRspec_getWidth(i);
+			e = 0;
+			for(j=0; j<w*w; j++) {
+				if(frame[j] == 0) e++;
+			}
+			assert_zero(e, "Not filled bit is found. (%d,%d)\n", j%w,j/w);
+			if(i & 1) {
+				e = w * 9 + 1;
+			} else {
+				e = w * (w - 1) + 1;
+			}
+			assert_equal(frame[e], (unsigned char)((length - 1) & 127) | 0x80,
+			"Number of cell does not match in version %d.\n", i);
+			free(frame);
+		}
+	}
+	testFinish();
+}
 
 void test_format(void)
 {
@@ -567,8 +620,8 @@ int main(void)
 {
 	test_iterate();
 	test_iterate2();
-//	print_filler();
-//	test_filler();
+	//print_filler();
+	test_filler();
 	test_format();
 	test_encode();
 	test_encode2();
@@ -585,6 +638,8 @@ int main(void)
 	test_struct_semilong();
 	test_null_free();
 	test_qrraw_new();
+	//print_fillerMQR();
+	test_fillerMQR();
 
 	QRspec_clearCache();
 	free_rs_cache();
