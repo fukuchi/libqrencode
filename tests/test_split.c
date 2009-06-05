@@ -127,7 +127,7 @@ void test_split3(void)
 	Split_splitStringToQRinput("ab:-E", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "a", 5)) {
-		printQrinput(input);
+		printQRinputInfo(input);
 		err++;
 	}
 	testEnd(err);
@@ -245,7 +245,7 @@ void test_split6(void)
 	Split_splitStringToQRinput("\x82\xd9""abcdeabcdea\x82\xb0""123456", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "kakn", 2, 11, 2, 6)) {
-		printQrinput(input);
+		printQRinputInfo(input);
 		err++;
 	}
 	testEnd(err);
@@ -319,7 +319,7 @@ void test_split3c(void)
 	Split_splitStringToQRinput("Ab345fg", input, QR_MODE_KANJI, 1);
 	list = input->head;
 	if(inputTest(list, "8", 7)) {
-		printQrinput(input);
+		printQRinputInfo(input);
 		err++;
 	}
 	testEnd(err);
@@ -351,7 +351,7 @@ void test_toupper(void)
 	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, QR_MODE_KANJI, 0);
 	list = input->head;
 	if(inputTest(list, "k", 10)) {
-		printQrinput(input);
+		printQRinputInfo(input);
 		err++;
 	}
 	if(strncmp((char *)list->data, "\x83n\x83q\x83t\x83w\x83z", list->size)) {
@@ -366,7 +366,7 @@ void test_toupper(void)
 	Split_splitStringToQRinput("\x83n\x83q\x83t\x83w\x83z", input, QR_MODE_8, 0);
 	list = input->head;
 	if(inputTest(list, "8", 10)) {
-		printQrinput(input);
+		printQRinputInfo(input);
 		err++;
 	}
 	if(strncmp((char *)list->data, "\x83N\x83Q\x83T\x83W\x83Z", list->size)) {
