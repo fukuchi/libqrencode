@@ -29,11 +29,6 @@
  *****************************************************************************/
 
 /**
- * Maximum version (size) of QR-code symbol.
- */
-#define MQRSPEC_VERSION_MAX 4
-
-/**
  * Maximum width of a symbol
  */
 #define MQRSPEC_WIDTH_MAX 17
