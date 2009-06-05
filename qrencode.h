@@ -193,7 +193,7 @@ extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const uns
 extern int QRinput_getVersion(QRinput *input);
 
 /**
- * Set version of the QR-code that is to be encoded.
+ * Set version of the QR code that is to be encoded.
  * This function cannot be applied to Micro QR Code.
  * @param input input object.
  * @param version version number (0 = auto)
@@ -210,7 +210,7 @@ extern int QRinput_setVersion(QRinput *input, int version);
 extern QRecLevel QRinput_getErrorCorrectionLevel(QRinput *input);
 
 /**
- * Set error correction level of the QR-code that is to be encoded.
+ * Set error correction level of the QR code that is to be encoded.
  * This function cannot be applied to Micro QR Code.
  * @param input input object.
  * @param level Error correction level.
@@ -218,6 +218,17 @@ extern QRecLevel QRinput_getErrorCorrectionLevel(QRinput *input);
  * @retval -1 invalid argument.
  */
 extern int QRinput_setErrorCorrectionLevel(QRinput *input, QRecLevel level);
+
+/**
+ * Set version and error correction level of the QR code at once.
+ * This function is recommened for Micro QR Code.
+ * @param input input object.
+ * @param version version number (0 = auto)
+ * @param level Error correction level.
+ * @retval 0 success.
+ * @retval -1 invalid argument.
+ */
+extern int QRinput_setVersionAndErrorCorrectionLevel(QRinput *input, int version, QRecLevel level);
 
 /**
  * Free the input object.
