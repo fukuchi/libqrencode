@@ -8,6 +8,14 @@
 	  - printFrame() and printQRcode() have been added.
 	* tests/test_qrencode.c:
 	  - Some tests have been added.
+	* qrspec.h, mqrspec.h, qrencode.h:
+	  - Definitions of {MQR,QR}SPEC_VERSION_MAX are moved to qrencode.h.
+	* qrinput.c, qrencode.h, tests/test_qrencode.c:
+	  - Size check has been removed from QRinput_convertData() for MQR.
+	  - QRinput_convertData() throws ERANGE when the input is too large.
+	  - QRinput_appendPadding*() throws ERANGE when the input is too large.
+	  - As a result, QRencode_encodeString*() throws ERANGE in that cases.
+	  - Some assertion checks of errno added to test_qrencode.
 	* Bumped vertion to 3.9.0.
 	  - Next public release will be 4.0.0.
 
