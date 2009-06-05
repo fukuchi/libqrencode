@@ -17,6 +17,7 @@ static int version = 1;
 static int size = 4;
 static int margin = 4;
 static int structured = 0;
+static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 
@@ -34,11 +35,12 @@ static const struct option options[] = {
 	{"casesensitive", no_argument      , NULL, 'c'},
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
+	{"micro"        , no_argument      , NULL, 'M'},
 	{"version"      , no_argument      , NULL, 'V'},
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:Skci8V";
+static char *optstring = "h:l:s:v:m:Skci8MV";
 
 static char levelChar[4] = {'L', 'M', 'Q', 'H'};
 static void usage(int help, int longopt)
@@ -70,6 +72,7 @@ static void usage(int help, int longopt)
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, -8bit    encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -M, --micro  encode in a Micro QR Code.\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
@@ -91,6 +94,7 @@ static void usage(int help, int longopt)
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
+"  -M           encode in a Micro QR Code.\n"
 "  -V           display the version number and copyrights of the qrencode.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n"
@@ -148,17 +152,24 @@ void draw_singleQRcode(QRinput *stream, int mask)
 	QRcode *qrcode;
 	int width;
 
-	QRinput_setVersion(stream, version);
-	QRinput_setErrorCorrectionLevel(stream, level);
-	qrcode = QRcode_encodeMask(stream, mask);
-	if(qrcode == NULL) return;
-
-	version = qrcode->version;
-	width = (qrcode->width + margin * 2) * size;
+	QRinput_setVersionAndErrorCorrectionLevel(stream, version, level);
+	if(micro) {
+		qrcode = QRcode_encodeMaskMQR(stream, mask);
+	} else {
+		qrcode = QRcode_encodeMask(stream, mask);
+	}
+	if(qrcode == NULL) {
+		width = (11 + margin * 2) * size;
+	} else {
+		version = qrcode->version;
+		width = (qrcode->width + margin * 2) * size;
+	}
 
 	screen = SDL_SetVideoMode(width, width, 32, 0);
 	SDL_FillRect(screen, NULL, 0xffffff);
-	draw_QRcode(qrcode, 0, 0);
+	if(qrcode) {
+		draw_QRcode(qrcode, 0, 0);
+	}
 	SDL_Flip(screen);
 	QRcode_free(qrcode);
 }
@@ -353,7 +364,11 @@ void view_simple(const char *str)
 	QRinput *input;
 	int ret;
 
-	input = QRinput_new2(version, level);
+	if(micro) {
+		input = QRinput_newMQR(version, level);
+	} else {
+		input = QRinput_new2(version, level);
+	}
 	if(input == NULL) {
 		fprintf(stderr, "Memory allocation error.\n");
 		exit(1);
@@ -454,6 +469,9 @@ int main(int argc, char **argv)
 				break;
 			case '8':
 				eightbit = 1;
+				break;
+			case 'M':
+				micro = 1;
 				break;
 			case 'V':
 				usage(0, 0);

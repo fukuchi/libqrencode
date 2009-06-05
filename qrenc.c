@@ -31,8 +31,9 @@ static int casesensitive = 1;
 static int eightbit = 0;
 static int version = 0;
 static int size = 3;
-static int margin = 4;
+static int margin = -1;
 static int structured = 0;
+static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 
@@ -48,11 +49,12 @@ static const struct option options[] = {
 	{"casesensitive", no_argument      , NULL, 'c'},
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
+	{"micro"        , no_argument      , NULL, 'M'},
 	{"version"      , no_argument      , NULL, 'V'},
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:Skci8V";
+static char *optstring = "ho:l:s:v:m:Skci8MV";
 
 static void usage(int help, int longopt)
 {
@@ -88,6 +90,7 @@ static void usage(int help, int longopt)
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, -8bit    encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -M, --micro  encode in a Micro QR Code.\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
@@ -113,6 +116,7 @@ static void usage(int help, int longopt)
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
+"  -M           encode in a Micro QR Code.\n"
 "  -V           display the version number and copyrights of the qrencode.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n"
@@ -250,10 +254,18 @@ static QRcode *encode(const char *intext)
 {
 	QRcode *code;
 
-	if(eightbit) {
-		code = QRcode_encodeString8bit(intext, version, level);
+	if(micro) {
+		if(eightbit) {
+			code = QRcode_encodeString8bitMQR(intext, version, level);
+		} else {
+			code = QRcode_encodeStringMQR(intext, version, level, hint, casesensitive);
+		}
 	} else {
-		code = QRcode_encodeString(intext, version, level, hint, casesensitive);
+		if(eightbit) {
+			code = QRcode_encodeString8bit(intext, version, level);
+		} else {
+			code = QRcode_encodeString(intext, version, level, hint, casesensitive);
+		}
 	}
 
 	return code;
@@ -411,6 +423,9 @@ int main(int argc, char **argv)
 			case '8':
 				eightbit = 1;
 				break;
+			case 'M':
+				micro = 1;
+				break;
 			case 'V':
 				usage(0, 0);
 				exit(0);
@@ -437,6 +452,25 @@ int main(int argc, char **argv)
 	}
 	if(intext == NULL) {
 		intext = readStdin();
+	}
+
+	if(margin < 0) {
+		if(micro) {
+			margin = 2;
+		} else {
+			margin = 4;
+		}
+	}
+
+	if(micro) {
+		if(version == 0) {
+			fprintf(stderr, "Version must be specified to encode a Micro QR Code symbol.\n");
+			exit(EXIT_FAILURE);
+		}
+		if(structured) {
+			fprintf(stderr, "Micro QR Code does not support structured symbols.\n");
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	if(structured) {

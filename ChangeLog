@@ -1,3 +1,9 @@
+2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c, tests/view_qrcode.c:
+	  - Experimental support of Micro QR Code has been implemented.
+	* qrencode.[ch]:
+	  - QRinput_setVersionAndErrorCorrectionLevel() has been added.
+
 2009.06.05 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h, qrencode_inner.h, tests/test_qrencode.c:
 	  - FrameFiller_next() has improved.
