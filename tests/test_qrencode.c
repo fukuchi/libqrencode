@@ -38,7 +38,7 @@ void test_qrraw_new(void)
 	assert_zero(raw->count, "QRraw.count = %d != 0\n", raw->count);
 	assert_equal(raw->version, 10, "QRraw.version was not as expected. (%d)\n", raw->version);
 	assert_equal(raw->dataLength, 19 * 6 + 20 * 2, "QRraw.dataLength was not as expected.\n");
-	assert_equal(raw->eccLength, 24 * 8, "QRraw.dataLength was not as expected.\n");
+	assert_equal(raw->eccLength, 24 * 8, "QRraw.eccLength was not as expected.\n");
 	assert_equal(raw->b1, 6, "QRraw.b1 was not as expected.\n");
 	assert_equal(raw->blocks, 8, "QRraw.blocks was not as expected.\n");
 
@@ -133,7 +133,6 @@ void test_iterate2()
 void print_filler(void)
 {
 	int width;
-	int x, y;
 	int version = 7;
 	unsigned char *frame;
 
@@ -141,12 +140,7 @@ void print_filler(void)
 	frame = FrameFiller_test(version);
 	if(frame == NULL) abort();
 
-	for(y=0; y<width; y++) {
-		for(x=0; x<width; x++) {
-			printf("%02x ", *frame++);
-		}
-		printf("\n");
-	}
+	printFrame(width, frame);
 	free(frame);
 }
 
@@ -182,7 +176,6 @@ void test_filler(void)
 void print_fillerMQR(void)
 {
 	int width;
-	int x, y;
 	int version = 3;
 	unsigned char *frame;
 
@@ -191,12 +184,7 @@ void print_fillerMQR(void)
 		frame = FrameFiller_testMQR(version);
 		if(frame == NULL) abort();
 
-		for(y=0; y<width; y++) {
-			for(x=0; x<width; x++) {
-				printf("%02x ", *frame++);
-			}
-			printf("\n");
-		}
+		printFrame(width, frame);
 	}
 }
 
@@ -497,21 +485,12 @@ void print_01234567(void)
 {
 	QRinput *stream;
 	char num[9] = "01234567";
-	unsigned char *frame;
-	int x, y, w;
 	QRcode *qrcode;
 
 	stream = QRinput_new2(1, QR_ECLEVEL_M);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	qrcode = QRcode_encodeInput(stream);
-	w = qrcode->width;
-	frame = qrcode->data;
-	for(y=0; y<w; y++) {
-		for(x=0; x<w; x++) {
-			printf("%02x ", frame[y*w+x]);
-		}
-		printf("\n");
-	}
+	printQRcode(qrcode);
 	QRinput_free(stream);
 	QRcode_free(qrcode);
 }
@@ -616,6 +595,54 @@ void test_null_free(void)
 	testFinish();
 }
 
+void test_encodeTooLongMQR(void)
+{
+	QRcode *code;
+	char *data[] = {"012345", "ABC0EFG", "0123456789", "0123456789ABCDEFG"};
+
+	testStart("Encode too large data for MQR.");
+
+	code = QRcode_encodeStringMQR(data[0], 1, QR_ECLEVEL_L, QR_MODE_8, 0);
+	assert_null(code, "6 byte length numeric string was accepted to version 1.\n");
+	code = QRcode_encodeStringMQR(data[1], 2, QR_ECLEVEL_L, QR_MODE_8, 0);
+	assert_null(code, "7 byte length alphanumeric string was accepted to version 2.\n");
+	code = QRcode_encodeString8bitMQR(data[2], 3, QR_ECLEVEL_L);
+	assert_null(code, "9 byte length 8bit string was accepted to version 3.\n");
+	code = QRcode_encodeString8bitMQR(data[3], 4, QR_ECLEVEL_L);
+	assert_null(code, "16 byte length 8bit string was accepted to version 4.\n");
+	testFinish();
+
+	if(code != NULL) {
+		printQRcode(code);
+		QRcode_free(code);
+	}
+}
+
+void test_mqrraw_new(void)
+{
+	QRinput *stream;
+	char *num = "01234";
+	unsigned char datacode[] = {0xa0, 0x62, 0x02};
+	MQRRawCode *raw;
+
+	testStart("Test MQRRaw_new()");
+	stream = QRinput_newMQR(1, QR_ECLEVEL_L);
+	QRinput_append(stream, QR_MODE_NUM, 5, (unsigned char *)num);
+
+	raw = MQRraw_new(stream);
+	assert_nonnull(raw, "Failed MQRraw_new().\n");
+	assert_zero(raw->count, "MQRraw.count = %d != 0\n", raw->count);
+	assert_equal(raw->version, 1, "MQRraw.version was not as expected. (%d)\n", raw->version);
+	assert_equal(raw->dataLength, 3, "MQRraw.dataLength was not as expected.\n");
+	assert_equal(raw->eccLength, 2, "MQRraw.eccLength was not as expected.\n");
+	assert_zero(memcmp(raw->datacode, datacode, 3), "Datacode doesn't match.\n");
+
+
+	QRinput_free(stream);
+	MQRraw_free(raw);
+	testFinish();
+}
+
 int main(void)
 {
 	test_iterate();
@@ -640,8 +667,11 @@ int main(void)
 	test_qrraw_new();
 	//print_fillerMQR();
 	test_fillerMQR();
+	test_encodeTooLongMQR();
+	test_mqrraw_new();
 
 	QRspec_clearCache();
+	MQRspec_clearCache();
 	free_rs_cache();
 
 	report();
