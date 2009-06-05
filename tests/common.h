@@ -71,6 +71,23 @@ void printQRinputInfo(QRinput *input)
 	}
 }
 
+void printFrame(int width, unsigned char *frame)
+{
+	int x, y;
+
+	for(y=0; y<width; y++) {
+		for(x=0; x<width; x++) {
+			printf("%02x ", *frame++);
+		}
+		printf("\n");
+	}
+}
+
+void printQRcode(QRcode *code)
+{
+	printFrame(code->width, code->data);
+}
+
 void testStartReal(const char *func, const char *name)
 {
 	tests++;
@@ -167,17 +184,5 @@ void printBstream(BitStream *bstream)
 		printf(bstream->data[i]?"1":"0");
 	}
 	printf("\n");
-}
-
-static char qrModeChar[4] = {'n', 'a', '8', 'k'};
-void printQrinput(QRinput *input)
-{
-	QRinput_List *list;
-
-	list = input->head;
-	while(list != NULL) {
-		printf("%c(%d)\n", qrModeChar[list->mode], list->size);
-		list = list->next;
-	}
 }
 #endif /* __COMMON_H__ */
