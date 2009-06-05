@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "common.h"
 #include "../qrencode_inner.h"
 #include "../qrspec.h"
@@ -429,10 +430,11 @@ void test_encodeTooLong(void)
 	data[4299] = '\0';
 
 	code = QRcode_encodeString(data, 0, QR_ECLEVEL_L, QR_MODE_8, 0);
-	testEndExp(code == NULL);
+	assert_null(code, "Too large data is incorrectly accepted.\n");
+	assert_equal(errno, ERANGE, "errno != ERANGE\n");
+	testFinish();
 
 	if(code != NULL) {
-		printf("%d, %d\n", code->version, code->width);
 		QRcode_free(code);
 	}
 	free(data);
@@ -604,12 +606,16 @@ void test_encodeTooLongMQR(void)
 
 	code = QRcode_encodeStringMQR(data[0], 1, QR_ECLEVEL_L, QR_MODE_8, 0);
 	assert_null(code, "6 byte length numeric string was accepted to version 1.\n");
+	assert_equal(errno, ERANGE, "errno != ERANGE\n");
 	code = QRcode_encodeStringMQR(data[1], 2, QR_ECLEVEL_L, QR_MODE_8, 0);
 	assert_null(code, "7 byte length alphanumeric string was accepted to version 2.\n");
+	assert_equal(errno, ERANGE, "errno != ERANGE\n");
 	code = QRcode_encodeString8bitMQR(data[2], 3, QR_ECLEVEL_L);
 	assert_null(code, "9 byte length 8bit string was accepted to version 3.\n");
+	assert_equal(errno, ERANGE, "errno != ERANGE\n");
 	code = QRcode_encodeString8bitMQR(data[3], 4, QR_ECLEVEL_L);
 	assert_null(code, "16 byte length 8bit string was accepted to version 4.\n");
+	assert_equal(errno, ERANGE, "errno != ERANGE\n");
 	testFinish();
 
 	if(code != NULL) {

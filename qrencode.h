@@ -125,6 +125,17 @@ typedef enum {
 	QR_ECLEVEL_H      ///< highest
 } QRecLevel;
 
+/**
+ * Maximum version (size) of QR-code symbol.
+ */
+#define QRSPEC_VERSION_MAX 40
+
+/**
+ * Maximum version (size) of QR-code symbol.
+ */
+#define MQRSPEC_VERSION_MAX 4
+
+
 /******************************************************************************
  * Input data (qrinput.c)
  *****************************************************************************/
@@ -385,6 +396,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
  *         details.
  * @throw EINVAL invalid input object.
  * @throw ENOMEM unable to allocate memory for input objects.
+ * @throw ERANGE input data is too large.
  */
 extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
 

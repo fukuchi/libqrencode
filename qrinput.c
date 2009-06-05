@@ -1007,22 +1007,12 @@ static int QRinput_createBitStream(QRinput *input)
  * @retval -1 an error occurred and errno is set to indeicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
- * @throw EINVAL input is too large.
+ * @throw ERANGE input is too large.
  */
 static int QRinput_convertData(QRinput *input)
 {
 	int bits;
 	int ver;
-
-	if(input->mqr) {
-		bits = QRinput_createBitStream(input);
-		if(bits < 0) return -1;
-		if(bits > MQRspec_getDataLengthBit(input->version, input->level)) {
-			errno = EINVAL;
-			return -1;
-		}
-		return 0;
-	}
 
 	ver = QRinput_estimateVersion(input);
 	if(ver > QRinput_getVersion(input)) {
@@ -1034,7 +1024,7 @@ static int QRinput_convertData(QRinput *input)
 		if(bits < 0) return -1;
 		ver = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
 		if(ver < 0) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		} else if(ver > QRinput_getVersion(input)) {
 			QRinput_setVersion(input, ver);
@@ -1053,6 +1043,7 @@ static int QRinput_convertData(QRinput *input)
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indeicate the error.
  *            See Execptions for the details.
+ * @throw ERANGE input data is too large.
  * @throw ENOMEM unable to allocate memory.
  */
 static int QRinput_appendPaddingBit(BitStream *bstream, QRinput *input)
@@ -1066,6 +1057,10 @@ static int QRinput_appendPaddingBit(BitStream *bstream, QRinput *input)
 	maxwords = QRspec_getDataLength(input->version, input->level);
 	maxbits = maxwords * 8;
 
+	if(maxbits < bits) {
+		errno = ERANGE;
+		return -1;
+	}
 	if(maxbits == bits) {
 		return 0;
 	}
@@ -1113,6 +1108,7 @@ DONE:
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indeicate the error.
  *            See Execptions for the details.
+ * @throw ERANGE input data is too large.
  * @throw ENOMEM unable to allocate memory.
  */
 static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
@@ -1126,6 +1122,10 @@ static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 	maxbits = MQRspec_getDataLengthBit(input->version, input->level);
 	maxwords = maxbits / 8;
 
+	if(maxbits < bits) {
+		errno = ERANGE;
+		return -1;
+	}
 	if(maxbits == bits) {
 		return 0;
 	}
@@ -1192,8 +1192,13 @@ __STATIC BitStream *QRinput_mergeBitStream(QRinput *input)
 	QRinput_List *list;
 	int ret;
 
-	if(QRinput_convertData(input) < 0) {
-		return NULL;
+	if(input->mqr) {
+		ret = QRinput_createBitStream(input);
+		if(ret < 0) return NULL;
+	} else {
+		if(QRinput_convertData(input) < 0) {
+			return NULL;
+		}
 	}
 
 	bstream = BitStream_new();
