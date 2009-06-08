@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "config.h"
 #include "rscode.h"
 
 #ifdef HAVE_LIBPTHREAD

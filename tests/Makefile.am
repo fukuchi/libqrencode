@@ -7,6 +7,9 @@ noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_mqrspec test_split test_monkey test_mask test_mmask \
 				  create_frame_pattern create_mqr_frame_pattern \
 				  $(sdlPROGRAMS)
+if BUILD_TESTS
+noinst_PROGRAMS += pthread_qrencode
+endif
 
 EXTRA_DIST = frame
 
@@ -45,6 +48,9 @@ test_mmask_LDADD = ../libqrencode.la
 
 prof_qrencode_SOURCES = prof_qrencode.c
 prof_qrencode_LDADD = ../libqrencode.la
+
+pthread_qrencode_SOURCES = pthread_qrencode.c
+pthread_qrencode_LDADD = ../libqrencode.la
 
 create_frame_pattern_SOURCES = create_frame_pattern.c
 create_frame_pattern_CFLAGS = $(png_CFLAGS)

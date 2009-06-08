@@ -11,6 +11,12 @@
 	  - Some definitions in qrencode_inner.h have been moved to appropriate
 	    header files.
 	  - Including config.h became mandatory for test programs.
+	* tests/pthread_qrencode.c, tests/Makefile.am:
+	  - New test program has been added.
+	* rscode.c:
+	  - config.h was not included.
+	* mask.c:
+	  - Race condition problem has been solved.
 
 2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c, tests/view_qrcode.c:

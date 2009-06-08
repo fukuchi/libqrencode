@@ -176,7 +176,6 @@ unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLeve
 	return masked;
 }
 
-static int runLength[QRSPEC_WIDTH_MAX + 1];
 
 //static int n1;
 //static int n2;
@@ -223,6 +222,7 @@ __STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
 	unsigned char b22, w22;
 	int head;
 	int demerit = 0;
+	int runLength[QRSPEC_WIDTH_MAX + 1];
 
 	p = frame;
 	for(y=0; y<width; y++) {
