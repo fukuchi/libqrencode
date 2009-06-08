@@ -291,9 +291,10 @@ typedef struct {
 	int x, y;
 	int dir;
 	int bit;
+	int mqr;
 } FrameFiller;
 
-static FrameFiller *FrameFiller_new(int width, unsigned char *frame)
+static FrameFiller *FrameFiller_new(int width, unsigned char *frame, int mqr)
 {
 	FrameFiller *filler;
 
@@ -305,6 +306,7 @@ static FrameFiller *FrameFiller_new(int width, unsigned char *frame)
 	filler->y = width - 1;
 	filler->dir = -1;
 	filler->bit = -1;
+	filler->mqr = mqr;
 
 	return filler;
 }
@@ -338,7 +340,7 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 			y = 0;
 			x -= 2;
 			filler->dir = 1;
-			if(x == 6) {
+			if(!filler->mqr && x == 6) {
 				x--;
 				y = 9;
 			}
@@ -348,7 +350,7 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 			y = w - 1;
 			x -= 2;
 			filler->dir = -1;
-			if(x == 6) {
+			if(!filler->mqr && x == 6) {
 				x--;
 				y -= 8;
 			}
@@ -377,7 +379,7 @@ extern unsigned char *FrameFiller_test(int version)
 	width = QRspec_getWidth(version);
 	frame = QRspec_newFrame(version);
 	if(frame == NULL) return NULL;
-	filler = FrameFiller_new(width, frame);
+	filler = FrameFiller_new(width, frame, 0);
 	if(filler == NULL) {
 		free(frame);
 		return NULL;
@@ -399,55 +401,6 @@ extern unsigned char *FrameFiller_test(int version)
 }
 #endif
 
-static unsigned char *FrameFiller_nextMQR(FrameFiller *filler)
-{
-	unsigned char *p;
-	int x, y, w;
-
-	if(filler->bit == -1) {
-		filler->bit = 0;
-		return filler->frame + filler->y * filler->width + filler->x;
-	}
-
-	x = filler->x;
-	y = filler->y;
-	p = filler->frame;
-	w = filler->width;
-
-	if(filler->bit == 0) {
-		x--;
-		filler->bit++;
-	} else {
-		x++;
-		y += filler->dir;
-		filler->bit--;
-	}
-
-	if(filler->dir < 0) {
-		if(y < 0) {
-			y = 0;
-			x -= 2;
-			filler->dir = 1;
-		}
-	} else {
-		if(y == w) {
-			y = w - 1;
-			x -= 2;
-			filler->dir = -1;
-		}
-	}
-	if(x < 0 || y < 0) return NULL;
-
-	filler->x = x;
-	filler->y = y;
-
-	if(p[y * w + x] & 0x80) {
-		// This tail recursion could be optimized.
-		return FrameFiller_nextMQR(filler);
-	}
-	return &p[y * w + x];
-}
-
 #ifdef __STATIC
 extern unsigned char *FrameFiller_testMQR(int version)
 {
@@ -459,7 +412,7 @@ extern unsigned char *FrameFiller_testMQR(int version)
 	width = MQRspec_getWidth(version);
 	frame = MQRspec_newFrame(version);
 	if(frame == NULL) return NULL;
-	filler = FrameFiller_new(width, frame);
+	filler = FrameFiller_new(width, frame, 1);
 	if(filler == NULL) {
 		free(frame);
 		return NULL;
@@ -467,7 +420,7 @@ extern unsigned char *FrameFiller_testMQR(int version)
 	length = MQRspec_getDataLengthBit(version, QR_ECLEVEL_L)
 	       + MQRspec_getECCLength(version, QR_ECLEVEL_L) * 8;
 	for(i=0; i<length; i++) {
-		p = FrameFiller_nextMQR(filler);
+		p = FrameFiller_next(filler);
 		if(p == NULL) {
 			fprintf(stderr, "Frame filler run over the frame!\n");
 			free(filler);
@@ -539,7 +492,7 @@ __STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 		QRraw_free(raw);
 		return NULL;
 	}
-	filler = FrameFiller_new(width, frame);
+	filler = FrameFiller_new(width, frame, 0);
 	if(filler == NULL) {
 		QRraw_free(raw);
 		free(frame);
@@ -617,7 +570,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		MQRraw_free(raw);
 		return NULL;
 	}
-	filler = FrameFiller_new(width, frame);
+	filler = FrameFiller_new(width, frame, 1);
 	if(filler == NULL) {
 		MQRraw_free(raw);
 		free(frame);
@@ -630,7 +583,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		if(raw->oddbits && i == raw->dataLength - 1) {
 			bit = 1 << raw->oddbits;
 			for(j=0; j<raw->oddbits; j++) {
-				p = FrameFiller_nextMQR(filler);
+				p = FrameFiller_next(filler);
 				if(p == NULL) goto EXIT;
 				*p = 0x02 | ((bit & code) != 0);
 				bit = bit >> 1;
@@ -638,7 +591,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		} else {
 			bit = 0x80;
 			for(j=0; j<8; j++) {
-				p = FrameFiller_nextMQR(filler);
+				p = FrameFiller_next(filler);
 				if(p == NULL) goto EXIT;
 				*p = 0x02 | ((bit & code) != 0);
 				bit = bit >> 1;

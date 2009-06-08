@@ -1,3 +1,8 @@
+2009.06.08 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.c:
+	  - FrameFiller_nextMQR() has integrated to FrameFiller_next().
+	  - FrameFiller_new() now requires mqr flag.
+
 2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c, tests/view_qrcode.c:
 	  - Experimental support of Micro QR Code has been implemented.
