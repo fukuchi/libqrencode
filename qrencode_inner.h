@@ -23,15 +23,8 @@
 #define __QRENCODE_INNER_H__
 
 /**
- * This header file includes definitions for test use.
+ * Ths header file includes definitions for test use.
  */
-extern BitStream *QRinput_mergeBitStream(QRinput *input);
-extern BitStream *QRinput_getBitStream(QRinput *input);
-extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
-extern int QRinput_splitEntry(QRinput_List *entry, int bytes);
-extern int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits);
-extern int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int index, unsigned char parity);
-
 
 /******************************************************************************
  * Raw code
@@ -90,17 +83,5 @@ extern unsigned char *FrameFiller_testMQR(int version);
  *****************************************************************************/
 extern QRcode *QRcode_encodeMask(QRinput *input, int mask);
 extern QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask);
-
-/******************************************************************************
- * Mask
- *****************************************************************************/
-
-extern int Mask_evaluateSymbol(int width, unsigned char *frame);
-extern int Mask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
-extern unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask);
-
-extern int MMask_evaluateSymbol(int width, unsigned char *frame);
-extern int MMask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
-extern unsigned char *MMask_makeMaskedFrame(int width, unsigned char *frame, int mask);
 
 #endif /* __QRENCODE_INNER_H__ */

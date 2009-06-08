@@ -308,7 +308,7 @@ static void QRspec_putAlignmentMarker(unsigned char *frame, int width, int ox, i
 	}
 }
 
-__STATIC void QRspec_putAlignmentPattern(int version, unsigned char *frame, int width)
+static void QRspec_putAlignmentPattern(int version, unsigned char *frame, int width)
 {
 	int d, w, x, y, cx, cy;
 

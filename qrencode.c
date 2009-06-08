@@ -368,7 +368,7 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 	return &p[y * w + x];
 }
 
-#ifdef __STATIC
+#ifdef WITH_TESTS
 extern unsigned char *FrameFiller_test(int version)
 {
 	int width;
@@ -401,7 +401,7 @@ extern unsigned char *FrameFiller_test(int version)
 }
 #endif
 
-#ifdef __STATIC
+#ifdef WITH_TESTS
 extern unsigned char *FrameFiller_testMQR(int version)
 {
 	int width;

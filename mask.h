@@ -25,4 +25,10 @@
 extern unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level);
 extern unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level);
 
+#ifdef WITH_TESTS
+extern int Mask_evaluateSymbol(int width, unsigned char *frame);
+extern int Mask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level);
+extern unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask);
+#endif
+
 #endif /* __MASK_H__ */

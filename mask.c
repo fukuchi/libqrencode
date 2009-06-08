@@ -144,7 +144,8 @@ static MaskMaker *maskMakers[maskNum] = {
 	Mask_mask4, Mask_mask5, Mask_mask6, Mask_mask7
 };
 
-__STATIC unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask)
+#ifdef WITH_TESTS
+unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask)
 {
 	unsigned char *masked;
 
@@ -155,6 +156,7 @@ __STATIC unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, in
 
 	return masked;
 }
+#endif
 
 unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level)
 {
