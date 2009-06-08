@@ -4,6 +4,13 @@
 	  - FrameFiller_new() now requires mqr flag.
 	* qrencode.[ch], tests/prof_qrencode.c, tests/test_{qrencode,monkey}.c:
 	  - QRcode_clearCache() has been added.
+	* configure.ac, qrencode_inner.h, qrencode.c, mask.[ch], mmask.[ch],
+	  qrinput.h, qrspec.c, tests/common.h:
+	  - A macro WITH_TESTS has been introduced.
+	  - "#ifdef __STATIC" has been replaced with "#ifdef __WITH_TESTS".
+	  - Some definitions in qrencode_inner.h have been moved to appropriate
+	    header files.
+	  - Including config.h became mandatory for test programs.
 
 2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c, tests/view_qrcode.c:
