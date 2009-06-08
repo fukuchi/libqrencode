@@ -4,8 +4,6 @@
 #include <time.h>
 #include <errno.h>
 #include "../qrencode.h"
-#include "../qrspec.h"
-#include "../rscode.h"
 
 struct timeval tv;
 void timerStart(const char *str)
@@ -70,8 +68,7 @@ int main(void)
 	prof_ver1to10();
 	prof_ver31to40();
 
-	QRspec_clearCache();
-	free_rs_cache();
+	QRcode_clearCache();
 
 	return 0;
 }

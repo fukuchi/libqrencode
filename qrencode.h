@@ -471,6 +471,17 @@ extern int QRcode_List_size(QRcode_List *qrlist);
  */
 extern void QRcode_List_free(QRcode_List *qrlist);
 
+
+/******************************************************************************
+ * System utilities
+ *****************************************************************************/
+
+/**
+ * Clear all caches. This is only for debug purpose. If you are attacking a
+ * complicated memory leak bug, try this to reduce the reachable blocks record.
+ */
+extern void QRcode_clearCache(void);
+
 #if defined(__cplusplus)
 }
 #endif

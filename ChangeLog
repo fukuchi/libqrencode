@@ -2,6 +2,8 @@
 	* qrencode.c:
 	  - FrameFiller_nextMQR() has integrated to FrameFiller_next().
 	  - FrameFiller_new() now requires mqr flag.
+	* qrencode.[ch], tests/prof_qrencode.c, tests/test_{qrencode,monkey}.c:
+	  - QRcode_clearCache() has been added.
 
 2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c, tests/view_qrcode.c:

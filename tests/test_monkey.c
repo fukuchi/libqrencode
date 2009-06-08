@@ -5,7 +5,6 @@
 #include "../qrinput.h"
 #include "../split.h"
 #include "../qrspec.h"
-#include "../rscode.h"
 
 #define MAX_LENGTH 7091
 static char data[MAX_LENGTH];
@@ -317,8 +316,7 @@ int main(int argc, char **argv)
 	monkey_split_kanji(loop);
 	monkey_split_structure(loop);
 
-	QRspec_clearCache();
-	free_rs_cache();
+	QRcode_clearCache();
 
 	report();
 

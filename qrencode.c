@@ -848,3 +848,14 @@ QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRec
 
 	return codes;
 }
+
+/******************************************************************************
+ * System utilities
+ *****************************************************************************/
+
+void QRcode_clearCache(void)
+{
+	QRspec_clearCache();
+	MQRspec_clearCache();
+	free_rs_cache();
+}

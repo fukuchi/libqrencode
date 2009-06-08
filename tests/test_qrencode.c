@@ -676,9 +676,7 @@ int main(void)
 	test_encodeTooLongMQR();
 	test_mqrraw_new();
 
-	QRspec_clearCache();
-	MQRspec_clearCache();
-	free_rs_cache();
+	QRcode_clearCache();
 
 	report();
 
