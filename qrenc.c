@@ -27,11 +27,14 @@
 #include "config.h"
 #include "qrencode.h"
 
+#define INCHES_PER_METER (100.0/2.54)
+
 static int casesensitive = 1;
 static int eightbit = 0;
 static int version = 0;
 static int size = 3;
 static int margin = -1;
+static int dpi = 72;
 static int structured = 0;
 static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
@@ -44,6 +47,7 @@ static const struct option options[] = {
 	{"size"         , required_argument, NULL, 's'},
 	{"symversion"   , required_argument, NULL, 'v'},
 	{"margin"       , required_argument, NULL, 'm'},
+ 	{"dpi"          , required_argument, NULL, 'd'},
 	{"structured"   , no_argument      , NULL, 'S'},
 	{"kanji"        , no_argument      , NULL, 'k'},
 	{"casesensitive", no_argument      , NULL, 'c'},
@@ -54,7 +58,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:Skci8MV";
+static char *optstring = "ho:l:s:v:m:d:Skci8MV";
 
 static void usage(int help, int longopt)
 {
@@ -74,14 +78,16 @@ static void usage(int help, int longopt)
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
 "               if specified, remove a trailing '.png' from FILENAME.\n\n"
 "  -s NUMBER, --size=NUMBER\n"
-"               specify the size of dot (pixel). (default=3)\n\n"
+"               specify module size in dots (pixels). (default=3)\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
-"               specify error collectin level from L (lowest) to H (highest).\n"
+"               specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n\n"
 "  -v NUMBER, --symversion=NUMBER\n"
 "               specify the version of the symbol. (default=auto)\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
-"               specify the width of margin. (default=4)\n\n"
+"               specify the width of the margins. (default=4)\n\n"
+"  -d NUMBER, --dpi=NUMBER\n"
+"               specify the DPI of the generated PNG. (default=72)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -106,11 +112,13 @@ static void usage(int help, int longopt)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
 "               if specified, remove a trailing '.png' from FILENAME.\n"
-"  -s NUMBER    specify the size of dot (pixel). (default=3)\n"
-"  -l {LMQH}    specify error collectin level from L (lowest) to H (highest).\n"
+"  -s NUMBER    specify module size in dots (pixel). (default=3)\n"
+"  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
-"  -m NUMBER    specify the width of margin. (default=4)\n"
+"  -m NUMBER    specify the width of the margins. (default=4)\n"
+"  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
+
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
@@ -204,6 +212,10 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 			PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_DEFAULT,
 			PNG_FILTER_TYPE_DEFAULT);
+	png_set_pHYs(png_ptr, info_ptr,
+			dpi * INCHES_PER_METER,
+			dpi * INCHES_PER_METER,
+			PNG_RESOLUTION_METER);
 	png_write_info(png_ptr, info_ptr);
 
 	/* top margin */
@@ -406,6 +418,13 @@ int main(int argc, char **argv)
 				margin = atoi(optarg);
 				if(margin < 0) {
 					fprintf(stderr, "Invalid margin: %d\n", margin);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case 'd':
+				dpi = atoi(optarg);
+				if( dpi < 0 ) {
+					fprintf(stderr, "Invalid DPI: %d\n", dpi);
 					exit(EXIT_FAILURE);
 				}
 				break;

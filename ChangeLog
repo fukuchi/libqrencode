@@ -1,3 +1,11 @@
+2009.09.28 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrenc.c:
+	  - David's patch has been applied.
+	  - New options '-d' and '--dpi' have been added.
+	  - Typo fixes.
+	* tests/view_qrcode.c:
+	  - Typo fixes.
+
 2009.06.08 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.c:
 	  - FrameFiller_nextMQR() has integrated to FrameFiller_next().
