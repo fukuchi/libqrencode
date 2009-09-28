@@ -36,7 +36,7 @@
 	  - QRinput_appendPadding*() throws ERANGE when the input is too large.
 	  - As a result, QRencode_encodeString*() throws ERANGE in that cases.
 	  - Some assertion checks of errno added to test_qrencode.
-	* Bumped vertion to 3.9.0.
+	* Bumped version to 3.9.0.
 	  - Next public release will be 4.0.0.
 
 2009.06.06 Kentaro FUKUCHI <fukuchi@megaui.net>
@@ -243,7 +243,7 @@
 	  - Memory leaks have been eliminated.
 
 2009.05.01 Kentaro FUKUCHI <fukuchi@megaui.net>
-	* Bumped vertion to 3.1.0.
+	* Bumped version to 3.1.0.
 
 2009.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* bistream.[ch]:
