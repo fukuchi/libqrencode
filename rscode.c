@@ -250,12 +250,19 @@ void free_rs_cache(void)
 {
 	RS *rs, *next;
 
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&rslist_mutex);
+#endif
 	rs = rslist;
 	while(rs != NULL) {
 		next = rs->next;
 		free_rs_char(rs);
 		rs = next;
 	}
+	rslist = NULL;
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&rslist_mutex);
+#endif
 }
 
 /* The guts of the Reed-Solomon encoder, meant to be #included
