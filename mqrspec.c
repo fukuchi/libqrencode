@@ -266,7 +266,14 @@ void MQRspec_clearCache(void)
 {
 	int i;
 
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&frames_mutex);
+#endif
 	for(i=1; i<=MQRSPEC_VERSION_MAX; i++) {
 		free(frames[i]);
+		frames[i] = NULL;
 	}
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&frames_mutex);
+#endif
 }
