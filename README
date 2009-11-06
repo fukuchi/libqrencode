@@ -1,4 +1,4 @@
-libqrencode 3.1.0 - QR Code encoding library
+libqrencode 4.0.0 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -23,10 +23,10 @@ are implemented such as:
   embedded
 - Optimized encoding of a string
 - Structured-append of symbols
+- Micro QR Code
 
 Currently the following features are not supported:
 - ECI and FNC1 mode
-- Micro QR Code
 - QR Code model 1 (deprecated)
 
 
@@ -112,4 +112,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 NANKI Haruo       - improved lower-case characteres encoding
 Philippe Delcroix - improved mask evaluation
 Yusuke Mihara     - structured-append support
+David Dahl        - DPI patch
 Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom - bug report / suggestion

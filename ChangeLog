@@ -1,6 +1,6 @@
 2009.09.28 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c:
-	  - David's patch has been applied.
+	  - David's patch has been applied. (Thanks to David)
 	  - New options '-d' and '--dpi' have been added.
 	  - Typo fixes.
 	* tests/view_qrcode.c:
