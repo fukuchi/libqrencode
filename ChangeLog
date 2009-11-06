@@ -1,3 +1,13 @@
+2009.11.06 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* NEWS, README:
+	  - Documents updated.
+	* qrspec.[ch], mqrspec.[ch]:
+	  - *_clearCache were not thread safe.
+	  - "Thread unsafe" warnings were removed.
+	* rscode.[ch]
+	  - free_rs_cache was not thread safe.
+	  - "Thread unsafe" warnings were removed.
+
 2009.09.28 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrenc.c:
 	  - David's patch has been applied. (Thanks to David)

@@ -7,11 +7,13 @@ Version 4.0.0 (2009.x.x)
 * "-M" option for Micro QR Code has been added to qrencode.
 * "--dpi" (or "-d") has been added to qrencode. This option set DPI information
   in an output PNG image. (Thanks to David Dahl)
-* New option "--enable-thread-safety" has been added to the configure script.
-  It is enabled by default.
+* New option "--enable-thread-safety" has been added to the configure script
+  that makes the library thread-safe. It is enabled by default.
 
 Release Note:
 This release supports Micro QR Code.
+For a long time, libqrencode was thread unsafe.
+Thread safe.
 
 Version 3.1.0 (2009.6.6)
 ------------------------
