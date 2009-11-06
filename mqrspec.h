@@ -139,7 +139,6 @@ extern unsigned char *MQRspec_newFrame(int version);
 
 /**
  * Clear the frame cache. Typically for debug.
- * WARNING: Thread unsafe!!!
  */
 extern void MQRspec_clearCache(void);
 
