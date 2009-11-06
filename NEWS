@@ -1,7 +1,7 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.1.0 (2009.5.x)
+Version 3.1.0 (2009.6.6)
 ------------------------
 * Various code cleanups and performance improves.
 * Strict internal error checks have been added.
