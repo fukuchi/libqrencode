@@ -1,3 +1,7 @@
+2009.11.27 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.h:
+	  - Typo fixes.
+
 2009.11.06 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* NEWS, README:
 	  - Documents updated.

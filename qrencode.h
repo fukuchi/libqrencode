@@ -380,7 +380,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
  * Create a symbol from the string. The library automatically parses the input
  * string and encodes in a QR Code symbol.
  * @warning This function is THREAD UNSAFE.
- * @param string input string. It must be NULL terminated.
+ * @param string input string. It must be NUL terminated.
  * @param version version of the symbol. If 0, the library chooses the minimum
  *                version for the given input data.
  * @param level error correction level.
@@ -436,7 +436,7 @@ extern QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s);
  * Create structured symbols from the string. The library automatically parses
  * the input string and encodes in a QR Code symbol.
  * @warning This function is THREAD UNSAFE.
- * @param string input string. It should be NULL terminated.
+ * @param string input string. It must be NUL terminated.
  * @param version version of the symbol.
  * @param level error correction level.
  * @param hint tell the library how non-alphanumerical characters should be
