@@ -629,7 +629,7 @@ QRcode *QRcode_encodeInput(QRinput *input)
 	}
 }
 
-static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLevel level, int eightbit, int mqr, QRencodeMode hint, int casesensitive)
+static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLevel level, int mqr, QRencodeMode hint, int casesensitive)
 {
 	QRinput *input;
 	QRcode *code;
@@ -639,7 +639,7 @@ static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLeve
 		errno = EINVAL;
 		return NULL;
 	}
-	if(!eightbit && (hint != QR_MODE_8 && hint != QR_MODE_KANJI)) {
+	if(hint != QR_MODE_8 && hint != QR_MODE_KANJI) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -651,11 +651,7 @@ static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLeve
 	}
 	if(input == NULL) return NULL;
 
-	if(eightbit) {
-		ret = QRinput_append(input, QR_MODE_8, strlen(string), (unsigned char *)string);
-	} else {
-		ret = Split_splitStringToQRinput(string, input, hint, casesensitive);
-	}
+	ret = Split_splitStringToQRinput(string, input, hint, casesensitive);
 	if(ret < 0) {
 		QRinput_free(input);
 		return NULL;
@@ -666,25 +662,73 @@ static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLeve
 	return code;
 }
 
-QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level)
-{
-	return QRcode_encodeStringReal(string, version, level, 1, 0, QR_MODE_NUL, 0);
-}
-
 QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
 {
-	return QRcode_encodeStringReal(string, version, level, 0, 0, hint, casesensitive);
-}
-
-QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level)
-{
-	return QRcode_encodeStringReal(string, version, level, 1, 1, QR_MODE_NUL, 0);
+	return QRcode_encodeStringReal(string, version, level, 0, hint, casesensitive);
 }
 
 QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
 {
-	return QRcode_encodeStringReal(string, version, level, 0, 1, hint, casesensitive);
+	return QRcode_encodeStringReal(string, version, level, 1, hint, casesensitive);
 }
+
+static QRcode *QRcode_encodeDataReal(const unsigned char *data, int length, int version, QRecLevel level, int mqr)
+{
+	QRinput *input;
+	QRcode *code;
+	int ret;
+
+	if(data == NULL || length == 0) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	if(mqr) {
+		input = QRinput_newMQR(version, level);
+	} else {
+		input = QRinput_new2(version, level);
+	}
+	if(input == NULL) return NULL;
+
+	ret = QRinput_append(input, QR_MODE_8, length, data);
+	if(ret < 0) {
+		QRinput_free(input);
+		return NULL;
+	}
+	code = QRcode_encodeInput(input);
+	QRinput_free(input);
+
+	return code;
+}
+
+QRcode *QRcode_encodeData(int size, const unsigned char *data, int version, QRecLevel level)
+{
+	return QRcode_encodeDataReal(data, size, version, level, 0);
+}
+
+QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level)
+{
+	if(string == NULL) {
+		errno = EINVAL;
+		return NULL;
+	}
+	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 0);
+}
+
+QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level)
+{
+	return QRcode_encodeDataReal(data, size, version, level, 1);
+}
+
+QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level)
+{
+	if(string == NULL) {
+		errno = EINVAL;
+		return NULL;
+	}
+	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 1);
+}
+
 
 /******************************************************************************
  * Structured QR-code encoding
@@ -795,7 +839,10 @@ static QRcode_List *QRcode_encodeInputToStructured(QRinput *input)
 	return codes;
 }
 
-QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, QRecLevel level)
+static QRcode_List *QRcode_encodeDataStructuredReal(
+	int size, const unsigned char *data,
+	int version, QRecLevel level,
+	int eightbit, QRencodeMode hint, int casesensitive)
 {
 	QRinput *input;
 	QRcode_List *codes;
@@ -805,11 +852,19 @@ QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, 
 		errno = EINVAL;
 		return NULL;
 	}
+	if(!eightbit && (hint != QR_MODE_8 && hint != QR_MODE_KANJI)) {
+		errno = EINVAL;
+		return NULL;
+	}
 
 	input = QRinput_new2(version, level);
 	if(input == NULL) return NULL;
 
-	ret = QRinput_append(input, QR_MODE_8, strlen(string), (unsigned char *)string);
+	if(eightbit) {
+		ret = QRinput_append(input, QR_MODE_8, size, data);
+	} else {
+		ret = Split_splitStringToQRinput((char *)data, input, hint, casesensitive);
+	}
 	if(ret < 0) {
 		QRinput_free(input);
 		return NULL;
@@ -820,33 +875,25 @@ QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, 
 	return codes;
 }
 
+QRcode_List *QRcode_encodeDataStructured(int size, const unsigned char *data, int version, QRecLevel level) {
+	return QRcode_encodeDataStructuredReal(size, data, version, level, 1, QR_MODE_NUL, 0);
+}
+
+QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, QRecLevel level) {
+	if(string == NULL) {
+		errno = EINVAL;
+		return NULL;
+	}
+	return QRcode_encodeDataStructured(strlen(string), (unsigned char *)string, version, level);
+}
+
 QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
 {
-	QRinput *input;
-	QRcode_List *codes;
-	int ret;
-
-	if(version <= 0) {
+	if(string == NULL) {
 		errno = EINVAL;
 		return NULL;
 	}
-	if(hint != QR_MODE_8 && hint != QR_MODE_KANJI) {
-		errno = EINVAL;
-		return NULL;
-	}
-
-	input = QRinput_new2(version, level);
-	if(input == NULL) return NULL;
-
-	ret = Split_splitStringToQRinput(string, input, hint, casesensitive);
-	if(ret < 0) {
-		QRinput_free(input);
-		return NULL;
-	}
-	codes = QRcode_encodeInputToStructured(input);
-	QRinput_free(input);
-
-	return codes;
+	return QRcode_encodeDataStructuredReal(strlen(string), (unsigned char *)string, version, level, 0, hint, casesensitive);
 }
 
 /******************************************************************************

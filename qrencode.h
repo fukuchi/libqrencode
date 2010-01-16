@@ -419,6 +419,26 @@ extern QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel
 extern QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level);
 
 /**
+ * Encode byte stream (may include '\0') in 8-bit mode.
+ * @warning This function is THREAD UNSAFE.
+ * @param size size of the input data.
+ * @param data input data.
+ * @param version version of the symbol. If 0, the library chooses the minimum
+ *                version for the given input data.
+ * @param level error correction level.
+ * @throw EINVAL invalid input object.
+ * @throw ENOMEM unable to allocate memory for input objects.
+ * @throw ERANGE input data is too large.
+ */
+extern QRcode *QRcode_encodeData(int size, const unsigned char *data, int version, QRecLevel level);
+
+/**
+ * Micro QR Code version of QRcode_encodeData().
+ * @warning This function is THREAD UNSAFE.
+ */
+extern QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level);
+
+/**
  * Free the instance of QRcode class.
  * @param qrcode an instance of QRcode class.
  */
@@ -457,6 +477,21 @@ extern QRcode_List *QRcode_encodeStringStructured(const char *string, int versio
  * @warning This function is THREAD UNSAFE.
  */
 extern QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, QRecLevel level);
+
+/**
+ * Create structured symbols from byte stream (may include '\0'). Wholde data
+ * are encoded in 8-bit mode.
+ * @warning This function is THREAD UNSAFE.
+ * @param size size of the input data.
+ * @param data input dat.
+ * @param version version of the symbol.
+ * @param level error correction level.
+ * @return a singly-linked list of QRcode. On error, NULL is returned, and
+ *         errno is set to indicate the error. See Exceptions for the details.
+ * @throw EINVAL invalid input object.
+ * @throw ENOMEM unable to allocate memory for input objects.
+ */
+extern QRcode_List *QRcode_encodeDataStructured(int size, const unsigned char *data, int version, QRecLevel level);
 
 /**
  * Return the number of symbols included in a QRcode_List.
