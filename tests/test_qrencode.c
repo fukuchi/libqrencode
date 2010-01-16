@@ -649,6 +649,24 @@ void test_mqrraw_new(void)
 	testFinish();
 }
 
+void test_encodeData(void)
+{
+	QRcode *qrcode;
+
+	testStart("Test QRencode_encodeData.");
+	qrcode = QRcode_encodeData(0, NULL, 0, QR_ECLEVEL_H);
+	assert_null(qrcode, "QRcode_encodeData(NULL, 0) returned something.\n");
+	if(qrcode != NULL) QRcode_free(qrcode);
+
+	qrcode = QRcode_encodeData(10, (unsigned char*)"test\0\0test", 0, QR_ECLEVEL_H);
+	assert_nonnull(qrcode, "QRcode_encodeData() failed.\n");
+	if(qrcode != NULL) QRcode_free(qrcode);
+
+	testFinish();
+}
+
+
+
 int main(void)
 {
 	test_iterate();
@@ -675,6 +693,7 @@ int main(void)
 	test_fillerMQR();
 	test_encodeTooLongMQR();
 	test_mqrraw_new();
+	test_encodeData();
 
 	QRcode_clearCache();
 
