@@ -4,6 +4,7 @@
 #include <iconv.h>
 #include "../qrspec.h"
 #include "../bitstream.h"
+#include "../mask.h"
 #include "decoder.h"
 
 enum {
@@ -511,9 +512,252 @@ void QRdata_dump(QRdata *data)
 	dumpChunks(data);
 }
 
-QRdata *decodeQr(QRcode *code)
+unsigned int QRcode_decodeVersion(QRcode *code)
 {
-	QRdata *qrdata;
+	unsigned int v1, v2;
+	int x, y, width;
+	unsigned char *p;
 
-	qrdata = QRdata_new();
+	width = code->width;
+	if(width < 45) {
+		return (width - 21)/ 4 + 1;
+	}
+
+	v1 = 0;
+	p = code->data + width * (width - 9) + 5;
+	for(x=0; x<6; x++) {
+		for(y=0; y<3; y++) {
+			v1 = v1 << 1;
+			v1 |= *(p - y * width - x) & 1;
+		}
+	}
+
+	v2 = 0;
+	p = code->data + width * 5 + width - 9;
+	for(y=0; y<6; y++) {
+		for(x=0; x<3; x++) {
+			v2 = v2 << 1;
+			v2 |= *(p - y * width - x) & 1;
+		}
+	}
+
+	if(v1 != v2) {
+		fprintf(stderr, "Two verion patterns are different.\n");
+		return -1;
+	}
+
+	return v1 >> 12;
 }
+
+int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask)
+{
+	unsigned int v1, v2;
+	int i, width;
+	unsigned char *p;
+
+	width = code->width;
+
+	v1 = 0;
+	p = code->data + width * 8;
+	for(i=0; i<8; i++) {
+		v1 = v1 << 1;
+		if(i < 6) {
+			v1 |= *(p + i) & 1;
+		} else {
+			v1 |= *(p + i + 1) & 1;
+		}
+	}
+	p = code->data + width * 7 + 8;
+	for(i=0; i<7; i++) {
+		v1 = v1 << 1;
+		if(i < 1) {
+			v1 |= *(p - width * i) & 1;
+		} else {
+			v1 |= *(p - width * (i + 1)) & 1;
+		}
+	}
+
+	v2 = 0;
+	p = code->data + width * (width - 1) + 8;
+	for(i=0; i<7; i++) {
+		v2 = v2 << 1;
+		v2 |= *(p - width * i) & 1;
+	}
+	p = code->data + width * 8 + width - 8;
+	for(i=0; i<8; i++) {
+		v2 = v2 << 1;
+		v2 |= *(p + i) & 1;
+	}
+
+	if(v1 != v2) {
+		fprintf(stderr, "Two format infos are different.\n");
+		return -1;
+	}
+	v1 = (v1 ^ 0x5412) >> 10;
+	*mask = v1 & 7;
+	switch((v1 >> 3) & 3) {
+		case 1:
+			*level = QR_ECLEVEL_L;
+			break;
+		case 0:
+			*level = QR_ECLEVEL_M;
+			break;
+		case 3:
+			*level = QR_ECLEVEL_Q;
+			break;
+		case 2:
+			*level = QR_ECLEVEL_H;
+			break;
+		default:
+			break;
+	}
+
+	return 0;
+}
+
+unsigned char *QRcode_unmask(QRcode *code)
+{
+	unsigned char *unmasked;
+	int mask;
+	QRecLevel level;
+	int ret;
+
+	ret = QRcode_decodeFormat(code, &level, &mask);
+	if(ret < 0) return NULL;
+	unmasked = Mask_makeMask(code->width, code->data, mask, level);
+
+	return unmasked;
+}
+
+typedef struct {
+	int width;
+	unsigned char *frame;
+	int x, y;
+	int dir;
+	int bit;
+	int mqr;
+} FrameFiller;
+
+static FrameFiller *FrameFiller_new(int width, unsigned char *frame, int mqr)
+{
+	FrameFiller *filler;
+
+	filler = (FrameFiller *)malloc(sizeof(FrameFiller));
+	if(filler == NULL) return NULL;
+	filler->width = width;
+	filler->frame = frame;
+	filler->x = width - 1;
+	filler->y = width - 1;
+	filler->dir = -1;
+	filler->bit = -1;
+	filler->mqr = mqr;
+
+	return filler;
+}
+
+static unsigned char *FrameFiller_next(FrameFiller *filler)
+{
+	unsigned char *p;
+	int x, y, w;
+
+	if(filler->bit == -1) {
+		filler->bit = 0;
+		return filler->frame + filler->y * filler->width + filler->x;
+	}
+
+	x = filler->x;
+	y = filler->y;
+	p = filler->frame;
+	w = filler->width;
+
+	if(filler->bit == 0) {
+		x--;
+		filler->bit++;
+	} else {
+		x++;
+		y += filler->dir;
+		filler->bit--;
+	}
+
+	if(filler->dir < 0) {
+		if(y < 0) {
+			y = 0;
+			x -= 2;
+			filler->dir = 1;
+			if(!filler->mqr && x == 6) {
+				x--;
+				y = 9;
+			}
+		}
+	} else {
+		if(y == w) {
+			y = w - 1;
+			x -= 2;
+			filler->dir = -1;
+			if(!filler->mqr && x == 6) {
+				x--;
+				y -= 8;
+			}
+		}
+	}
+	if(x < 0 || y < 0) return NULL;
+
+	filler->x = x;
+	filler->y = y;
+
+	if(p[y * w + x] & 0x80) {
+		// This tail recursion could be optimized.
+		return FrameFiller_next(filler);
+	}
+	return &p[y * w + x];
+}
+
+unsigned char *QRcode_decodeBits(QRcode *code, int *length)
+{
+	unsigned char *unmasked, *p, *bits;
+	FrameFiller *filler;
+	int spec[5];
+	int ret, i, version, mask;
+	QRecLevel level;
+
+	version = QRcode_decodeVersion(code);
+	if(version < 1) return NULL;
+	ret = QRcode_decodeFormat(code, &level, &mask);
+	if(ret < 0) return NULL;
+
+	QRspec_getEccSpec(version, level, spec);
+	*length = QRspec_rsDataLength(spec) * 8;
+	bits = (unsigned char*)malloc(*length);
+
+	unmasked = QRcode_unmask(code);
+	if(unmasked == NULL) return NULL;
+
+	filler = FrameFiller_new(code->width, unmasked, 0);
+	for(i=0; i<*length; i++) {
+		p = FrameFiller_next(filler);
+		bits[i] = *p & 1;
+	}
+
+	free(filler);
+	free(unmasked);
+
+	return bits;
+}
+
+QRdata *QRcode_decode(QRcode *code)
+{
+	unsigned char *bits;
+	QRdata *qrdata;
+	int length;
+
+	bits = QRcode_decodeBits(code, &length);
+	if(bits == NULL) return NULL;
+	qrdata = QRdata_new();
+	QRdata_decodeBits(qrdata, length, bits);
+	QRdata_concatChunks(qrdata);
+
+	free(bits);
+
+	return qrdata;
+}
+

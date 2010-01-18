@@ -5,6 +5,7 @@
 #include "../qrinput.h"
 #include "../qrencode_inner.h"
 #include "../split.h"
+#include "decoder.h"
 
 int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mode, char *data, char *correct)
 {

@@ -23,7 +23,7 @@ test_estimatebit_SOURCES = test_estimatebit.c
 test_estimatebit_LDADD = ../libqrencode.la
 
 test_qrspec_SOURCES = test_qrspec.c
-test_qrspec_LDADD = ../libqrencode.la
+test_qrspec_LDADD = ../libqrencode.la decoder.o
 
 test_mqrspec_SOURCES = test_mqrspec.c
 test_mqrspec_LDADD = ../libqrencode.la

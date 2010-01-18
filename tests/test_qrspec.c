@@ -2,6 +2,8 @@
 #include <string.h>
 #include "common.h"
 #include "../qrspec.h"
+#include "../qrencode_inner.h"
+#include "decoder.h"
 
 void print_eccTable(void)
 {
@@ -300,6 +302,24 @@ void test_format(void)
 	testEnd(err);
 }
 
+void test_allframe(void)
+{
+	unsigned int version;
+	int i, width;
+	unsigned char *frame;
+	QRcode *qrcode;
+
+	testStart("All empty frame check");
+	for(i=1; i<= QRSPEC_VERSION_MAX; i++) {
+		width = QRspec_getWidth(i);
+		frame = QRspec_newFrame(i);
+		qrcode = QRcode_new(i, width, frame);
+		version = QRcode_decodeVersion(qrcode);
+		assert_equal(version, i, "Decoded version number is wrong: %d, expected %d.\n", version, i);
+		QRcode_free(qrcode);
+	}
+}
+
 int main(void)
 {
 	test_eccTable();
@@ -311,6 +331,7 @@ int main(void)
 	test_verpat();
 	//print_newFrame();
 	test_format();
+	test_allframe();
 
 	QRspec_clearCache();
 

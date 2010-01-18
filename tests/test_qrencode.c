@@ -8,6 +8,7 @@
 #include "../qrinput.h"
 #include "../mask.h"
 #include "../rscode.h"
+#include "decoder.h"
 
 int inputSize(QRinput *input)
 {
@@ -665,6 +666,42 @@ void test_encodeData(void)
 	testFinish();
 }
 
+void test_formatInfo(void)
+{
+	QRcode *qrcode;
+	QRecLevel level;
+	int mask;
+	int ret;
+
+	testStart("Test format info in QR code.");
+	qrcode = QRcode_encodeString("AC-42", 1, QR_ECLEVEL_H, QR_MODE_8, 1);
+	ret = QRcode_decodeFormat(qrcode, &level, &mask);
+	assert_equal(level, QR_ECLEVEL_H, "Decoded format is wrong.\n");
+
+	if(qrcode != NULL) QRcode_free(qrcode);
+
+	testFinish();
+}
+
+void test_decodeSimple(void)
+{
+	char *str = "AC-42";
+	QRcode *qrcode;
+	QRdata *qrdata;
+
+	testStart("Test code words.");
+	qrcode = QRcode_encodeString(str, 1, QR_ECLEVEL_H, QR_MODE_8, 1);
+	qrdata = QRcode_decode(qrcode);
+
+	assert_nonnull(qrdata, "Failed to decode.\n");
+	if(qrdata != NULL) {
+		assert_zero(strncmp(str, (char *)(qrdata->data), strlen(str)), "Decoded data %s is different from the original %s\n", qrdata->data, str);
+	}
+	if(qrdata != NULL) QRdata_free(qrdata);
+	if(qrcode != NULL) QRcode_free(qrcode);
+
+	testFinish();
+}
 
 
 int main(void)
@@ -694,6 +731,8 @@ int main(void)
 	test_encodeTooLongMQR();
 	test_mqrraw_new();
 	test_encodeData();
+	test_formatInfo();
+	test_decodeSimple();
 
 	QRcode_clearCache();
 
