@@ -366,7 +366,7 @@ unsigned int QRspec_getVersionPattern(int version)
 {
 	if(version < 7 || version > QRSPEC_VERSION_MAX) return 0;
 
-	return versionPattern[version -7];
+	return versionPattern[version - 7];
 }
 
 /******************************************************************************
