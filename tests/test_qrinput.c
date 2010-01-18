@@ -704,7 +704,7 @@ void test_splitentry3(void)
 	e01 = e00->next;
 	list = list->next;
 	e10 = list->input->head;
-	e11 = e00->next;
+	e11 = e10->next;
 	
 	assert_equal(e00->mode, QR_MODE_STRUCTURE, "Structure header is missing?");
 	assert_equal(e01->mode, QR_MODE_8, "no data?!");
