@@ -83,5 +83,6 @@ extern unsigned char *FrameFiller_testMQR(int version);
  *****************************************************************************/
 extern QRcode *QRcode_encodeMask(QRinput *input, int mask);
 extern QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask);
+extern QRcode *QRcode_new(int version, int width, unsigned char *data);
 
 #endif /* __QRENCODE_INNER_H__ */

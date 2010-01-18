@@ -399,9 +399,7 @@ extern unsigned char *FrameFiller_test(int version)
 	free(filler);
 	return frame;
 }
-#endif
 
-#ifdef WITH_TESTS
 extern unsigned char *FrameFiller_testMQR(int version)
 {
 	int width;
@@ -438,7 +436,7 @@ extern unsigned char *FrameFiller_testMQR(int version)
  * QR-code encoding
  *****************************************************************************/
 
-static QRcode *QRcode_new(int version, int width, unsigned char *data)
+__STATIC QRcode *QRcode_new(int version, int width, unsigned char *data)
 {
 	QRcode *qrcode;
 
