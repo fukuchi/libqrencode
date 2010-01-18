@@ -13,37 +13,37 @@ endif
 
 EXTRA_DIST = frame
 
-test_qrinput_SOURCES = test_qrinput.c common.h
-test_qrinput_LDADD = ../libqrencode.la
+test_qrinput_SOURCES = test_qrinput.c
+test_qrinput_LDADD = ../libqrencode.la decoder.o
 
-test_bitstream_SOURCES = test_bitstream.c common.h
+test_bitstream_SOURCES = test_bitstream.c
 test_bitstream_LDADD = ../libqrencode.la
 
-test_estimatebit_SOURCES = test_estimatebit.c common.h
+test_estimatebit_SOURCES = test_estimatebit.c
 test_estimatebit_LDADD = ../libqrencode.la
 
-test_qrspec_SOURCES = test_qrspec.c common.h
+test_qrspec_SOURCES = test_qrspec.c
 test_qrspec_LDADD = ../libqrencode.la
 
-test_mqrspec_SOURCES = test_mqrspec.c common.h
+test_mqrspec_SOURCES = test_mqrspec.c
 test_mqrspec_LDADD = ../libqrencode.la
 
-test_rs_SOURCES = test_rs.c common.h
+test_rs_SOURCES = test_rs.c
 test_rs_LDADD = ../libqrencode.la
 
-test_qrencode_SOURCES = test_qrencode.c common.h
-test_qrencode_LDADD = ../libqrencode.la
+test_qrencode_SOURCES = test_qrencode.c
+test_qrencode_LDADD = ../libqrencode.la decoder.o
 
-test_split_SOURCES = test_split.c common.h
+test_split_SOURCES = test_split.c
 test_split_LDADD = ../libqrencode.la
 
-test_monkey_SOURCES = test_monkey.c common.h
+test_monkey_SOURCES = test_monkey.c
 test_monkey_LDADD = ../libqrencode.la
 
-test_mask_SOURCES = test_mask.c common.h
+test_mask_SOURCES = test_mask.c
 test_mask_LDADD = ../libqrencode.la
 
-test_mmask_SOURCES = test_mmask.c common.h
+test_mmask_SOURCES = test_mmask.c
 test_mmask_LDADD = ../libqrencode.la
 
 prof_qrencode_SOURCES = prof_qrencode.c
@@ -61,7 +61,7 @@ create_mqr_frame_pattern_CFLAGS = $(png_CFLAGS)
 create_mqr_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
 
 if HAVE_SDL
-view_qrcode_SOURCES = view_qrcode.c common.h
+view_qrcode_SOURCES = view_qrcode.c
 view_qrcode_CFLAGS= $(SDL_CFLAGS)
 view_qrcode_LDADD = ../libqrencode.la $(SDL_LIBS)
 endif
