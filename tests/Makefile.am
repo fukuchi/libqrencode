@@ -7,7 +7,7 @@ noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_mqrspec test_split test_monkey test_mask test_mmask \
 				  create_frame_pattern create_mqr_frame_pattern \
 				  $(sdlPROGRAMS)
-if BUILD_TESTS
+if HAVE_LIBPTHREAD
 noinst_PROGRAMS += pthread_qrencode
 endif
 
