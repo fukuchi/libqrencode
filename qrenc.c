@@ -95,7 +95,7 @@ static void usage(int help, int longopt)
 "               encode lower-case alphabet characters in 8-bit mode. (default)\n\n"
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
-"  -8, -8bit    encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
 "  -M, --micro  encode in a Micro QR Code.\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
@@ -112,7 +112,7 @@ static void usage(int help, int longopt)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
 "               if specified, remove a trailing '.png' from FILENAME.\n"
-"  -s NUMBER    specify module size in dots (pixel). (default=3)\n"
+"  -s NUMBER    specify module size in dots (pixels). (default=3)\n"
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
@@ -134,12 +134,12 @@ static void usage(int help, int longopt)
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
-static char *readStdin(void)
+static unsigned char *readStdin(int *length)
 {
-	char *buffer;
+	unsigned char *buffer;
 	int ret;
 
-	buffer = (char *)malloc(MAX_DATA_SIZE);
+	buffer = (unsigned char *)malloc(MAX_DATA_SIZE + 1);
 	if(buffer == NULL) {
 		fprintf(stderr, "Memory allocation failed.\n");
 		exit(EXIT_FAILURE);
@@ -155,6 +155,7 @@ static char *readStdin(void)
 	}
 
 	buffer[ret] = '\0';
+	*length = ret;
 
 	return buffer;
 }
@@ -262,32 +263,32 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static QRcode *encode(const char *intext)
+static QRcode *encode(const unsigned char *intext, int length)
 {
 	QRcode *code;
 
 	if(micro) {
 		if(eightbit) {
-			code = QRcode_encodeString8bitMQR(intext, version, level);
+			code = QRcode_encodeDataMQR(length, intext, version, level);
 		} else {
-			code = QRcode_encodeStringMQR(intext, version, level, hint, casesensitive);
+			code = QRcode_encodeStringMQR((char *)intext, version, level, hint, casesensitive);
 		}
 	} else {
 		if(eightbit) {
-			code = QRcode_encodeString8bit(intext, version, level);
+			code = QRcode_encodeData(length, intext, version, level);
 		} else {
-			code = QRcode_encodeString(intext, version, level, hint, casesensitive);
+			code = QRcode_encodeString((char *)intext, version, level, hint, casesensitive);
 		}
 	}
 
 	return code;
 }
 
-static void qrencode(const char *intext, const char *outfile)
+static void qrencode(const unsigned char *intext, int length, const char *outfile)
 {
 	QRcode *qrcode;
 	
-	qrcode = encode(intext);
+	qrcode = encode(intext, length);
 	if(qrcode == NULL) {
 		perror("Failed to encode the input data");
 		exit(EXIT_FAILURE);
@@ -296,20 +297,20 @@ static void qrencode(const char *intext, const char *outfile)
 	QRcode_free(qrcode);
 }
 
-static QRcode_List *encodeStructured(const char *intext)
+static QRcode_List *encodeStructured(const unsigned char *intext, int length)
 {
 	QRcode_List *list;
 
 	if(eightbit) {
-		list = QRcode_encodeString8bitStructured(intext, version, level);
+		list = QRcode_encodeDataStructured(length, intext, version, level);
 	} else {
-		list = QRcode_encodeStringStructured(intext, version, level, hint, casesensitive);
+		list = QRcode_encodeStringStructured((char *)intext, version, level, hint, casesensitive);
 	}
 
 	return list;
 }
 
-static void qrencodeStructured(const char *intext, const char *outfile)
+static void qrencodeStructured(const unsigned char *intext, int length, const char *outfile)
 {
 	QRcode_List *qrlist, *p;
 	char filename[FILENAME_MAX];
@@ -329,7 +330,7 @@ static void qrencodeStructured(const char *intext, const char *outfile)
 		}
 	}
 	
-	qrlist = encodeStructured(intext);
+	qrlist = encodeStructured(intext, length);
 	if(qrlist == NULL) {
 		perror("Failed to encode the input data");
 		exit(EXIT_FAILURE);
@@ -361,7 +362,8 @@ int main(int argc, char **argv)
 {
 	int opt, lindex = -1;
 	char *outfile = NULL;
-	char *intext = NULL;
+	unsigned char *intext = NULL;
+	int length = 0;
 
 	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
@@ -371,7 +373,7 @@ int main(int argc, char **argv)
 				} else {
 					usage(1, 0);
 				}
-				exit(0);
+				exit(EXIT_SUCCESS);
 				break;
 			case 'o':
 				outfile = optarg;
@@ -447,7 +449,7 @@ int main(int argc, char **argv)
 				break;
 			case 'V':
 				usage(0, 0);
-				exit(0);
+				exit(EXIT_SUCCESS);
 				break;
 			default:
 				fprintf(stderr, "Try `qrencode --help' for more information.\n");
@@ -458,7 +460,7 @@ int main(int argc, char **argv)
 
 	if(argc == 1) {
 		usage(1, 0);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if(outfile == NULL) {
@@ -467,10 +469,11 @@ int main(int argc, char **argv)
 	}
 
 	if(optind < argc) {
-		intext = argv[optind];
+		intext = (unsigned char *)argv[optind];
+		length = strlen((char *)intext);
 	}
 	if(intext == NULL) {
-		intext = readStdin();
+		intext = readStdin(&length);
 	}
 
 	if(micro && version > MQRSPEC_VERSION_MAX) {
@@ -505,9 +508,9 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Version must be specified to encode structured symbols.\n");
 			exit(EXIT_FAILURE);
 		}
-		qrencodeStructured(intext, outfile);
+		qrencodeStructured(intext, length, outfile);
 	} else {
-		qrencode(intext, outfile);
+		qrencode(intext, length, outfile);
 	}
 
 	return 0;
