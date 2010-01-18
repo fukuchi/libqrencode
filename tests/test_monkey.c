@@ -27,17 +27,26 @@ int fill8bitData(void)
 	return len;
 }
 
-void test_split_an(int num)
+int fillANData(void)
 {
-	QRinput *input;
-	QRinput_List *list;
-	int len, i, ret;
+	int len, i;
 
 	len = 1 + (int)drand((MAX_LENGTH - 2));
 	for(i=0; i<len; i++) {
 		data[i] = AN[(int)drand(45)];
 	}
 	data[len] = '\0';
+
+	return len;
+}
+
+void test_split_an(int num)
+{
+	QRinput *input;
+	QRinput_List *list;
+	int len, i, ret;
+
+	len = fillANData();
 
 	input = QRinput_new2(0, QR_ECLEVEL_L);
 	if(input == NULL) {
