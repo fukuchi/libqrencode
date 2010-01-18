@@ -1,3 +1,19 @@
+2010.01.18 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* configure.ac:
+	  - Configuration cleanups.
+	* tests/Makefile.am:
+	  - Wrong conditional branch fixed.
+	* tests/decoder.[ch], tests/Makefile.am:
+	  - Decoding function has been added.
+	* tests/test_{qrinput,qrspec,qrencode}.c:
+	  - New tests added.
+
+2010.01.16 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.[ch]:
+	  - QRcode_encodeData{,MQR,Structured}() have been added.
+	* tests/test_qrencode.c:
+	  - New test has been added.
+
 2009.11.27 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:
 	  - Typo fixes.
