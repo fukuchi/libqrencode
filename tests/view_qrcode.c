@@ -56,14 +56,14 @@ static void usage(int help, int longopt)
 "  -h, --help   display the help message. -h displays only the help of short\n"
 "               options.\n\n"
 "  -s NUMBER, --size=NUMBER\n"
-"               specify the size of dot (pixel). (default=3)\n\n"
+"               specify module size in dots (pixels). (default=3)\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
-"               specify error correctin level from L (lowest) to H (highest).\n"
+"               specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n\n"
 "  -v NUMBER, --symversion=NUMBER\n"
 "               specify the version of the symbol. (default=auto)\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
-"               specify the width of margin. (default=4)\n\n"
+"               specify the width of the margins. (default=4)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -71,7 +71,7 @@ static void usage(int help, int longopt)
 "               encode lower-case alphabet characters in 8-bit mode. (default)\n\n"
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
-"  -8, -8bit    encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
 "  -M, --micro  encode in a Micro QR Code.\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
@@ -84,11 +84,11 @@ static void usage(int help, int longopt)
 "Encode input data in a QR Code and display.\n\n"
 "  -h           display this message.\n"
 "  --help       display the usage of long options.\n"
-"  -s NUMBER    specify the size of dot (pixel). (default=3)\n"
-"  -l {LMQH}    specify error correctin level from L (lowest) to H (highest).\n"
+"  -s NUMBER    specify module size in dots (pixels). (default=3)\n"
+"  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
-"  -m NUMBER    specify the width of margin. (default=4)\n"
+"  -m NUMBER    specify the width of the margins. (default=4)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
@@ -104,23 +104,29 @@ static void usage(int help, int longopt)
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
-static char *readStdin(void)
+static unsigned char *readStdin(int *length)
 {
-	char *buffer;
+	unsigned char *buffer;
 	int ret;
 
-	buffer = (char *)malloc(MAX_DATA_SIZE);
+	buffer = (unsigned char *)malloc(MAX_DATA_SIZE + 1);
+	if(buffer == NULL) {
+		fprintf(stderr, "Memory allocation failed.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	ret = fread(buffer, 1, MAX_DATA_SIZE, stdin);
 	if(ret == 0) {
 		fprintf(stderr, "No input data.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
-	if(!feof(stdin)) {
+	if(feof(stdin) == 0) {
 		fprintf(stderr, "Input data is too large.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	buffer[ret] = '\0';
+	*length = ret;
 
 	return buffer;
 }
@@ -211,13 +217,13 @@ void draw_structuredQRcodeFromText(int argc, char **argv)
 	s = QRinput_Struct_new();
 	if(s == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	for(i=0; i<argc; i++) {
 		input = QRinput_new2(version, level);
 		if(input == NULL) {
 			fprintf(stderr, "Failed to allocate memory.\n");
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 		if(eightbit) {
 			ret = QRinput_append(input, QR_MODE_8, strlen(argv[i]), (unsigned char *)argv[i]);
@@ -226,12 +232,12 @@ void draw_structuredQRcodeFromText(int argc, char **argv)
 		}
 		if(ret < 0) {
 			perror("Encoding the input string");
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 		ret = QRinput_Struct_appendInput(s, input);
 		if(ret < 0) {
 			perror("Encoding the input string");
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 	ret = QRinput_Struct_insertStructuredAppendHeaders(s);
@@ -359,7 +365,7 @@ void view(int mode, QRinput *input)
 	}
 }
 
-void view_simple(const char *str)
+void view_simple(const unsigned char *str, int length)
 {
 	QRinput *input;
 	int ret;
@@ -371,16 +377,16 @@ void view_simple(const char *str)
 	}
 	if(input == NULL) {
 		fprintf(stderr, "Memory allocation error.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	if(eightbit) {
-		ret = QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
+		ret = QRinput_append(input, QR_MODE_8, length, str);
 	} else {
-		ret = Split_splitStringToQRinput(str, input, hint, casesensitive);
+		ret = Split_splitStringToQRinput((char *)str, input, hint, casesensitive);
 	}
 	if(ret < 0) {
 		perror("Encoding the input string");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	view(0, input);
@@ -399,7 +405,8 @@ void view_multiText(char **argv, int argc)
 int main(int argc, char **argv)
 {
 	int opt, lindex = -1;
-	char *intext = NULL;
+	unsigned char *intext = NULL;
+	int length = 0;
 
 	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
@@ -409,20 +416,20 @@ int main(int argc, char **argv)
 				} else {
 					usage(1, 0);
 				}
-				exit(0);
+				exit(EXIT_SUCCESS);
 				break;
 			case 's':
 				size = atoi(optarg);
 				if(size <= 0) {
 					fprintf(stderr, "Invalid size: %d\n", size);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case 'v':
 				version = atoi(optarg);
 				if(version < 0) {
 					fprintf(stderr, "Invalid version: %d\n", version);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case 'l':
@@ -445,7 +452,7 @@ int main(int argc, char **argv)
 						break;
 					default:
 						fprintf(stderr, "Invalid level: %s\n", optarg);
-						exit(1);
+						exit(EXIT_FAILURE);
 						break;
 				}
 				break;
@@ -453,7 +460,7 @@ int main(int argc, char **argv)
 				margin = atoi(optarg);
 				if(margin < 0) {
 					fprintf(stderr, "Invalid margin: %d\n", margin);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case 'S':
@@ -475,24 +482,25 @@ int main(int argc, char **argv)
 				break;
 			case 'V':
 				usage(0, 0);
-				exit(0);
+				exit(EXIT_SUCCESS);
 				break;
 			default:
 				fprintf(stderr, "Try `view_qrcode --help' for more information.\n");
-				exit(1);
+				exit(EXIT_FAILURE);
 				break;
 		}
 	}
 	if(argc == 1) {
 		usage(1, 0);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if(optind < argc) {
-		intext = argv[optind];
+		intext = (unsigned char *)argv[optind];
+		length = strlen((char *)intext);
 	}
 	if(intext == NULL) {
-		intext = readStdin();
+		intext = readStdin(&length);
 	}
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -501,12 +509,12 @@ int main(int argc, char **argv)
 	}
 	if(structured && version < 1) {
 		fprintf(stderr, "Version number must be greater than 0 to encode structured symbols.\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	if(structured && (argc - optind > 1)) {
 		view_multiText(argv + optind, argc - optind);
 	} else {
-		view_simple(intext);
+		view_simple(intext, length);
 	}
 
 	SDL_Quit();
