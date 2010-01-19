@@ -38,7 +38,7 @@ test_split_SOURCES = test_split.c
 test_split_LDADD = ../libqrencode.la
 
 test_monkey_SOURCES = test_monkey.c
-test_monkey_LDADD = ../libqrencode.la
+test_monkey_LDADD = ../libqrencode.la decoder.o
 
 test_mask_SOURCES = test_mask.c
 test_mask_LDADD = ../libqrencode.la decoder.o

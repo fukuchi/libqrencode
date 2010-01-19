@@ -12,7 +12,6 @@ typedef struct _DataChunk {
 } DataChunk;
 
 typedef struct {
-	int status;
 	int size;
 	unsigned char *data;
 	int version;
@@ -24,11 +23,12 @@ QRdata *QRdata_new(void);
 void QRdata_decodeBitStream(QRdata *qrdata, BitStream *bstream);
 void QRdata_dump(QRdata *data);
 void QRdata_free(QRdata *data);
-QRdata *QRcode_decode(QRcode *code);
 
 unsigned int QRcode_decodeVersion(QRcode *code);
 int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask);
-unsigned char *QRcode_unmask(QRcode *code, QRecLevel level, int mask);
-unsigned char *QRcode_decodeCodeword(QRcode *code);
+unsigned char *QRcode_unmask(QRcode *code);
+unsigned char *QRcode_extractBits(QRcode *code, int *length);
+QRdata *QRcode_decodeBits(QRcode *code);
+QRdata *QRcode_decode(QRcode *code);
 
 #endif /* __DECODER_H__ */

@@ -11,6 +11,16 @@
 #include "../split.h"
 #include "decoder.h"
 
+static const char decodeAnTable[45] = {
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+	'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+	'U', 'V', 'W', 'X', 'Y', 'Z', ' ', '$', '%', '*',
+	'+', '-', '.', '/', ':'
+};
+
+#define drand(__scale__) ((__scale__) * (double)rand() / ((double)RAND_MAX + 1.0))
+
 int inputSize(QRinput *input)
 {
 	BitStream *bstream;
@@ -711,18 +721,10 @@ void test_decodeLong(void)
 	char *str = "12345678901234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ?????????????";
 	QRcode *qrcode;
 	QRdata *qrdata;
-	QRecLevel level;
-	int mask, version;
-	QRinput *input;
 
 	testStart("Test code words (long, splitted).");
-	input = QRinput_new2(0, QR_ECLEVEL_H);
-	Split_splitStringToQRinput(str, input, QR_MODE_8, 1);
 	qrcode = QRcode_encodeString(str, 0, QR_ECLEVEL_H, QR_MODE_8, 1);
 	qrdata = QRcode_decode(qrcode);
-
-	version = QRcode_decodeVersion(qrcode);
-	QRcode_decodeFormat(qrcode, &level, &mask);
 
 	assert_nonnull(qrdata, "Failed to decode.\n");
 	if(qrdata != NULL) {
@@ -731,7 +733,34 @@ void test_decodeLong(void)
 	}
 	if(qrdata != NULL) QRdata_free(qrdata);
 	if(qrcode != NULL) QRcode_free(qrcode);
-	QRinput_free(input);
+
+	testFinish();
+}
+
+void test_decodeVeryLong(void)
+{
+	char str[4000];
+	int i;
+	QRcode *qrcode;
+	QRdata *qrdata;
+
+	testStart("Test code words (very long string).");
+
+	for(i=0; i<3999; i++) {
+		str[i] = decodeAnTable[(int)drand(45)];
+	}
+	str[3999] = '\0';
+
+	qrcode = QRcode_encodeString(str, 0, QR_ECLEVEL_L, QR_MODE_8, 0);
+	qrdata = QRcode_decode(qrcode);
+
+	assert_nonnull(qrdata, "Failed to decode.\n");
+	if(qrdata != NULL) {
+		assert_equal(strlen(str), qrdata->size, "Lengths of input/output mismatched.\n");
+		assert_zero(strncmp(str, (char *)(qrdata->data), qrdata->size), "Decoded data %s is different from the original %s\n", qrdata->data, str);
+	}
+	if(qrdata != NULL) QRdata_free(qrdata);
+	if(qrcode != NULL) QRcode_free(qrcode);
 
 	testFinish();
 }
@@ -767,6 +796,7 @@ int main(void)
 	test_formatInfo();
 	test_decodeSimple();
 	test_decodeLong();
+	test_decodeVeryLong();
 
 	QRcode_clearCache();
 

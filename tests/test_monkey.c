@@ -5,6 +5,7 @@
 #include "../qrinput.h"
 #include "../split.h"
 #include "../qrspec.h"
+#include "decoder.h"
 
 #define MAX_LENGTH 7091
 static char data[MAX_LENGTH];
@@ -39,6 +40,141 @@ int fillANData(void)
 
 	return len;
 }
+
+void test_encode_an(int num)
+{
+	int ret;
+	int len;
+	len = fillANData();
+	QRcode *qrcode;
+	QRdata *qrdata;
+	FILE *fp;
+	char buf[256];
+
+	qrcode = QRcode_encodeString(data, 0, num % 4, QR_MODE_8, num % 2);
+	if(qrcode == NULL) {
+		if(errno == ERANGE) return;
+		perror("test_encode_an aborted at QRcode_encodeString():");
+		printf("Length: %d\n", len);
+		printf("Level: %d\n", num % 4);
+		return;
+	}
+	qrdata = QRcode_decode(qrcode);
+	if(qrdata == NULL) {
+		printf("#%d: Failed to decode this code.\n", num);
+		QRcode_free(qrcode);
+		return;
+	}
+	if(qrdata->size != len) {
+		printf("#%d: length mismatched (orig: %d, decoded: %d)\n", num, len, qrdata->size);
+	}
+	ret = memcmp(qrdata->data, data, len);
+	if(ret != 0) {
+		unsigned char *frame, *p;
+		int x,y, c;
+		QRinput *input;
+		QRcode *origcode;
+		BitStream *bstream;
+		int spec[5];
+
+		printf("#%d: data mismatched.\n", num);
+		printf("Version: %d\n", qrcode->version);
+		QRspec_getEccSpec(qrcode->version, num%4, spec);
+		printf("DataLength: %d\n", QRspec_rsDataLength(spec));
+		printf("BlockNum1: %d\n", QRspec_rsBlockNum1(spec));
+		printf("BlockNum: %d\n", QRspec_rsBlockNum(spec));
+		printf("DataCodes1: %d\n", QRspec_rsDataCodes1(spec));
+
+		snprintf(buf, 256, "monkey-orig-%d.dat", num);
+		fp = fopen(buf, "w");
+		fputs(data, fp);
+		fclose(fp);
+
+		snprintf(buf, 256, "monkey-result-%d.dat", num);
+		fp = fopen(buf, "w");
+		fputs((char *)qrdata->data, fp);
+		fclose(fp);
+
+		snprintf(buf, 256, "monkey-result-unmasked-%d.dat", num);
+		fp = fopen(buf, "w");
+		frame = QRcode_unmask(qrcode);
+		p = frame;
+		for(y=0; y<qrcode->width; y++) {
+			for(x=0; x<qrcode->width; x++) {
+				fputc((*p&1)?'1':'0', fp);
+				p++;
+			}
+			fputc('\n', fp);
+		}
+		fclose(fp);
+		free(frame);
+
+		snprintf(buf, 256, "monkey-orig-unmasked-%d.dat", num);
+		fp = fopen(buf, "w");
+		input = QRinput_new2(0, num % 4);
+		Split_splitStringToQRinput(data, input, QR_MODE_8, num % 2);
+		origcode = QRcode_encodeMask(input, -2);
+		p = origcode->data;
+		for(y=0; y<origcode->width; y++) {
+			for(x=0; x<origcode->width; x++) {
+				fputc((*p&1)?'1':'0', fp);
+				p++;
+			}
+			fputc('\n', fp);
+		}
+		fclose(fp);
+		QRcode_free(origcode);
+
+		snprintf(buf, 256, "monkey-orig-bits-%d.dat", num);
+		fp = fopen(buf, "w");
+		bstream = QRinput_mergeBitStream(input);
+		c = 0;
+		for(x=0; x<bstream->length; x++) {
+			fputc((bstream->data[x]&1)?'1':'0', fp);
+			if((x & 7) == 7) {
+				fputc(' ', fp);
+				c++;
+			}
+			if((x & 63) == 63) {
+				fprintf(fp, "%d\n", c);
+			}
+		}
+		fclose(fp);
+		QRinput_free(input);
+		BitStream_free(bstream);
+
+		snprintf(buf, 256, "monkey-result-bits-%d.dat", num);
+		fp = fopen(buf, "w");
+		p = QRcode_extractBits(qrcode, &y);
+		c = 0;
+		for(x=0; x<y; x++) {
+			fputc((p[x]&1)?'1':'0', fp);
+			if((x & 7) == 7) {
+				fputc(' ', fp);
+				c++;
+			}
+			if((x & 63) == 63) {
+				fprintf(fp, "%d\n", c);
+			}
+		}
+		fclose(fp);
+		free(p);
+	}
+	QRdata_free(qrdata);
+	QRcode_free(qrcode);
+}
+
+void monkey_encode_an(int loop)
+{
+	int i;
+
+	puts("Monkey test: QRcode_encodeString() - AlphaNumeric string.");
+	srand(0);
+	for(i=0; i<loop; i++) {
+		test_encode_an(i);
+	}
+}
+
 
 void test_split_an(int num)
 {
@@ -321,6 +457,7 @@ int main(int argc, char **argv)
 		loop = atoi(argv[1]);
 	}
 	monkey_split_an(loop);
+	monkey_encode_an(loop);
 	monkey_split_8(loop);
 	monkey_split_kanji(loop);
 	monkey_split_structure(loop);
