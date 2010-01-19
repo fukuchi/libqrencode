@@ -8,6 +8,7 @@
 #include "../qrinput.h"
 #include "../mask.h"
 #include "../rscode.h"
+#include "../split.h"
 #include "decoder.h"
 
 int inputSize(QRinput *input)
@@ -695,6 +696,38 @@ void test_decodeSimple(void)
 
 	assert_nonnull(qrdata, "Failed to decode.\n");
 	if(qrdata != NULL) {
+		assert_equal(strlen(str), qrdata->size, "Lengths of input/output mismatched: %d, expected %d.\n", qrdata->size, (int)strlen(str));
+		assert_zero(strncmp(str, (char *)(qrdata->data), qrdata->size), "Decoded data %s is different from the original %s\n", qrdata->data, str);
+	}
+	if(qrdata != NULL) QRdata_free(qrdata);
+	if(qrcode != NULL) QRcode_free(qrcode);
+
+	testFinish();
+}
+
+
+void test_decodeLong(void)
+{
+	char *str = "12345678901234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ?????????????";
+	QRcode *qrcode;
+	QRdata *qrdata;
+	QRecLevel level;
+	int mask, version;
+	QRinput *input;
+	BitStream *bstream;
+
+	testStart("Test code words (long, splitted).");
+	input = QRinput_new2(0, QR_ECLEVEL_H);
+	Split_splitStringToQRinput(str, input, QR_MODE_8, 1);
+	bstream = QRinput_mergeBitStream(input);
+	qrcode = QRcode_encodeString(str, 0, QR_ECLEVEL_H, QR_MODE_8, 1);
+	qrdata = QRcode_decode(qrcode);
+
+	version = QRcode_decodeVersion(qrcode);
+	QRcode_decodeFormat(qrcode, &level, &mask);
+
+	assert_nonnull(qrdata, "Failed to decode.\n");
+	if(qrdata != NULL) {
 		assert_equal(strlen(str), qrdata->size, "Lengths of input/output mismatched.\n");
 		assert_zero(strncmp(str, (char *)(qrdata->data), qrdata->size), "Decoded data %s is different from the original %s\n", qrdata->data, str);
 	}
@@ -734,6 +767,7 @@ int main(void)
 	test_encodeData();
 	test_formatInfo();
 	test_decodeSimple();
+	test_decodeLong();
 
 	QRcode_clearCache();
 

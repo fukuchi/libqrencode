@@ -41,7 +41,7 @@ test_monkey_SOURCES = test_monkey.c
 test_monkey_LDADD = ../libqrencode.la
 
 test_mask_SOURCES = test_mask.c
-test_mask_LDADD = ../libqrencode.la
+test_mask_LDADD = ../libqrencode.la decoder.o
 
 test_mmask_SOURCES = test_mmask.c
 test_mmask_LDADD = ../libqrencode.la
