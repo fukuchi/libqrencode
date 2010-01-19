@@ -695,7 +695,8 @@ void test_decodeSimple(void)
 
 	assert_nonnull(qrdata, "Failed to decode.\n");
 	if(qrdata != NULL) {
-		assert_zero(strncmp(str, (char *)(qrdata->data), strlen(str)), "Decoded data %s is different from the original %s\n", qrdata->data, str);
+		assert_equal(strlen(str), qrdata->size, "Lengths of input/output mismatched.\n");
+		assert_zero(strncmp(str, (char *)(qrdata->data), qrdata->size), "Decoded data %s is different from the original %s\n", qrdata->data, str);
 	}
 	if(qrdata != NULL) QRdata_free(qrdata);
 	if(qrcode != NULL) QRcode_free(qrcode);
