@@ -28,7 +28,7 @@ QRdata *QRcode_decode(QRcode *code);
 
 unsigned int QRcode_decodeVersion(QRcode *code);
 int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask);
-unsigned char *QRcode_unmask(QRcode *code);
+unsigned char *QRcode_unmask(QRcode *code, QRecLevel, int mask);
 unsigned char *QRcode_decodeCodeword(QRcode *code);
 
 #endif /* __DECODER_H__ */

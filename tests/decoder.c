@@ -615,15 +615,10 @@ int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask)
 	return 0;
 }
 
-unsigned char *QRcode_unmask(QRcode *code)
+unsigned char *QRcode_unmask(QRcode *code, QRecLevel level, int mask)
 {
 	unsigned char *unmasked;
-	int mask;
-	QRecLevel level;
-	int ret;
 
-	ret = QRcode_decodeFormat(code, &level, &mask);
-	if(ret < 0) return NULL;
 	unmasked = Mask_makeMask(code->width, code->data, mask, level);
 
 	return unmasked;
@@ -729,7 +724,7 @@ unsigned char *QRcode_decodeBits(QRcode *code, int *length)
 	*length = QRspec_rsDataLength(spec) * 8;
 	bits = (unsigned char*)malloc(*length);
 
-	unmasked = QRcode_unmask(code);
+	unmasked = QRcode_unmask(code, level, mask);
 	if(unmasked == NULL) return NULL;
 
 	filler = FrameFiller_new(code->width, unmasked, 0);
