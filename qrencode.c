@@ -165,7 +165,7 @@ __STATIC unsigned char QRraw_getCode(QRRawCode *raw)
 	if(raw->count < raw->dataLength) {
 		row = raw->count % raw->blocks;
 		col = raw->count / raw->blocks;
-		if(col >= raw->rsblock[row].dataLength) {
+		if(col >= raw->rsblock[0].dataLength) {
 			row += raw->b1;
 		}
 		ret = raw->rsblock[row].data[col];
@@ -519,7 +519,10 @@ __STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 	}
 
 	/* masking */
-	if(mask < 0) {
+	if(mask == -2) { // just for debug purpose
+		masked = (unsigned char *)malloc(width * width);
+		memcpy(masked, frame, width * width);
+	} else if(mask < 0) {
 		masked = Mask_mask(width, frame, input->level);
 	} else {
 		masked = Mask_makeMask(width, frame, mask, input->level);
