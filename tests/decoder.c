@@ -65,6 +65,7 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version)
 	DataChunk *chunk;
 
 	size = decodeLength(bits_length, bits, QR_MODE_NUM, version);
+	printf("Num ver=%d, size=%d\n", version, size);
 	if(size < 0) return NULL;
 
 	words = size / 3;
@@ -108,6 +109,7 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version)
 		}
 		sprintf(q, "%1d", val);
 	}
+	buf[size] = '\0';
 
 	chunk = DataChunk_new(QR_MODE_NUM);
 	chunk->size = size;
@@ -431,7 +433,7 @@ void QRdata_concatChunks(QRdata *qrdata)
 		return;
 	}
 
-	data = malloc(size);
+	data = malloc(size + 1);
 	chunk = qrdata->chunks;
 	idx = 0;
 	while(chunk != NULL) {
@@ -439,6 +441,7 @@ void QRdata_concatChunks(QRdata *qrdata)
 		idx += chunk->size;
 		chunk = chunk->next;
 	}
+	data[size] = '\0';
 	qrdata->size = size;
 	qrdata->data = data;
 }
@@ -707,13 +710,44 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 	return &p[y * w + x];
 }
 
-unsigned char *QRcode_decodeBits(QRcode *code, int *length)
+unsigned char *QRcode_extractBits(int width, unsigned char *frame, int spec[5])
 {
-	unsigned char *unmasked, *p, *bits;
+	unsigned char *bits, *p, *q;
 	FrameFiller *filler;
+	int i, j;
+	int col, row, d1, b1, blocks, idx, words;
+
+	blocks = QRspec_rsBlockNum(spec);
+	words = QRspec_rsDataLength(spec);
+	d1 = QRspec_rsDataCodes1(spec);
+	b1 = QRspec_rsBlockNum1(spec);
+	bits = (unsigned char *)calloc(words * 8, 1);
+
+	row = col = 0;
+	filler = FrameFiller_new(width, frame, 0);
+	for(i=0; i<words; i++) {
+		col = i / blocks;
+		row = i % blocks + ((col>=d1)?b1:0);
+		idx = d1 * row + col + ((row > b1)?(row-b1):0);
+		q = bits + idx * 8;
+		for(j=0; j<8; j++) {
+			p = FrameFiller_next(filler);
+			q[j] = *p & 1;
+		}
+	}
+	free(filler);
+
+	return bits;
+}
+
+QRdata *QRcode_decodeBits(QRcode *code)
+{
+	unsigned char *unmasked, *bits;
 	int spec[5];
-	int ret, i, version, mask;
+	int ret, version, mask;
+	int length;
 	QRecLevel level;
+	QRdata *qrdata;
 
 	version = QRcode_decodeVersion(code);
 	if(version < 1) return NULL;
@@ -721,37 +755,30 @@ unsigned char *QRcode_decodeBits(QRcode *code, int *length)
 	if(ret < 0) return NULL;
 
 	QRspec_getEccSpec(version, level, spec);
-	*length = QRspec_rsDataLength(spec) * 8;
-	bits = (unsigned char*)malloc(*length);
+	length = QRspec_rsDataLength(spec) * 8;
 
 	unmasked = QRcode_unmask(code, level, mask);
 	if(unmasked == NULL) return NULL;
 
-	filler = FrameFiller_new(code->width, unmasked, 0);
-	for(i=0; i<*length; i++) {
-		p = FrameFiller_next(filler);
-		bits[i] = *p & 1;
-	}
-
-	free(filler);
+	bits = QRcode_extractBits(code->width, unmasked, spec);
 	free(unmasked);
 
-	return bits;
+	qrdata = QRdata_new();
+	qrdata->version = version;
+	qrdata->level = level;
+	QRdata_decodeBits(qrdata, length, bits);
+
+	free(bits);
+
+	return qrdata;
 }
 
 QRdata *QRcode_decode(QRcode *code)
 {
-	unsigned char *bits;
 	QRdata *qrdata;
-	int length;
 
-	bits = QRcode_decodeBits(code, &length);
-	if(bits == NULL) return NULL;
-	qrdata = QRdata_new();
-	QRdata_decodeBits(qrdata, length, bits);
+	qrdata = QRcode_decodeBits(code);
 	QRdata_concatChunks(qrdata);
-
-	free(bits);
 
 	return qrdata;
 }
