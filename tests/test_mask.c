@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../mask.h"
 #include "../qrspec.h"
+#include "decoder.h"
 
 char dot[2] = {'_', '#'};
 static char *maskPatterns[8] = {
@@ -236,6 +237,34 @@ void test_eval3(void)
 	free(frame);
 }
 
+void test_format(void)
+{
+	unsigned char *frame, *masked;
+	int version, mask, width, dmask;
+	QRecLevel level, dlevel;
+	QRcode *code;
+	int ret;
+
+	testStart("Checking format info.");
+	for(version=1; version<=QRSPEC_VERSION_MAX; version++) {
+		frame = QRspec_newFrame(version);
+		width = QRspec_getWidth(version);
+		for(level=0; level<4; level++) {
+			for(mask=0; mask<8; mask++) {
+				masked = Mask_makeMask(width, frame, mask, level);
+				code = QRcode_new(version, width, masked);
+				ret = QRcode_decodeFormat(code, &dlevel, &dmask);
+				assert_zero(ret, "Something wrong in format info.\n");
+				assert_equal(dlevel, level, "Decoded level is wrong: %d, expected %d", dlevel, level);
+				assert_equal(dmask, mask, "Decoded mask is wrong: %d, expected %d", dlevel, level);
+				QRcode_free(code);
+			}
+		}
+		free(frame);
+	}
+	testFinish();
+}
+
 int main(void)
 {
 	//print_masks();
@@ -243,6 +272,7 @@ int main(void)
 	test_eval();
 	test_eval2();
 	test_eval3();
+	test_format();
 
 	report();
 
