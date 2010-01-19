@@ -714,12 +714,10 @@ void test_decodeLong(void)
 	QRecLevel level;
 	int mask, version;
 	QRinput *input;
-	BitStream *bstream;
 
 	testStart("Test code words (long, splitted).");
 	input = QRinput_new2(0, QR_ECLEVEL_H);
 	Split_splitStringToQRinput(str, input, QR_MODE_8, 1);
-	bstream = QRinput_mergeBitStream(input);
 	qrcode = QRcode_encodeString(str, 0, QR_ECLEVEL_H, QR_MODE_8, 1);
 	qrdata = QRcode_decode(qrcode);
 
@@ -733,6 +731,7 @@ void test_decodeLong(void)
 	}
 	if(qrdata != NULL) QRdata_free(qrdata);
 	if(qrcode != NULL) QRcode_free(qrcode);
+	QRinput_free(input);
 
 	testFinish();
 }
