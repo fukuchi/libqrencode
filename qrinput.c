@@ -1049,7 +1049,7 @@ static int QRinput_convertData(QRinput *input)
 static int QRinput_appendPaddingBit(BitStream *bstream, QRinput *input)
 {
 	int bits, maxbits, words, maxwords, i, ret;
-	BitStream *padding;
+	BitStream *padding = NULL;
 	unsigned char *padbuf;
 	int padlen;
 
@@ -1114,7 +1114,7 @@ DONE:
 static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 {
 	int bits, maxbits, words, maxwords, i, ret, termbits;
-	BitStream *padding;
+	BitStream *padding = NULL;
 	unsigned char *padbuf;
 	int padlen;
 
