@@ -9,6 +9,10 @@
 	  - Typo fix.
 	* NEWS:
 	  - Updated.
+	* qrinput.c:
+	  - Possible memory errors fixed.
+	* configure.ac, tests/Makefile.am:
+	  - Added iconv checks.
 
 2010.01.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac:
