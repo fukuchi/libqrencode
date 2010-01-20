@@ -5,6 +5,8 @@
 	  - Code refactoring.
 	* tests/test_{qrencode,mask,monkey}.c, Makefile.am:
 	  - New tests added.
+	* qrencode_inner.h:
+	  - Typo fix.
 
 2010.01.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac:

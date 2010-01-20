@@ -37,7 +37,6 @@ int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
 	QRinput *input;
 	BitStream *bstream;
 	int ret;
-	QRdata *qrdata;
 
 	if(mqr) {
 		input = QRinput_newMQR(1, QR_ECLEVEL_L);
@@ -47,11 +46,6 @@ int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
 	QRinput_append(input, mode, strlen(data), (unsigned char *)data);
 	bstream = QRinput_mergeBitStream(input);
 	ret = cmpBin(correct, bstream);
-
-	qrdata = QRdata_new();
-	qrdata->version = input->version;
-	QRdata_decodeBitStream(qrdata, bstream);
-	QRdata_dump(qrdata);
 
 	QRinput_free(input);
 	BitStream_free(bstream);
