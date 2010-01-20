@@ -1,19 +1,28 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 4.0.0 (2009.x.x)
+Version 3.9.0 (2010.x.x)
 ------------------------
 * Micro QR Code support has been added.
-* "-M" option for Micro QR Code has been added to qrencode.
+* "--micro" (or "-M") option for Micro QR Code has been added to qrencode.
 * "--dpi" (or "-d") has been added to qrencode. This option set DPI information
   in an output PNG image. (Thanks to David Dahl)
 * New option "--enable-thread-safety" has been added to the configure script
   that makes the library thread-safe. It is enabled by default.
+* QRcode_encodeData(), QRcode_encodeDataMQR, QRcode_encodeDataStructured() have
+  been added for binary data encoding including '\0'.
+* Typo and bug fixes.
 
 Release Note:
-This release supports Micro QR Code.
-For a long time, libqrencode was thread unsafe.
-Thread safe.
+** This is an open beta version of libqrencode 4.0.0. 
+Micro QR Code encoder has been added. Some functions (QRcode_*MQR()) have been
+added to the library. The command line tool also accepts "--micro" and "-M"
+options. "--dpi" and "-d" are also added to embed DPI information to PNG file.
+
+Binary data including '\0' can be encoded now with qrencode. To encode a binary
+data, give "-8" option to qrencode, and let qrencode obtain data via standard
+input like "qrencode -8 -o output.png < binary".
+
 
 Version 3.1.0 (2009.6.6)
 ------------------------
