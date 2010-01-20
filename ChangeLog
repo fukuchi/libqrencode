@@ -7,6 +7,8 @@
 	  - New tests added.
 	* qrencode_inner.h:
 	  - Typo fix.
+	* NEWS:
+	  - Updated.
 
 2010.01.18 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* configure.ac:
