@@ -23,7 +23,7 @@
 #define __QRENCODE_INNER_H__
 
 /**
- * Ths header file includes definitions for test use.
+ * This header file includes definitions for test use.
  */
 
 /******************************************************************************
