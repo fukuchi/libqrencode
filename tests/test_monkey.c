@@ -8,12 +8,25 @@
 #include "decoder.h"
 
 #define MAX_LENGTH 7091
-static char data[MAX_LENGTH];
-static char check[MAX_LENGTH];
+static unsigned char data[MAX_LENGTH];
+static unsigned char check[MAX_LENGTH];
 
 static const char *AN = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 
 #define drand(__scale__) ((__scale__) * (double)rand() / ((double)RAND_MAX + 1.0))
+
+int fill8bitString(void)
+{
+	int len, i;
+
+	len = 1 + (int)drand((MAX_LENGTH - 2));
+	for(i=0; i<len; i++) {
+		data[i] = (unsigned char)drand(255) + 1;
+	}
+	data[len] = '\0';
+
+	return len;
+}
 
 int fill8bitData(void)
 {
@@ -21,7 +34,7 @@ int fill8bitData(void)
 
 	len = 1 + (int)drand((MAX_LENGTH - 2));
 	for(i=0; i<len; i++) {
-		data[i] = (unsigned char)drand(255) + 1;
+		data[i] = (unsigned char)drand(256);
 	}
 	data[len] = '\0';
 
@@ -51,7 +64,7 @@ void test_encode_an(int num)
 	FILE *fp;
 	char buf[256];
 
-	qrcode = QRcode_encodeString(data, 0, num % 4, QR_MODE_8, num % 2);
+	qrcode = QRcode_encodeString((char *)data, 0, num % 4, QR_MODE_8, num % 2);
 	if(qrcode == NULL) {
 		if(errno == ERANGE) return;
 		perror("test_encode_an aborted at QRcode_encodeString():");
@@ -87,7 +100,7 @@ void test_encode_an(int num)
 
 		snprintf(buf, 256, "monkey-orig-%d.dat", num);
 		fp = fopen(buf, "w");
-		fputs(data, fp);
+		fputs((char *)data, fp);
 		fclose(fp);
 
 		snprintf(buf, 256, "monkey-result-%d.dat", num);
@@ -112,7 +125,7 @@ void test_encode_an(int num)
 		snprintf(buf, 256, "monkey-orig-unmasked-%d.dat", num);
 		fp = fopen(buf, "w");
 		input = QRinput_new2(0, num % 4);
-		Split_splitStringToQRinput(data, input, QR_MODE_8, num % 2);
+		Split_splitStringToQRinput((char *)data, input, QR_MODE_8, num % 2);
 		origcode = QRcode_encodeMask(input, -2);
 		p = origcode->data;
 		for(y=0; y<origcode->width; y++) {
@@ -189,7 +202,7 @@ void test_split_an(int num)
 		perror("test_split_an aborted at QRinput_new2():");
 		return;
 	}
-	ret = Split_splitStringToQRinput(data, input, QR_MODE_8, 1);
+	ret = Split_splitStringToQRinput((char *)data, input, QR_MODE_8, 1);
 	if(ret < 0) {
 		perror("test_split_an aborted at Split_splitStringToQRinput():");
 		QRinput_free(input);
@@ -238,20 +251,62 @@ void monkey_split_an(int loop)
 	}
 }
 
+void test_encode_8(int num)
+{
+	QRcode *qrcode;
+	QRdata *qrdata;
+	int len, ret;
+
+	len = fill8bitData();
+
+	qrcode = QRcode_encodeData(len, data, 0, num % 4);
+	if(qrcode == NULL) {
+		if(errno == ERANGE) return;
+		perror("test_encdoe_8 aborted at QRcode_encodeData():");
+		return;
+	}
+	qrdata = QRcode_decode(qrcode);
+	if(qrdata == NULL) {
+		printf("#%d: Failed to decode this code.\n", num);
+		QRcode_free(qrcode);
+		return;
+	}
+	if(qrdata->size != len) {
+		printf("#%d: length mismatched (orig: %d, decoded: %d)\n", num, len, qrdata->size);
+	}
+	ret = memcmp(qrdata->data, data, len);
+	if(ret != 0) {
+		printf("#%d: data mismatched.\n", num);
+	}
+	QRdata_free(qrdata);
+	QRcode_free(qrcode);
+}
+
+void monkey_encode_8(int loop)
+{
+	int i;
+
+	puts("Monkey test: QRcode_encodeData() - 8bit char string.");
+	srand(0);
+	for(i=0; i<loop; i++) {
+		test_encode_8(i);
+	}
+}
+
 void test_split_8(int num)
 {
 	QRinput *input;
 	QRinput_List *list;
 	int len, i, ret;
 
-	len = fill8bitData();
+	len = fill8bitString();
 
 	input = QRinput_new2(0, QR_ECLEVEL_L);
 	if(input == NULL) {
 		perror("test_split_8 aborted at QRinput_new2():");
 		return;
 	}
-	ret = Split_splitStringToQRinput(data, input, QR_MODE_8, 1);
+	ret = Split_splitStringToQRinput((char *)data, input, QR_MODE_8, 1);
 	if(ret < 0) {
 		perror("test_split_8 aborted at Split_splitStringToQRinput():");
 		QRinput_free(input);
@@ -300,20 +355,62 @@ void monkey_split_8(int loop)
 	}
 }
 
+void test_encode_kanji(int num)
+{
+	QRcode *qrcode;
+	QRdata *qrdata;
+	int len, ret;
+
+	len = fill8bitString();
+
+	qrcode = QRcode_encodeString((char *)data, 0, num % 4, QR_MODE_8, 1);
+	if(qrcode == NULL) {
+		if(errno == ERANGE) return;
+		perror("test_encdoe_kanji aborted at QRcode_encodeString():");
+		return;
+	}
+	qrdata = QRcode_decode(qrcode);
+	if(qrdata == NULL) {
+		printf("#%d: Failed to decode this code.\n", num);
+		QRcode_free(qrcode);
+		return;
+	}
+	if(qrdata->size != len) {
+		printf("#%d: length mismatched (orig: %d, decoded: %d)\n", num, len, qrdata->size);
+	}
+	ret = memcmp(qrdata->data, data, len);
+	if(ret != 0) {
+		printf("#%d: data mismatched.\n", num);
+	}
+	QRdata_free(qrdata);
+	QRcode_free(qrcode);
+}
+
+void monkey_encode_kanji(int loop)
+{
+	int i;
+
+	puts("Monkey test: QRcode_encodeString() - kanji string.");
+	srand(0);
+	for(i=0; i<loop; i++) {
+		test_encode_kanji(i);
+	}
+}
+
 void test_split_kanji(int num)
 {
 	QRinput *input;
 	QRinput_List *list;
 	int len, i, ret;
 
-	len = fill8bitData();
+	len = fill8bitString();
 
 	input = QRinput_new2(0, QR_ECLEVEL_L);
 	if(input == NULL) {
 		perror("test_split_kanji aborted at QRinput_new2():");
 		return;
 	}
-	ret = Split_splitStringToQRinput(data, input, QR_MODE_KANJI, 1);
+	ret = Split_splitStringToQRinput((char *)data, input, QR_MODE_KANJI, 1);
 	if(ret < 0) {
 		perror("test_split_kanji aborted at Split_splitStringToQRinput():");
 		QRinput_free(input);
@@ -375,14 +472,14 @@ void test_split_structure(int num)
 	version = (int)drand(40) + 1;
 	level = (QRecLevel)drand(4);
 
-	len = fill8bitData();
+	len = fill8bitString();
 
 	input = QRinput_new2(version, level);
 	if(input == NULL) {
 		perror("test_split_structure aborted at QRinput_new2():");
 		return;
 	}
-	ret = Split_splitStringToQRinput(data, input, QR_MODE_KANJI, 1);
+	ret = Split_splitStringToQRinput((char *)data, input, QR_MODE_KANJI, 1);
 	if(ret < 0) {
 		perror("test_split_structure aborted at Split_splitStringToQRinput():");
 		QRinput_free(input);
@@ -459,7 +556,9 @@ int main(int argc, char **argv)
 	monkey_split_an(loop);
 	monkey_encode_an(loop);
 	monkey_split_8(loop);
+	monkey_encode_8(loop);
 	monkey_split_kanji(loop);
+	monkey_encode_kanji(loop);
 	monkey_split_structure(loop);
 
 	QRcode_clearCache();
