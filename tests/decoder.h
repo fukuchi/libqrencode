@@ -20,7 +20,7 @@ typedef struct {
 } QRdata;
 
 QRdata *QRdata_new(void);
-void QRdata_decodeBitStream(QRdata *qrdata, BitStream *bstream);
+int QRdata_decodeBitStream(QRdata *qrdata, BitStream *bstream);
 void QRdata_dump(QRdata *data);
 void QRdata_free(QRdata *data);
 
