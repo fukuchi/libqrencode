@@ -833,16 +833,16 @@ int main(void)
 	test_struct_semilong();
 	test_null_free();
 	test_qrraw_new();
-	//print_fillerMQR();
-	test_fillerMQR();
-	test_encodeTooLongMQR();
 	test_mqrraw_new();
 	test_encodeData();
 	test_formatInfo();
-	test_formatInfoMQR();
 	test_decodeSimple();
 	test_decodeLong();
 	test_decodeVeryLong();
+	//print_fillerMQR();
+	test_fillerMQR();
+	test_formatInfoMQR();
+	test_encodeTooLongMQR();
 	test_decodeShortMQR();
 
 	QRcode_clearCache();
