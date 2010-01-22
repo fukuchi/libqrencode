@@ -5,7 +5,22 @@
 #include "../qrspec.h"
 #include "../bitstream.h"
 #include "../mask.h"
+#include "../mqrspec.h"
+#include "../mmask.h"
 #include "decoder.h"
+
+static unsigned int bitToInt(unsigned char *bits, int length)
+{
+	int i;
+	unsigned int val = 0;
+
+	for(i=0; i<length; i++) {
+		val = val << 1;
+		val |= (bits[i] & 1);
+	}
+
+	return val;
+}
 
 DataChunk *DataChunk_new(QRencodeMode mode)
 {
@@ -27,11 +42,17 @@ void DataChunk_free(DataChunk *chunk)
 	}
 }
 
-static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mode, int version)
+static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mode, int version, int mqr)
 {
 	int i;
 	int length = 0;
-	int lbits = QRspec_lengthIndicator(mode, version);
+	int lbits;
+	
+	if(mqr) {
+		lbits = MQRspec_lengthIndicator(mode, version);
+	} else {
+		lbits = QRspec_lengthIndicator(mode, version);
+	}
 
 	if(*bits_length < lbits) {
 		printf("Bit length is too short: %d\n", *bits_length);
@@ -50,16 +71,16 @@ static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mod
 	return length;
 }
 
-static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version)
+static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version, int mqr)
 {
-	int i, j;
+	int i;
 	int size, sizeInBit, words, remain;
 	unsigned char *p;
 	char *buf, *q;
-	int val;
+	unsigned int val;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_NUM, version);
+	size = decodeLength(bits_length, bits, QR_MODE_NUM, version, mqr);
 	if(size < 0) return NULL;
 
 	words = size / 3;
@@ -79,28 +100,16 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version)
 	p = *bits;
 	q = buf;
 	for(i=0; i<words; i++) {
-		val = 0;
-		for(j=0; j<10; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
+		val = bitToInt(p, 10);
 		sprintf(q, "%03d", val);
 		p += 10;
 		q += 3;
 	}
 	if(remain == 2) {
-		val = 0;
-		for(j=0; j<7; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
+		val = bitToInt(p, 7);
 		sprintf(q, "%02d", val);
 	} else if(remain == 1) {
-		val = 0;
-		for(j=0; j<4; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
+		val = bitToInt(p, 4);
 		sprintf(q, "%1d", val);
 	}
 	buf[size] = '\0';
@@ -122,17 +131,17 @@ static const char decodeAnTable[45] = {
 	'+', '-', '.', '/', ':'
 };
 
-static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version)
+static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version, int mqr)
 {
-	int i, j;
+	int i;
 	int size, sizeInBit, words, remain;
 	unsigned char *p;
 	char *buf, *q;
-	int val;
+	unsigned int val;
 	int ch, cl;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_AN, version);
+	size = decodeLength(bits_length, bits, QR_MODE_AN, version, mqr);
 	if(size < 0) return NULL;
 
 	words = size / 2;
@@ -147,11 +156,7 @@ static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version)
 	p = *bits;
 	q = buf;
 	for(i=0; i<words; i++) {
-		val = 0;
-		for(j=0; j<11; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
+		val = bitToInt(p, 11);
 		ch = val / 45;
 		cl = val % 45;
 		sprintf(q, "%c%c", decodeAnTable[ch], decodeAnTable[cl]);
@@ -159,11 +164,7 @@ static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version)
 		q += 2;
 	}
 	if(remain == 1) {
-		val = 0;
-		for(j=0; j<6; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
+		val = bitToInt(p, 6);
 		sprintf(q, "%c", decodeAnTable[val]);
 	}
 
@@ -176,16 +177,15 @@ static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version)
 	return chunk;
 }
 
-static DataChunk *decode8(int *bits_length, unsigned char **bits, int version)
+static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, int mqr)
 {
-	int i, j;
+	int i;
 	int size, sizeInBit;
 	unsigned char *p;
 	unsigned char *buf, *q;
-	int val;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_8, version);
+	size = decodeLength(bits_length, bits, QR_MODE_8, version, mqr);
 	if(size < 0) return NULL;
 
 	sizeInBit = size * 8;
@@ -198,12 +198,7 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version)
 	p = *bits;
 	q = buf;
 	for(i=0; i<size; i++) {
-		val = 0;
-		for(j=0; j<8; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
-		*q = (unsigned char)val;
+		*q = (unsigned char)bitToInt(p, 8);
 		p += 8;
 		q += 1;
 	}
@@ -217,17 +212,17 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version)
 	return chunk;
 }
 
-static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int version)
+static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int version, int mqr)
 {
-	int i, j;
+	int i;
 	int size, sizeInBit;
 	unsigned char *p;
 	char *buf, *q;
-	int val;
+	unsigned int val;
 	int ch, cl;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_KANJI, version);
+	size = decodeLength(bits_length, bits, QR_MODE_KANJI, version, mqr);
 	if(size < 0) return NULL;
 
 	sizeInBit = size * 13;
@@ -240,11 +235,7 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 	p = *bits;
 	q = buf;
 	for(i=0; i<size; i++) {
-		val = 0;
-		for(j=0; j<13; j++) {
-			val = val << 1;
-			val += (int)p[j];
-		}
+		val = bitToInt(p, 13);
 		ch = val / 0xc0;
 		cl = val - ch * 0xc0;
 		val = ch * 256 + cl;
@@ -269,29 +260,76 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 
 static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int version)
 {
-	int i, val;
+	int val;
 
 	if(*bits_length < 4) {
 		return NULL;
 	}
-	val = 0;
-	for(i=0; i<4; i++) {
-		val = val << 1;
-		val += (*bits)[i];
-	}
+	val = bitToInt(*bits, 4);;
 	*bits_length -= 4;
 	*bits += 4;
 	switch(val) {
 		case 0:
 			return NULL;
 		case 1:
-			return decodeNum(bits_length, bits, version);
+			return decodeNum(bits_length, bits, version, 0);
 		case 2:
-			return decodeAn(bits_length, bits, version);
+			return decodeAn(bits_length, bits, version, 0);
 		case 4:
-			return decode8(bits_length, bits, version);
+			return decode8(bits_length, bits, version, 0);
 		case 8:
-			return decodeKanji(bits_length, bits, version);
+			return decodeKanji(bits_length, bits, version, 0);
+		default:
+			break;
+	}
+
+	printf("Invalid mode in a chunk: %d\n", val);
+
+	return NULL;
+}
+
+static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int version)
+{
+	int modebits, termbits;
+	unsigned int val;
+
+	modebits = version - 1;
+	termbits = version * 2 + 1;
+	if(*bits_length >= termbits) {
+		val = bitToInt(*bits, termbits);
+		if(val == 0) {
+			*bits += termbits;
+			*bits_length -= termbits;
+			return NULL;
+		}
+	} else {
+		if(*bits_length < modebits) {
+			val = bitToInt(*bits, *bits_length);
+		} else {
+			val = bitToInt(*bits, modebits);
+		}
+		if(val == 0) {
+			return NULL;
+		} else {
+			printf("Terminating bits include 1-bit.\n");
+			return NULL;
+		}
+	}
+	val = bitToInt(*bits, modebits);
+	if(version == 4 && val > 3) {
+		printf("Invalid mode number %d.\n", val);
+	}
+	*bits_length -= modebits;
+	*bits += modebits;
+	switch(val) {
+		case 0:
+			return decodeNum(bits_length, bits, version, 1);
+		case 1:
+			return decodeAn(bits_length, bits, version, 1);
+		case 2:
+			return decode8(bits_length, bits, version, 1);
+		case 3:
+			return decodeKanji(bits_length, bits, version, 1);
 		default:
 			break;
 	}
@@ -442,7 +480,11 @@ int appendChunk(QRdata *qrdata, int *bits_length, unsigned char **bits)
 {
 	DataChunk *chunk;
 
-	chunk = decodeChunk(bits_length, bits, qrdata->version);
+	if(qrdata->mqr) {
+		chunk = decodeChunkMQR(bits_length, bits, qrdata->version);
+	} else {
+		chunk = decodeChunk(bits_length, bits, qrdata->version);
+	}
 	if(chunk == NULL) {
 		return 1;
 	}
@@ -463,6 +505,17 @@ QRdata *QRdata_new(void)
 
 	qrdata = (QRdata *)calloc(sizeof(QRdata), 1);
 	if(qrdata == NULL) return NULL;
+
+	return qrdata;
+}
+
+QRdata *QRdata_newMQR(void)
+{
+	QRdata *qrdata;
+
+	qrdata = (QRdata *)calloc(sizeof(QRdata), 1);
+	if(qrdata == NULL) return NULL;
+	qrdata->mqr = 1;
 
 	return qrdata;
 }
@@ -788,16 +841,11 @@ static int checkRemainderWords(int length, unsigned char *bits, int remainder)
 {
 	int rbits, words;
 	unsigned char *p, v;
-	int i, j;
+	int i;
 
 	words = remainder / 8;
 	rbits = remainder - words * 8;
 	bits += (length - remainder);
-	if(rbits >= 8) {
-		printf("Something wrong? rbits = %d\n", rbits);
-		printBits(remainder, bits);
-		return -1;
-	}
 	for(i=0; i<rbits; i++) {
 		if((bits[i]&1) != 0) {
 			printf("Terminating code includes 1-bit.\n");
@@ -807,11 +855,7 @@ static int checkRemainderWords(int length, unsigned char *bits, int remainder)
 	}
 	p = bits + rbits;
 	for(i=0; i<words; i++) {
-		v = 0;
-		for(j=0; j<8; j++) {
-			v = v << 1;
-			v |= (p[j] & 1);
-		}
+		v = (unsigned char)bitToInt(p, 8);
 		if(v != ((i&1)?0x11:0xec)) {
 			printf("Remainder codewords wrong.\n");
 			printBits(remainder, bits);
@@ -869,3 +913,191 @@ QRdata *QRcode_decode(QRcode *code)
 	return qrdata;
 }
 
+/*
+ * Micro QR Code decoder
+ */
+
+struct FormatInfo MQRformat[] = {
+	{1, QR_ECLEVEL_L},
+	{2, QR_ECLEVEL_L},
+	{2, QR_ECLEVEL_M},
+	{3, QR_ECLEVEL_L},
+	{3, QR_ECLEVEL_M},
+	{4, QR_ECLEVEL_L},
+	{4, QR_ECLEVEL_M},
+	{4, QR_ECLEVEL_Q}
+};
+
+int QRcode_decodeFormatMQR(QRcode *code, int *version, QRecLevel *level, int *mask)
+{
+	unsigned int v, t;
+	int i, width;
+	unsigned char *p;
+
+	width = code->width;
+
+	v = 0;
+	p = code->data + width * 8 + 1;
+	for(i=0; i<8; i++) {
+		v = v << 1;
+		v |= p[i] & 1;
+	}
+	p = code->data + width * 7 + 8;
+	for(i=0; i<7; i++) {
+		v = v << 1;
+		v |= *(p - width * i) & 1;
+	}
+	v ^= 0x4445;
+	*mask = (v >> 10) & 3;
+	t = (v >> 12) & 7;
+	*version = MQRformat[t].version;
+	*level = MQRformat[t].level;
+	if(*version * 2 + 9 != width) {
+		printf("Decoded version number does not match to the size.\n");
+		return -1;
+	}
+	return 0;
+}
+
+static unsigned char *unmaskMQR(QRcode *code, QRecLevel level, int mask)
+{
+	unsigned char *unmasked;
+
+	unmasked = MMask_makeMask(code->version, code->data, mask, level);
+
+	return unmasked;
+}
+
+unsigned char *QRcode_unmaskMQR(QRcode *code)
+{
+	int ret, version, mask;
+	QRecLevel level;
+
+	ret = QRcode_decodeFormatMQR(code, &version, &level, &mask);
+	if(ret < 0) return NULL;
+
+	return unmaskMQR(code, level, mask);
+}
+
+static unsigned char *extractBitsMQR(int width, unsigned char *frame, int version, QRecLevel level)
+{
+	unsigned char *bits;
+	FrameFiller *filler;
+	int i;
+	int size;
+
+	size = MQRspec_getDataLengthBit(version, level);
+	bits = (unsigned char *)malloc(size);
+	filler = FrameFiller_new(width, frame, 1);
+	for(i=0; i<size; i++) {
+		bits[i] = *(FrameFiller_next(filler)) & 1;
+	}
+	free(filler);
+
+	return bits;
+}
+
+unsigned char *MQRcode_extractBits(QRcode *code, int *length)
+{
+	unsigned char *unmasked, *bits;
+	int ret, version, mask;
+	QRecLevel level;
+
+	ret = QRcode_decodeFormatMQR(code, &version, &level, &mask);
+	if(ret < 0) return NULL;
+
+	unmasked = unmaskMQR(code, level, mask);
+	if(unmasked == NULL) return NULL;
+
+	*length = MQRspec_getDataLengthBit(version, level);
+	bits = extractBitsMQR(code->width, unmasked, version, level);
+	free(unmasked);
+
+	return bits;
+}
+
+static int checkRemainderWordsMQR(int length, unsigned char *bits, int remainder, int version)
+{
+	int rbits, words, paddings;
+	unsigned char *p, v;
+	int i, decoded;
+
+	decoded = length - remainder;
+	bits += decoded;
+	words = (decoded + 7) / 8;
+	rbits = words * 8 - decoded;
+	for(i=0; i<rbits; i++) {
+		if((bits[i]&1) != 0) {
+			printf("Terminating code includes 1-bit.\n");
+			printBits(remainder, bits);
+			return -1;
+		}
+	}
+
+	paddings = (length - words * 8) / 8;
+	p = bits + rbits;
+	for(i=0; i<paddings; i++) {
+		v = (unsigned char)bitToInt(p, 8);
+		if(v != ((i&1)?0x11:0xec)) {
+			printf("Remainder codewords wrong.\n");
+			printBits(remainder, bits);
+			return -1;
+		}
+		p += 8;
+	}
+	rbits = length - (paddings + words)* 8;
+	if(rbits > 0) {
+		if((version == 1 || version == 3) && rbits == 4) {
+			v = (unsigned char)bitToInt(p, 4);
+			if(v != 0) {
+				printf("Last padding bits include 1-bit.\n");
+				return -1;
+			}
+		} else {
+			printf("The length of the last padding bits is %d, not %d.\n", rbits, (version == 1 || version == 3)?4:0);
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+QRdata *QRcode_decodeBitsMQR(QRcode *code)
+{
+	unsigned char *unmasked, *bits;
+	int ret, version, mask;
+	int length;
+	QRecLevel level;
+	QRdata *qrdata;
+
+	ret = QRcode_decodeFormatMQR(code, &version, &level, &mask);
+	if(ret < 0) return NULL;
+
+	unmasked = unmaskMQR(code, level, mask);
+	if(unmasked == NULL) return NULL;
+
+	length = MQRspec_getDataLengthBit(version, level);
+	bits = extractBitsMQR(code->width, unmasked, version, level);
+	free(unmasked);
+
+	qrdata = QRdata_newMQR();
+	qrdata->version = version;
+	qrdata->level = level;
+	ret = QRdata_decodeBits(qrdata, length, bits);
+	if(ret > 0) {
+		checkRemainderWordsMQR(length, bits, ret, version);
+	}
+
+	free(bits);
+
+	return qrdata;
+}
+
+QRdata *QRcode_decodeMQR(QRcode *code)
+{
+	QRdata *qrdata;
+	qrdata = QRcode_decodeBitsMQR(code);
+	QRdata_concatChunks(qrdata);
+
+	return qrdata;
+}

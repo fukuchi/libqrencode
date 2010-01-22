@@ -694,6 +694,28 @@ void test_formatInfo(void)
 	testFinish();
 }
 
+void test_formatInfoMQR(void)
+{
+	QRcode *qrcode;
+	QRecLevel level;
+	int version, mask;
+	int i, ret;
+
+	testStart("Test format info in Micro QR code.");
+	for(i=0; i<8; i++) {
+		qrcode = QRcode_encodeStringMQR("1",
+										MQRformat[i].version,
+										MQRformat[i].level,
+										QR_MODE_8, 1);
+		ret = QRcode_decodeFormatMQR(qrcode, &version, &level, &mask);
+		assert_equal(MQRformat[i].version, version, "Decoded verion is wrong.\n");
+		assert_equal(MQRformat[i].level, level, "Decoded level is wrong.\n");
+		QRcode_free(qrcode);
+	}
+
+	testFinish();
+}
+
 void test_decodeSimple(void)
 {
 	char *str = "AC-42";
@@ -765,6 +787,29 @@ void test_decodeVeryLong(void)
 	testFinish();
 }
 
+void test_decodeShortMQR(void)
+{
+	char str[]="55";
+	QRcode *qrcode;
+	QRdata *qrdata;
+	int i;
+
+	testStart("Test code words (MQR).");
+	for(i=0; i<8; i++) {
+		qrcode = QRcode_encodeStringMQR(str,
+										MQRformat[i].version,
+										MQRformat[i].level,
+										QR_MODE_8, 1);
+		qrdata = QRcode_decodeMQR(qrcode);
+
+		assert_nonnull(qrdata, "Failed to decode.\n");
+		assert_zero(strcmp((char *)qrdata->data, str), "Decoded data (%s) mismatched (%s)\n", (char *)qrdata->data, str);
+		if(qrdata != NULL) QRdata_free(qrdata);
+		if(qrcode != NULL) QRcode_free(qrcode);
+	}
+
+	testFinish();
+}
 
 int main(void)
 {
@@ -794,9 +839,11 @@ int main(void)
 	test_mqrraw_new();
 	test_encodeData();
 	test_formatInfo();
+	test_formatInfoMQR();
 	test_decodeSimple();
 	test_decodeLong();
 	test_decodeVeryLong();
+	test_decodeShortMQR();
 
 	QRcode_clearCache();
 

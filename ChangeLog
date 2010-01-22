@@ -1,3 +1,9 @@
+2010.01.22 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* tests/test_qrspec.c:
+	  - Code cleanup.
+	* tests/decoder.[ch], tests/test_qrencode.c:
+	  - Added tests for Micro QR Code.
+
 2010.01.20 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.c:
 	  - Bug fix.
