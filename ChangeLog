@@ -4,6 +4,13 @@
 	* qrspec.h, mqrspec.h, qrinput.c:
 	  - QRSPEC_MODEID_* and MQRSPEC_MODEID_* have been added, and hard coded
 	    numbers were replaced with them.
+	* qrenc.c:
+	  - Modified usage.
+	* qrinput.h:
+	  - Added a new field to QRinput for FNC1 support.
+	* qrinput.c, qrencode.h:
+	  - Added new functions to set FNC1 flag.
+	  - FNC1 second position encoding now supported.
 
 2010.01.22 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/test_qrspec.c:

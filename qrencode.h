@@ -114,8 +114,8 @@ typedef enum {
 	QR_MODE_KANJI,     ///< Kanji (shift-jis) mode
 	QR_MODE_STRUCTURE, ///< Internal use only
 	QR_MODE_ECI,       ///< ECI mode
-	QR_MODE_FNC1A,     ///< FNC1, first position
-	QR_MODE_FNC1B,     ///< FNC1, second position
+	QR_MODE_FNC1FIRST,  ///< FNC1, first position
+	QR_MODE_FNC1SECOND, ///< FNC1, second position
 } QRencodeMode;
 
 /**
@@ -198,6 +198,22 @@ extern QRinput *QRinput_newMQR(int version, QRecLevel level);
  *
  */
 extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned char *data);
+
+/**
+ * Append data to an input object with ECI header.
+ * The data is copied and appended to the input object.
+ * @param input input object.
+ * @param mode encoding mode.
+ * @param size size of data (byte).
+ * @param data a pointer to the memory area of the input data.
+ * @retval 0 success.
+ * @retval -1 an error occurred and errno is set to indeicate the error.
+ *            See Execptions for the details.
+ * @throw ENOMEM unable to allocate memory.
+ * @throw EINVAL input data is invalid.
+ *
+ */
+extern int QRinput_appendECI(QRinput *input, QRencodeMode mode, int size, const unsigned char *data, unsigned int ecinum);
 
 /**
  * Get current version.
@@ -325,6 +341,16 @@ extern QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input);
  * @throw ENOMEM unable to allocate memory.
  */
 extern int QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct *s);
+
+/**
+ * Set FNC1-1st position flag.
+ */
+extern int QRinput_setFNC1First(QRinput *input);
+
+/**
+ * Set FNC1-2nd position flag and application identifier.
+ */
+extern int QRinput_setFNC1Second(QRinput *input, unsigned char appid);
 
 /******************************************************************************
  * QRcode output (qrencode.c)

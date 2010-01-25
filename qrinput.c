@@ -49,12 +49,14 @@ static QRinput_List *QRinput_List_newEntry(QRencodeMode mode, int size, const un
 
 	entry->mode = mode;
 	entry->size = size;
-	entry->data = (unsigned char *)malloc(size);
-	if(entry->data == NULL) {
-		free(entry);
-		return NULL;
+	if(size > 0) {
+		entry->data = (unsigned char *)malloc(size);
+		if(entry->data == NULL) {
+			free(entry);
+			return NULL;
+		}
+		memcpy(entry->data, data, size);
 	}
-	memcpy(entry->data, data, size);
 	entry->bstream = NULL;
 	entry->next = NULL;
 
@@ -117,6 +119,7 @@ QRinput *QRinput_new2(int version, QRecLevel level)
 	input->version = version;
 	input->level = level;
 	input->mqr = 0;
+	input->fnc1 = 0;
 
 	return input;
 }
@@ -730,30 +733,62 @@ ABORT:
 }
 
 /******************************************************************************
+ * FNC1
+ *****************************************************************************/
+
+static int QRinput_checkModeFNC1Second(int size, const unsigned char *data)
+{
+	if(size != 1) return -1;
+
+	return 0;
+}
+
+static int QRinput_encodeModeFNC1Second(QRinput_List *entry, int version)
+{
+	int ret;
+
+	entry->bstream = BitStream_new();
+	if(entry->bstream == NULL) return -1;
+
+	ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_FNC1SECOND);
+	if(ret < 0) goto ABORT;
+	
+	ret = BitStream_appendBytes(entry->bstream, 1, entry->data);
+	if(ret < 0) goto ABORT;
+
+	return 0;
+ABORT:
+	BitStream_free(entry->bstream);
+	entry->bstream = NULL;
+	return -1;
+}
+
+/******************************************************************************
  * Validation
  *****************************************************************************/
 
 int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 {
-	if(size <= 0) return -1;
+	if((mode == QR_MODE_FNC1FIRST && size < 0) || size <= 0) return -1;
 
 	switch(mode) {
 		case QR_MODE_NUM:
 			return QRinput_checkModeNum(size, (const char *)data);
-			break;
 		case QR_MODE_AN:
 			return QRinput_checkModeAn(size, (const char *)data);
-			break;
 		case QR_MODE_KANJI:
 			return QRinput_checkModeKanji(size, data);
-			break;
 		case QR_MODE_8:
 			return 0;
-			break;
 		case QR_MODE_STRUCTURE:
 			return 0;
-			break;
-		default:
+		case QR_MODE_ECI:
+			return -1;
+		case QR_MODE_FNC1FIRST:
+			return 0;
+		case QR_MODE_FNC1SECOND:
+			return QRinput_checkModeFNC1Second(size, data);
+		case QR_MODE_NUL:
 			break;
 	}
 
@@ -961,6 +996,8 @@ static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
 			case QR_MODE_STRUCTURE:
 				ret = QRinput_encodeModeStructure(entry, mqr);
 				break;
+			case QR_MODE_FNC1SECOND:
+				ret = QRinput_encodeModeFNC1Second(entry, version);
 			default:
 				break;
 		}
@@ -1180,6 +1217,30 @@ DONE:
 	return ret;
 }
 
+static int QRinput_insertFNC1Header(QRinput *input)
+{
+	QRinput_List *entry;
+
+	if(input->fnc1 == 1) {
+		entry = QRinput_List_newEntry(QR_MODE_FNC1FIRST, 0, NULL);
+	} else if(input->fnc1 == 2) {
+		entry = QRinput_List_newEntry(QR_MODE_FNC1SECOND, 1, &(input->appid));
+	}
+	if(entry == NULL) {
+		return -1;
+	}
+
+	if(input->head->mode != QR_MODE_STRUCTURE || input->head->mode != QR_MODE_ECI) {
+		entry->next = input->head;
+		input->head = entry;
+	} else {
+		entry->next = input->head->next;
+		input->head->next = entry;
+	}
+
+	return 0;
+}
+
 /**
  * Merge all bit streams in the input data.
  * @param input input data.
@@ -1193,9 +1254,15 @@ __STATIC BitStream *QRinput_mergeBitStream(QRinput *input)
 	int ret;
 
 	if(input->mqr) {
-		ret = QRinput_createBitStream(input);
-		if(ret < 0) return NULL;
+		if(QRinput_createBitStream(input) < 0) {
+			return NULL;
+		}
 	} else {
+		if(input->fnc1) {
+			if(QRinput_insertFNC1Header(input) < 0) {
+				return NULL;
+			}
+		}
 		if(QRinput_convertData(input) < 0) {
 			return NULL;
 		}
@@ -1525,5 +1592,28 @@ int QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct *s)
 }
 
 /******************************************************************************
- * Functions for Micro QR Code
+ * Extended encoding mode (FNC1 and ECI)
  *****************************************************************************/
+
+int QRinput_setFNC1First(QRinput *input)
+{
+	if(input->mqr) {
+		errno = EINVAL;
+		return -1;
+	}
+	input->fnc1 = 1;
+
+	return 0;
+}
+
+int QRinput_setFNC1Second(QRinput *input, unsigned char appid)
+{
+	if(input->mqr) {
+		errno = EINVAL;
+		return -1;
+	}
+	input->fnc1 = 2;
+	input->appid = appid;
+
+	return 0;
+}
