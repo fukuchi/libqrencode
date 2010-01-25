@@ -85,7 +85,7 @@ static void usage(int help, int longopt)
 "  -v NUMBER, --symversion=NUMBER\n"
 "               specify the version of the symbol. (default=auto)\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
-"               specify the width of the margins. (default=4)\n\n"
+"               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
 "  -S, --structured\n"
@@ -116,7 +116,7 @@ static void usage(int help, int longopt)
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
-"  -m NUMBER    specify the width of the margins. (default=4)\n"
+"  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
 
 "  -S           make structured symbols. Version must be specified.\n"
