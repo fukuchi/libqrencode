@@ -1,3 +1,10 @@
+2010.01.25 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrencode.h:
+	  - QR_MODE_{ECI,FNC1A,FNC1B} have been added to QRencodeMode.
+	* qrspec.h, mqrspec.h, qrinput.c:
+	  - QRSPEC_MODEID_* and MQRSPEC_MODEID_* have been added, and hard coded
+	    numbers were replaced with them.
+
 2010.01.22 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* tests/test_qrspec.c:
 	  - Code cleanup.

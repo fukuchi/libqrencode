@@ -161,4 +161,21 @@ extern unsigned char *QRspec_newFrame(int version);
  */
 extern void QRspec_clearCache(void);
 
+/******************************************************************************
+ * Mode indicator
+ *****************************************************************************/
+
+/**
+ * Mode indicator. See Table 2 of JIS X0510:2004, pp.16.
+ */
+#define QRSPEC_MODEID_ECI        7
+#define QRSPEC_MODEID_NUM        1
+#define QRSPEC_MODEID_AN         2
+#define QRSPEC_MODEID_8          4
+#define QRSPEC_MODEID_KANJI      8
+#define QRSPEC_MODEID_FNC1A      5
+#define QRSPEC_MODEID_FNC1B      9
+#define QRSPEC_MODEID_STRUCTURE  3
+#define QRSPEC_MODEID_TERMINATOR 0
+ 
 #endif /* __QRSPEC_H__ */

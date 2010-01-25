@@ -386,13 +386,13 @@ static int QRinput_encodeModeNum(QRinput_List *entry, int version, int mqr)
 
 	if(mqr) {
 		if(version > 1) {
-			ret = BitStream_appendNum(entry->bstream, version - 1, 0);
+			ret = BitStream_appendNum(entry->bstream, version - 1, MQRSPEC_MODEID_NUM);
 			if(ret < 0) goto ABORT;
 		}
 		ret = BitStream_appendNum(entry->bstream, MQRspec_lengthIndicator(QR_MODE_NUM, version), entry->size);
 		if(ret < 0) goto ABORT;
 	} else {
-		ret = BitStream_appendNum(entry->bstream, 4, 1);
+		ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_NUM);
 		if(ret < 0) goto ABORT;
 	
 		ret = BitStream_appendNum(entry->bstream, QRspec_lengthIndicator(QR_MODE_NUM, version), entry->size);
@@ -502,12 +502,12 @@ static int QRinput_encodeModeAn(QRinput_List *entry, int version, int mqr)
 			errno = EINVAL;
 			goto ABORT;
 		}
-		ret = BitStream_appendNum(entry->bstream, version - 1, 1);
+		ret = BitStream_appendNum(entry->bstream, version - 1, MQRSPEC_MODEID_AN);
 		if(ret < 0) goto ABORT;
 		ret = BitStream_appendNum(entry->bstream, MQRspec_lengthIndicator(QR_MODE_AN, version), entry->size);
 		if(ret < 0) goto ABORT;
 	} else {
-		ret = BitStream_appendNum(entry->bstream, 4, 2);
+		ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_AN);
 		if(ret < 0) goto ABORT;
 		ret = BitStream_appendNum(entry->bstream, QRspec_lengthIndicator(QR_MODE_AN, version), entry->size);
 		if(ret < 0) goto ABORT;
@@ -571,12 +571,12 @@ static int QRinput_encodeMode8(QRinput_List *entry, int version, int mqr)
 			errno = EINVAL;
 			goto ABORT;
 		}
-		ret = BitStream_appendNum(entry->bstream, version - 1, 2);
+		ret = BitStream_appendNum(entry->bstream, version - 1, MQRSPEC_MODEID_8);
 		if(ret < 0) goto ABORT;
 		ret = BitStream_appendNum(entry->bstream, MQRspec_lengthIndicator(QR_MODE_8, version), entry->size);
 		if(ret < 0) goto ABORT;
 	} else {
-		ret = BitStream_appendNum(entry->bstream, 4, 4);
+		ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_8);
 		if(ret < 0) goto ABORT;
 		ret = BitStream_appendNum(entry->bstream, QRspec_lengthIndicator(QR_MODE_8, version), entry->size);
 		if(ret < 0) goto ABORT;
@@ -656,12 +656,12 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, int version, int mqr)
 			errno = EINVAL;
 			goto ABORT;
 		}
-		ret = BitStream_appendNum(entry->bstream, version - 1, 3);
+		ret = BitStream_appendNum(entry->bstream, version - 1, MQRSPEC_MODEID_KANJI);
 		if(ret < 0) goto ABORT;
 		ret = BitStream_appendNum(entry->bstream, MQRspec_lengthIndicator(QR_MODE_KANJI, version), entry->size/2);
 		if(ret < 0) goto ABORT;
 	} else {
-		ret = BitStream_appendNum(entry->bstream, 4, 8);
+		ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_KANJI);
 		if(ret < 0) goto ABORT;
 		ret = BitStream_appendNum(entry->bstream, QRspec_lengthIndicator(QR_MODE_KANJI, version), entry->size/2);
 		if(ret < 0) goto ABORT;
@@ -713,7 +713,7 @@ static int QRinput_encodeModeStructure(QRinput_List *entry, int mqr)
 	entry->bstream = BitStream_new();
 	if(entry->bstream == NULL) return -1;
 
-	ret = BitStream_appendNum(entry->bstream, 4, 0x03);
+	ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_STRUCTURE);
 	if(ret < 0) goto ABORT;
 	ret = BitStream_appendNum(entry->bstream, 4, entry->data[1] - 1);
 	if(ret < 0) goto ABORT;
