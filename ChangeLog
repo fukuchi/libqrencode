@@ -1,3 +1,18 @@
+2010.01.27 Kentaro FUKUCHI <fukuchi@megaui.net>
+	* qrinput.c, qrencode.h:
+	  - 8bit encoding improved.
+	  - QRinput_encodeModeECI(), QRinput_appendECIheader(),
+		QRinput_estimateBitsModeECI() have been added.
+	* tests/test_qrinput.c:
+	  - Some tests for ECI header have been added.
+	* qrinput.[ch]:
+	  - STRUCTURE_HEADER_BITS was renamed to STRUCTURE_HEADER_SIZE.
+	  - MODE_INDICATOR_SIZE has been added.
+	  - QRinput_isSplittableMode() has been added.
+	* qrspec.c:
+	  - QRspec_maximumWords() now returns 0 if the entry cannot be splitted.
+	  - Now includes "qrinput.h" for QRinput_isSplittableMode().
+
 2010.01.25 Kentaro FUKUCHI <fukuchi@megaui.net>
 	* qrencode.h:
 	  - QR_MODE_{ECI,FNC1A,FNC1B} have been added to QRencodeMode.

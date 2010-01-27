@@ -200,12 +200,9 @@ extern QRinput *QRinput_newMQR(int version, QRecLevel level);
 extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned char *data);
 
 /**
- * Append data to an input object with ECI header.
- * The data is copied and appended to the input object.
+ * Append ECI header.
  * @param input input object.
- * @param mode encoding mode.
- * @param size size of data (byte).
- * @param data a pointer to the memory area of the input data.
+ * @param ecinum ECI indicator number (0 - 999999)
  * @retval 0 success.
  * @retval -1 an error occurred and errno is set to indeicate the error.
  *            See Execptions for the details.
@@ -213,7 +210,7 @@ extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const uns
  * @throw EINVAL input data is invalid.
  *
  */
-extern int QRinput_appendECI(QRinput *input, QRencodeMode mode, int size, const unsigned char *data, unsigned int ecinum);
+extern int QRinput_appendECIheader(QRinput *input, unsigned int ecinum);
 
 /**
  * Get current version.

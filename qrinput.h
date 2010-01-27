@@ -25,6 +25,8 @@
 #include "qrencode.h"
 #include "bitstream.h"
 
+int QRinput_isSplittableMode(QRencodeMode mode);
+
 /******************************************************************************
  * Entry of input data
  *****************************************************************************/
@@ -94,9 +96,15 @@ extern const signed char QRinput_anTable[128];
 	((__c__ & 0x80)?-1:QRinput_anTable[(int)__c__])
 
 /**
+ * Length of a standard mode indicator in bits.
+ */
+
+#define MODE_INDICATOR_SIZE 4
+
+/**
  * Length of a segment of structured-append header.
  */
-#define STRUCTURE_HEADER_BITS 20
+#define STRUCTURE_HEADER_SIZE 20
 
 /**
  * Maximum number of symbols in a set of structured-appended symbols.

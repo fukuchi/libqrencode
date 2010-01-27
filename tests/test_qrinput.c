@@ -883,6 +883,46 @@ void test_padding2MQR(void)
 	testFinish();
 }
 
+void test_ECIinvalid(void)
+{
+	QRinput *stream;
+	int ret;
+
+	testStart("Appending invalid ECI header");
+	stream = QRinput_new();
+	ret = QRinput_appendECIheader(stream, 999999);
+	assert_zero(ret, "Valid ECI header rejected.");
+	ret = QRinput_appendECIheader(stream, 1000000);
+	assert_nonzero(ret, "Invalid ECI header accepted.");
+	QRinput_free(stream);
+	testFinish();
+}
+
+void test_encodeECI(void)
+{
+	QRinput *input;
+	BitStream *bstream;
+	unsigned char str[] = {0xa1, 0xa2, 0xa3, 0xa4, 0xa5};
+	char *correct = "0111 00001001 0100 00000101 10100001 10100010 10100011 10100100 10100101";
+	int ret;
+
+	testStart("Encoding characters with ECI header.");
+	input = QRinput_new();
+	ret = QRinput_appendECIheader(input, 9);
+	assert_zero(ret, "Valid ECI header rejected.\n");
+
+	ret = QRinput_append(input, QR_MODE_8, 5, str);
+	assert_zero(ret, "Failed to append characters.\n");
+	bstream = QRinput_mergeBitStream(input);
+	assert_nonnull(bstream, "Failed to merge.\n");
+	if(bstream != NULL) {
+		ret = ncmpBin(correct, bstream, 64);
+		assert_zero(ret, "Encodation of ECI header was invalid.\n");
+		BitStream_free(bstream);
+	}
+	QRinput_free(input);
+	testFinish();
+}
 
 int main(void)
 {
@@ -921,6 +961,9 @@ int main(void)
 	test_mqr_setlevel();
 	test_paddingMQR();
 	test_padding2MQR();
+
+	test_ECIinvalid();
+	test_encodeECI();
 
 	report();
 

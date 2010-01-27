@@ -36,6 +36,7 @@
 #endif
 
 #include "qrspec.h"
+#include "qrinput.h"
 
 /******************************************************************************
  * Version and capacity
@@ -144,7 +145,7 @@ int QRspec_lengthIndicator(QRencodeMode mode, int version)
 {
 	int l;
 
-	if(mode == QR_MODE_STRUCTURE) return 0;
+	if(!QRinput_isSplittableMode(mode)) return 0;
 	if(version <= 9) {
 		l = 0;
 	} else if(version <= 26) {
@@ -162,7 +163,7 @@ int QRspec_maximumWords(QRencodeMode mode, int version)
 	int bits;
 	int words;
 
-	if(mode == QR_MODE_STRUCTURE) return 3;
+	if(!QRinput_isSplittableMode(mode)) return 0;
 	if(version <= 9) {
 		l = 0;
 	} else if(version <= 26) {

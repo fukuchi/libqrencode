@@ -32,6 +32,14 @@
 #include "qrinput.h"
 
 /******************************************************************************
+ * Utilities
+ *****************************************************************************/
+int QRinput_isSplittableMode(QRencodeMode mode)
+{
+	return (mode >= QR_MODE_NUM && mode <= QR_MODE_KANJI);
+}
+
+/******************************************************************************
  * Entry of input data
  *****************************************************************************/
 
@@ -260,6 +268,24 @@ __STATIC int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int 
 	input->head = entry;
 
 	return 0;
+}
+
+int QRinput_appendECIheader(QRinput *input, unsigned int ecinum)
+{
+	unsigned char data[4];
+
+	if(ecinum > 999999) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	/* We manually create byte array of ecinum because
+	 (unsigned char *)&ecinum may cause bus error on some architectures, */
+	data[0] = ecinum & 0xff;
+	data[1] = (ecinum >>  8) & 0xff;
+	data[2] = (ecinum >> 16) & 0xff;
+	data[3] = (ecinum >> 24) & 0xff;
+	return QRinput_append(input, QR_MODE_ECI, 4, data);
 }
 
 void QRinput_free(QRinput *input)
@@ -564,7 +590,7 @@ int QRinput_estimateBitsMode8(int size)
  */
 static int QRinput_encodeMode8(QRinput_List *entry, int version, int mqr)
 {
-	int ret, i;
+	int ret;
 
 	entry->bstream = BitStream_new();
 	if(entry->bstream == NULL) return -1;
@@ -585,10 +611,8 @@ static int QRinput_encodeMode8(QRinput_List *entry, int version, int mqr)
 		if(ret < 0) goto ABORT;
 	}
 
-	for(i=0; i<entry->size; i++) {
-		ret = BitStream_appendNum(entry->bstream, 8, entry->data[i]);
-		if(ret < 0) goto ABORT;
-	}
+	ret = BitStream_appendBytes(entry->bstream, entry->size, entry->data);
+	if(ret < 0) goto ABORT;
 
 	return 0;
 ABORT:
@@ -764,6 +788,74 @@ ABORT:
 }
 
 /******************************************************************************
+ * ECI header
+ *****************************************************************************/
+static unsigned int QRinput_decodeECIfromByteArray(unsigned char *data)
+{
+	int i;
+	unsigned int ecinum;
+
+	ecinum = 0;
+	for(i=0; i<4; i++) {
+		ecinum = ecinum << 8;
+		ecinum |= data[3-i];
+	}
+
+	return ecinum;
+}
+
+int QRinput_estimateBitsModeECI(unsigned char *data)
+{
+	unsigned int ecinum;
+
+	ecinum = QRinput_decodeECIfromByteArray(data);;
+
+	/* See Table 4 of JISX 0510:2004 pp.17. */
+	if(ecinum < 128) {
+		return MODE_INDICATOR_SIZE + 8;
+	} else if(ecinum < 16384) {
+		return MODE_INDICATOR_SIZE + 16;
+	} else {
+		return MODE_INDICATOR_SIZE + 24;
+	}
+}
+
+static int QRinput_encodeModeECI(QRinput_List *entry, int version)
+{
+	int ret, words;
+	unsigned int ecinum, code;
+
+	entry->bstream = BitStream_new();
+	if(entry->bstream == NULL) return -1;
+
+	ecinum = QRinput_decodeECIfromByteArray(entry->data);;
+
+	/* See Table 4 of JISX 0510:2004 pp.17. */
+	if(ecinum < 128) {
+		words = 1;
+		code = ecinum;
+	} else if(ecinum < 16384) {
+		words = 2;
+		code = 0x8000 + ecinum;
+	} else {
+		words = 3;
+		code = 0xc0000 + ecinum;
+	}
+
+	ret = BitStream_appendNum(entry->bstream, 4, QRSPEC_MODEID_ECI);
+	if(ret < 0) goto ABORT;
+	
+	ret = BitStream_appendNum(entry->bstream, words * 8, code);
+	if(ret < 0) goto ABORT;
+
+	return 0;
+ABORT:
+	BitStream_free(entry->bstream);
+	entry->bstream = NULL;
+	return -1;
+}
+
+/******************************************************************************
  * Validation
  *****************************************************************************/
 
@@ -783,7 +875,7 @@ int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 		case QR_MODE_STRUCTURE:
 			return 0;
 		case QR_MODE_ECI:
-			return -1;
+			return 0;
 		case QR_MODE_FNC1FIRST:
 			return 0;
 		case QR_MODE_FNC1SECOND:
@@ -828,7 +920,15 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 			bits = QRinput_estimateBitsModeKanji(entry->size);
 			break;
 		case QR_MODE_STRUCTURE:
-			return STRUCTURE_HEADER_BITS;
+			return STRUCTURE_HEADER_SIZE;
+		case QR_MODE_ECI:
+			bits = QRinput_estimateBitsModeECI(entry->data);
+			break;
+		case QR_MODE_FNC1FIRST:
+			return MODE_INDICATOR_SIZE;
+			break;
+		case QR_MODE_FNC1SECOND:
+			return MODE_INDICATOR_SIZE + 8;
 		default:
 			return 0;
 	}
@@ -842,7 +942,7 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 		m = 1 << l;
 		num = (entry->size + m - 1) / m;
 
-		bits += num * (4 + l); // mode indicator (4bits) + length indicator
+		bits += num * (MODE_INDICATOR_SIZE + l);
 	}
 
 	return bits;
@@ -935,7 +1035,7 @@ __STATIC int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits)
 	}
 	maxsize = QRspec_maximumWords(mode, version);
 	if(size < 0) size = 0;
-	if(size > maxsize) size = maxsize;
+	if(maxsize > 0 && size > maxsize) size = maxsize;
 
 	return size;
 }
@@ -960,7 +1060,7 @@ static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
 	}
 
 	words = QRspec_maximumWords(entry->mode, version);
-	if(entry->size > words) {
+	if(words != 0 && entry->size > words) {
 		st1 = QRinput_List_newEntry(entry->mode, words, entry->data);
 		if(st1 == NULL) goto ABORT;
 		st2 = QRinput_List_newEntry(entry->mode, entry->size - words, &entry->data[words]);
@@ -995,6 +1095,9 @@ static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
 				break;
 			case QR_MODE_STRUCTURE:
 				ret = QRinput_encodeModeStructure(entry, mqr);
+				break;
+			case QR_MODE_ECI:
+				ret = QRinput_encodeModeECI(entry, version);
 				break;
 			case QR_MODE_FNC1SECOND:
 				ret = QRinput_encodeModeFNC1Second(entry, version);
@@ -1492,7 +1595,7 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 	}
 
 	QRinput_Struct_setParity(s, QRinput_calcParity(input));
-	maxbits = QRspec_getDataLength(input->version, input->level) * 8 - STRUCTURE_HEADER_BITS;
+	maxbits = QRspec_getDataLength(input->version, input->level) * 8 - STRUCTURE_HEADER_SIZE;
 
 	if(maxbits <= 0) {
 		QRinput_Struct_free(s);
