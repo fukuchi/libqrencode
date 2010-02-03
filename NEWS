@@ -23,6 +23,16 @@ Binary data including '\0' can be encoded now with qrencode. To encode a binary
 data, give "-8" option to qrencode, and let qrencode obtain data via standard
 input like "qrencode -8 -o output.png < binary".
 
+Version 3.1.1 (2010.2.3)
+------------------------
+* A bug in the library has been fixed.
+
+Release Note:
+
+Libqrecode had generated incorrect QR Code in some cases. Symbols larger than
+version 5 (error correction level Q and H) were affected. In many cases this
+bug did not cause serious damage thanks to the error correction mechanism, but
+we highly recommend you to encode symbols again using this release.
 
 Version 3.1.0 (2009.6.6)
 ------------------------
