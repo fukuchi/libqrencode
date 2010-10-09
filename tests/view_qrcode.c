@@ -47,7 +47,7 @@ static void usage(int help, int longopt)
 {
 	fprintf(stderr,
 "view_qrcode version %s\n"
-"Copyright (C) 2008, 2009 Kentaro Fukuchi\n", VERSION);
+"Copyright (C) 2008, 2009, 2010 Kentaro Fukuchi\n", VERSION);
 	if(help) {
 		if(longopt) {
 			fprintf(stderr,

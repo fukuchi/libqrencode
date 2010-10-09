@@ -1,8 +1,13 @@
+2010.10.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* Copyright year and mail address were updated.
+	* README, qrencode.spec.in
+	  - The URL of qrencode's page has been updated.
+
 2010.02.03 Kentaro FUKUCHI <fukuchi@megaui.net>
 	[3.1.1]
 	* qrencode.c, README:
 	  - Copyright year updates.
-	* Bumped vertion to 3.1.1.
+	* Bumped version to 3.1.1.
 	* Version 3.1.1 has been released.
 
 2010.01.27 Kentaro FUKUCHI <fukuchi@megaui.net>

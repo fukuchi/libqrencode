@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Input data splitter.
- * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006-2010 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)

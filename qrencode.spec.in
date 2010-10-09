@@ -8,8 +8,8 @@ Summary:        Libqrencode is a library for encoding data in a QR Code symbol, 
 
 Group:          System Environment/Libraries
 License:        LGPLv2+
-URL:            http://megaui.net/fukuchi/works/qrencode/
-Source0:        http://megaui.net/fukuchi/works/qrencode/%{name}-%{version}.tar.gz
+URL:            http://fukuchi.org/works/qrencode/
+Source0:        http://fukuchi.org/works/qrencode/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -62,6 +62,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/libqrencode.pc
 
 %changelog
+* Sat Oct 09 2010 Kentaro Fukuchi <kentaro at fukuchi.org> 3.9.0-1
+- URL and Source0 have been updated.
 * Fri May 01 2008 Kentaro Fukuchi <fukuchi at megaui.net> 3.0.1-1
 - The man page has been packaged correctly.
 * Tue May 15 2007 Kentaro Fukuchi <fukuchi at megaui.net> 1.0.2-2

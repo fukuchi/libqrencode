@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * QR Code encoding tool
- * Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi <fukuchi@megaui.net>
+ * Copyright (C) 2006-2010 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,7 @@ static void usage(int help, int longopt)
 {
 	fprintf(stderr,
 "qrencode version %s\n"
-"Copyright (C) 2006, 2007, 2008, 2009 Kentaro Fukuchi\n", VERSION);
+"Copyright (C) 2006-2010 Kentaro Fukuchi\n", VERSION);
 	if(help) {
 		if(longopt) {
 			fprintf(stderr,
