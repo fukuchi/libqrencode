@@ -2,6 +2,11 @@
 	* Copyright year and mail address were updated.
 	* README, qrencode.spec.in
 	  - The URL of qrencode's page has been updated.
+	* Makefile.am:
+	  - Added ACLOCAL_AMFLAGS.
+	* use/config.rpath:
+	  - Now explicitly included because required by AM_ICONV_LINK in
+	    configure.ac.
 
 2010.02.03 Kentaro FUKUCHI <fukuchi@megaui.net>
 	[3.1.1]

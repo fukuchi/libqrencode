@@ -36,7 +36,6 @@ tests/test_split
 tests/view_qrcode
 use/compile
 use/config.guess
-use/config.rpath
 use/config.sub
 use/depcomp
 use/install-sh
