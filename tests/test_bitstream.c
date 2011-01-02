@@ -11,7 +11,7 @@ void test_null(void)
 	bstream = BitStream_new();
 	assert_zero(BitStream_size(bstream), "Size of empty BitStream is not 0.\n");
 	assert_null(BitStream_toByte(bstream), "BitStream_toByte returned non-NULL.\n");
-	assert_nothing(BitStream_free(NULL), "Check BitStream_free(NULL).\n");
+	assert_nothing(BitStream_free(NULL), "Checking BitStream_free(NULL).\n");
 	testFinish();
 
 	BitStream_free(bstream);
