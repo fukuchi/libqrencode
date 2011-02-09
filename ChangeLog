@@ -1,3 +1,7 @@
+2011.02.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* tests/view_qrcode.c:
+	  - "-h" had required an argument.
+
 2010.10.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* Copyright year and mail address were updated.
 	* README, qrencode.spec.in

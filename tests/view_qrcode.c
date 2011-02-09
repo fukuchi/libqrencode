@@ -40,7 +40,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "h:l:s:v:m:Skci8MV";
+static char *optstring = "hl:s:v:m:Skci8MV";
 
 static char levelChar[4] = {'L', 'M', 'Q', 'H'};
 static void usage(int help, int longopt)
