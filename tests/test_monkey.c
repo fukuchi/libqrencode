@@ -563,7 +563,5 @@ int main(int argc, char **argv)
 
 	QRcode_clearCache();
 
-	report();
-
 	return 0;
 }
