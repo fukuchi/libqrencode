@@ -19,12 +19,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <png.h>
 #include <getopt.h>
 
-#include "config.h"
 #include "qrencode.h"
 
 #define INCHES_PER_METER (100.0/2.54)

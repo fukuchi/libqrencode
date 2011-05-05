@@ -19,12 +19,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-#include "config.h"
 #include "qrencode.h"
 #include "qrspec.h"
 #include "mqrspec.h"
@@ -1322,7 +1324,7 @@ DONE:
 
 static int QRinput_insertFNC1Header(QRinput *input)
 {
-	QRinput_List *entry;
+	QRinput_List *entry = NULL;
 
 	if(input->fnc1 == 1) {
 		entry = QRinput_List_newEntry(QR_MODE_FNC1FIRST, 0, NULL);

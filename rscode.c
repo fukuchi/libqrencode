@@ -24,14 +24,16 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#if HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
-#include "rscode.h"
-
 #ifdef HAVE_LIBPTHREAD
 #  include <pthread.h>
 #endif
+
+#include "rscode.h"
 
 /* Stuff specific to the 8-bit symbol version of the general purpose RS codecs
  *
