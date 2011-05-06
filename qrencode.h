@@ -391,7 +391,7 @@ struct _QRcode_List {
 
 /**
  * Create a symbol from the input data.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param input input data.
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version. On error, NULL is returned,
@@ -405,7 +405,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
 /**
  * Create a symbol from the string. The library automatically parses the input
  * string and encodes in a QR Code symbol.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param string input string. It must be NUL terminated.
  * @param version version of the symbol. If 0, the library chooses the minimum
  *                version for the given input data.
@@ -428,25 +428,25 @@ extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel le
 
 /**
  * Same to QRcode_encodeString(), but encode whole data in 8-bit mode.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
 extern QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level);
 
 /**
  * Micro QR Code version of QRcode_encodeString().
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
 extern QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
 
 /**
  * Micro QR Code version of QRcode_encodeString8bit().
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
 extern QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level);
 
 /**
  * Encode byte stream (may include '\0') in 8-bit mode.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param size size of the input data.
  * @param data input data.
  * @param version version of the symbol. If 0, the library chooses the minimum
@@ -460,7 +460,7 @@ extern QRcode *QRcode_encodeData(int size, const unsigned char *data, int versio
 
 /**
  * Micro QR Code version of QRcode_encodeData().
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
 extern QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level);
 
@@ -472,7 +472,7 @@ extern void QRcode_free(QRcode *qrcode);
 
 /**
  * Create structured symbols from the input data.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param s
  * @return a singly-linked list of QRcode.
  */
@@ -481,7 +481,7 @@ extern QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s);
 /**
  * Create structured symbols from the string. The library automatically parses
  * the input string and encodes in a QR Code symbol.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param string input string. It must be NUL terminated.
  * @param version version of the symbol.
  * @param level error correction level.
@@ -500,14 +500,14 @@ extern QRcode_List *QRcode_encodeStringStructured(const char *string, int versio
 
 /**
  * Same to QRcode_encodeStringStructured(), but encode whole data in 8-bit mode.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
 extern QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, QRecLevel level);
 
 /**
  * Create structured symbols from byte stream (may include '\0'). Wholde data
  * are encoded in 8-bit mode.
- * @warning This function is THREAD UNSAFE.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param size size of the input data.
  * @param data input dat.
  * @param version version of the symbol.
