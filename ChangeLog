@@ -1,3 +1,7 @@
+2011.08.07 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* libqrencode.pc.in:
+	  - Cflags has been set. (issue #2)(Thanks to ryo-on)
+
 2011.05.05 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* split.c:
 	  - strdup() code has been added for non-POSIX environments. (Thanks to
