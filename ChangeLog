@@ -1,3 +1,7 @@
+2011.08.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* configure.ac:
+	  - Added "AC_PROG_RANLIB" (bug report from dev66)
+
 2011.08.07 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* libqrencode.pc.in:
 	  - Cflags has been set. (issue #2)(Thanks to ryo-on)

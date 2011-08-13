@@ -27,6 +27,7 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_PROG_RANLIB
 PKG_PROG_PKG_CONFIG
 
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
