@@ -197,6 +197,44 @@ void test_eval2(void)
 	free(frame);
 }
 
+void test_calcN2(void)
+{
+	unsigned char frame[64];
+	int width;
+	int demerit;
+	int x, y;
+
+	testStart("Test mask evaluation (2x2 block check)");
+	width = 4;
+	for(y = 0; y < width; y++) {
+		for(x = 0; x < width; x++) {
+			frame[y * width + x] = ((x & 2) ^ (y & 2)) >> 1;
+		}
+	}
+	demerit = Mask_calcN2(width, frame);
+	assert_equal(demerit, N2 * 4, "Calculation of N2 demerit is wrong: %d, expected %d", demerit, N2 * 4);
+
+	width = 4;
+	for(y = 0; y < width; y++) {
+		for(x = 0; x < width; x++) {
+			frame[y * width + x] = (((x + 1) & 2) ^ (y & 2)) >> 1;
+		}
+	}
+	demerit = Mask_calcN2(width, frame);
+	assert_equal(demerit, N2 * 2, "Calculation of N2 demerit is wrong: %d, expected %d", demerit, N2 * 2);
+
+	width = 6;
+	for(y = 0; y < width; y++) {
+		for(x = 0; x < width; x++) {
+			frame[y * width + x] = (x / 3) ^ (y / 3);
+		}
+	}
+	demerit = Mask_calcN2(width, frame);
+	assert_equal(demerit, N2 * 16, "Calculation of N2 demerit is wrong: %d, expected %d", demerit, N2 * 16);
+
+	testFinish();
+}
+
 void test_eval3(void)
 {
 	unsigned char *frame;
@@ -273,6 +311,7 @@ int main(void)
 	test_eval2();
 	test_eval3();
 	test_format();
+	test_calcN2();
 
 	report();
 
