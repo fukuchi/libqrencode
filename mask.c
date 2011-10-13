@@ -218,27 +218,44 @@ static int Mask_calcN1N3(int length, int *runLength)
 	return demerit;
 }
 
-__STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
+__STATIC int Mask_calcN2(int width, unsigned char *frame)
 {
 	int x, y;
 	unsigned char *p;
 	unsigned char b22, w22;
+	int demerit = 0;
+
+	p = frame + width + 1;
+	for(y=1; y<width; y++) {
+		for(x=1; x<width; x++) {
+			b22 = p[0] & p[-1] & p[-width] & p [-width-1];
+			w22 = p[0] | p[-1] | p[-width] | p [-width-1];
+			if((b22 | (w22 ^ 1))&1) {
+				demerit += N2;
+			}
+			p++;
+		}
+		p++;
+	}
+
+	return demerit;
+}
+
+__STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
+{
+	int x, y;
+	unsigned char *p;
 	int head;
 	int demerit = 0;
 	int runLength[QRSPEC_WIDTH_MAX + 1];
+
+	demerit += Mask_calcN2(width, frame);
 
 	p = frame;
 	for(y=0; y<width; y++) {
 		head = 0;
 		runLength[0] = 1;
 		for(x=0; x<width; x++) {
-			if(x > 0 && y > 0) {
-				b22 = p[0] & p[-1] & p[-width] & p [-width-1];
-				w22 = p[0] | p[-1] | p[-width] | p [-width-1];
-				if((b22 | (w22 ^ 1))&1) {
-					demerit += N2;
-				}
-			}
 			if(x == 0 && (p[0] & 1)) {
 				runLength[0] = -1;
 				head = 1;
