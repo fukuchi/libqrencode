@@ -1,4 +1,4 @@
-libqrencode 4.0.0 - QR Code encoding library
+libqrencode 3.9.0 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -94,7 +94,9 @@ Visit the homepage at:
 
 http://fukuchi.org/works/qrencode/index.en.html
 
-for new releases.
+for new releases. The git repository is available at:
+
+https://github.com/fukuchi/libqrencode
 
 Please mail any bug reports, suggestions, comments and questions to
 Kentaro Fukuchi <kentaro@fukuchi.org>. Questions of license compliance

@@ -3,6 +3,8 @@
 	  - Mask_calcN2() has been refactored out from Mask_evaluateSymbol().
 	* test/test_mask.c:
 	  - New test code for Mask_calcN2 has been added.
+	* README:
+	  - Added a URL to the git repository.
 
 2011.08.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
