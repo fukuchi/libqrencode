@@ -185,7 +185,7 @@ unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLeve
 //static int n3;
 //static int n4;
 
-static int Mask_calcN1N3(int length, int *runLength)
+__STATIC int Mask_calcN1N3(int length, int *runLength)
 {
 	int i;
 	int demerit = 0;
@@ -241,58 +241,56 @@ __STATIC int Mask_calcN2(int width, unsigned char *frame)
 	return demerit;
 }
 
+__STATIC int Mask_calcRunLength(int width, unsigned char *frame, int dir, int *runLength)
+{
+	int head;
+	int i;
+	unsigned char *p;
+	int pitch;
+
+	pitch = (dir==0)?1:width;
+	for(i=0; i<width+1; i++) {
+		runLength[i] = 0;
+	}
+	if(frame[0] & 1) {
+		runLength[0] = -1;
+		head = 1;
+	} else {
+		head = 0;
+	}
+	runLength[head] = 1;
+	p = frame + pitch;
+
+	for(i=1; i<width; i++) {
+		if((p[0] ^ p[-pitch]) & 1) {
+			head++;
+			runLength[head] = 1;
+		} else {
+			runLength[head]++;
+		}
+		p += pitch;
+	}
+
+	return head + 1;
+}
+
 __STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
 {
 	int x, y;
-	unsigned char *p;
-	int head;
 	int demerit = 0;
 	int runLength[QRSPEC_WIDTH_MAX + 1];
+	int length;
 
 	demerit += Mask_calcN2(width, frame);
 
-	p = frame;
 	for(y=0; y<width; y++) {
-		head = 0;
-		runLength[0] = 1;
-		for(x=0; x<width; x++) {
-			if(x == 0 && (p[0] & 1)) {
-				runLength[0] = -1;
-				head = 1;
-				runLength[head] = 1;
-			} else if(x > 0) {
-				if((p[0] ^ p[-1]) & 1) {
-					head++;
-					runLength[head] = 1;
-				} else {
-					runLength[head]++;
-				}
-			}
-			p++;
-		}
-		demerit += Mask_calcN1N3(head+1, runLength);
+		length = Mask_calcRunLength(width, frame + y * width, 0, runLength);
+		demerit += Mask_calcN1N3(length, runLength);
 	}
 
 	for(x=0; x<width; x++) {
-		head = 0;
-		runLength[0] = 1;
-		p = frame + x;
-		for(y=0; y<width; y++) {
-			if(y == 0 && (p[0] & 1)) {
-				runLength[0] = -1;
-				head = 1;
-				runLength[head] = 1;
-			} else if(y > 0) {
-				if((p[0] ^ p[-width]) & 1) {
-					head++;
-					runLength[head] = 1;
-				} else {
-					runLength[head]++;
-				}
-			}
-			p+=width;
-		}
-		demerit += Mask_calcN1N3(head+1, runLength);
+		length = Mask_calcRunLength(width, frame + x, 1, runLength);
+		demerit += Mask_calcN1N3(length, runLength);
 	}
 
 	return demerit;

@@ -303,6 +303,45 @@ void test_format(void)
 	testFinish();
 }
 
+void test_calcRunLength(void)
+{
+	int width = 5;
+	unsigned char frame[width * width];
+	int runLength[width + 1];
+	int i, j;
+	int length;
+	static unsigned char pattern[6][5] = {
+		{0, 1, 0, 1, 0},
+		{1, 0, 1, 0, 1},
+		{0, 0, 0, 0, 0},
+		{1, 1, 1, 1, 1},
+		{0, 0, 1, 1, 1},
+		{1, 1, 0, 0, 0}
+	};
+	static int expected[6][7] = {
+		{ 1, 1, 1, 1, 1, 0, 5},
+		{-1, 1, 1, 1, 1, 1, 6},
+		{ 5, 0, 0, 0, 0, 0, 1},
+		{-1, 5, 0, 0, 0, 0, 2},
+		{ 2, 3, 0, 0, 0, 0, 2},
+		{-1, 2, 3, 0, 0, 0, 3}
+	};
+
+	testStart("Test runlength calc function");
+	for(i=0; i<6; i++) {
+		length = Mask_calcRunLength(width, pattern[i], 0, runLength);
+		assert_equal(expected[i][6], length, "Length incorrect: %d, expected %d.\n", length, expected[i][6]);
+		assert_zero(memcmp(runLength, expected[i], sizeof(int) * (width + 1)), "Run length does not match: pattern %d, horizontal access.\n", i);
+		for(j=0; j<width; j++) {
+			frame[j * width] = pattern[i][j];
+		}
+		length = Mask_calcRunLength(width, frame, 1, runLength);
+		assert_equal(expected[i][6], length, "Length incorrect: %d, expected %d.\n", length, expected[i][6]);
+		assert_zero(memcmp(runLength, expected[i], sizeof(int) * (width + 1)), "Run length does not match: pattern %d, vertical access.\n", i);
+	}
+	testFinish();
+}
+
 int main(void)
 {
 	//print_masks();
@@ -312,6 +351,7 @@ int main(void)
 	test_eval3();
 	test_format();
 	test_calcN2();
+	test_calcRunLength();
 
 	report();
 

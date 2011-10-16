@@ -1,3 +1,9 @@
+2011.10.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* mask.[ch]:
+	  - Mask_calcRunLength() has been refactored out from Mask_evaluateSymbol().
+	* test/test_mask.c:
+	  - New test code for Mask_calcRunLength has been added.
+
 2011.10.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* mask.[ch]:
 	  - Mask_calcN2() has been refactored out from Mask_evaluateSymbol().
