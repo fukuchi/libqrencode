@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * Masking.
- * Copyright (C) 2006-2010 Kentaro Fukuchi <kentaro@fukuchi.org>
+ * Copyright (C) 2006-2011 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -203,10 +203,10 @@ __STATIC int Mask_calcN1N3(int length, int *runLength)
 				   runLength[i-1] == fact &&
 				   runLength[i+1] == fact &&
 				   runLength[i+2] == fact) {
-					if(runLength[i-3] < 0 || runLength[i-3] >= 4 * fact) {
+					if(i == 3 || runLength[i-3] >= 4 * fact) {
 						demerit += N3;
 						//n3 += N3;
-					} else if(i+3 >= length || runLength[i+3] >= 4 * fact) {
+					} else if(i+4 >= length || runLength[i+3] >= 4 * fact) {
 						demerit += N3;
 						//n3 += N3;
 					}
@@ -249,9 +249,6 @@ __STATIC int Mask_calcRunLength(int width, unsigned char *frame, int dir, int *r
 	int pitch;
 
 	pitch = (dir==0)?1:width;
-	for(i=0; i<width+1; i++) {
-		runLength[i] = 0;
-	}
 	if(frame[0] & 1) {
 		runLength[0] = -1;
 		head = 1;
@@ -303,9 +300,11 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 	int minDemerit = INT_MAX;
 	int bestMaskNum = 0;
 	int blacks;
+	int bratio;
 	int demerit;
+	int w2 = width * width;
 
-	mask = (unsigned char *)malloc(width * width);
+	mask = (unsigned char *)malloc(w2);
 	if(mask == NULL) return NULL;
 	bestMask = NULL;
 
@@ -314,8 +313,8 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		demerit = 0;
 		blacks = maskMakers[i](width, frame, mask);
 		blacks += Mask_writeFormatInformation(width, mask, i, level);
-		blacks = 100 * blacks / (width * width);
-		demerit = (abs(blacks - 50) / 5) * N4;
+		bratio = (200 * blacks + w2) / w2 / 2; /* (int)(100*blacks/w2+0.5) */
+		demerit = (abs(bratio - 50) / 5) * N4;
 //		n4 = demerit;
 		demerit += Mask_evaluateSymbol(width, mask);
 //		printf("(%d,%d,%d,%d)=%d\n", n1, n2, n3 ,n4, demerit);
@@ -324,7 +323,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 			bestMaskNum = i;
 			free(bestMask);
 			bestMask = mask;
-			mask = (unsigned char *)malloc(width * width);
+			mask = (unsigned char *)malloc(w2);
 			if(mask == NULL) break;
 		}
 	}
