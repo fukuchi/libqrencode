@@ -1,3 +1,25 @@
+2011.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* configure.ac:
+	  - Now the latest PNG library is chosen when the configure script is
+	    executed.
+	* Copyright year has been updated.
+
+2011.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* mask.c:
+	  - Unneeded zero-clear has been eliminated from Mask_calcRunLength().
+	  - A rounding-down error in N4 calculation has been fixed.
+	    (Thanks to Adam Shepherd)
+	* tests/test_mask.c:
+	  - Fixed some test cases.
+
+2011.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* mask.c:
+	  - A bug in N3 penalty calculation functoin has been fixed.
+	    (Thanks to Adam Shepherd)
+	* mask.h, tests/test_mask.c:
+	  - Test cases for Mask_calcN1N3() have been added.
+	  - Wrong test cases have been corrected.
+
 2011.10.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* mask.[ch]:
 	  - Mask_calcRunLength() has been refactored out from Mask_evaluateSymbol().
@@ -41,7 +63,7 @@
 
 2010.10.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* Copyright year and mail address were updated.
-	* README, qrencode.spec.in
+	* README, qrencode.spec.in:
 	  - The URL of qrencode's page has been updated.
 	* Makefile.am:
 	  - Added ACLOCAL_AMFLAGS.
