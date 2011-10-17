@@ -50,7 +50,7 @@ AC_ARG_WITH([tools], [AS_HELP_STRING([--with-tools], [build utility tools [defau
 
 AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
 if test x$build_tools = xyes ; then
-	PKG_CHECK_MODULES(png, "libpng12")
+	PKG_CHECK_MODULES(png, "libpng")
 fi
 
 dnl --with-tests
