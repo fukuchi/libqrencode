@@ -98,9 +98,15 @@ for new releases. The git repository is available at:
 
 https://github.com/fukuchi/libqrencode
 
-Please mail any bug reports, suggestions, comments and questions to
-Kentaro Fukuchi <kentaro@fukuchi.org>. Questions of license compliance
-are also welcome.
+Please mail any bug reports, suggestions, comments and questions to:
+
+Kentaro Fukuchi <kentaro@fukuchi.org>
+
+or submit issues to:
+
+https://github.com/fukuchi/libqrencode/issues
+
+Questions of license compliance are also welcome.
 
 
 ACKNOWLEDGMENTS
