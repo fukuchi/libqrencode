@@ -1,3 +1,13 @@
+2011.10.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* mask.c, mmask.c, tests/common.h:
+	  - Eliminated unused valiables.
+	* tests/test_qrencode.c:
+	  - Some assertions added.
+
+2011.10.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* test/test_mask.c:
+	  - To call QRspec_clearCache() at exit.
+
 2011.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
 	  - Now the latest PNG library is chosen when the configure script is

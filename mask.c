@@ -298,7 +298,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 	int i;
 	unsigned char *mask, *bestMask;
 	int minDemerit = INT_MAX;
-	int bestMaskNum = 0;
 	int blacks;
 	int bratio;
 	int demerit;
@@ -320,7 +319,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 //		printf("(%d,%d,%d,%d)=%d\n", n1, n2, n3 ,n4, demerit);
 		if(demerit < minDemerit) {
 			minDemerit = demerit;
-			bestMaskNum = i;
 			free(bestMask);
 			bestMask = mask;
 			mask = (unsigned char *)malloc(w2);

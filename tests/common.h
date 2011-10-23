@@ -27,12 +27,10 @@ const char *modeStr[5] = {"nm", "an", "8", "kj", "st"};
 void printQRinput(QRinput *input)
 {
 	QRinput_List *list;
-	unsigned char *p;
 	int i;
 
 	list = input->head;
 	while(list != NULL) {
-		p = list->data;
 		for(i=0; i<list->size; i++) {
 			printf("0x%02x,", list->data[i]);
 		}

@@ -687,6 +687,7 @@ void test_formatInfo(void)
 	testStart("Test format info in QR code.");
 	qrcode = QRcode_encodeString("AC-42", 1, QR_ECLEVEL_H, QR_MODE_8, 1);
 	ret = QRcode_decodeFormat(qrcode, &level, &mask);
+	assert_zero(ret, "Failed to decode.\n");
 	assert_equal(level, QR_ECLEVEL_H, "Decoded format is wrong.\n");
 
 	if(qrcode != NULL) QRcode_free(qrcode);
@@ -708,6 +709,7 @@ void test_formatInfoMQR(void)
 										MQRformat[i].level,
 										QR_MODE_8, 1);
 		ret = QRcode_decodeFormatMQR(qrcode, &version, &level, &mask);
+		assert_zero(ret, "Failed to decode.\n");
 		assert_equal(MQRformat[i].version, version, "Decoded verion is wrong.\n");
 		assert_equal(MQRformat[i].level, level, "Decoded level is wrong.\n");
 		QRcode_free(qrcode);
