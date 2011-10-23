@@ -1,4 +1,4 @@
-libqrencode 3.9.0 - QR Code encoding library
+libqrencode 3.2.0 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -23,7 +23,7 @@ are implemented such as:
   embedded
 - Optimized encoding of a string
 - Structured-append of symbols
-- Micro QR Code
+- Micro QR Code (experimental)
 
 Currently the following features are not supported:
 - ECI and FNC1 mode
