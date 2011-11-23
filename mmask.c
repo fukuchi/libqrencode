@@ -132,12 +132,12 @@ __STATIC int MMask_evaluateSymbol(int width, unsigned char *frame)
 	int sum1 = 0, sum2 = 0;
 
 	p = frame + width * (width - 1);
-	for(x=0; x<width; x++) {
+	for(x=1; x<width; x++) {
 		sum1 += (p[x] & 1);
 	}
 
-	p = frame + width - 1;
-	for(y=0; y<width; y++) {
+	p = frame + width * 2 - 1;
+	for(y=1; y<width; y++) {
 		sum2 += (*p & 1);
 		p += width;
 	}
