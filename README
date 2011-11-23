@@ -64,11 +64,14 @@ You can generate a manual of the library by using Doxygen.
 
 WARNINGS
 ========
-Some functions are THREAD UNSAFE. See qrencode.h for the details.
+The library is distributed WITHOUT ANY WRRANTY.
 
-Carefully use the qrencode command if it is used by a web application (CGI).
-For example, giving "-s" option with too large number to qrencode may cause DoS.
-You should limit the parameter by your application.
+Micro QR Code support is EXPERIMENTAL.
+
+Be careful to use the command line tool (qrencode) if it is used by a web
+application (e.g. CGI script). For example, giving "-s" option with a large
+number to qrencode may cause DoS. The parameters should be checked by the
+application.
 
 
 LICENSING INFORMATION
@@ -114,7 +117,7 @@ ACKNOWLEDGMENTS
 QR Code is registered trademarks of DENSO WAVE INCORPORATED in JAPAN and other
 countries.
 
-Reed-Solomon code encoder is written by Phil Karn, KA9Q.
+Reed-Solomon encoder is written by Phil Karn, KA9Q.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
 NANKI Haruo       - improved lower-case characteres encoding

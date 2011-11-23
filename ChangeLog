@@ -1,3 +1,21 @@
+2011.11.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2.0]
+	* qrencode.1.in:
+	  - Added descriptions of "-d" and "-M".
+
+2011.11.3 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2.0]
+	* tests/view_qrcode.c:
+	  - Messages improved.
+	* mmask.c:
+	  - A bug in mask evaluation function has been eliminatd.
+	* tests/test_mmask.c:
+	  - New test case has been added.
+	* qrenc.c:
+	  - Micro QR Code support is now marked as "experimental" explicitly.
+	* tests/test_qrinput.c, tests/test_qrencode.c:
+	  - Added some test cases.
+
 2011.10.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.0]
 	* 3.2 branch has been started.

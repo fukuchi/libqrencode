@@ -103,12 +103,50 @@ void test_masks(void)
 	testFinish();
 }
 
+void test_maskEvaluation(void)
+{
+	static const int w = 11;
+	unsigned char pattern[w*w];
+	int i, score;
+
+	memset(pattern, 0, w*w);
+
+	testStart("Test mask evaluation");
+	score = MMask_evaluateSymbol(w, pattern);
+	assert_equal(score, 0, "Mask score caluculation is incorrect. (score=%d (%d expected)\n", score, 0);
+
+	for(i=0; i<w; i++) {
+		pattern[(w-1) * w + i] = 1;
+	}
+	score = MMask_evaluateSymbol(w, pattern);
+	assert_equal(score, 16 + w - 1, "Mask score caluculation is incorrect. (score=%d) (%d expected)\n", score, 16 + w - 1);
+
+	for(i=0; i<w; i++) {
+		pattern[(w-1) * w + i] = 0;
+		pattern[i * w + w - 1] = 1;
+	}
+	score = MMask_evaluateSymbol(w, pattern);
+	assert_equal(score, 16 + w - 1, "Mask score caluculation is incorrect. (score=%d) (%d expected)\n", score, 16 + w - 1);
+
+	for(i=0; i<w; i++) {
+		pattern[(w-1) * w + i] = 1;
+		pattern[i * w + w - 1] = 1;
+	}
+	score = MMask_evaluateSymbol(w, pattern);
+	assert_equal(score, 16 * (w - 1) + w - 1, "Mask score caluculation is incorrect. (score=%d) (%d expected)\n", score, 16 * (w - 1) + w - 1);
+
+	testFinish();
+}
+
 int main(void)
 {
 	//print_masks();
 	test_masks();
+	test_maskEvaluation();
 
 	report();
+
+	MQRspec_clearCache();
 
 	return 0;
 }

@@ -72,7 +72,7 @@ static void usage(int help, int longopt)
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
-"  -M, --micro  encode in a Micro QR Code.\n\n"
+"  -M, --micro  encode in a Micro QR Code. (experimental)\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
@@ -166,6 +166,7 @@ void draw_singleQRcode(QRinput *stream, int mask)
 	}
 	if(qrcode == NULL) {
 		width = (11 + margin * 2) * size;
+		fprintf(stderr, "Input data does not fit to this setting.\n");
 	} else {
 		version = qrcode->version;
 		width = (qrcode->width + margin * 2) * size;

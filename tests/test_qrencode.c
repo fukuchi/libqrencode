@@ -813,6 +813,53 @@ void test_decodeShortMQR(void)
 	testFinish();
 }
 
+void test_mqrencode(void)
+{
+	char *str = "MICROQR";
+	char pattern[] = {
+		"#######_#_#_#_#"
+		"#_____#_#__####"
+		"#_###_#_#_####_"
+		"#_###_#_#__##_#"
+		"#_###_#___#__##"
+		"#_____#____#_#_"
+		"#######__##_#_#"
+		"_________#__#__"
+		"#___#__####_#_#"
+		"_#######_#_##_#"
+		"##___#_#____#__"
+		"_##_#_####____#"
+		"#__###___#__##_"
+		"_###_#_###_#_#_"
+		"##____####_###_"
+	};
+	QRcode qrcode;
+	QRdata *qrdata;
+	unsigned char *frame;
+	int i;
+
+	testStart("Encoding test (MQR).");
+
+	qrcode.width = 15;
+	qrcode.version = 3;
+
+	frame = MQRspec_newFrame(qrcode.version);
+	for(i=0; i<225; i++) {
+		frame[i] ^= (pattern[i] == '#')?1:0;
+	}
+
+	qrcode.data = frame;
+	qrdata = QRcode_decodeMQR(&qrcode);
+	assert_equal(qrdata->version, 3, "Format info decoder returns wrong version number: %d (%d expected)\n", qrdata->version, 3);
+	assert_equal(qrdata->level, 1, "Format info decoder returns wrong level: %d (%d expected)\n", qrdata->level, 1);
+	assert_zero(strcmp((char *)qrdata->data, str), "Decoded data (%s) mismatched (%s)\n", (char *)qrdata->data, str);
+
+	QRdata_free(qrdata);
+	free(frame);
+
+	testFinish();
+}
+
 int main(void)
 {
 	test_iterate();
@@ -846,6 +893,7 @@ int main(void)
 	test_formatInfoMQR();
 	test_encodeTooLongMQR();
 	test_decodeShortMQR();
+	test_mqrencode();
 
 	QRcode_clearCache();
 

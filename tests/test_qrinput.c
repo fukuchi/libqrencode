@@ -883,6 +883,20 @@ void test_padding2MQR(void)
 	testFinish();
 }
 
+void test_textMQR(void)
+{
+	int version = 3;
+	QRecLevel level = QR_ECLEVEL_M;
+	char *str = "MICROQR";
+	char *correct = {"01 0111 01111110000 01000110111 10001010010 011011 0000000 0000 11101100 0000"};
+	int ret;
+
+	testStart("Text encoding (Micro QR)");
+	ret = encodeAndCheckBStream(1, version, level, QR_MODE_AN, str, correct);
+	assert_zero(ret, "AlphaNumeric string '%s' incorrectly encoded.\n", str);
+	testFinish();
+}
+
 void test_ECIinvalid(void)
 {
 	QRinput *stream;
@@ -961,6 +975,7 @@ int main(void)
 	test_mqr_setlevel();
 	test_paddingMQR();
 	test_padding2MQR();
+	test_textMQR();
 
 	test_ECIinvalid();
 	test_encodeECI();

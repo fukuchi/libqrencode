@@ -1,4 +1,4 @@
-.TH QRENCODE 1 "Jan. 23, 2008" "qrencode @VERSION@"
+.TH QRENCODE 1 "Nov. 23, 2011" "qrencode @VERSION@"
 .SH NAME
 qrencode \- Encode input data in a QR Code and save as a PNG image.
 .SH SYNOPSIS
@@ -36,6 +36,9 @@ specify the version of the symbol. (default=auto)
 .B \-m NUMBER, --margin=NUMBER
 specify the width of margin. (default=4)
 .TP
+.B \-d NUMBER, --dpi=NUMBER
+specify the DPI of the generated PNG. (default=72)
+.TP
 .B \-S, --structured
 make structured symbols. Version must be specified.
 .TP
@@ -50,6 +53,9 @@ ignore case distinctions and use only upper-case characters.
 .TP
 .B \-8, --8bit
 encode entire data in 8-bit mode. -k, -c and -i will be ignored.
+.TP
+.B \-M, --micro
+encode in a Micro QR Code. (experimental)
 .TP
 .B \-V, --version
 display the version number and copyrights of the qrencode.
@@ -70,4 +76,4 @@ case-insensitive mode.
 Written by Kentaro Fukuchi.
 
 .SH COPYRIGHT
-Copyright (C) 2006, 2007, 2008, 2009, 2010 Kentaro Fukuchi.
+Copyright (C) 2006-2011 Kentaro Fukuchi.
