@@ -1,5 +1,9 @@
 2011.11.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.0]
+	* qrencode.1.in:
+	  - "RESOURCES" section has been added.
+	* README:
+	  - URL to the main web site updated.
 	* Version 3.2.0 has been released.
 
 2011.11.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
