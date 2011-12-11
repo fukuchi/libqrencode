@@ -277,7 +277,7 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 
 static int writeEPS(QRcode *qrcode, const char *outfile)
 {
-	static FILE *fp; // avoid clobbering by setjmp.
+	FILE *fp;
 	unsigned char *row, *p;
 	int x, y, yy;
 	int realwidth;
@@ -397,16 +397,16 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 	switch(image_type) {
 		case PNG_TYPE: 
 			type_suffix = ".png";
-			suffix_size = 4;
 			break;
 		case EPS_TYPE: 
 			type_suffix = ".eps";
-			suffix_size = 4;
 			break;
 		default:
 			fprintf(stderr, "Unknown image type.\n");
 			exit(EXIT_FAILURE);
 	}
+
+	suffix_size = strlen(type_suffix);
 	
 	base = strdup(outfile);
 	if(base == NULL) {
