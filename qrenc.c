@@ -49,7 +49,7 @@ static const struct option options[] = {
 	{"size"         , required_argument, NULL, 's'},
 	{"symversion"   , required_argument, NULL, 'v'},
 	{"margin"       , required_argument, NULL, 'm'},
- 	{"dpi"          , required_argument, NULL, 'd'},
+	{"dpi"          , required_argument, NULL, 'd'},
 	{"structured"   , no_argument      , NULL, 'S'},
 	{"kanji"        , no_argument      , NULL, 'k'},
 	{"casesensitive", no_argument      , NULL, 'c'},
