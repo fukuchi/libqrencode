@@ -406,13 +406,12 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			exit(EXIT_FAILURE);
 	}
 
-	suffix_size = strlen(type_suffix);
-	
 	base = strdup(outfile);
 	if(base == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
 	}
+	suffix_size = strlen(type_suffix);
 	if(strlen(base) > suffix_size) {
 		q = base + strlen(base) - suffix_size;
 		if(strcasecmp(type_suffix, q) == 0) {
