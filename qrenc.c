@@ -42,6 +42,13 @@ static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 
+static enum imageType {
+	PNG_TYPE,
+	EPS_TYPE
+};
+
+static enum imageType image_type = PNG_TYPE;
+
 static const struct option options[] = {
 	{"help"         , no_argument      , NULL, 'h'},
 	{"output"       , required_argument, NULL, 'o'},
@@ -50,6 +57,7 @@ static const struct option options[] = {
 	{"symversion"   , required_argument, NULL, 'v'},
 	{"margin"       , required_argument, NULL, 'm'},
 	{"dpi"          , required_argument, NULL, 'd'},
+	{"type"         , required_argument, NULL, 't'},
 	{"structured"   , no_argument      , NULL, 'S'},
 	{"kanji"        , no_argument      , NULL, 'k'},
 	{"casesensitive", no_argument      , NULL, 'c'},
@@ -60,7 +68,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:d:Skci8MV";
+static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt)
 {
@@ -71,11 +79,11 @@ static void usage(int help, int longopt)
 		if(longopt) {
 			fprintf(stderr,
 "Usage: qrencode [OPTION]... [STRING]\n"
-"Encode input data in a QR Code and save as a PNG image.\n\n"
+"Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h, --help   display the help message. -h displays only the help of short\n"
 "               options.\n\n"
 "  -o FILENAME, --output=FILENAME\n"
-"               write PNG image to FILENAME. If '-' is specified, the result\n"
+"               write image to FILENAME. If '-' is specified, the result\n"
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
 "               if specified, remove a trailing '.png' from FILENAME.\n\n"
@@ -90,6 +98,8 @@ static void usage(int help, int longopt)
 "               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
+"  -t {PNG,EPS}, --type={PNG,EPS}\n"
+"               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -107,10 +117,10 @@ static void usage(int help, int longopt)
 		} else {
 			fprintf(stderr,
 "Usage: qrencode [OPTION]... [STRING]\n"
-"Encode input data in a QR Code and save as a PNG image.\n\n"
+"Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h           display this message.\n"
 "  --help       display the usage of long options.\n"
-"  -o FILENAME  write PNG image to FILENAME. If '-' is specified, the result\n"
+"  -o FILENAME  write image to FILENAME. If '-' is specified, the result\n"
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...;\n"
 "               if specified, remove a trailing '.png' from FILENAME.\n"
@@ -120,7 +130,7 @@ static void usage(int help, int longopt)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-
+"  -t {PNG,EPS} specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
@@ -265,6 +275,59 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
+static int writeEPS(QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	unsigned char *row, *p;
+	int x, y, yy;
+	int realwidth;
+
+	if(outfile[0] == '-' && outfile[1] == '\0') {
+		fp = stdout;
+	} else {
+		fp = fopen(outfile, "wb");
+		if(fp == NULL) {
+			fprintf(stderr, "Failed to create file: %s\n", outfile);
+			perror(NULL);
+			exit(EXIT_FAILURE);
+		}
+	}
+   
+	realwidth = (qrcode->width + margin * 2) * size;
+	/* EPS file header */
+	fprintf(fp, "%%!PS-Adobe-2.0 EPSF-1.2\n"
+				"%%%%BoundingBox: 0 0 %d %d\n"
+				"%%%%Pages: 1 1\n"
+				"%%%%EndComments\n", realwidth, realwidth);
+	/* draw point */
+	fprintf(fp, "/p { "
+				"moveto "
+				"0 1 rlineto "
+				"1 0 rlineto "
+				"0 -1 rlineto "
+				"fill "
+				"} bind def "
+				"3 3 scale ");
+	
+	/* data */
+	p = qrcode->data;
+	for(y=0; y<qrcode->width; y++) {
+		row = (p+(y*qrcode->width));
+		yy = (margin + qrcode->width - y - 1);
+		
+		for(x=0; x<qrcode->width; x++) {
+			if(*(row+x)&0x1) {
+				fprintf(fp, "%d %d p ", margin + x,  yy);
+			}
+		}
+	}
+
+	fprintf(fp, "\n%%%%EOF\n");
+	fclose(fp);
+
+	return 0;
+}
+
 static QRcode *encode(const unsigned char *intext, int length)
 {
 	QRcode *code;
@@ -295,7 +358,17 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		perror("Failed to encode the input data");
 		exit(EXIT_FAILURE);
 	}
-	writePNG(qrcode, outfile);
+	switch(image_type) {
+		case PNG_TYPE: 
+			writePNG(qrcode, outfile);
+			break;
+		case EPS_TYPE: 
+			writeEPS(qrcode, outfile);
+			break;
+		default:
+			fprintf(stderr, "Unknown image type.\n");
+			exit(EXIT_FAILURE);
+	}
 	QRcode_free(qrcode);
 }
 
@@ -317,16 +390,31 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 	QRcode_List *qrlist, *p;
 	char filename[FILENAME_MAX];
 	char *base, *q, *suffix = NULL;
+	const char *type_suffix;
 	int i = 1;
+	int suffix_size;
+
+	switch(image_type) {
+		case PNG_TYPE: 
+			type_suffix = ".png";
+			break;
+		case EPS_TYPE: 
+			type_suffix = ".eps";
+			break;
+		default:
+			fprintf(stderr, "Unknown image type.\n");
+			exit(EXIT_FAILURE);
+	}
 
 	base = strdup(outfile);
 	if(base == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
 	}
-	if(strlen(base) > 4) {
-		q = base + strlen(base) - 4;
-		if(strcasecmp(".png", q) == 0) {
+	suffix_size = strlen(type_suffix);
+	if(strlen(base) > suffix_size) {
+		q = base + strlen(base) - suffix_size;
+		if(strcasecmp(type_suffix, q) == 0) {
 			suffix = strdup(q);
 			*q = '\0';
 		}
@@ -348,7 +436,17 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 		} else {
 			snprintf(filename, FILENAME_MAX, "%s-%02d", base, i);
 		}
-		writePNG(p->code, filename);
+		switch(image_type) {
+			case PNG_TYPE: 
+				writePNG(p->code, filename);
+				break;
+			case EPS_TYPE: 
+				writeEPS(p->code, filename);
+				break;
+			default:
+				fprintf(stderr, "Unknown image type.\n");
+				exit(EXIT_FAILURE);
+		}
 		i++;
 	}
 
@@ -429,6 +527,16 @@ int main(int argc, char **argv)
 				dpi = atoi(optarg);
 				if( dpi < 0 ) {
 					fprintf(stderr, "Invalid DPI: %d\n", dpi);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case 't':
+				if(strcasecmp(optarg, "png") == 0) {
+					image_type = PNG_TYPE;
+				} else if(strcasecmp(optarg, "eps") == 0) {
+					image_type = EPS_TYPE;
+				} else {
+					fprintf(stderr, "Invalid image type: %s\n", optarg);
 					exit(EXIT_FAILURE);
 				}
 				break;
