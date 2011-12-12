@@ -1,4 +1,9 @@
 2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2.1]
+	* configure.ac, README:
+	  - Bumped version to 3.2.1.
+
+2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.1.in:
 	  - Usage updates.
 
