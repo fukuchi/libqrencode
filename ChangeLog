@@ -1,3 +1,7 @@
+2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c, qrencode.1.in:
+	  - Usage updates.
+
 2011.12.11 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Pulled Zapster's EPS support patch.
