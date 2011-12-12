@@ -1,6 +1,6 @@
 .TH QRENCODE 1 "Nov. 23, 2011" "qrencode @VERSION@"
 .SH NAME
-qrencode \- Encode input data in a QR Code and save as a PNG image.
+qrencode \- Encode input data in a QR Code and save as a PNG or EPS image.
 .SH SYNOPSIS
 .B "qrencode"
 [OPTION]...
@@ -13,7 +13,7 @@ CCD. The capacity of QR Code is up to 7000 digits or 4000 characters, and has
 high robustness.
 
 Qrencode is a utility software using libqrencode to encode string data in
-a QR Code and save as a PNG image.
+a QR Code and save as a PNG or EPS image.
 
 .SH OPTIONS
 .TP
@@ -21,8 +21,7 @@ a QR Code and save as a PNG image.
 display help message.
 .TP
 .B \-o FILENAME, --output=FILENAME
-write PNG image to FILENAME. If '-' is specified, the result will be output
-to standard output.
+write image to FILENAME. If '-' is specified, the result will be output to standard output. If -S is given, structured symbols are written to FILENAME-01.png, FILENAME-02.png, ... (suffix is removed from FILENAME, if specified)
 .TP
 .B \-s NUMBER, --size=NUMBER
 specify the size of dot (pixel). (default=3)
@@ -38,6 +37,9 @@ specify the width of margin. (default=4)
 .TP
 .B \-d NUMBER, --dpi=NUMBER
 specify the DPI of the generated PNG. (default=72)
+.TP
+.B \-t {PNG,EPS}, --type={PNG,EPS}
+specify the type of the generated image. (default=PNG)
 .TP
 .B \-S, --structured
 make structured symbols. Version must be specified.
