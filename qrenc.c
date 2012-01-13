@@ -44,7 +44,9 @@ static QRencodeMode hint = QR_MODE_8;
 
 static enum imageType {
 	PNG_TYPE,
-	EPS_TYPE
+	EPS_TYPE,
+	ANSI_TYPE,
+	ANSI256_TYPE
 };
 
 static enum imageType image_type = PNG_TYPE;
@@ -365,6 +367,12 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case EPS_TYPE: 
 			writeEPS(qrcode, outfile);
 			break;
+		case ANSI_TYPE:
+			writeANSI(qrcode, outfile);
+			break;
+		case ANSI256_TYPE:
+			writeANSI(qrcode, outfile);
+			break;
 		default:
 			fprintf(stderr, "Unknown image type.\n");
 			exit(EXIT_FAILURE);
@@ -400,6 +408,12 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			break;
 		case EPS_TYPE: 
 			type_suffix = ".eps";
+			break;
+		case ANSI_TYPE:
+			type_suffix = ".txt";
+			break;
+		case ANSI256_TYPE:
+			type_suffix = ".txt";
 			break;
 		default:
 			fprintf(stderr, "Unknown image type.\n");
@@ -442,6 +456,12 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				break;
 			case EPS_TYPE: 
 				writeEPS(p->code, filename);
+				break;
+			case ANSI_TYPE:
+				writeANSI(p->code, filename);
+				break;
+			case ANSI256_TYPE:
+				writeANSI(p->code, filename);
 				break;
 			default:
 				fprintf(stderr, "Unknown image type.\n");
@@ -535,6 +555,10 @@ int main(int argc, char **argv)
 					image_type = PNG_TYPE;
 				} else if(strcasecmp(optarg, "eps") == 0) {
 					image_type = EPS_TYPE;
+				} else if(strcasecmp(optarg, "ansi") == 0) {
+					image_type = ANSI_TYPE;
+				} else if(strcasecmp(optarg, "ansi256") == 0) {
+					image_type = ANSI256_TYPE;
 				} else {
 					fprintf(stderr, "Invalid image type: %s\n", optarg);
 					exit(EXIT_FAILURE);
