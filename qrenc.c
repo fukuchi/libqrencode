@@ -464,10 +464,10 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		exit(EXIT_FAILURE);
 	}
 	switch(image_type) {
-		case PNG_TYPE: 
+		case PNG_TYPE:
 			writePNG(qrcode, outfile);
 			break;
-		case EPS_TYPE: 
+		case EPS_TYPE:
 			writeEPS(qrcode, outfile);
 			break;
 		case ANSI_TYPE:
@@ -506,10 +506,10 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 	int suffix_size;
 
 	switch(image_type) {
-		case PNG_TYPE: 
+		case PNG_TYPE:
 			type_suffix = ".png";
 			break;
-		case EPS_TYPE: 
+		case EPS_TYPE:
 			type_suffix = ".eps";
 			break;
 		case ANSI_TYPE:
