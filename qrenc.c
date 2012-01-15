@@ -383,7 +383,7 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 	for(y=0; y<realwidth; y++){
 		strncat(buffer, "  ", 2);
 	}
-	strncat(buffer, "\n", 1);
+	strncat(buffer, "\033[0m\n", 5);
 	fputs(buffer, fp);
 
 	/* data */
@@ -415,7 +415,7 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 		if( last != 0 ){
 			strncat( buffer, white, white_s );
 		}
-		strncat( buffer, "  \n", 3 );
+		strncat( buffer, "  \033[0m\n", 7 );
 		fputs( buffer, fp );
 	}
 
