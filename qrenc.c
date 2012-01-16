@@ -405,7 +405,9 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 
 		bzero( buffer, buffer_s );
 		strncpy( buffer, white, white_s );
-		strncat( buffer, "  ", 2 );
+		for(x=0; x<margin; x++ ){
+			strncat( buffer, "  ", 2 );
+		}
 		last = 0;
 
 		for(x=0; x<qrcode->width; x++) {
@@ -426,7 +428,10 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 		if( last != 0 ){
 			strncat( buffer, white, white_s );
 		}
-		strncat( buffer, "  \033[0m\n", 7 );
+		for(x=0; x<margin; x++ ){
+			strncat( buffer, "  ", 2 );
+		}
+		strncat( buffer, "\033[0m\n", 5 );
 		fputs( buffer, fp );
 	}
 
