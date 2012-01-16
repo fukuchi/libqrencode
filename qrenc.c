@@ -331,6 +331,23 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
+static void writeANSI_margin(FILE* fp, int realwidth,
+                             char* buffer, int buffer_s,
+                             char* white, int white_s )
+{
+	int x, y;
+
+	for(x=0; x<margin; x++ ){
+		bzero( buffer, buffer_s);
+		strncpy(buffer, white, white_s);
+		for(y=0; y<realwidth; y++){
+			strncat(buffer, "  ", 2);
+		}
+		strncat(buffer, "\033[0m\n", 5); // reset to default colors
+		fputs(buffer, fp);
+	}
+}
+
 static int writeANSI(QRcode *qrcode, const char *outfile)
 {
 	FILE *fp;
