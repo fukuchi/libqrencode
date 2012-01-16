@@ -393,15 +393,9 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
 	}
-	bzero( buffer, buffer_s );
 
 	/* top margin */
-	strncpy(buffer, white, white_s);
-	for(y=0; y<realwidth; y++){
-		strncat(buffer, "  ", 2);
-	}
-	strncat(buffer, "\033[0m\n", 5);
-	fputs(buffer, fp);
+	writeANSI_margin(fp, realwidth, buffer, buffer_s, white, white_s);
 
 	/* data */
 	p = qrcode->data;
@@ -437,13 +431,8 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 	}
 
 	/* bottom margin */
-	bzero( buffer, buffer_s);
-	strncpy(buffer, white, white_s);
-	for(y=0; y<realwidth; y++){
-		strncat(buffer, "  ", 2);
-	}
-	strncat(buffer, "\033[0m\n", 5); // reset to default colors
-	fputs(buffer, fp);
+	writeANSI_margin(fp, realwidth, buffer, buffer_s, white, white_s);
+
 	fclose(fp);
 	free(buffer);
 
