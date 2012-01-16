@@ -373,7 +373,6 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 	}
 
 	size = 1;
-	margin = 1;
 
 	if(outfile[0] == '-' && outfile[1] == '\0') {
 		fp = stdout;
@@ -670,8 +669,10 @@ int main(int argc, char **argv)
 				} else if(strcasecmp(optarg, "eps") == 0) {
 					image_type = EPS_TYPE;
 				} else if(strcasecmp(optarg, "ansi") == 0) {
+					margin = 1;
 					image_type = ANSI_TYPE;
 				} else if(strcasecmp(optarg, "ansi256") == 0) {
+					margin = 1;
 					image_type = ANSI256_TYPE;
 				} else {
 					fprintf(stderr, "Invalid image type: %s\n", optarg);
