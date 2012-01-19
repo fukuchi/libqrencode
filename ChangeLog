@@ -6,6 +6,8 @@
 	  - New tests have been added.
 	* qrenc.c:
 	  - Removed a useless storage class specifier from enum imageType.
+	[master, 3.2.1]
+	* Pulled moshen:write_ansi.
 
 2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.1]

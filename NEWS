@@ -1,8 +1,18 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.2.1 (2012.x.x)
+-------------------------
+* EPS and ANSI text output supports have been added.
+  (Thanks to Zapster and Colin)
+* QRcode_APIVersion() and QRcode_APIVersionString() have been added.
+
+Release Note:
+Two new output format, EPS and ANSI text, have been added to the command line
+tool.
+
 Version 3.2.0 (2011.11.26)
-------------------------
+--------------------------
 * "--dpi" (or "-d") option has been added to qrencode. This option set DPI
   information in an output PNG image. (Thanks to David Dahl)
 * New option "--enable-thread-safety" has been added to the configure script
