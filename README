@@ -120,10 +120,11 @@ countries.
 Reed-Solomon encoder is written by Phil Karn, KA9Q.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
-NANKI Haruo       - improved lower-case characteres encoding
-Philippe Delcroix - improved mask evaluation
-Yusuke Mihara     - structured-append support
-David Dahl        - DPI patch
-Adam Shepherd     - bug fix patch of the mask evaluation
-zapster           - EPS support patch
+NANKI Haruo          - improved lower-case characteres encoding
+Philippe Delcroix    - improved mask evaluation
+Yusuke Mihara        - structured-append support
+David Dahl           - DPI patch
+Adam Shepherd        - bug fix patch of the mask evaluation
+Josef Eisl (zapster) - EPS support patch
+Colin (moshen)       - ANSI support patch
 Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom - bug report / suggestion

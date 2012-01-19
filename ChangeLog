@@ -14,6 +14,9 @@
 	* qrenc.c:
 	  - Code refactoring.
 	  - Now you can omit "-o -" for EPS and ANSI output.
+	* README:
+	  - Added Colin (moshen@github) to ACKNOWLEDGMENTS.
+	  - Added zapster's real name to ACKNOWLEDGMENTS.
 
 2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.1]
