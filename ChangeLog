@@ -14,6 +14,7 @@
 	* qrenc.c:
 	  - Code refactoring.
 	  - Now you can omit "-o -" for EPS and ANSI output.
+	  - Default margin size has been rollbacked to 4 for ANSI(256).
 	* README:
 	  - Added Colin (moshen@github) to ACKNOWLEDGMENTS.
 	  - Added zapster's real name to ACKNOWLEDGMENTS.
