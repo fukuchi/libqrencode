@@ -42,7 +42,7 @@ static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 
-static enum imageType {
+enum imageType {
 	PNG_TYPE,
 	EPS_TYPE
 };
