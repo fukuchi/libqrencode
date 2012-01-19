@@ -860,6 +860,23 @@ void test_mqrencode(void)
 	testFinish();
 }
 
+void test_apiversion(void)
+{
+	int major_version, minor_version, micro_version;
+	char *str, *str2;
+
+	testStart("API Version check");
+	QRcode_APIVersion(&major_version, &minor_version, &micro_version);
+	assert_equal(major_version, MAJOR_VERSION, "Major version number mismatched: %d (%d expected)\n", major_version, MAJOR_VERSION);
+	assert_equal(minor_version, MINOR_VERSION, "Minor version number mismatched: %d (%d expected)\n", minor_version, MINOR_VERSION);
+	assert_equal(micro_version, MICRO_VERSION, "Micro version number mismatched: %d (%d expected)\n", micro_version, MICRO_VERSION);
+	str = QRcode_APIVersionString();
+	str2 = QRcode_APIVersionString();
+	assert_zero(strcmp(VERSION, str), "Version string mismatched: %s (%s expected)\n", str, VERSION);
+	assert_equal(str, str2, "Version strings are not identical.");
+	testFinish();
+}
+
 int main(void)
 {
 	test_iterate();
@@ -894,6 +911,7 @@ int main(void)
 	test_encodeTooLongMQR();
 	test_decodeShortMQR();
 	test_mqrencode();
+	test_apiversion();
 
 	QRcode_clearCache();
 

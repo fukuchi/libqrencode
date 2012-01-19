@@ -538,6 +538,21 @@ extern void QRcode_List_free(QRcode_List *qrlist);
  *****************************************************************************/
 
 /**
+ * Return a string that identifies the library version.
+ * @param major_version
+ * @param minor_version
+ * @param micro_version
+ */
+extern void QRcode_APIVersion(int *major_version, int *minor_version, int *micro_version);
+
+/**
+ * Return a string that identifies the library version.
+ * @return a string identifies the library version. The string is held by the
+ * library. Do NOT free it.
+ */
+extern char *QRcode_APIVersionString(void);
+
+/**
  * Clear all caches. This is only for debug purpose. If you are attacking a
  * complicated memory leak bug, try this to reduce the reachable blocks record.
  */

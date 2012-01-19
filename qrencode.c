@@ -903,6 +903,24 @@ QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRec
  * System utilities
  *****************************************************************************/
 
+void QRcode_APIVersion(int *major_version, int *minor_version, int *micro_version)
+{
+	if(major_version != NULL) {
+		*major_version = MAJOR_VERSION;
+	}
+	if(minor_version != NULL) {
+		*minor_version = MINOR_VERSION;
+	}
+	if(micro_version != NULL) {
+		*micro_version = MICRO_VERSION;
+	}
+}
+
+char *QRcode_APIVersionString(void)
+{
+	return VERSION;
+}
+
 void QRcode_clearCache(void)
 {
 	QRspec_clearCache();

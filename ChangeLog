@@ -1,3 +1,10 @@
+2012.01.19 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2.1]
+	* cofigure.ac, qrencode.[hc], qrenc.c, tests/test_qrencode.c:
+	  - QRcode_APIVersion() and QRcode_APIVersionString() have been added.
+	  - New macro values {MAJOR,MINOR,MICRO}_VERSION have been introduced.
+	  - New tests have been added.
+
 2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.1]
 	* configure.ac, README:
