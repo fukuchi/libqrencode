@@ -175,6 +175,24 @@ static unsigned char *readStdin(int *length)
 	return buffer;
 }
 
+static FILE *openFile(const char *outfile)
+{
+	FILE *fp;
+
+	if(outfile == NULL || (outfile[0] == '-' && outfile[1] == '\0')) {
+		fp = stdout;
+	} else {
+		fp = fopen(outfile, "wb");
+		if(fp == NULL) {
+			fprintf(stderr, "Failed to create file: %s\n", outfile);
+			perror(NULL);
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	return fp;
+}
+
 static int writePNG(QRcode *qrcode, const char *outfile)
 {
 	static FILE *fp; // avoid clobbering by setjmp.
@@ -285,16 +303,7 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 	int x, y, yy;
 	int realwidth;
 
-	if(outfile[0] == '-' && outfile[1] == '\0') {
-		fp = stdout;
-	} else {
-		fp = fopen(outfile, "wb");
-		if(fp == NULL) {
-			fprintf(stderr, "Failed to create file: %s\n", outfile);
-			perror(NULL);
-			exit(EXIT_FAILURE);
-		}
-	}
+	fp = openFile(outfile);
    
 	realwidth = (qrcode->width + margin * 2) * size;
 	/* EPS file header */
@@ -352,7 +361,7 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 {
 	FILE *fp;
 	unsigned char *row, *p;
-	int x, y, yy;
+	int x, y;
 	int realwidth;
 	int last;
 
@@ -374,16 +383,7 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 
 	size = 1;
 
-	if(outfile[0] == '-' && outfile[1] == '\0') {
-		fp = stdout;
-	} else {
-		fp = fopen(outfile, "wb");
-		if(fp == NULL) {
-			fprintf(stderr, "Failed to create file: %s\n", outfile);
-			perror(NULL);
-			exit(EXIT_FAILURE);
-		}
-	}
+	fp = openFile(outfile);
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	buffer_s = ( realwidth * white_s ) * 2;
@@ -400,7 +400,6 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 	p = qrcode->data;
 	for(y=0; y<qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
-		yy = (margin + qrcode->width - y - 1);
 
 		bzero( buffer, buffer_s );
 		strncpy( buffer, white, white_s );
@@ -513,7 +512,7 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 	char *base, *q, *suffix = NULL;
 	const char *type_suffix;
 	int i = 1;
-	int suffix_size;
+	size_t suffix_size;
 
 	switch(image_type) {
 		case PNG_TYPE:
@@ -712,7 +711,7 @@ int main(int argc, char **argv)
 		exit(EXIT_SUCCESS);
 	}
 
-	if(outfile == NULL) {
+	if(outfile == NULL && image_type == PNG_TYPE) {
 		fprintf(stderr, "No output filename is given.\n");
 		exit(EXIT_FAILURE);
 	}

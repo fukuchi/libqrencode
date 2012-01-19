@@ -8,6 +8,12 @@
 	  - Removed a useless storage class specifier from enum imageType.
 	[master, 3.2.1]
 	* Pulled moshen:write_ansi.
+	[3.2.1]
+	* tests/decoder.c:
+	  - Bug fix.
+	* qrenc.c:
+	  - Code refactoring.
+	  - Now you can omit "-o -" for EPS and ANSI output.
 
 2011.12.12 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.1]
