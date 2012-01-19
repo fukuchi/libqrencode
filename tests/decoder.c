@@ -401,7 +401,7 @@ void dumpKanji(DataChunk *chunk)
 	outbuf = (char *)malloc(inbytes * 4 + 1);
 	outp = outbuf;
 	ret = iconv(conv, &inbuf, &inbytes, &outp, &outbytes);
-	if(ret < 0) { perror(NULL); }
+	if(ret == (size_t) -1) { perror(NULL); }
 	*outp = '\0';
 
 	printf("%s\n", outbuf);
