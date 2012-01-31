@@ -532,6 +532,10 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			exit(EXIT_FAILURE);
 	}
 
+	if(outfile == NULL) {
+		fprintf(stderr, "An output filename must be specified to store the structured images.\n");
+		exit(EXIT_FAILURE);
+	}
 	base = strdup(outfile);
 	if(base == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
