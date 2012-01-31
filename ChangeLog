@@ -1,3 +1,7 @@
+2012.01.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[master]
+	* Recent 3.2 branch has been merged into the master.
+
 2012.01.19 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.1]
 	* cofigure.ac, qrencode.[hc], qrenc.c, tests/test_qrencode.c:
