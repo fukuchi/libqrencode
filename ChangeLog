@@ -1,7 +1,7 @@
 2012.02.28 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master, 3.2.1]
 	* .gitignore
-	  - Added "pthread_qrencode".
+	  - Added "tests/pthread_qrencode".
 
 2012.01.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master]
