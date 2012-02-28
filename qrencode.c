@@ -1,7 +1,7 @@
 /*
  * qrencode - QR Code encoder
  *
- * Copyright (C) 2006-2011 Kentaro Fukuchi <kentaro@fukuchi.org>
+ * Copyright (C) 2006-2012 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
