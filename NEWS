@@ -1,7 +1,7 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.2.1 (2012.x.x)
+Version 3.3.0 (2012.x.x)
 -------------------------
 * EPS and ANSI text output supports have been added.
   (Thanks to Zapster and Colin)

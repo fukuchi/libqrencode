@@ -2,6 +2,11 @@
 	[master, 3.2.1]
 	* .gitignore
 	  - Added "tests/pthread_qrencode".
+	[3.3]
+	* 3.3 branch has been started.
+	  - 3.2.1 has been canceled.
+	* configure.ac, README, NEWS:
+	  - Version number changes.
 
 2012.01.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master]
