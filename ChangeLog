@@ -1,7 +1,9 @@
 2012.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
-	[3.2]
 	* libqrencode.pc.in :
 	  - Replaced obsolete macro LIBPTHREAD with LIBS. (thx to gniibe)
+	* configure.ac:
+	  - Checks $ac_cv_lib_pthread_pthread_mutex_init instead of
+	    HAVE_LIBPTHREAD. (thx to gniibe)
 
 2012.02.28 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master, 3.2.1]

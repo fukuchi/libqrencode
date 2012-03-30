@@ -44,7 +44,7 @@ AC_ARG_ENABLE([thread-safety], [AS_HELP_STRING([--enable-thread-safety], [make t
 if test x$enable_thread_safety = xyes; then
 	AC_CHECK_LIB([pthread], [pthread_mutex_init])
 fi
-AM_CONDITIONAL([HAVE_LIBPTHREAD], [test "x$HAVE_LIBPTHREAD" = "xyes" ])
+AM_CONDITIONAL([HAVE_LIBPTHREAD], [test "x$ac_cv_lib_pthread_pthread_mutex_init" = "xyes" ])
 
 
 dnl --with-tools
