@@ -6,5 +6,5 @@ includedir=@includedir@
 Name: libqrencode
 Description: A QR Code encoding library
 Version: @VERSION@
-Libs: -L${libdir} -lqrencode @LIBPTHREAD@
+Libs: -L${libdir} -lqrencode @LIBS@
 Cflags: -I${includedir}

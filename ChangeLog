@@ -1,3 +1,8 @@
+2012.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2]
+	* libqrencode.pc.in :
+	  - Replaced obsolete macro LIBPTHREAD with LIBS. (thx to gniibe)
+
 2011.11.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.0]
 	* Version 3.2.0 has been released.

@@ -1,4 +1,4 @@
-libqrencode 3.2.0 - QR Code encoding library
+libqrencode 3.2.1 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -95,7 +95,7 @@ CONTACT
 =======
 Visit the homepage at:
 
-http://fukuchi.org/works/qrencode/index.en.html
+http://fukuchi.org/works/qrencode/
 
 for new releases. The git repository is available at:
 
@@ -125,4 +125,5 @@ Philippe Delcroix - improved mask evaluation
 Yusuke Mihara     - structured-append support
 David Dahl        - DPI patch
 Adam Shepherd     - bug fix patch of the mask evaluation
-Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom - bug report / suggestion
+Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Yutaka Niibe (gniibe)
+ - bug report / suggestion

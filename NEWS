@@ -1,6 +1,11 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.2.1 (2012.4.1)
+------------------------
+* Bugs in configure script and libtool file has been fixed. (Thanks to Yutaka
+  Niibe)
+
 Version 3.2.0 (2011.11.26)
 ------------------------
 * "--dpi" (or "-d") option has been added to qrencode. This option set DPI
