@@ -1,6 +1,11 @@
+2012.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2]
+	* libqrencode.pc.in :
+	  - Replaced obsolete macro LIBPTHREAD with LIBS. (thx to gniibe)
+
 2012.02.28 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master, 3.2.1]
-	* .gitignore
+	* .gitignore:
 	  - Added "tests/pthread_qrencode".
 	[3.3]
 	* 3.3 branch has been started.
