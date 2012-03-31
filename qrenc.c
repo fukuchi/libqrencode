@@ -76,7 +76,7 @@ static void usage(int help, int longopt)
 {
 	fprintf(stderr,
 "qrencode version %s\n"
-"Copyright (C) 2006-2011 Kentaro Fukuchi\n", QRcode_APIVersionString());
+"Copyright (C) 2006-2012 Kentaro Fukuchi\n", QRcode_APIVersionString());
 	if(help) {
 		if(longopt) {
 			fprintf(stderr,
