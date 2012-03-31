@@ -1,7 +1,7 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.3.0 (2012.x.x)
+Version 3.3.0 (2012.4.1)
 -------------------------
 * EPS and ANSI text output supports have been added.
   (Thanks to Zapster and Colin)
@@ -10,6 +10,11 @@ Version 3.3.0 (2012.x.x)
 Release Note:
 Two new output format, EPS and ANSI text, have been added to the command line
 tool.
+
+Version 3.2.1 (2012.4.1)
+-------------------------
+* Bugs in configure script and libtool file has been fixed. (Thanks to Yutaka
+  Niibe)
 
 Version 3.2.0 (2011.11.26)
 --------------------------

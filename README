@@ -127,4 +127,5 @@ David Dahl           - DPI patch
 Adam Shepherd        - bug fix patch of the mask evaluation
 Josef Eisl (zapster) - EPS support patch
 Colin (moshen)       - ANSI support patch
-Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom - bug report / suggestion
+Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Yutaka Niibe (gniibe)
+ - bug report / suggestion
