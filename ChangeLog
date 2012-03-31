@@ -1,3 +1,9 @@
+2012.03.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.2]
+	* README, NEWS, configure.ac:
+	  - Bumped version to 3.2.1.
+	* Version 3.2.1 has been released.
+
 2012.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* libqrencode.pc.in :
 	  - Replaced obsolete macro LIBPTHREAD with LIBS. (thx to gniibe)
