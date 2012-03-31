@@ -24,6 +24,7 @@ tests/create_mqr_frame_pattern
 tests/frame
 tests/mqrframe
 tests/prof_qrencode
+tests/pthread_qrencode
 tests/test_bitstream
 tests/test_estimatebit
 tests/test_mask
