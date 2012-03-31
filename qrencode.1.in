@@ -75,5 +75,11 @@ case-insensitive mode.
 .SH AUTHOR
 Written by Kentaro Fukuchi.
 
+.SH RESOURCES
+.TP
+Main Web Site: http://fukuchi.org/works/qrencode/
+.TP
+Source code repository: https://github.com/fukuchi/libqrencode/
+
 .SH COPYRIGHT
 Copyright (C) 2006-2011 Kentaro Fukuchi.
