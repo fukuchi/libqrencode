@@ -604,9 +604,8 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			type_suffix = ".eps";
 			break;
 		case ANSI_TYPE:
-			type_suffix = ".txt";
-			break;
 		case ANSI256_TYPE:
+		case ASCII_TYPE:
 			type_suffix = ".txt";
 			break;
 		default:
