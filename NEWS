@@ -3,13 +3,17 @@ libqrencode NEWS - Overview of changes
 
 Version 3.3.0 (2012.4.1)
 -------------------------
-* EPS and ANSI text output supports have been added.
-  (Thanks to Zapster and Colin)
+* EPS, ANSI, and ASCII text output supports have been added.
+  (Thanks to Zapster, Colin, and Ralf)
 * QRcode_APIVersion() and QRcode_APIVersionString() have been added.
 
 Release Note:
-Two new output format, EPS and ANSI text, have been added to the command line
-tool.
+Three new output format, EPS, ANSI, and ASCII text, have been added to the
+command line tool. ANSI and ASCII mode ignore "-size" option. Give "-t ASCIIi"
+to get an ASCII-mode symbol in inverted color.
+
+QRcode_APIVersion() is requested by Matthew Baker for better support of Python
+ctypes binding. Check them out at https://code.google.com/p/libqrencode-ctypes/
 
 Version 3.2.1 (2012.4.1)
 -------------------------
