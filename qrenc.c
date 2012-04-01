@@ -46,7 +46,9 @@ enum imageType {
 	PNG_TYPE,
 	EPS_TYPE,
 	ANSI_TYPE,
-	ANSI256_TYPE
+	ANSI256_TYPE,
+	ASCII_TYPE,
+	ASCIIi_TYPE
 };
 
 static enum imageType image_type = PNG_TYPE;
@@ -100,7 +102,7 @@ static void usage(int help, int longopt)
 "               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,EPS,ANSI,ANSI256}, --type={PNG,EPS,ANSI,ANSI256}\n"
+"  -t {PNG,EPS,ANSI,ANSI256,ASCII}, --type={PNG,EPS,ANSI,ANSI256,ASCII}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
@@ -132,7 +134,7 @@ static void usage(int help, int longopt)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,EPS,ANSI,ANSI256}\n"
+"  -t {PNG,EPS,ANSI,ANSI256,ASCII}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -442,6 +444,85 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
+static void writeASCII_margin(FILE* fp, int realwidth, char* buffer, int buffer_s, int invert)
+{
+	int y, h;
+
+	h = margin;
+
+	memset(buffer, (invert?'#':' '), realwidth);
+	buffer[realwidth] = '\n';
+	buffer[realwidth + 1] = '\0';
+	for(y=0; y<h; y++ ){
+		fputs(buffer, fp);
+	}
+}
+
+static int writeASCII(QRcode *qrcode, const char *outfile, int invert)
+{
+	FILE *fp;
+	unsigned char *row;
+	int x, y;
+	int realwidth;
+	char *buffer, *p;
+	int buffer_s;
+	char black = '#';
+	char white = ' ';
+
+	if(invert) {
+		black = ' ';
+		white = '#';
+	}
+
+	size = 1;
+
+	fp = openFile(outfile);
+
+	realwidth = (qrcode->width + margin * 2) * 2;
+	buffer_s = realwidth + 1;
+	buffer = (char *)malloc( buffer_s );
+	if(buffer == NULL) {
+		fprintf(stderr, "Failed to allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/* top margin */
+	writeASCII_margin(fp, realwidth, buffer, buffer_s, invert);
+
+	/* data */
+	for(y=0; y<qrcode->width; y++) {
+		row = qrcode->data+(y*qrcode->width);
+		p = buffer;
+
+		memset(p, white, margin * 2);
+		p += margin * 2;
+
+		for(x=0; x<qrcode->width; x++) {
+			if(row[x]&0x1) {
+				*p++ = black;
+				*p++ = black;
+			} else {
+				*p++ = white;
+				*p++ = white;
+			}
+		}
+
+		memset(p, white, margin * 2);
+		p += margin * 2;
+		*p++ = '\n';
+		*p++ = '\0';
+		fputs( buffer, fp );
+	}
+
+	/* bottom margin */
+	writeASCII_margin(fp, realwidth, buffer, buffer_s, invert);
+
+	fclose(fp);
+	free(buffer);
+
+	return 0;
+}
+
 static QRcode *encode(const unsigned char *intext, int length)
 {
 	QRcode *code;
@@ -484,6 +565,12 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 			break;
 		case ANSI256_TYPE:
 			writeANSI(qrcode, outfile);
+			break;
+		case ASCIIi_TYPE:
+			writeASCII(qrcode, outfile,  1);
+			break;
+		case ASCII_TYPE:
+			writeASCII(qrcode, outfile,  0);
 			break;
 		default:
 			fprintf(stderr, "Unknown image type.\n");
@@ -578,6 +665,12 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				break;
 			case ANSI256_TYPE:
 				writeANSI(p->code, filename);
+				break;
+			case ASCIIi_TYPE:
+				writeASCII(p->code, filename, 1);
+				break;
+			case ASCII_TYPE:
+				writeASCII(p->code, filename, 0);
 				break;
 			default:
 				fprintf(stderr, "Unknown image type.\n");
@@ -675,6 +768,10 @@ int main(int argc, char **argv)
 					image_type = ANSI_TYPE;
 				} else if(strcasecmp(optarg, "ansi256") == 0) {
 					image_type = ANSI256_TYPE;
+				} else if(strcasecmp(optarg, "asciii") == 0) {
+					image_type = ASCIIi_TYPE;
+				} else if(strcasecmp(optarg, "ascii") == 0) {
+					image_type = ASCII_TYPE;
 				} else {
 					fprintf(stderr, "Invalid image type: %s\n", optarg);
 					exit(EXIT_FAILURE);

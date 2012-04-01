@@ -1,3 +1,8 @@
+2012.04.01 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.3]
+	* qrenc.c:
+	  - ASCII mode has been added. (Thanks to Ralf Ertzinger)
+
 2012.03.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2]
 	* README, NEWS, configure.ac:
