@@ -2,6 +2,7 @@
 	[3.3]
 	* qrenc.c:
 	  - ASCII mode has been added. (Thanks to Ralf Ertzinger)
+	  - Small code cleanups.
 
 2012.03.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2]

@@ -346,15 +346,12 @@ static void writeANSI_margin(FILE* fp, int realwidth,
                              char* buffer, int buffer_s,
                              char* white, int white_s )
 {
-	int x, y;
+	int y;
 
-	for(x=0; x<margin; x++ ){
-		bzero( buffer, buffer_s);
-		strncpy(buffer, white, white_s);
-		for(y=0; y<realwidth; y++){
-			strncat(buffer, "  ", 2);
-		}
-		strncat(buffer, "\033[0m\n", 5); // reset to default colors
+	strncpy(buffer, white, white_s);
+	memset(buffer + white_s, ' ', realwidth * 2);
+	strcpy(buffer + white_s + realwidth * 2, "\033[0m\n"); // reset to default colors
+	for(y=0; y<margin; y++ ){
 		fputs(buffer, fp);
 	}
 }
@@ -561,8 +558,6 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 			writeEPS(qrcode, outfile);
 			break;
 		case ANSI_TYPE:
-			writeANSI(qrcode, outfile);
-			break;
 		case ANSI256_TYPE:
 			writeANSI(qrcode, outfile);
 			break;
@@ -661,8 +656,6 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				writeEPS(p->code, filename);
 				break;
 			case ANSI_TYPE:
-				writeANSI(p->code, filename);
-				break;
 			case ANSI256_TYPE:
 				writeANSI(p->code, filename);
 				break;
