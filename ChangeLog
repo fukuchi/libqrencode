@@ -4,6 +4,9 @@
 	  - ASCII mode has been added. (Thanks to Ralf Ertzinger)
 	  - Small code cleanups.
 	  - ASCII mode now handles ".txt" suffix correctly.
+	* NEWS, README:
+	  - Documentation updates.
+	* Version 3.3.0 has been released.
 
 2012.03.31 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2]
