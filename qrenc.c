@@ -135,7 +135,7 @@ static void usage(int help, int longopt)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,EPS,ANSI,ANSI256,ASCII}\n"
+"  -t {PNG,EPS,SVG,ANSI,ANSI256,ASCII}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -354,24 +354,22 @@ static int writeSVG(QRcode *qrcode, const char *outfile)
 	fp = openFile(outfile);
    
 	realwidth = (qrcode->width + margin * 2) * size;
-	middle = realwidth / 2;
+	middle = (qrcode->width * size) / 2;
 	
-	/* EPS file header */
+	/* SVG file header */
 	fprintf(fp, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
-				"<rect x=\"0\" y=\"0\" height=\"%d\" width=\"%d\" style=\"fill:white\"/>\n"
 				"\t<g transform=\"rotate(90 %d %d)\">\n"
-				, realwidth, realwidth, middle, middle);
-	
+				, middle, middle);
+
 	/* data */
 	p = qrcode->data;
 	for(y=0; y<qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
-		yy = (margin + qrcode->width - y - 1);
+		yy = (qrcode->width - y - 1);
 		yy = yy * size;	
 		for(x=0; x<qrcode->width; x++) {
 			if(*(row+x)&0x1) {
-				xx = margin + x;
-				xx = xx * size;
+				xx = x * size;
 				// Swapping xx and yy as the QR code will be mirrored (unreadable) otherwise
 				fprintf(fp, "\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" style=\"fill:black\"/>\n", yy,  xx, size, size);
 			}
