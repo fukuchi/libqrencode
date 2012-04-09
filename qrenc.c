@@ -45,6 +45,7 @@ static QRencodeMode hint = QR_MODE_8;
 enum imageType {
 	PNG_TYPE,
 	EPS_TYPE,
+	SVG_TYPE,
 	ANSI_TYPE,
 	ANSI256_TYPE,
 	ASCII_TYPE,
@@ -102,7 +103,7 @@ static void usage(int help, int longopt)
 "               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,EPS,ANSI,ANSI256,ASCII}, --type={PNG,EPS,ANSI,ANSI256,ASCII}\n"
+"  -t {PNG,EPS,SVG,ANSI,ANSI256,ASCII}, --type={PNG,EPS,SVG,ANSI,ANSI256,ASCII}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
@@ -134,7 +135,7 @@ static void usage(int help, int longopt)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,EPS,ANSI,ANSI256,ASCII}\n"
+"  -t {PNG,EPS,SVG,ANSI,ANSI256,ASCII}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -337,6 +338,45 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 	}
 
 	fprintf(fp, "\n%%%%EOF\n");
+	fclose(fp);
+
+	return 0;
+}
+
+static int writeSVG(QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	unsigned char *row, *p;
+	int x, y, yy, xx;
+	int realwidth;
+	int middle;
+
+	fp = openFile(outfile);
+   
+	realwidth = (qrcode->width + margin * 2) * size;
+	middle = (qrcode->width * size) / 2;
+	
+	/* SVG file header */
+	fprintf(fp, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
+				"\t<g transform=\"rotate(90 %d %d)\">\n"
+				, middle, middle);
+
+	/* data */
+	p = qrcode->data;
+	for(y=0; y<qrcode->width; y++) {
+		row = (p+(y*qrcode->width));
+		yy = (qrcode->width - y - 1);
+		yy = yy * size;	
+		for(x=0; x<qrcode->width; x++) {
+			if(*(row+x)&0x1) {
+				xx = x * size;
+				// Swapping xx and yy as the QR code will be mirrored (unreadable) otherwise
+				fprintf(fp, "\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" style=\"fill:black\"/>\n", yy,  xx, size, size);
+			}
+		}
+	}
+
+	fprintf(fp, "\t</g>\n</svg>");
 	fclose(fp);
 
 	return 0;
@@ -557,6 +597,9 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case EPS_TYPE:
 			writeEPS(qrcode, outfile);
 			break;
+		case SVG_TYPE:
+			writeSVG(qrcode, outfile);
+			break;
 		case ANSI_TYPE:
 		case ANSI256_TYPE:
 			writeANSI(qrcode, outfile);
@@ -602,6 +645,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			break;
 		case EPS_TYPE:
 			type_suffix = ".eps";
+			break;
+		case SVG_TYPE:
+			type_suffix = ".svg";
 			break;
 		case ANSI_TYPE:
 		case ANSI256_TYPE:
@@ -653,6 +699,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				break;
 			case EPS_TYPE: 
 				writeEPS(p->code, filename);
+				break;
+			case SVG_TYPE: 
+				writeSVG(p->code, filename);
 				break;
 			case ANSI_TYPE:
 			case ANSI256_TYPE:
@@ -756,6 +805,8 @@ int main(int argc, char **argv)
 					image_type = PNG_TYPE;
 				} else if(strcasecmp(optarg, "eps") == 0) {
 					image_type = EPS_TYPE;
+				} else if(strcasecmp(optarg, "svg") == 0) {
+					image_type = SVG_TYPE;
 				} else if(strcasecmp(optarg, "ansi") == 0) {
 					image_type = ANSI_TYPE;
 				} else if(strcasecmp(optarg, "ansi256") == 0) {
