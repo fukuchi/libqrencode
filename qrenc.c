@@ -348,30 +348,22 @@ static int writeSVG(QRcode *qrcode, const char *outfile)
 	FILE *fp;
 	unsigned char *row, *p;
 	int x, y, yy, xx;
-	int realwidth;
-	int middle;
 
 	fp = openFile(outfile);
    
-	realwidth = (qrcode->width + margin * 2) * size;
-	middle = (qrcode->width * size) / 2;
-	
 	/* SVG file header */
 	fprintf(fp, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
-				"\t<g transform=\"rotate(90 %d %d)\">\n"
-				, middle, middle);
+				"\t<g>\n");
 
 	/* data */
 	p = qrcode->data;
 	for(y=0; y<qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
-		yy = (qrcode->width - y - 1);
-		yy = yy * size;	
+		yy = y * size;	
 		for(x=0; x<qrcode->width; x++) {
 			if(*(row+x)&0x1) {
 				xx = x * size;
-				// Swapping xx and yy as the QR code will be mirrored (unreadable) otherwise
-				fprintf(fp, "\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" style=\"fill:black\"/>\n", yy,  xx, size, size);
+				fprintf(fp, "\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" style=\"fill:black\"/>\n", xx,  yy, size, size);
 			}
 		}
 	}
