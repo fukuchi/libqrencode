@@ -1,6 +1,11 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.3.1 (2012.4.11)
+-------------------------
+* Bugs in manual, configure script, and libtool files have been fixed. (Thanks
+  to Yutaka Niibe)
+
 Version 3.3.0 (2012.4.1)
 -------------------------
 * EPS, ANSI, and ASCII text output supports have been added.
