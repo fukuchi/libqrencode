@@ -17,49 +17,49 @@ a QR Code and save as a PNG or EPS image.
 
 .SH OPTIONS
 .TP
-.B \-h, --help
+.B \-h, \-\-help
 display help message.
 .TP
-.B \-o FILENAME, --output=FILENAME
-write image to FILENAME. If '-' is specified, the result will be output to standard output. If -S is given, structured symbols are written to FILENAME-01.png, FILENAME-02.png, ... (suffix is removed from FILENAME, if specified)
+.B \-o FILENAME, \-\-output=FILENAME
+write image to FILENAME. If '\-' is specified, the result will be output to standard output. If \-S is given, structured symbols are written to FILENAME-01.png, FILENAME-02.png, ... (suffix is removed from FILENAME, if specified)
 .TP
-.B \-s NUMBER, --size=NUMBER
+.B \-s NUMBER, \-\-size=NUMBER
 specify the size of dot (pixel). (default=3)
 .TP
-.B \-l {LMQH}, --level={LMQH}
+.B \-l {LMQH}, \-\-level={LMQH}
 specify error collectin level from L (lowest) to H (highest). (default=L)
 .TP
-.B \-v NUMBER, --symversion=NUMBER
+.B \-v NUMBER, \-\-symversion=NUMBER
 specify the version of the symbol. (default=auto)
 .TP
-.B \-m NUMBER, --margin=NUMBER
+.B \-m NUMBER, \-\-margin=NUMBER
 specify the width of margin. (default=4)
 .TP
-.B \-d NUMBER, --dpi=NUMBER
+.B \-d NUMBER, \-\-dpi=NUMBER
 specify the DPI of the generated PNG. (default=72)
 .TP
-.B \-t {PNG,EPS,ANSI,ANSI256}, --type={PNG,EPS,ANSI,ANSI256}
+.B \-t {PNG,EPS,ANSI,ANSI256}, \-\-type={PNG,EPS,ANSI,ANSI256}
 specify the type of the generated image. (default=PNG)
 .TP
-.B \-S, --structured
+.B \-S, \-\-structured
 make structured symbols. Version must be specified.
 .TP
-.B \-k, --kanji
+.B \-k, \-\-kanji
 assume that the input text contains kanji (shift-jis).
 .TP
-.B \-c, --casesensitive
+.B \-c, \-\-casesensitive
 encode lower-case alphabet characters in 8-bit mode. (default)
 .TP
-.B \-i, --ignorecase
+.B \-i, \-\-ignorecase
 ignore case distinctions and use only upper-case characters.
 .TP
-.B \-8, --8bit
-encode entire data in 8-bit mode. -k, -c and -i will be ignored.
+.B \-8, \-\-8bit
+encode entire data in 8-bit mode. \-k, \-c and \-i will be ignored.
 .TP
-.B \-M, --micro
+.B \-M, \-\-micro
 encode in a Micro QR Code. (experimental)
 .TP
-.B \-V, --version
+.B \-V, \-\-version
 display the version number and copyrights of the qrencode.
 .TP
 .B [STRING]
@@ -67,10 +67,10 @@ input data. If it is not specified, data will be taken from standard input.
 
 .SH EXAMPLES
 .TP
-.B qrencode -l L -v 1 -o output.png 'Hello, world!'
+.B qrencode \-l L \-v 1 \-o output.png 'Hello, world!'
 encode into a symbol version 1, level L.
 .TP
-.B qrencode -iSv 1 --output=output.png
+.B qrencode \-iSv 1 \-\-output=output.png
 read standard input and encode it into a structured-appended symbols in
 case-insensitive mode.
 

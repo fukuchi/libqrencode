@@ -1,3 +1,9 @@
+2012.04.10 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[master]
+	* Following fixes have been contributed by Yutaka Niibe.
+	* qrencode.1.in:
+	  - "Hyphen-used-as-minus-sign" error has been fixed.
+
 2012.04.01 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.3]
 	* qrenc.c:
