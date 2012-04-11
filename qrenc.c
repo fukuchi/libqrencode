@@ -348,21 +348,24 @@ static int writeSVG(QRcode *qrcode, const char *outfile)
 	FILE *fp;
 	unsigned char *row, *p;
 	int x, y, yy, xx;
+	int realwidth;
 
 	fp = openFile(outfile);
+
+	realwidth = (qrcode->width + margin * 2) * size;
    
 	/* SVG file header */
-	fprintf(fp, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
-				"\t<g>\n");
+	fprintf(fp, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"%d\" height=\"%d\">\n\t<g>\n",
+			realwidth, realwidth);
 
 	/* data */
 	p = qrcode->data;
 	for(y=0; y<qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
-		yy = y * size;	
+		yy = (y + margin) * size;	
 		for(x=0; x<qrcode->width; x++) {
 			if(*(row+x)&0x1) {
-				xx = x * size;
+				xx = (x + margin) * size;
 				fprintf(fp, "\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" style=\"fill:black\"/>\n", xx,  yy, size, size);
 			}
 		}
