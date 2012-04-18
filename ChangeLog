@@ -1,3 +1,8 @@
+2012.04.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.3]
+	* qrenc.c:
+	  - EPS dot size bug has been fixed (closes: #12).
+
 2012.04.10 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master]
 	* Following fixes have been contributed by Yutaka Niibe.

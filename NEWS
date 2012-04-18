@@ -1,10 +1,10 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.3.1 (2012.4.11)
+Version 3.3.1 (2012.4.18)
 -------------------------
-* Bugs in manual, configure script, and libtool files have been fixed. (Thanks
-  to Yutaka Niibe)
+* Bugs in command line tool, manual, configure script, and libtool files have
+  been fixed. (Thanks to Yutaka Niibe and Rob Ryan)
 
 Version 3.3.0 (2012.4.1)
 -------------------------
