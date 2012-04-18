@@ -321,7 +321,7 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 				"0 -1 rlineto "
 				"fill "
 				"} bind def "
-				"3 3 scale ");
+				"%d %d scale ", size, size);
 	
 	/* data */
 	p = qrcode->data;
