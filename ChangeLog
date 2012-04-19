@@ -1,3 +1,8 @@
+2012.04.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.3]
+	* qrenc.c:
+	  - EPS dot size bug has been fixed (closes: #12).
+
 2012.04.11 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[master]
 	* qrenc.c:
@@ -13,6 +18,9 @@
 	* qrenc.c:
 	  - Pulled Repox's SVG patch (Pull request #10).
 	  - Slightly simplified.
+	[3.3]
+	* README, configure.ac:
+	  - Bumped version to 3.3.1.
 
 2012.04.01 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.3]

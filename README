@@ -1,4 +1,4 @@
-libqrencode 3.3.0 - QR Code encoding library
+libqrencode 3.3.1 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -130,5 +130,5 @@ Colin (moshen)        - ANSI support patch
 Ralf Ertzinger        - ASCII support patch
 Yutaka Niibe (gniibe) - various bug fix patches
 Dan Strom (Repox)     - SVG support patch
-Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker
+Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan
  - bug report / suggestion
