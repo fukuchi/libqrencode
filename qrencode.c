@@ -137,7 +137,7 @@ __STATIC QRRawCode *QRraw_new(QRinput *input)
 	}
 
 	raw->blocks = QRspec_rsBlockNum(spec);
-	raw->rsblock = (RSblock *)calloc(sizeof(RSblock), raw->blocks);
+	raw->rsblock = (RSblock *)calloc(raw->blocks, sizeof(RSblock));
 	if(raw->rsblock == NULL) {
 		QRraw_free(raw);
 		return NULL;
@@ -232,7 +232,7 @@ __STATIC MQRRawCode *MQRraw_new(QRinput *input)
 		return NULL;
 	}
 
-	raw->rsblock = (RSblock *)calloc(sizeof(RSblock), 1);
+	raw->rsblock = (RSblock *)calloc(1, sizeof(RSblock));
 	if(raw->rsblock == NULL) {
 		MQRraw_free(raw);
 		return NULL;
