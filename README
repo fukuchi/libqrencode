@@ -129,5 +129,6 @@ Josef Eisl (zapster)  - EPS support patch
 Colin (moshen)        - ANSI support patch
 Ralf Ertzinger        - ASCII support patch
 Yutaka Niibe (gniibe) - various bug fix patches
-Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan
+Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan,
+Fred Steinhaeuser
  - bug report / suggestion
