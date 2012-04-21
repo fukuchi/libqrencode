@@ -1,3 +1,7 @@
+2012.04.21 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Incorrect arguments order has been fixed. (Thank to Fred Steinhaeuser)
+
 2012.04.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.3]
 	* qrenc.c:
