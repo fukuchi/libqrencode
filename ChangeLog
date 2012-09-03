@@ -1,3 +1,7 @@
+2012.09.03 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Integrated David's SVG patch.
+
 2012.04.21 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Incorrect arguments order has been fixed. (Thank to Fred Steinhaeuser)

@@ -320,7 +320,7 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 				"0 1 rlineto "
 				"1 0 rlineto "
 				"0 -1 rlineto "
-				"fill "
+
 				"} bind def "
 				"%d %d scale ", size, size);
 	
@@ -343,36 +343,91 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static int writeSVG(QRcode *qrcode, const char *outfile)
+static int writeSVG( QRcode *qrcode, const char *outfile )
 {
 	FILE *fp;
 	unsigned char *row, *p;
-	int x, y, yy, xx;
+	int x, y, x0, pen;
 	int realwidth;
+	float scale;
 
 	fp = openFile(outfile);
 
-	realwidth = (qrcode->width + margin * 2) * size;
-   
-	/* SVG file header */
-	fprintf(fp, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"%d\" height=\"%d\">\n\t<g>\n",
-			realwidth, realwidth);
+	scale = dpi * INCHES_PER_METER / 100.0;
 
-	/* data */
+	realwidth = (qrcode->width + margin * 2) * size;
+
+	/* XML declaration */
+	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", fp );
+
+	/* DTD 
+	   No document type specified because "while a DTD is provided in [the SVG] 
+	   specification, the use of DTDs for validating XML documents is known to be 
+	   problematic. In particular, DTDs do not handle namespaces gracefully. It 
+	   is *not* recommended that a DOCTYPE declaration be included in SVG 
+	   documents." 
+	   http://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
+	*/
+
+	/* Vanity remark */
+	fprintf( fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html.en) -->\n", 
+			QRcode_APIVersionString() );
+
+	/* SVG code start */
+	fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
+			" preserveAspectRatio=\"none\" version=\"1.1\""\
+			" xmlns=\"http://www.w3.org/2000/svg\">\n", 
+			realwidth / scale,
+			realwidth / scale,
+			qrcode->width + margin * 2,
+			qrcode->width + margin * 2
+		   );
+
+	/* Make named group */
+	fputs( "\t<g id=\"QRcode\">\n", fp );
+
+	/* Make solid background */
+	fputs( "\t\t<rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"white\" />\n", fp );
+
+	/* Create new viewbox for QR data */
+	fputs( "\t\t<g id=\"Pattern\">\n", fp);
+
+	/* Write data */
 	p = qrcode->data;
 	for(y=0; y<qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
-		yy = (y + margin) * size;	
+
+		/* simple RLE */
+		pen = 0;
+		x0  = 0;
 		for(x=0; x<qrcode->width; x++) {
-			if(*(row+x)&0x1) {
-				xx = (x + margin) * size;
-				fprintf(fp, "\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" style=\"fill:black\"/>\n", xx,  yy, size, size);
+			if( !pen ) {
+				pen = *(row+x)&0x1;
+				x0 = x;
+			} else {
+				if(!(*(row+x)&0x1)) {
+					fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
+							"fill=\"black\" />\n", 
+							x0 + margin, y + margin, x-x0 );
+					pen = 0;
+				}
 			}
 		}
+		if( pen )
+			fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
+					"fill=\"black\" />\n",
+					x0 + margin, y + margin, qrcode->width-x0 );
 	}
 
-	fprintf(fp, "\t</g>\n</svg>");
-	fclose(fp);
+	/* Close QR data viewbox */
+	fputs( "\t\t</g>\n", fp );
+
+	/* Close group */
+	fputs( "\t</g>\n", fp );
+
+	/* Close SVG code */
+	fputs( "</svg>\n", fp );
+	fclose( fp );
 
 	return 0;
 }
