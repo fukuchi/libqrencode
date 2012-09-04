@@ -1,5 +1,9 @@
 2012.09.03 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
+	  - A bug introduced in 'b3d5f7' has been reverted. (Thanks to Terry)
+
+2012.09.03 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
 	  - Integrated David's SVG patch.
 
 2012.04.21 Kentaro FUKUCHI <kentaro@fukuchi.org>
