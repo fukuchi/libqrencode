@@ -1,3 +1,7 @@
+2012.09.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Set XML(SVG) declaration's 'standalone' to 'yes'.
+
 2012.09.03 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - A bug introduced in 'b3d5f7' has been reverted. (Thanks to Terry)

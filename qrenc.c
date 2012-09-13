@@ -358,7 +358,7 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 	realwidth = (qrcode->width + margin * 2) * size;
 
 	/* XML declaration */
-	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", fp );
+	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
 
 	/* DTD 
 	   No document type specified because "while a DTD is provided in [the SVG] 
