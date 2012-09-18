@@ -1,3 +1,8 @@
+2012.09.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Merge pull request #19 from mezcalero/master (UTF-8 box drawing
+	    characters support).
+
 2012.09.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Set XML(SVG) declaration's 'standalone' to 'yes'.
