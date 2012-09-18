@@ -38,7 +38,11 @@ specify the width of margin. (default=4)
 .B \-d NUMBER, \-\-dpi=NUMBER
 specify the DPI of the generated PNG. (default=72)
 .TP
-.B \-t {PNG,EPS,ANSI,ANSI256}, \-\-type={PNG,EPS,ANSI,ANSI256}
+.PD 0
+.B \-t {PNG,EPS,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
+.TP
+.PD
+.B \-\-type={PNG,EPS,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
 specify the type of the generated image. (default=PNG)
 .TP
 .B \-S, \-\-structured
