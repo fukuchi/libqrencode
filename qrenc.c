@@ -43,6 +43,8 @@ static int structured = 0;
 static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
+static unsigned int fg_color[4] = {0, 0, 0, 255};
+static unsigned int bg_color[4] = {255, 255, 255, 255};
 
 enum imageType {
 	PNG_TYPE,
@@ -73,6 +75,8 @@ static const struct option options[] = {
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
 	{"micro"        , no_argument      , NULL, 'M'},
+	{"foreground"	, required_argument, NULL, 'f'},
+	{"background"	, required_argument, NULL, 'b'},
 	{"version"      , no_argument      , NULL, 'V'},
 	{NULL, 0, NULL, 0}
 };
@@ -119,6 +123,11 @@ static void usage(int help, int longopt)
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
 "  -M, --micro  encode in a Micro QR Code. (experimental)\n\n"
+"  --foreground=RRGGBB[AA]\n"
+"  --background=RRGGBB[AA]\n"
+"               specify foreground/background color in hexadecimal notation.\n"
+"               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
+"               Color output support available only in PNG and SVG.\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
@@ -154,6 +163,20 @@ static void usage(int help, int longopt)
 			);
 		}
 	}
+}
+
+static int color_set(unsigned int color[4], const char *value)
+{
+	int len = strlen(value);
+	if(len == 6) {
+		sscanf(value, "%02x%02x%02x", &color[0], &color[1], &color[2]);
+		color[3] = 255;
+	} else if(len == 8) {
+		sscanf(value, "%02x%02x%02x%02x", &color[0], &color[1], &color[2], &color[3]);
+	} else {
+		return -1;
+	}
+	return 0;
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
@@ -206,6 +229,8 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	static FILE *fp; // avoid clobbering by setjmp.
 	png_structp png_ptr;
 	png_infop info_ptr;
+	png_colorp palette;
+	png_byte alpha_values[2];
 	unsigned char *row, *p, *q;
 	int x, y, xx, yy, bit;
 	int realwidth;
@@ -246,11 +271,23 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 		exit(EXIT_FAILURE);
 	}
 
+	palette = (png_colorp) malloc(sizeof(png_color) * 2);
+	palette[0].red   = fg_color[0];
+	palette[0].green = fg_color[1];
+	palette[0].blue  = fg_color[2];
+	palette[1].red   = bg_color[0];
+	palette[1].green = bg_color[1];
+	palette[1].blue  = bg_color[2];
+	alpha_values[0] = fg_color[3];
+	alpha_values[1] = bg_color[3];
+	png_set_PLTE(png_ptr, info_ptr, palette, 2);
+	png_set_tRNS(png_ptr, info_ptr, alpha_values, 2, NULL);
+
 	png_init_io(png_ptr, fp);
 	png_set_IHDR(png_ptr, info_ptr,
 			realwidth, realwidth,
 			1,
-			PNG_COLOR_TYPE_GRAY,
+			PNG_COLOR_TYPE_PALETTE,
 			PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_DEFAULT,
 			PNG_FILTER_TYPE_DEFAULT);
@@ -348,6 +385,19 @@ static int writeEPS(QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
+static void writeSVG_writeRect(FILE *fp, int x, int y, int width, char* col, float opacity)
+{
+	if(fg_color[3] != 255) {
+		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
+				"fill=\"#%s\" fill-opacity=\"%f\" />\n", 
+				x, y, width, col, opacity );
+	} else {
+		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
+				"fill=\"#%s\" />\n", 
+				x, y, width, col );
+	}
+}
+
 static int writeSVG( QRcode *qrcode, const char *outfile )
 {
 	FILE *fp;
@@ -355,12 +405,20 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 	int x, y, x0, pen;
 	int realwidth;
 	float scale;
+	char fg[7], bg[7];
+	float fg_opacity;
+	float bg_opacity;
 
 	fp = openFile(outfile);
 
 	scale = dpi * INCHES_PER_METER / 100.0;
 
 	realwidth = (qrcode->width + margin * 2) * size;
+
+	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
+	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
+	fg_opacity = (float)fg_color[3] / 255;
+	bg_opacity = (float)bg_color[3] / 255;
 
 	/* XML declaration */
 	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
@@ -392,7 +450,11 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 	fputs( "\t<g id=\"QRcode\">\n", fp );
 
 	/* Make solid background */
-	fputs( "\t\t<rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"white\" />\n", fp );
+	if(bg_color[3] != 255) {
+		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"100%%\" height=\"100%%\" fill=\"#%s\" fill-opacity=\"%f\" />\n", bg, bg_opacity);
+	} else {
+		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"100%%\" height=\"100%%\" fill=\"#%s\" />\n", bg);
+	}
 
 	/* Create new viewbox for QR data */
 	fputs( "\t\t<g id=\"Pattern\">\n", fp);
@@ -411,17 +473,14 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 				x0 = x;
 			} else {
 				if(!(*(row+x)&0x1)) {
-					fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-							"fill=\"black\" />\n", 
-							x0 + margin, y + margin, x-x0 );
+					writeSVG_writeRect(fp, x0 + margin, y + margin, x-x0, fg, fg_opacity);
 					pen = 0;
 				}
 			}
 		}
-		if( pen )
-			fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-					"fill=\"black\" />\n",
-					x0 + margin, y + margin, qrcode->width-x0 );
+		if( pen ) {
+			writeSVG_writeRect(fp, x0 + margin, y + margin, qrcode->width - x0, fg, fg_opacity);
+		}
 	}
 
 	/* Close QR data viewbox */
@@ -986,6 +1045,18 @@ int main(int argc, char **argv)
 				break;
 			case 'M':
 				micro = 1;
+				break;
+			case 'f':
+				if(color_set(fg_color, optarg)) {
+					fprintf(stderr, "Invalid foreground color value.\n");
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case 'b':
+				if(color_set(bg_color, optarg)) {
+					fprintf(stderr, "Invalid background color value.\n");
+					exit(EXIT_FAILURE);
+				}
 				break;
 			case 'V':
 				usage(0, 0);

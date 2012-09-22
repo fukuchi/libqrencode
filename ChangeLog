@@ -1,3 +1,10 @@
+2012.09.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Color palette support has been added. Currently PNG and SVG are
+	    supported
+	* qrencode.1.in:
+	  - "--foreground" and "--background" options have been added.
+
 2012.09.19 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README:
 	  - Contributors list has been updated.

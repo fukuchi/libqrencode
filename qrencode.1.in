@@ -63,6 +63,15 @@ encode entire data in 8-bit mode. \-k, \-c and \-i will be ignored.
 .B \-M, \-\-micro
 encode in a Micro QR Code. (experimental)
 .TP
+.PD 0
+.B \-\-foreground=RRGGBB[AA]
+.TP
+.PD
+.B \-\-background=RRGGBB[AA]
+specify foreground/background color in hexadecimal notation.
+6-digit (RGB) or 8-digit (RGBA) form are supported.
+Color output support available only in PNG and SVG.
+.TP
 .B \-V, \-\-version
 display the version number and copyrights of the qrencode.
 .TP
