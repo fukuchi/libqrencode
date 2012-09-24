@@ -168,11 +168,18 @@ static void usage(int help, int longopt)
 static int color_set(unsigned int color[4], const char *value)
 {
 	int len = strlen(value);
+	int count;
 	if(len == 6) {
-		sscanf(value, "%02x%02x%02x", &color[0], &color[1], &color[2]);
+		count = sscanf(value, "%02x%02x%02x%n", &color[0], &color[1], &color[2], &len);
+		if(count < 3 || len != 6) {
+			return -1;
+		}
 		color[3] = 255;
 	} else if(len == 8) {
-		sscanf(value, "%02x%02x%02x%02x", &color[0], &color[1], &color[2], &color[3]);
+		count = sscanf(value, "%02x%02x%02x%02x%n", &color[0], &color[1], &color[2], &color[3], &len);
+		if(count < 4 || len != 8) {
+			return -1;
+		}
 	} else {
 		return -1;
 	}
