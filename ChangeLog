@@ -1,6 +1,8 @@
 2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Input validation improved. (Thanks to Yann Droneaud)
+	* README:
+	  - Contributors list has been updated.
 
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:
