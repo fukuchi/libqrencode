@@ -25,6 +25,7 @@
 typedef struct {
 	int length;
 	unsigned char *data;
+	int datasize;
 } BitStream;
 
 extern BitStream *BitStream_new(void);

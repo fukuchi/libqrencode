@@ -1,6 +1,8 @@
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:
 	  - Added new test.
+	* bitstream.[ch]:
+	  - Reduced the use of dynamic memory allocation.
 
 2012.09.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
