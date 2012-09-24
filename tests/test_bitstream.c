@@ -160,6 +160,40 @@ void test_size(void)
 	BitStream_free(bstream);
 }
 
+void test_append(void)
+{
+	BitStream *bs1, *bs2;
+	char c1[] = "0001111111111111111";
+	char c2[] = "01111111111111111";
+	char c3[] = "00011111111111111111111111111111";
+	int ret;
+
+	testStart("Append two BitStreams");
+
+	bs1 = BitStream_new();
+	bs2 = BitStream_new();
+	ret = BitStream_appendNum(bs1, 1, 0);
+	ret = BitStream_appendNum(bs2, 1, 0);
+	ret = BitStream_append(bs1, bs2);
+	assert_zero(ret, "Failed to append.");
+	assert_zero(ncmpBin(c1, bs1, 2), "Internal data is incorrect.");
+
+	ret = BitStream_appendNum(bs2, 16, 65535);
+	assert_zero(ncmpBin(c2, bs2, 17), "Internal data is incorrect.");
+	ret = BitStream_append(bs1, bs2);
+	assert_zero(ret, "Failed to append.");
+	assert_zero(ncmpBin(c1, bs1, 19), "Internal data is incorrect.");
+
+	ret = BitStream_appendNum(bs1, 13, (2^14)-1);
+	assert_zero(ret, "Failed to append.");
+	assert_zero(cmpBin(c3, bs1), "Internal data is incorrect.");
+
+	testFinish();
+
+	BitStream_free(bs1);
+	BitStream_free(bs2);
+}
+
 int main(void)
 {
 	test_null();
@@ -170,6 +204,7 @@ int main(void)
 	test_toByte();
 	test_toByte_4bitpadding();
 	test_size();
+	test_append();
 
 	report();
 
