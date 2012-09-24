@@ -5,6 +5,8 @@
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:
 	  - Added new test.
+	* tests/test_{monkey,qrspec}.c:
+	  - Warnings suppressed.
 	* bitstream.[ch]:
 	  - Reduced the use of dynamic memory allocation.
 
