@@ -184,7 +184,7 @@ void test_append(void)
 	assert_zero(ret, "Failed to append.");
 	assert_zero(ncmpBin(c1, bs1, 19), "Internal data is incorrect.");
 
-	ret = BitStream_appendNum(bs1, 13, (2^14)-1);
+	ret = BitStream_appendNum(bs1, 13, 16383);
 	assert_zero(ret, "Failed to append.");
 	assert_zero(cmpBin(c3, bs1), "Internal data is incorrect.");
 
