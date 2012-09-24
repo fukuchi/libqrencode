@@ -20,6 +20,7 @@ void print_eccTable(void)
 			     + QRspec_rsBlockNum2(spec) * QRspec_rsDataCodes2(spec);
 			ecc  = QRspec_rsBlockNum1(spec) * QRspec_rsEccCodes1(spec)
 			     + QRspec_rsBlockNum2(spec) * QRspec_rsEccCodes2(spec);
+			printf("%3d\t", data);
 			printf("%3d\t", ecc);
 			printf("%2d\t", QRspec_rsBlockNum1(spec));
 			printf("(%3d, %3d, %3d)\n",

@@ -1,6 +1,8 @@
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:
 	  - Added new test.
+	* tests/test_{monkey,qrspec}.c:
+	  - Warnings suppressed.
 
 2012.09.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
