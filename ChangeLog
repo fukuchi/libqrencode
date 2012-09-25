@@ -3,6 +3,7 @@
 	  - Input validation improved. (Thanks to Yann Droneaud)
 	* README:
 	  - Contributors list has been updated.
+	  - Added a note about autogen.sh.
 
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:
