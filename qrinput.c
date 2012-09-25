@@ -1191,8 +1191,6 @@ static int QRinput_convertData(QRinput *input)
 static int QRinput_appendPaddingBit(BitStream *bstream, QRinput *input)
 {
 	int bits, maxbits, words, maxwords, i, ret;
-	BitStream *padding = NULL;
-	unsigned char *padbuf;
 	int padlen;
 
 	bits = BitStream_size(bstream);
@@ -1208,39 +1206,25 @@ static int QRinput_appendPaddingBit(BitStream *bstream, QRinput *input)
 	}
 
 	if(maxbits - bits <= 4) {
-		ret = BitStream_appendNum(bstream, maxbits - bits, 0);
-		goto DONE;
+		return BitStream_appendNum(bstream, maxbits - bits, 0);
 	}
 
 	words = (bits + 4 + 7) / 8;
 
-	padding = BitStream_new();
-	if(padding == NULL) return -1;
-	ret = BitStream_appendNum(padding, words * 8 - bits, 0);
-	if(ret < 0) goto DONE;
+	ret = BitStream_appendNum(bstream, words * 8 - bits, 0);
+	if(ret < 0) return ret;
 
 	padlen = maxwords - words;
 	if(padlen > 0) {
-		padbuf = (unsigned char *)malloc(padlen);
-		if(padbuf == NULL) {
-			ret = -1;
-			goto DONE;
-		}
 		for(i=0; i<padlen; i++) {
-			padbuf[i] = (i&1)?0x11:0xec;
-		}
-		ret = BitStream_appendBytes(padding, padlen, padbuf);
-		free(padbuf);
-		if(ret < 0) {
-			goto DONE;
+			ret = BitStream_appendNum(bstream, 8, (i&1)?0x11:0xec);
+			if(ret < 0) {
+				return ret;
+			}
 		}
 	}
 
-	ret = BitStream_append(bstream, padding);
-
-DONE:
-	BitStream_free(padding);
-	return ret;
+	return 0;
 }
 
 /**
@@ -1256,8 +1240,6 @@ DONE:
 static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 {
 	int bits, maxbits, words, maxwords, i, ret, termbits;
-	BitStream *padding = NULL;
-	unsigned char *padbuf;
 	int padlen;
 
 	bits = BitStream_size(bstream);
@@ -1275,8 +1257,7 @@ static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 	termbits = input->version * 2 + 1;
 
 	if(maxbits - bits <= termbits) {
-		ret = BitStream_appendNum(bstream, maxbits - bits, 0);
-		goto DONE;
+		return BitStream_appendNum(bstream, maxbits - bits, 0);
 	}
 
 	bits += termbits;
@@ -1288,38 +1269,23 @@ static int QRinput_appendPaddingBitMQR(BitStream *bstream, QRinput *input)
 	} else {
 		termbits += words * 8 - bits;
 	}
-	padding = BitStream_new();
-	if(padding == NULL) return -1;
-	ret = BitStream_appendNum(padding, termbits, 0);
-	if(ret < 0) goto DONE;
+	ret = BitStream_appendNum(bstream, termbits, 0);
+	if(ret < 0) return ret;
 
 	padlen = maxwords - words;
 	if(padlen > 0) {
-		padbuf = (unsigned char *)malloc(padlen);
-		if(padbuf == NULL) {
-			ret = -1;
-			goto DONE;
-		}
 		for(i=0; i<padlen; i++) {
-			padbuf[i] = (i&1)?0x11:0xec;
-		}
-		ret = BitStream_appendBytes(padding, padlen, padbuf);
-		free(padbuf);
-		if(ret < 0) {
-			goto DONE;
+			ret = BitStream_appendNum(bstream, 8, (i&1)?0x11:0xec);
+			if(ret < 0) return ret;
 		}
 		termbits = maxbits - maxwords * 8;
 		if(termbits > 0) {
-			ret = BitStream_appendNum(padding, termbits, 0);
-			if(ret < 0) goto DONE;
+			ret = BitStream_appendNum(bstream, termbits, 0);
+			if(ret < 0) return ret;
 		}
 	}
 
-	ret = BitStream_append(bstream, padding);
-
-DONE:
-	BitStream_free(padding);
-	return ret;
+	return 0;
 }
 
 static int QRinput_insertFNC1Header(QRinput *input)

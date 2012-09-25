@@ -1,3 +1,7 @@
+2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* tests/qrinput.c:
+	  - Reduced the use of dynamic memory allocation.
+
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:
 	  - Added new test.
