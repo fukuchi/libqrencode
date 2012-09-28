@@ -1017,19 +1017,13 @@ __STATIC int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits)
  * @param entry
  * @return number of bits (>0) or -1 for failure.
  */
-static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
+static int QRinput_encodeBitStream(QRinput_List *entry, BitStream *bstream, int version, int mqr)
 {
 	int words, ret;
 	QRinput_List *st1 = NULL, *st2 = NULL;
-	BitStream *bstream;
+	int prevsize;
 
-	if(entry->bstream != NULL) {
-		BitStream_free(entry->bstream);
-		entry->bstream = NULL;
-	}
-
-	bstream = BitStream_new();
-	entry->bstream = bstream;
+	prevsize = BitStream_size(bstream);
 
 	words = QRspec_maximumWords(entry->mode, version);
 	if(words != 0 && entry->size > words) {
@@ -1038,15 +1032,11 @@ static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
 		st2 = QRinput_List_newEntry(entry->mode, entry->size - words, &entry->data[words]);
 		if(st2 == NULL) goto ABORT;
 
-		ret = QRinput_encodeBitStream(st1, version, mqr);
+		ret = QRinput_encodeBitStream(st1, bstream, version, mqr);
 		if(ret < 0) goto ABORT;
-		ret = QRinput_encodeBitStream(st2, version, mqr);
+		ret = QRinput_encodeBitStream(st2, bstream, version, mqr);
 		if(ret < 0) goto ABORT;
 
-		ret = BitStream_append(entry->bstream, st1->bstream);
-		if(ret < 0) goto ABORT;
-		ret = BitStream_append(entry->bstream, st2->bstream);
-		if(ret < 0) goto ABORT;
 		QRinput_List_freeEntry(st1);
 		QRinput_List_freeEntry(st2);
 	} else {
@@ -1078,11 +1068,10 @@ static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
 		if(ret < 0) return -1;
 	}
 
-	return BitStream_size(entry->bstream);
+	return BitStream_size(bstream) - prevsize;
 ABORT:
 	QRinput_List_freeEntry(st1);
 	QRinput_List_freeEntry(st2);
-	BitStream_free(bstream);
 	return -1;
 }
 
@@ -1094,14 +1083,14 @@ ABORT:
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  */
-static int QRinput_createBitStream(QRinput *input)
+static int QRinput_createBitStream(QRinput *input, BitStream *bstream)
 {
 	QRinput_List *list;
 	int bits, total = 0;
 
 	list = input->head;
 	while(list != NULL) {
-		bits = QRinput_encodeBitStream(list, input->version, input->mqr);
+		bits = QRinput_encodeBitStream(list, bstream, input->version, input->mqr);
 		if(bits < 0) return -1;
 		total += bits;
 		list = list->next;
@@ -1121,7 +1110,7 @@ static int QRinput_createBitStream(QRinput *input)
  * @throw ENOMEM unable to allocate memory.
  * @throw ERANGE input is too large.
  */
-static int QRinput_convertData(QRinput *input)
+static int QRinput_convertData(QRinput *input, BitStream *bstream)
 {
 	int bits;
 	int ver;
@@ -1132,7 +1121,8 @@ static int QRinput_convertData(QRinput *input)
 	}
 
 	for(;;) {
-		bits = QRinput_createBitStream(input);
+		BitStream_reset(bstream);
+		bits = QRinput_createBitStream(input, bstream);
 		if(bits < 0) return -1;
 		ver = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
 		if(ver < 0) {
@@ -1291,12 +1281,13 @@ static int QRinput_insertFNC1Header(QRinput *input)
 __STATIC BitStream *QRinput_mergeBitStream(QRinput *input)
 {
 	BitStream *bstream;
-	QRinput_List *list;
-	int ret;
+
+	bstream = BitStream_new();
+	if(bstream == NULL) return NULL;
 
 	if(input->mqr) {
-		if(QRinput_createBitStream(input) < 0) {
-			return NULL;
+		if(QRinput_createBitStream(input, bstream) < 0) {
+			goto ABORT;
 		}
 	} else {
 		if(input->fnc1) {
@@ -1304,25 +1295,16 @@ __STATIC BitStream *QRinput_mergeBitStream(QRinput *input)
 				return NULL;
 			}
 		}
-		if(QRinput_convertData(input) < 0) {
-			return NULL;
+		if(QRinput_convertData(input, bstream) < 0) {
+			goto ABORT;
 		}
-	}
-
-	bstream = BitStream_new();
-	if(bstream == NULL) return NULL;
-
-	list = input->head;
-	while(list != NULL) {
-		ret = BitStream_append(bstream, list->bstream);
-		if(ret < 0) {
-			BitStream_free(bstream);
-			return NULL;
-		}
-		list = list->next;
 	}
 
 	return bstream;
+
+ABORT:
+	BitStream_free(bstream);
+	return NULL;
 }
 
 /**
@@ -1513,10 +1495,11 @@ __STATIC int QRinput_splitEntry(QRinput_List *entry, int bytes)
 
 QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 {
-	QRinput *p;
-	QRinput_Struct *s;
+	QRinput *p = NULL;
+	QRinput_Struct *s = NULL;
 	int bits, maxbits, nextbits, bytes, ret;
 	QRinput_List *list, *next, *prev;
+	BitStream *bstream = NULL;
 
 	if(input->mqr) {
 		errno = EINVAL;
@@ -1535,11 +1518,10 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 	QRinput_Struct_setParity(s, QRinput_calcParity(input));
 	maxbits = QRspec_getDataLength(input->version, input->level) * 8 - STRUCTURE_HEADER_SIZE;
 
-	if(maxbits <= 0) {
-		QRinput_Struct_free(s);
-		QRinput_free(input);
-		return NULL;
-	}
+	if(maxbits <= 0) goto ABORT;
+
+	bstream = BitStream_new();
+	if(bstream == NULL) goto ABORT;
 
 	bits = 0;
 	list = input->head;
@@ -1547,7 +1529,8 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 	while(list != NULL) {
 		nextbits = QRinput_estimateBitStreamSizeOfEntry(list, input->version, input->mqr);
 		if(bits + nextbits <= maxbits) {
-			ret = QRinput_encodeBitStream(list, input->version, input->mqr);
+			BitStream_reset(bstream);
+			ret = QRinput_encodeBitStream(list, bstream, input->version, input->mqr);
 			if(ret < 0) goto ABORT;
 			bits += ret;
 			prev = list;
@@ -1588,19 +1571,23 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 	}
 	QRinput_Struct_appendInput(s, input);
 	if(s->size > MAX_STRUCTURED_SYMBOLS) {
-		QRinput_Struct_free(s);
 		errno = ERANGE;
+		QRinput_Struct_free(s);
+		BitStream_free(bstream);
 		return NULL;
 	}
 	ret = QRinput_Struct_insertStructuredAppendHeaders(s);
 	if(ret < 0) {
 		QRinput_Struct_free(s);
+		BitStream_free(bstream);
 		return NULL;
 	}
 
+	BitStream_free(bstream);
 	return s;
 
 ABORT:
+	BitStream_free(bstream);
 	QRinput_free(input);
 	QRinput_Struct_free(s);
 	return NULL;

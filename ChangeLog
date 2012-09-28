@@ -1,5 +1,12 @@
+2012.09.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* bstream.h:
+	  - Added a new function "BitStream_reset()".
+	* qrinput.c:
+	  - Reduced the use of dynamic memory allocation.
+	  - Performance improved.
+
 2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
-	* tests/qrinput.c:
+	* qrinput.c, tests/qrinput.c:
 	  - Reduced the use of dynamic memory allocation.
 
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
