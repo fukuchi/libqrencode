@@ -26,7 +26,8 @@ int inputSize(QRinput *input)
 	BitStream *bstream;
 	int size;
 
-	bstream = QRinput_mergeBitStream(input);
+	bstream = BitStream_new();
+	QRinput_mergeBitStream(input, bstream);
 	size = BitStream_size(bstream);
 	BitStream_free(bstream);
 

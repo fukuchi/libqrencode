@@ -1278,33 +1278,24 @@ static int QRinput_insertFNC1Header(QRinput *input)
  * @return merged bit stream
  */
 
-__STATIC BitStream *QRinput_mergeBitStream(QRinput *input)
+__STATIC int QRinput_mergeBitStream(QRinput *input, BitStream *bstream)
 {
-	BitStream *bstream;
-
-	bstream = BitStream_new();
-	if(bstream == NULL) return NULL;
-
 	if(input->mqr) {
 		if(QRinput_createBitStream(input, bstream) < 0) {
-			goto ABORT;
+			return -1;
 		}
 	} else {
 		if(input->fnc1) {
 			if(QRinput_insertFNC1Header(input) < 0) {
-				return NULL;
+				return -1;
 			}
 		}
 		if(QRinput_convertData(input, bstream) < 0) {
-			goto ABORT;
+			return -1;
 		}
 	}
 
-	return bstream;
-
-ABORT:
-	BitStream_free(bstream);
-	return NULL;
+	return 0;
 }
 
 /**
@@ -1318,21 +1309,24 @@ __STATIC BitStream *QRinput_getBitStream(QRinput *input)
 	BitStream *bstream;
 	int ret;
 
-	bstream = QRinput_mergeBitStream(input);
-	if(bstream == NULL) {
-		return NULL;
-	}
+	bstream = BitStream_new();
+	if(bstream == NULL) return NULL;
+
+	ret = QRinput_mergeBitStream(input, bstream);
+	if(ret < 0) goto ABORT;
+
 	if(input->mqr) {
 		ret = QRinput_appendPaddingBitMQR(bstream, input);
 	} else {
 		ret = QRinput_appendPaddingBit(bstream, input);
 	}
-	if(ret < 0) {
-		BitStream_free(bstream);
-		return NULL;
-	}
+	if(ret < 0) goto ABORT;
 
 	return bstream;
+
+ABORT:
+	BitStream_free(bstream);
+	return NULL;
 }
 
 /**

@@ -67,7 +67,8 @@ int inputSize(QRinput *input)
 	BitStream *bstream;
 	int size;
 
-	bstream = QRinput_mergeBitStream(input);
+	bstream = BitStream_new();
+	QRinput_mergeBitStream(input, bstream);
 	size = BitStream_size(bstream);
 	BitStream_free(bstream);
 
@@ -77,15 +78,16 @@ int inputSize(QRinput *input)
 void test_split1(void)
 {
 	QRinput *input;
-	BitStream *stream;
+	BitStream *bstream;
 
 	testStart("Split test: null string");
 	input = QRinput_new2(0, QR_ECLEVEL_L);
 	Split_splitStringToQRinput("", input, QR_MODE_8, 0);
-	stream = QRinput_mergeBitStream(input);
-	testEndExp(BitStream_size(stream) == 0);
+	bstream = BitStream_new();
+	QRinput_mergeBitStream(input, bstream);
+	testEndExp(BitStream_size(bstream) == 0);
 	QRinput_free(input);
-	BitStream_free(stream);
+	BitStream_free(bstream);
 }
 
 void test_split2(void)
