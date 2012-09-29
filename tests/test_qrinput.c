@@ -19,7 +19,8 @@ int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mo
 		input = QRinput_new2(version, level);
 	}
 	QRinput_append(input, mode, strlen(data), (unsigned char *)data);
-	bstream = QRinput_getBitStream(input);
+	bstream = BitStream_new();
+	QRinput_getBitStream(input, bstream);
 	ret = cmpBin(correct, bstream);
 	if(ret) {
 		printf("result : ");
@@ -198,7 +199,8 @@ void test_padding(void)
 	testStart("Padding bit check. (less than 5 bits)");
 	input = QRinput_new2(1, QR_ECLEVEL_L);
 	QRinput_append(input, QR_MODE_8, 17, (unsigned char *)data);
-	bstream = QRinput_getBitStream(input);
+	bstream = BitStream_new();
+	QRinput_getBitStream(input, bstream);
 	size = BitStream_size(bstream);
 	assert_equal(size, 152, "# of bit is incorrect (%d != 152).\n", size);
 	c = 0;
@@ -237,7 +239,8 @@ void test_padding2(void)
 
 	input = QRinput_new2(1, QR_ECLEVEL_L);
 	QRinput_append(input, QR_MODE_8, 16, (unsigned char *)data);
-	bstream = QRinput_getBitStream(input);
+	bstream = BitStream_new();
+	QRinput_getBitStream(input, bstream);
 	size = BitStream_size(bstream);
 	assert_equal(size, 152, "16byte: # of bit is incorrect (%d != 152).\n", size);
 	ret = ncmpBin(correct, bstream, 152);
@@ -254,7 +257,8 @@ void test_padding2(void)
 
 	input = QRinput_new2(1, QR_ECLEVEL_L);
 	QRinput_append(input, QR_MODE_8, 15, (unsigned char *)data);
-	bstream = QRinput_getBitStream(input);
+	bstream = BitStream_new();
+	QRinput_getBitStream(input, bstream);
 	size = BitStream_size(bstream);
 	assert_equal(size, 152, "15byte: # of bit is incorrect (%d != 152).\n", size);
 	ret = ncmpBin(correct, bstream, 152);

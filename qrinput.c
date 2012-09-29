@@ -1304,29 +1304,21 @@ __STATIC int QRinput_mergeBitStream(QRinput *input, BitStream *bstream)
  * @return padded merged bit stream
  */
 
-__STATIC BitStream *QRinput_getBitStream(QRinput *input)
+__STATIC int QRinput_getBitStream(QRinput *input, BitStream *bstream)
 {
-	BitStream *bstream;
 	int ret;
 
-	bstream = BitStream_new();
-	if(bstream == NULL) return NULL;
-
 	ret = QRinput_mergeBitStream(input, bstream);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 
 	if(input->mqr) {
 		ret = QRinput_appendPaddingBitMQR(bstream, input);
 	} else {
 		ret = QRinput_appendPaddingBit(bstream, input);
 	}
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 
-	return bstream;
-
-ABORT:
-	BitStream_free(bstream);
-	return NULL;
+	return 0;
 }
 
 /**
@@ -1339,9 +1331,16 @@ unsigned char *QRinput_getByteStream(QRinput *input)
 {
 	BitStream *bstream;
 	unsigned char *array;
+	int ret;
 
-	bstream = QRinput_getBitStream(input);
+	bstream = BitStream_new();
 	if(bstream == NULL) {
+		return NULL;
+	}
+
+	ret = QRinput_getBitStream(input, bstream);
+	if(ret < 0) {
+		BitStream_free(bstream);
 		return NULL;
 	}
 	array = BitStream_toByte(bstream);

@@ -113,7 +113,7 @@ extern const signed char QRinput_anTable[128];
 
 #ifdef WITH_TESTS
 extern int QRinput_mergeBitStream(QRinput *input, BitStream *bstream);
-extern BitStream *QRinput_getBitStream(QRinput *input);
+extern int QRinput_getBitStream(QRinput *input, BitStream *bstream);
 extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
 extern int QRinput_splitEntry(QRinput_List *entry, int bytes);
 extern int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits);

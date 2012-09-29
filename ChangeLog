@@ -4,6 +4,8 @@
 	* qrinput.c:
 	  - Reduced the use of dynamic memory allocation.
 	  - Performance improved.
+	  - Interfaces of QRinput_getBitStream() and QRinput_mergeBitStream() have
+	    been changed.
 
 2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c, tests/qrinput.c:
