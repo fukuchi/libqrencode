@@ -1,6 +1,9 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.4.0 (2012.10.x)
+-------------------------
+
 Version 3.3.1 (2012.4.18)
 -------------------------
 * Bugs in command line tool, manual, configure script, and libtool files have
