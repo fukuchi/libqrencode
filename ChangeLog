@@ -1,3 +1,11 @@
+2012.10.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4]
+	* qrencode.h:
+	  - Documentation improved.
+	  - Copyright year has been updated.
+	* Doxyfile:
+	  - Rebased on a template from Doxygen 1.7.6.1.
+
 2012.10.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
 	* configure.ac, README, NEWS: 
