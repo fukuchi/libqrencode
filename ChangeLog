@@ -1,3 +1,25 @@
+2012.10.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4]
+	* Version 3.4.0 has been released.
+
+2012.10.13 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4]
+	* qrencode.h:
+	  - Documentation improved.
+	  - Copyright year has been updated.
+	* Doxyfile:
+	  - Rebased on a template from Doxygen 1.7.6.1.
+
+2012.10.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4]
+	* configure.ac, README, NEWS: 
+	  - Bumped version to 3.4.0.
+	* qrencode.1.in:
+	  - Added SVG option to --type.
+	* qrenc.c:
+	  - Usage improved.
+	  - Inkscape-friendly SVG output.
+
 2012.09.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* bstream.h:
 	  - Added a new function "BitStream_reset()".
@@ -10,6 +32,13 @@
 2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c, tests/qrinput.c:
 	  - Reduced the use of dynamic memory allocation.
+
+2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Input validation improved. (Thanks to Yann Droneaud)
+	* README:
+	  - Contributors list has been updated.
+	  - Added a note about autogen.sh.
 
 2012.09.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_bitstream.c:

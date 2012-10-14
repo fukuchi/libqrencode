@@ -1,7 +1,7 @@
 /**
  * qrencode - QR Code encoder
  *
- * Copyright (C) 2006-2011 Kentaro Fukuchi <kentaro@fukuchi.org>
+ * Copyright (C) 2006-2012 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -382,12 +382,10 @@ typedef struct {
  * Singly-linked list of QRcode. Used to represent a structured symbols.
  * A list is terminated with NULL.
  */
-typedef struct _QRcode_List QRcode_List;
-
-struct _QRcode_List {
+typedef struct _QRcode_List {
 	QRcode *code;
-	QRcode_List *next;
-};
+	struct _QRcode_List *next;
+} QRcode_List;
 
 /**
  * Create a symbol from the input data.
@@ -555,6 +553,7 @@ extern char *QRcode_APIVersionString(void);
 /**
  * Clear all caches. This is only for debug purpose. If you are attacking a
  * complicated memory leak bug, try this to reduce the reachable blocks record.
+ * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
 extern void QRcode_clearCache(void);
 

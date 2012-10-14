@@ -157,6 +157,11 @@ static void usage(int help, int longopt)
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
 "  -M           encode in a Micro QR Code.\n"
+"  --foreground=RRGGBB[AA]\n"
+"  --background=RRGGBB[AA]\n"
+"               specify foreground/background color in hexadecimal notation.\n"
+"               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
+"               Color output support available only in PNG and SVG.\n"
 "  -V           display the version number and copyrights of the qrencode.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n"
@@ -168,11 +173,18 @@ static void usage(int help, int longopt)
 static int color_set(unsigned int color[4], const char *value)
 {
 	int len = strlen(value);
+	int count;
 	if(len == 6) {
-		sscanf(value, "%02x%02x%02x", &color[0], &color[1], &color[2]);
+		count = sscanf(value, "%02x%02x%02x%n", &color[0], &color[1], &color[2], &len);
+		if(count < 3 || len != 6) {
+			return -1;
+		}
 		color[3] = 255;
 	} else if(len == 8) {
-		sscanf(value, "%02x%02x%02x%02x", &color[0], &color[1], &color[2], &color[3]);
+		count = sscanf(value, "%02x%02x%02x%02x%n", &color[0], &color[1], &color[2], &color[3], &len);
+		if(count < 4 || len != 8) {
+			return -1;
+		}
 	} else {
 		return -1;
 	}
@@ -403,7 +415,7 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 	FILE *fp;
 	unsigned char *row, *p;
 	int x, y, x0, pen;
-	int realwidth;
+	int symwidth, realwidth;
 	float scale;
 	char fg[7], bg[7];
 	float fg_opacity;
@@ -413,7 +425,8 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 
 	scale = dpi * INCHES_PER_METER / 100.0;
 
-	realwidth = (qrcode->width + margin * 2) * size;
+	symwidth = qrcode->width + margin * 2;
+	realwidth = symwidth * size;
 
 	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
 	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
@@ -440,10 +453,7 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 	fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
 			" preserveAspectRatio=\"none\" version=\"1.1\""\
 			" xmlns=\"http://www.w3.org/2000/svg\">\n", 
-			realwidth / scale,
-			realwidth / scale,
-			qrcode->width + margin * 2,
-			qrcode->width + margin * 2
+			realwidth / scale, realwidth / scale, symwidth, symwidth
 		   );
 
 	/* Make named group */
@@ -451,9 +461,9 @@ static int writeSVG( QRcode *qrcode, const char *outfile )
 
 	/* Make solid background */
 	if(bg_color[3] != 255) {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"100%%\" height=\"100%%\" fill=\"#%s\" fill-opacity=\"%f\" />\n", bg, bg_opacity);
+		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\" />\n", symwidth, symwidth, bg, bg_opacity);
 	} else {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"100%%\" height=\"100%%\" fill=\"#%s\" />\n", bg);
+		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" />\n", symwidth, symwidth, bg);
 	}
 
 	/* Create new viewbox for QR data */
