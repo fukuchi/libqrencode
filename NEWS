@@ -1,8 +1,8 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.4.0 (2012.10.x)
--------------------------
+Version 3.4.0 (2012.10.15)
+--------------------------
 * SVG, UTF8, and ANSIUTF8 output supports have been added to the command line
   tool. (Thanks to Dan Storm, David Dahl, and Lennart Poettering)
 * Colored QR Code support.
