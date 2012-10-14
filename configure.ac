@@ -45,6 +45,10 @@ if test x$enable_thread_safety = xyes; then
 	AC_CHECK_LIB([pthread], [pthread_mutex_init], [AC_SUBST([LIBPTHREAD], [-lpthread])])
 fi
 AM_CONDITIONAL([HAVE_LIBPTHREAD], [test "x$ac_cv_lib_pthread_pthread_mutex_init" = "xyes" ])
+# FIXME: isn't it able to integrate the followings to AC_CHECK_LIB?
+if test x$ac_cv_lib_pthread_pthread_mutex_init = xyes ; then
+	AC_DEFINE([HAVE_LIBPTHREAD], [1], [Define to 1 if using pthread is enabled.])
+fi
 
 
 dnl --with-tools
