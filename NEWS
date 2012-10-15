@@ -1,6 +1,10 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.4.1 (2012.10.15)
+--------------------------
+* Bug fix release.
+
 Version 3.4.0 (2012.10.15)
 --------------------------
 * SVG, UTF8, and ANSIUTF8 output supports have been added to the command line
