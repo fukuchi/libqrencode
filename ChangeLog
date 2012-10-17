@@ -1,3 +1,9 @@
+2012.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4]
+	* NEWS:
+	  - Release note has been written.
+	* Version 3.4.1 has been released.
+
 2012.10.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
 	* configure.ac:
