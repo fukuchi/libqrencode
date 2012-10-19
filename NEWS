@@ -1,6 +1,15 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.4.1 (2012.10.17)
+--------------------------
+* Bug fix release.
+
+Release Note:
+Mutual exclusion did not work correctly since 3.3.1. If your application uses
+libqrencode in multithreaded environment, it is strongly recommended to update
+it.
+
 Version 3.4.0 (2012.10.15)
 --------------------------
 * SVG, UTF8, and ANSIUTF8 output supports have been added to the command line
