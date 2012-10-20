@@ -415,16 +415,16 @@ static int QRinput_encodeModeNum(QRinput_List *entry, BitStream *bstream, int ve
 	if(mqr) {
 		if(version > 1) {
 			ret = BitStream_appendNum(bstream, version - 1, MQRSPEC_MODEID_NUM);
-			if(ret < 0) goto ABORT;
+			if(ret < 0) return -1;
 		}
 		ret = BitStream_appendNum(bstream, MQRspec_lengthIndicator(QR_MODE_NUM, version), entry->size);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	} else {
 		ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_NUM);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	
 		ret = BitStream_appendNum(bstream, QRspec_lengthIndicator(QR_MODE_NUM, version), entry->size);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	words = entry->size / 3;
@@ -434,23 +434,21 @@ static int QRinput_encodeModeNum(QRinput_List *entry, BitStream *bstream, int ve
 		val += (entry->data[i*3+2] - '0');
 
 		ret = BitStream_appendNum(bstream, 10, val);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	if(entry->size - words * 3 == 1) {
 		val = entry->data[words*3] - '0';
 		ret = BitStream_appendNum(bstream, 4, val);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	} else if(entry->size - words * 3 == 2) {
 		val  = (entry->data[words*3  ] - '0') * 10;
 		val += (entry->data[words*3+1] - '0');
 		BitStream_appendNum(bstream, 7, val);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 /******************************************************************************
@@ -523,17 +521,17 @@ static int QRinput_encodeModeAn(QRinput_List *entry, BitStream *bstream, int ver
 	if(mqr) {
 		if(version < 2) {
 			errno = EINVAL;
-			goto ABORT;
+			return -1;
 		}
 		ret = BitStream_appendNum(bstream, version - 1, MQRSPEC_MODEID_AN);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 		ret = BitStream_appendNum(bstream, MQRspec_lengthIndicator(QR_MODE_AN, version), entry->size);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	} else {
 		ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_AN);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 		ret = BitStream_appendNum(bstream, QRspec_lengthIndicator(QR_MODE_AN, version), entry->size);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	words = entry->size / 2;
@@ -542,19 +540,17 @@ static int QRinput_encodeModeAn(QRinput_List *entry, BitStream *bstream, int ver
 		val += (unsigned int)QRinput_lookAnTable(entry->data[i*2+1]);
 
 		ret = BitStream_appendNum(bstream, 11, val);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	if(entry->size & 1) {
 		val = (unsigned int)QRinput_lookAnTable(entry->data[words * 2]);
 
 		ret = BitStream_appendNum(bstream, 6, val);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 /******************************************************************************
@@ -587,25 +583,23 @@ static int QRinput_encodeMode8(QRinput_List *entry, BitStream *bstream, int vers
 	if(mqr) {
 		if(version < 3) {
 			errno = EINVAL;
-			goto ABORT;
+			return -1;
 		}
 		ret = BitStream_appendNum(bstream, version - 1, MQRSPEC_MODEID_8);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 		ret = BitStream_appendNum(bstream, MQRspec_lengthIndicator(QR_MODE_8, version), entry->size);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	} else {
 		ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_8);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 		ret = BitStream_appendNum(bstream, QRspec_lengthIndicator(QR_MODE_8, version), entry->size);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	ret = BitStream_appendBytes(bstream, entry->size, entry->data);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 
@@ -665,17 +659,17 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, BitStream *bstream, int 
 	if(mqr) {
 		if(version < 2) {
 			errno = EINVAL;
-			goto ABORT;
+			return -1;
 		}
 		ret = BitStream_appendNum(bstream, version - 1, MQRSPEC_MODEID_KANJI);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 		ret = BitStream_appendNum(bstream, MQRspec_lengthIndicator(QR_MODE_KANJI, version), entry->size/2);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	} else {
 		ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_KANJI);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 		ret = BitStream_appendNum(bstream, QRspec_lengthIndicator(QR_MODE_KANJI, version), entry->size/2);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	for(i=0; i<entry->size; i+=2) {
@@ -689,12 +683,10 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, BitStream *bstream, int 
 		val = (val & 0xff) + h;
 
 		ret = BitStream_appendNum(bstream, 13, val);
-		if(ret < 0) goto ABORT;
+		if(ret < 0) return -1;
 	}
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 /******************************************************************************
@@ -721,17 +713,15 @@ static int QRinput_encodeModeStructure(QRinput_List *entry, BitStream *bstream, 
 	}
 
 	ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_STRUCTURE);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 	ret = BitStream_appendNum(bstream, 4, entry->data[1] - 1);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 	ret = BitStream_appendNum(bstream, 4, entry->data[0] - 1);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 	ret = BitStream_appendNum(bstream, 8, entry->data[2]);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 /******************************************************************************
@@ -750,14 +740,12 @@ static int QRinput_encodeModeFNC1Second(QRinput_List *entry, BitStream *bstream,
 	int ret;
 
 	ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_FNC1SECOND);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 	
 	ret = BitStream_appendBytes(bstream, 1, entry->data);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 /******************************************************************************
@@ -813,14 +801,12 @@ static int QRinput_encodeModeECI(QRinput_List *entry, BitStream *bstream, int ve
 	}
 
 	ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_ECI);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 	
 	ret = BitStream_appendNum(bstream, words * 8, code);
-	if(ret < 0) goto ABORT;
+	if(ret < 0) return -1;
 
 	return 0;
-ABORT:
-	return -1;
 }
 
 /******************************************************************************

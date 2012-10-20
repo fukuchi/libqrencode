@@ -1,3 +1,7 @@
+2012.10.21 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Unnecessary "goto ABORT" eliminated.
+
 2012.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
 	* NEWS:
