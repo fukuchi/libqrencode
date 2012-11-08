@@ -19,6 +19,15 @@ static const char decodeAnTable[45] = {
 	'+', '-', '.', '/', ':'
 };
 
+typedef struct {
+	char *str;
+	int version;
+	QRecLevel level;
+	QRencodeMode hint;
+	int casesensitive;
+} TestString;
+#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+
 #define drand(__scale__) ((__scale__) * (double)rand() / ((double)RAND_MAX + 1.0))
 
 int inputSize(QRinput *input)
@@ -818,6 +827,38 @@ void test_decodeShortMQR(void)
 	testFinish();
 }
 
+void test_oddBitCalcMQR(void)
+{
+	/* test issue #25 (odd bits calculation bug) */
+	/* test pattern contributed by vlad417 */
+	TestString tests[] = {
+		{"46194", 1, QR_ECLEVEL_L, QR_MODE_8, 1},
+		{"WBA5Y47YPQQ", 3, QR_ECLEVEL_L, QR_MODE_8, 1}
+	};
+	QRcode *qrcode;
+	QRdata *qrdata;
+	int i;
+
+	testStart("Odd bits calculation bug checking (MQR).");
+
+	for(i=0; i<_countof(tests); i++) {
+		qrcode = QRcode_encodeStringMQR(tests[i].str,
+										tests[i].version,
+										tests[i].level,
+										tests[i].hint,
+										tests[i].casesensitive);
+		assert_nonnull(qrcode, "Failed to encode: %s\n", tests[i].str);
+		if(qrcode == NULL) continue;
+		qrdata = QRcode_decodeMQR(qrcode);
+		assert_nonnull(qrdata, "Failed to decode.\n");
+		assert_zero(strcmp((char *)qrdata->data, tests[i].str), "Decoded data (%s) mismatched (%s)\n", (char *)qrdata->data, tests[i].str);
+		if(qrdata != NULL) QRdata_free(qrdata);
+		QRcode_free(qrcode);
+	}
+
+	testFinish();
+}
+
 void test_mqrencode(void)
 {
 	char *str = "MICROQR";
@@ -915,6 +956,7 @@ int main(void)
 	test_formatInfoMQR();
 	test_encodeTooLongMQR();
 	test_decodeShortMQR();
+	test_oddBitCalcMQR();
 	test_mqrencode();
 	test_apiversion();
 

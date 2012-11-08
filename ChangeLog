@@ -1,8 +1,12 @@
 2012.11.8 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
-	  - Memory leak bug has been fixed. (issue #25) (Thanks to chisj)
-	* tests/test_qrinput.c:
+	  - Memory leak bug has been fixed. (issue #24) (Thanks to chisj)
+	* qrencode.c:
+	  - Incorrect bit extraction bug in QRcode_encodeMaskMQR() has been fixed.
+	    (issue #25) (Thanks to vlad417)
+	* tests/test_qrencode.c:
 	  - Added NUL checks for malloc-related bugs using failmalloc.
+	  - Added a new test for issue #25. (Thanks to vlad417)
 
 2012.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]

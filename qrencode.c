@@ -584,7 +584,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	for(i=0; i<raw->dataLength + raw->eccLength; i++) {
 		code = MQRraw_getCode(raw);
 		if(raw->oddbits && i == raw->dataLength - 1) {
-			bit = 1 << raw->oddbits;
+			bit = 1 << (raw->oddbits - 1);
 			for(j=0; j<raw->oddbits; j++) {
 				p = FrameFiller_next(filler);
 				if(p == NULL) goto EXIT;
