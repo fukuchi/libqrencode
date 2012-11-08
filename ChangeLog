@@ -1,3 +1,9 @@
+2012.11.8 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Memory leak bug has been fixed. (issue #25) (Thanks to chisj)
+	* tests/test_qrinput.c:
+	  - Added NUL checks for malloc-related bugs using failmalloc.
+
 2012.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
 	* NEWS:

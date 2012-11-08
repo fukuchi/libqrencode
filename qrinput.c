@@ -1645,12 +1645,16 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 				input->tail = prev;
 			}
 			ret = QRinput_Struct_appendInput(s, input);
-			if(ret < 0) goto ABORT;
+			if(ret < 0) {
+				QRinput_free(p);
+				goto ABORT;
+			}
 			input = p;
 			bits = 0;
 		}
 	}
-	QRinput_Struct_appendInput(s, input);
+	ret = QRinput_Struct_appendInput(s, input);
+	if(ret < 0) goto ABORT;
 	if(s->size > MAX_STRUCTURED_SYMBOLS) {
 		QRinput_Struct_free(s);
 		errno = ERANGE;

@@ -245,6 +245,7 @@ void test_format(void)
 	testStart("Test format information(level L,mask 0)");
 	width = QRspec_getWidth(1);
 	frame = QRspec_newFrame(1);
+	if(frame == NULL) goto ABORT;
 	format = QRspec_getFormatInfo(1, QR_ECLEVEL_L);
 	blacks = Mask_writeFormatInformation(width, frame, 1, QR_ECLEVEL_L);
 	decode = 0;
@@ -294,6 +295,7 @@ void test_format(void)
 
 	free(frame);
 
+ABORT:
 	testEnd(0);
 }
 
@@ -336,11 +338,13 @@ void test_encode(void)
 
 	testStart("Test encode (1-M)");
 	stream = QRinput_new();
+	if(stream == NULL) goto ABORT;
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	for(mask=0; mask<8; mask++) {
 		QRinput_setVersion(stream, 1);
 		QRinput_setErrorCorrectionLevel(stream, QR_ECLEVEL_M);
 		qrcode = QRcode_encodeMask(stream, mask);
+		if(qrcode == NULL) goto ABORT;
 		w = qrcode->width;
 		frame = qrcode->data;
 		for(y=0; y<w; y++) {
@@ -354,6 +358,7 @@ void test_encode(void)
 		QRcode_free(qrcode);
 	}
 	QRinput_free(stream);
+ABORT:
 	testEnd(err);
 }
 
