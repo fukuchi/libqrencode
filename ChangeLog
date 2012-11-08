@@ -1,3 +1,7 @@
+2012.11.9 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Code cleanup.
+
 2012.11.8 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Memory leak bug has been fixed. (issue #24) (Thanks to chisj)
