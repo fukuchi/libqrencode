@@ -1,8 +1,12 @@
-2012.11.9 Kentaro FUKUCHI <kentaro@fukuchi.org>
+2012.11.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrencode.h
+	  - Doxygen documents improved.
+
+2012.11.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Code cleanup.
 
-2012.11.8 Kentaro FUKUCHI <kentaro@fukuchi.org>
+2012.11.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Memory leak bug has been fixed. (issue #24) (Thanks to chisj)
 	* qrencode.c:
