@@ -1,3 +1,7 @@
+2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Now it includes "string.h" by itself for libpng16. (Thanks to Petr)
+
 2012.11.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrencode.h
 	  - Doxygen documents improved.
