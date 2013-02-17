@@ -1,4 +1,9 @@
 2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4, master]
+	* configure.ac, README, NEWS: 
+	  - Bumped version to 3.4.2.
+
+2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Now it includes "string.h" by itself for libpng16. (Thanks to Petr)
 
