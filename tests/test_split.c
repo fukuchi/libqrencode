@@ -420,7 +420,106 @@ void test_splitAnNAn(void)
 	s3 = inputSize(input3);
 
 	assert_equal(s1, s2, "Incorrect split");
-	assert_exp(s2 < s3, "Incorrect split");
+	assert_exp(s2 < s3, "Incorrect estimation");
+	testFinish();
+	QRinput_free(input1);
+	QRinput_free(input2);
+	QRinput_free(input3);
+}
+
+void test_splitAn8An(void)
+{
+	QRinput *input1, *input2, *input3;
+	int s1, s2, s3;
+	char *strall = "ABCDabcdefABCD";
+	char *str1 = "ABCD";
+	char *str2 = "abcdef";
+	char *str3 = "ABCD";
+
+	testStart("Split test: switching from 8 to An cost test");
+	input1 = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 1);
+
+	input2 = QRinput_new();
+	QRinput_append(input2, QR_MODE_8, 14, (unsigned char *)strall);
+
+	input3 = QRinput_new();
+	QRinput_append(input3, QR_MODE_AN,  4, (unsigned char *)str1);
+	QRinput_append(input3, QR_MODE_8, 6, (unsigned char *)str2);
+	QRinput_append(input3, QR_MODE_AN,  4, (unsigned char *)str3);
+
+	s1 = inputSize(input1);
+	s2 = inputSize(input2);
+	s3 = inputSize(input3);
+
+	assert_equal(s1, s2, "Incorrect split");
+	assert_exp(s2 < s3, "Incorrect estimation");
+	testFinish();
+	QRinput_free(input1);
+	QRinput_free(input2);
+	QRinput_free(input3);
+}
+
+void test_split8An8(void)
+{
+	QRinput *input1, *input2, *input3;
+	int s1, s2, s3;
+	char *strall = "abcABCDEFGHabc";
+	char *str1 = "abc";
+	char *str2 = "ABCDEFGH";
+	char *str3 = "abc";
+
+	testStart("Split test: switching from 8-An-8 cost test");
+	input1 = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 1);
+
+	input2 = QRinput_new();
+	QRinput_append(input2, QR_MODE_8, 14, (unsigned char *)strall);
+
+	input3 = QRinput_new();
+	QRinput_append(input3, QR_MODE_8,  3, (unsigned char *)str1);
+	QRinput_append(input3, QR_MODE_AN, 8, (unsigned char *)str2);
+	QRinput_append(input3, QR_MODE_8,  3, (unsigned char *)str3);
+
+	s1 = inputSize(input1);
+	s2 = inputSize(input2);
+	s3 = inputSize(input3);
+
+	assert_equal(s1, s2, "Incorrect split");
+	assert_exp(s2 < s3, "Incorrect estimation");
+	testFinish();
+	QRinput_free(input1);
+	QRinput_free(input2);
+	QRinput_free(input3);
+}
+
+void test_split8N8(void)
+{
+	QRinput *input1, *input2, *input3;
+	int s1, s2, s3;
+	char *strall = "abc1234abc";
+	char *str1 = "abc";
+	char *str2 = "1234";
+	char *str3 = "abc";
+
+	testStart("Split test: switching from 8-N-8 cost test");
+	input1 = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 1);
+
+	input2 = QRinput_new();
+	QRinput_append(input2, QR_MODE_8, 10, (unsigned char *)strall);
+
+	input3 = QRinput_new();
+	QRinput_append(input3, QR_MODE_8,   3, (unsigned char *)str1);
+	QRinput_append(input3, QR_MODE_NUM, 4, (unsigned char *)str2);
+	QRinput_append(input3, QR_MODE_8,   3, (unsigned char *)str3);
+
+	s1 = inputSize(input1);
+	s2 = inputSize(input2);
+	s3 = inputSize(input3);
+
+	assert_equal(s1, s2, "Incorrect split");
+	assert_exp(s2 < s3, "Incorrect estimation");
 	testFinish();
 	QRinput_free(input1);
 	QRinput_free(input2);
@@ -441,6 +540,9 @@ int main(void)
 	test_toupper();
 	test_splitNum8();
 	test_splitAnNAn();
+	test_splitAn8An();
+	test_split8An8();
+	test_split8N8();
 
 	report();
 

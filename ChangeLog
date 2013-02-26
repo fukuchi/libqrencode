@@ -3,6 +3,8 @@
 	  - Applied Viona's bug fix patch. (Thanks to Viona)
 	  - Additional switching cost between AN and Num mode has been included
 	    correctly.
+	  - Additional switching cost between 8 and AN/Num mode has been included
+	    correctly.
 	  - New test case has been added.
 
 2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
