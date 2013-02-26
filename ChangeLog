@@ -1,3 +1,10 @@
+2013.02.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* split.c, tests/test_split.c:
+	  - Applied Viona's bug fix patch. (Thanks to Viona)
+	  - Additional switching cost between AN and Num mode has been included
+	    correctly.
+	  - New test case has been added.
+
 2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4, master]
 	* configure.ac, README, NEWS: 

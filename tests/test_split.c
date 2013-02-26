@@ -394,6 +394,39 @@ void test_splitNum8(void)
 	QRinput_free(input);
 }
 
+void test_splitAnNAn(void)
+{
+	QRinput *input1, *input2, *input3;
+	int s1, s2, s3;
+	char *strall = "326A80A9C5004C0875571F8B71C311F2F86";
+	char *str1 = "326A80A9C5004C";
+	char *str2 = "0875571";
+	char *str3 = "F8B71C311F2F86";
+
+	testStart("Split test: switching from An to Num cost test");
+	input1 = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 0);
+
+	input2 = QRinput_new();
+	QRinput_append(input2, QR_MODE_AN, 35, (unsigned char *)strall);
+
+	input3 = QRinput_new();
+	QRinput_append(input3, QR_MODE_AN, 14, (unsigned char *)str1);
+	QRinput_append(input3, QR_MODE_NUM, 7, (unsigned char *)str2);
+	QRinput_append(input3, QR_MODE_AN, 14, (unsigned char *)str3);
+
+	s1 = inputSize(input1);
+	s2 = inputSize(input2);
+	s3 = inputSize(input3);
+
+	assert_equal(s1, s2, "Incorrect split");
+	assert_exp(s2 < s3, "Incorrect split");
+	testFinish();
+	QRinput_free(input1);
+	QRinput_free(input2);
+	QRinput_free(input3);
+}
+
 int main(void)
 {
 	test_split1();
@@ -407,6 +440,7 @@ int main(void)
 	test_split3c();
 	test_toupper();
 	test_splitNum8();
+	test_splitAnNAn();
 
 	report();
 

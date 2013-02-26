@@ -140,6 +140,7 @@ static int Split_eatAn(const char *string, QRinput *input, QRencodeMode hint)
 			}
 			dif = QRinput_estimateBitsModeAn(p - string) /* + 4 + la */
 				+ QRinput_estimateBitsModeNum(q - p) + 4 + ln
+				+ (isalnum(*q)?(4 + ln):0)
 				- QRinput_estimateBitsModeAn(q - string) /* - 4 - la */;
 			if(dif < 0) {
 				break;
