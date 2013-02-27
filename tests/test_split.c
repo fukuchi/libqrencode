@@ -403,7 +403,7 @@ void test_splitAnNAn(void)
 	char *str2 = "0875571";
 	char *str3 = "F8B71C311F2F86";
 
-	testStart("Split test: switching from An to Num cost test");
+	testStart("Split test: An-N-An switching cost test");
 	input1 = QRinput_new2(0, QR_ECLEVEL_L);
 	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 0);
 
@@ -436,7 +436,7 @@ void test_splitAn8An(void)
 	char *str2 = "abcdef";
 	char *str3 = "ABCD";
 
-	testStart("Split test: switching from 8 to An cost test");
+	testStart("Split test: An-8-An switching cost test");
 	input1 = QRinput_new2(0, QR_ECLEVEL_L);
 	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 1);
 
@@ -469,7 +469,7 @@ void test_split8An8(void)
 	char *str2 = "ABCDEFGH";
 	char *str3 = "abc";
 
-	testStart("Split test: switching from 8-An-8 cost test");
+	testStart("Split test: 8-An-8 switching cost test");
 	input1 = QRinput_new2(0, QR_ECLEVEL_L);
 	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 1);
 
@@ -502,7 +502,7 @@ void test_split8N8(void)
 	char *str2 = "1234";
 	char *str3 = "abc";
 
-	testStart("Split test: switching from 8-N-8 cost test");
+	testStart("Split test: 8-N-8 switching cost test");
 	input1 = QRinput_new2(0, QR_ECLEVEL_L);
 	Split_splitStringToQRinput(strall, input1, QR_MODE_8, 1);
 
