@@ -3,11 +3,13 @@ libqrencode NEWS - Overview of changes
 
 Version 3.4.2 (2013.2.17)
 -------------------------
-* Bug fix release. (issue #24 and #25) (Thanks to chisj, vlad417 and Petr)
+* Bug fix release. (Thanks to chisj, vlad417, Petr and Viona)	
+
 
 Release Note:
-Micro QR Code encoder had a bug that caused incorrect output. Now the bug has
-been fixed.
+Micro QR Code encoder had a bug that caused incorrect output (issue #25). Now
+the bug has been fixed. Memory leak bug (#24) and insufficient string splitting
+bug have been fixed.
 
 Version 3.4.1 (2012.10.17)
 --------------------------
