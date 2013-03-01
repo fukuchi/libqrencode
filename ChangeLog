@@ -1,6 +1,7 @@
 2013.03.01 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README, NEWS:
 	  - Documentation update.
+	* Version 3.4.2 has been released.
 
 2013.02.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* split.c, tests/test_split.c:
