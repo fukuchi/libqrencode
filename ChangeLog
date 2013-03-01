@@ -1,3 +1,7 @@
+2013.03.01 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* README, NEWS:
+	  - Documentation update.
+
 2013.02.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* split.c, tests/test_split.c:
 	  - Applied Viona's bug fix patch. (Thanks to Viona)
