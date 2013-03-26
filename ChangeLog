@@ -1,6 +1,8 @@
 2013.03.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Memory leak bug has been fixed. (Thanks to Hassan Hajji)
+	  - Buffer overrun bug has been fixed.
+	  - Code cleanups.
 
 2013.03.01 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README, NEWS:

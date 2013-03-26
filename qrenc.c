@@ -285,6 +285,10 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 	}
 
 	palette = (png_colorp) malloc(sizeof(png_color) * 2);
+	if(palette == NULL) {
+		fprintf(stderr, "Failed to allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	palette[0].red   = fg_color[0];
 	palette[0].green = fg_color[1];
 	palette[0].blue  = fg_color[2];
@@ -627,7 +631,6 @@ static int writeUTF8(QRcode *qrcode, const char *outfile, int use_ansi)
 	FILE *fp;
 	int x, y;
 	int realwidth;
-	unsigned char *p;
 	const char *white, *reset;
 
 	if (use_ansi){
@@ -646,11 +649,10 @@ static int writeUTF8(QRcode *qrcode, const char *outfile, int use_ansi)
 	writeUTF8_margin(fp, realwidth, white, reset, use_ansi);
 
 	/* data */
-	p = qrcode->data;
 	for(y = 0; y < qrcode->width; y += 2) {
 		unsigned char *row1, *row2;
-		row1 = p + y*qrcode->width;
-		row2 = p + y*qrcode->width + qrcode->width;
+		row1 = qrcode->data + y*qrcode->width;
+		row2 = row1 + qrcode->width;
 
 		fputs(white, fp);
 
@@ -658,14 +660,19 @@ static int writeUTF8(QRcode *qrcode, const char *outfile, int use_ansi)
 			fputs("\342\226\210", fp);
 
 		for (x = 0; x < qrcode->width; x++) {
-			if ((*(row1 + x) & 1) && (*(row2 + x) & 1))
-				fputc(' ', fp);
-			else if (*(row1 + x) & 1)
-				fputs("\342\226\204", fp);
-			else if (*(row2 + x) & 1)
-				fputs("\342\226\200", fp);
-			else
-				fputs("\342\226\210", fp);
+			if(row1[x] & 1) {
+				if(y < qrcode->width - 1 && row2[x] & 1) {
+					fputc(' ', fp);
+				} else {
+					fputs("\342\226\204", fp);
+				}
+			} else {
+				if(y < qrcode->width - 1 && row2[x] & 1) {
+					fputs("\342\226\200", fp);
+				} else {
+					fputs("\342\226\210", fp);
+				}
+			}
 		}
 
 		for (x = 0; x < margin; x++)
@@ -718,7 +725,7 @@ static int writeASCII(QRcode *qrcode, const char *outfile, int invert)
 	fp = openFile(outfile);
 
 	realwidth = (qrcode->width + margin * 2) * 2;
-	buffer_s = realwidth + 1;
+	buffer_s = realwidth + 2;
 	buffer = (char *)malloc( buffer_s );
 	if(buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
