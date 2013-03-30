@@ -1,3 +1,9 @@
+2013.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Renamed a variable ("index") to avoid compile-time warning. (Thanks to
+	    Emmanuel Blot)
+	  - Range check improved.
+
 2013.03.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Memory leak bug has been fixed. (Thanks to Hassan Hajji)
