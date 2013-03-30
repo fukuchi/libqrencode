@@ -3,6 +3,8 @@
 	  - Renamed a variable ("index") to avoid compile-time warning. (Thanks to
 	    Emmanuel Blot)
 	  - Range check improved.
+	* autogen.sh:
+	  - bug fix.(Thanks to Emmanuel Blot)
 
 2013.03.26 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
