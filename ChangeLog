@@ -1,3 +1,10 @@
+2013.06.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Merged pull request #29. (Thanks to Daniel Dörrhöfer)
+	    - Run length encoding has been made non-default.
+	    - New option "--rle" has been instroduced to enable run length encoding
+	      for SVG format.
+
 2013.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Renamed a variable ("index") to avoid compile-time warning. (Thanks to
