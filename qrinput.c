@@ -237,14 +237,14 @@ int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned c
  * Insert a structured-append header to the head of the input data.
  * @param input input data.
  * @param size number of structured symbols.
- * @param index index number of the symbol. (1 <= index <= size)
+ * @param number index number of the symbol. (1 <= number <= size)
  * @param parity parity among input data. (NOTE: each symbol of a set of structured symbols has the same parity data)
  * @retval 0 success.
  * @retval -1 error occurred and errno is set to indeicate the error. See Execptions for the details.
  * @throw EINVAL invalid parameter.
  * @throw ENOMEM unable to allocate memory.
  */
-__STATIC int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int index, unsigned char parity)
+__STATIC int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int number, unsigned char parity)
 {
 	QRinput_List *entry;
 	unsigned char buf[3];
@@ -253,13 +253,13 @@ __STATIC int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int 
 		errno = EINVAL;
 		return -1;
 	}
-	if(index <= 0 || index > MAX_STRUCTURED_SYMBOLS) {
+	if(number <= 0 || number > size) {
 		errno = EINVAL;
 		return -1;
 	}
 
 	buf[0] = (unsigned char)size;
-	buf[1] = (unsigned char)index;
+	buf[1] = (unsigned char)number;
 	buf[2] = parity;
 	entry = QRinput_List_newEntry(QR_MODE_STRUCTURE, 3, buf);
 	if(entry == NULL) {
