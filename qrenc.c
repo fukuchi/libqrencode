@@ -74,7 +74,7 @@ static const struct option options[] = {
 	{"casesensitive", no_argument      , NULL, 'c'},
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
-	{"rle"		, no_argument      , NULL, 'r'},
+	{"rle"          , no_argument      , &rle,   1},
 	{"micro"        , no_argument      , NULL, 'M'},
 	{"foreground"	, required_argument, NULL, 'f'},
 	{"background"	, required_argument, NULL, 'b'},
@@ -123,10 +123,10 @@ static void usage(int help, int longopt)
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
-"  -r, --rle    enable run-length encoding for svg.\n\n"
+"      --rle    enable run-length encoding for SVG.\n\n"
 "  -M, --micro  encode in a Micro QR Code. (experimental)\n\n"
-"  --foreground=RRGGBB[AA]\n"
-"  --background=RRGGBB[AA]\n"
+"      --foreground=RRGGBB[AA]\n"
+"      --background=RRGGBB[AA]\n"
 "               specify foreground/background color in hexadecimal notation.\n"
 "               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
 "               Color output support available only in PNG and SVG.\n"
@@ -158,7 +158,6 @@ static void usage(int help, int longopt)
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
-"  -r, --rle    enable run-length encoding for svg.\n\n"
 "  -M           encode in a Micro QR Code.\n"
 "  --foreground=RRGGBB[AA]\n"
 "  --background=RRGGBB[AA]\n"
@@ -1095,6 +1094,8 @@ int main(int argc, char **argv)
 			case 'V':
 				usage(0, 0);
 				exit(EXIT_SUCCESS);
+				break;
+			case 0:
 				break;
 			default:
 				fprintf(stderr, "Try `qrencode --help' for more information.\n");
