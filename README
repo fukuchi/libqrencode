@@ -138,5 +138,6 @@ Lennart Poettering (mezcalero)
 Yann Droneaud         - improved input validation patch
 Viona                 - bug fix patch for string splitting
 Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan,
-Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji
+Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji,
+Emmanuel Blot
  - bug report / suggestion
