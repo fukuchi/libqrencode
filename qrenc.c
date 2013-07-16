@@ -82,7 +82,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:d:t:Skci8rMV";
+static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt)
 {
