@@ -1061,6 +1061,7 @@ int main(int argc, char **argv)
 				break;
 			case 'S':
 				structured = 1;
+				break;
 			case 'k':
 				hint = QR_MODE_KANJI;
 				break;
