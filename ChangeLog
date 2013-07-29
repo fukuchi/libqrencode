@@ -1,3 +1,8 @@
+2013.07.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[3.4]
+	* configure.ac, README, NEWS: 
+	  - Bumped version to 3.4.3.
+
 2013.03.30 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Renamed a variable ("index") to avoid compile-time warning. (Thanks to

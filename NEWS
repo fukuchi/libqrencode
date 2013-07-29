@@ -1,6 +1,10 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.4.3 (2013.7.30)
+------------------------
+* Bug fix release. (Thanks to Emmanuel Blot)
+
 Version 3.4.2 (2013.3.1)
 ------------------------
 * Bug fix release. (Thanks to chisj, vlad417, Petr and Viona)	
