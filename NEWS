@@ -3,12 +3,22 @@ libqrencode NEWS - Overview of changes
 
 Version 3.4.3 (2013.7.30)
 ------------------------
-* Bug fix release. (Thanks to Emmanuel Blot)
+* New option "--rle" has been added to the command line tool (Thanks to Daniel
+  Dörrhöfer)
+* Bug fix release. (Thanks to Emmanuel Blot, ßlúèÇhîp)
+
+Release Note:
+This release contains a couple of bug fixes and a new minor feature of the
+command line tool. There is no change in the library.
+
+Run Length Encoding (RLE) for SVG output decreases the size of the output file,
+but it makes complicated to edit the image by SVG editors. A newly introduced
+command line option "--rle" enables RLE. RLE will not be applied if it is not
+given.
 
 Version 3.4.2 (2013.3.1)
 ------------------------
 * Bug fix release. (Thanks to chisj, vlad417, Petr and Viona)	
-
 
 Release Note:
 Micro QR Code encoder had a bug that caused incorrect output (issue #25). Now
