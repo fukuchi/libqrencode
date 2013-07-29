@@ -928,7 +928,6 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 			break;
 		case QR_MODE_FNC1FIRST:
 			return MODE_INDICATOR_SIZE;
-			break;
 		case QR_MODE_FNC1SECOND:
 			return MODE_INDICATOR_SIZE + 8;
 		default:
@@ -1103,6 +1102,7 @@ static int QRinput_encodeBitStream(QRinput_List *entry, int version, int mqr)
 				break;
 			case QR_MODE_FNC1SECOND:
 				ret = QRinput_encodeModeFNC1Second(entry, version);
+				break;
 			default:
 				break;
 		}
