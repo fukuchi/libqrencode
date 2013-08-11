@@ -5,7 +5,7 @@ Version 3.4.3 (2013.7.30)
 ------------------------
 * New option "--rle" has been added to the command line tool (Thanks to Daniel
   Dörrhöfer)
-* Bug fix release. (Thanks to Emmanuel Blot, ßlúèÇhîp)
+* Bug fix release. (Thanks to Emmanuel Blot and ßlúèÇhîp)
 
 Release Note:
 This release contains a couple of bug fixes and a new minor feature of the
