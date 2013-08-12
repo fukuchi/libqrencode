@@ -7,7 +7,7 @@
 	* qrenc.c:
 	  - missing break in switch. (Thanks to ßlúèÇhîp)
 	* qrinput.c:
-	  - missing/redundant breaks in switch.
+	  - missing/redundant breaks in some switch statements.
 
 2013.06.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:

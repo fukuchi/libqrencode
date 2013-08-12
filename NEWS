@@ -1,15 +1,15 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 3.4.3 (2013.8.11)
+Version 3.4.3 (2013.8.12)
 ------------------------
 * New option "--rle" has been added to the command line tool (Thanks to Daniel
   Dörrhöfer)
-* Bug fix release. (Thanks to Hassan Hajji, Emmanuel Blot, and ßlúèÇhîp)
+* Bug fixes. (Thanks to Hassan Hajji, Emmanuel Blot, and ßlúèÇhîp)
 
 Release Note:
 This release contains a couple of bug fixes and a new minor feature of the
-command line tool. There is no change in the library.
+command line tool. Some minor bugs in the library have been fixed.
 
 Run Length Encoding (RLE) for SVG output decreases the size of the output file,
 but it makes complicated to edit the image by SVG editors. A newly introduced
