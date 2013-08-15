@@ -95,8 +95,8 @@ void test_format(void)
 	int err = 0;
 
 	testStart("Format info test");
-	for(version=1; version<=4; version++) {
-		for(l=0; l<3; l++) {
+	for(version=1; version<=MQRSPEC_VERSION_MAX; version++) {
+		for(l=QR_ECLEVEL_L; l<=QR_ECLEVEL_Q; l++) {
 			for(mask=0; mask<4; mask++) {
 				format = MQRspec_getFormatInfo(mask, version, (QRecLevel)l);
 				type = typeTable[version - 1][l];
