@@ -66,7 +66,7 @@ static void RSECC_initLookupTable(void)
 void RSECC_init(void)
 {
 	RSECC_initLookupTable();
-	memset(generatorInitialized, 0, (max_length - min_length));
+	memset(generatorInitialized, 0, (max_length - min_length + 1));
 	initialized = 1;
 }
 
