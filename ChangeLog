@@ -1,6 +1,10 @@
 2013.08.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* rsecc.[ch], qrencode.c, tests/test_rc.c:
 	  - Code cleanups and refactoring.
+	* configure.ac:
+	  - Bumped version to 3.9.0, preparing for major update.
+	* qrenc.c:
+	  - Copyright year in usage has been updated.
 
 2013.08.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* rsecc.[ch], rscode.[ch], Makefile.am, qrencode.c:
