@@ -44,7 +44,7 @@ static void compareRS(unsigned char data[])
 			dl = QRspec_rsDataCodes1(spec);
 			el = QRspec_rsEccCodes1(spec);
 			rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
-			RSECC_encode(el, 255 - dl - el, data, ecc_rscodec);
+			RSECC_encode(dl, el, data, ecc_rscodec);
 			encode_rs_char(rs, data, ecc_expected);
 			assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
 			free_rs_char(rs);
@@ -53,7 +53,7 @@ static void compareRS(unsigned char data[])
 			el = QRspec_rsEccCodes2(spec);
 			if(dl != 0) {
 				rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
-				RSECC_encode(el, 255 - dl - el, data, ecc_rscodec);
+				RSECC_encode(dl, el, data, ecc_rscodec);
 				encode_rs_char(rs, data, ecc_expected);
 				assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
 				free_rs_char(rs);
@@ -75,7 +75,7 @@ static void compareRSMQR(unsigned char data[])
 			el = MQRspec_getECCLength(i, (QRecLevel)j);
 			if(dl != 0) {
 				rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
-				RSECC_encode(el, 255 - dl - el, data, ecc_rscodec);
+				RSECC_encode(dl, el, data, ecc_rscodec);
 				encode_rs_char(rs, data, ecc_expected);
 				assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
 				free_rs_char(rs);

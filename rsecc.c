@@ -31,12 +31,13 @@
 static int initialized = 0;
 
 #define SYMBOL_SIZE (8)
-static const int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see pp.37 of JIS X0510:2004) */
 #define symbols ((1 << SYMBOL_SIZE) - 1)
-#define max_generatorSize (30)
+static const int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see pp.37 of JIS X0510:2004) */
 
+/* min/max codeword length of ECC, calculated from the specification. */
 #define min_length (2)
-#define max_length (max_generatorSize)
+#define max_length (30)
+#define max_generatorSize (max_length)
 
 static unsigned char alpha[symbols + 1];
 static unsigned char aindex[symbols + 1];
@@ -96,7 +97,7 @@ static void generator_init(int length)
 	generatorInitialized[length - min_length] = 1;
 }
 
-int RSECC_encode(int length, int pad, const unsigned char *data, unsigned char *ecc)
+int RSECC_encode(int datalength, int ecclength, const unsigned char *data, unsigned char *ecc)
 {
 	int i, j;
 	unsigned char feedback;
@@ -106,24 +107,24 @@ int RSECC_encode(int length, int pad, const unsigned char *data, unsigned char *
 		RSECC_init();
 	}
 
-	if(length > max_length) return -1;
+	if(ecclength > max_length) return -1;
 
-	memset(ecc, 0, length);
-	if(!generatorInitialized[length - min_length]) generator_init(length);
-	gen = generator[length - min_length];
+	memset(ecc, 0, ecclength);
+	if(!generatorInitialized[ecclength - min_length]) generator_init(ecclength);
+	gen = generator[ecclength - min_length];
 
-	for(i = 0; i < symbols - length - pad; i++) {
+	for(i = 0; i < datalength; i++) {
 		feedback = aindex[data[i] ^ ecc[0]];
 		if(feedback != symbols) {
-			for(j = 1; j < length; j++) {
-				ecc[j] ^= alpha[(feedback + gen[length - j]) % symbols];
+			for(j = 1; j < ecclength; j++) {
+				ecc[j] ^= alpha[(feedback + gen[ecclength - j]) % symbols];
 			}
 		}
-		memmove(&ecc[0], &ecc[1], length - 1);
+		memmove(&ecc[0], &ecc[1], ecclength - 1);
 		if(feedback != symbols) {
-			ecc[length - 1] = alpha[(feedback + gen[0]) % symbols];
+			ecc[ecclength - 1] = alpha[(feedback + gen[0]) % symbols];
 		} else {
-			ecc[length - 1] = 0;
+			ecc[ecclength - 1] = 0;
 		}
 	}
 

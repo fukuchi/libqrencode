@@ -1,4 +1,8 @@
 2013.08.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* rsecc.[ch], qrencode.c, tests/test_rc.c:
+	  - Code cleanups and refactoring.
+
+2013.08.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* rsecc.[ch], rscode.[ch], Makefile.am, qrencode.c:
 	  - Reed-Solomon error correction code has been completely rewritten.
 	  - Phil Karn's code has been removed (moved to tests).

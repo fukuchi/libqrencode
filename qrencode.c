@@ -66,7 +66,7 @@ static void RSblock_initBlock(RSblock *block, int dl, unsigned char *data, int e
 	block->eccLength = el;
 	block->ecc = ecc;
 
-	RSECC_encode(el, 255 - dl - el, data, ecc);
+	RSECC_encode(dl, el, data, ecc);
 }
 
 static int RSblock_init(RSblock *blocks, int spec[5], unsigned char *data, unsigned char *ecc)

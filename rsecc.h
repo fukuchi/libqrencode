@@ -23,6 +23,6 @@
 #ifndef __RSECC_H__
 #define __RSECC_H__
 
-extern int RSECC_encode(int length, int pad, const unsigned char *data, unsigned char *ecc);
+extern int RSECC_encode(int datalength, int ecclength, const unsigned char *data, unsigned char *ecc);
 
 #endif /* __RSECC_H__ */
