@@ -13,7 +13,7 @@ libqrencode_la_SOURCES = qrencode.c qrencode_inner.h \
 						 qrinput.c qrinput.h \
 						 bitstream.c bitstream.h \
 						 qrspec.c qrspec.h \
-						 rscode.c rscode.h \
+						 rsecc.c rsecc.h \
 						 split.c split.h \
 						 mask.c mask.h \
 						 mqrspec.c mqrspec.h \

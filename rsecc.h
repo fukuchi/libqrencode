@@ -1,11 +1,7 @@
 /*
  * qrencode - QR Code encoder
  *
- * Reed solomon encoder. This code is taken from Phil Karn's libfec then
- * editted and packed into a pair of .c and .h files.
- *
- * Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
- * (libfec is released under the GNU Lesser General Public License.)
+ * Reed solomon error correction code encoder specialized for QR code.
  *
  * Copyright (C) 2006-2011 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
@@ -24,18 +20,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __RSCODE_H__
-#define __RSCODE_H__
+#ifndef __RSECC_H__
+#define __RSECC_H__
 
-/*
- * General purpose RS codec, 8-bit symbols.
- */
+extern int RSECC_encode(int length, int pad, const unsigned char *data, unsigned char *ecc);
 
-typedef struct _RS RS;
-
-extern RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad);
-extern void encode_rs_char(RS *rs, const unsigned char *data, unsigned char *parity);
-extern void free_rs_char(RS *rs);
-extern void free_rs_cache(void);
-
-#endif /* __RSCODE_H__ */
+#endif /* __RSECC_H__ */

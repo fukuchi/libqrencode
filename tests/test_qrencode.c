@@ -7,7 +7,7 @@
 #include "../mqrspec.h"
 #include "../qrinput.h"
 #include "../mask.h"
-#include "../rscode.h"
+#include "../rsecc.h"
 #include "../split.h"
 #include "decoder.h"
 
