@@ -29,9 +29,6 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#ifdef HAVE_LIBPTHREAD
-#  include <pthread.h>
-#endif
 
 #include "rscode.h"
 
@@ -56,13 +53,7 @@ struct _RS {
 	int iprim;      /* prim-th root of 1, index form */
 	int pad;        /* Padding bytes in shortened block */
 	int gfpoly;
-	struct _RS *next;
 };
-
-static RS *rslist = NULL;
-#ifdef HAVE_LIBPTHREAD
-static pthread_mutex_t rslist_mutex = PTHREAD_MUTEX_INITIALIZER;
-#endif
 
 static inline int modnn(RS *rs, int x){
 	while (x >= rs->nn) {
@@ -211,32 +202,7 @@ static RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, 
 
 RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad)
 {
-	RS *rs;
-
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_lock(&rslist_mutex);
-#endif
-	for(rs = rslist; rs != NULL; rs = rs->next) {
-		if(rs->pad != pad) continue;
-		if(rs->nroots != nroots) continue;
-		if(rs->mm != symsize) continue;
-		if(rs->gfpoly != gfpoly) continue;
-		if(rs->fcr != fcr) continue;
-		if(rs->prim != prim) continue;
-
-		goto DONE;
-	}
-
-	rs = init_rs_char(symsize, gfpoly, fcr, prim, nroots, pad);
-	if(rs == NULL) goto DONE;
-	rs->next = rslist;
-	rslist = rs;
-
-DONE:
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_unlock(&rslist_mutex);
-#endif
-	return rs;
+	return init_rs_char(symsize, gfpoly, fcr, prim, nroots, pad);
 }
 
 
@@ -246,25 +212,6 @@ void free_rs_char(RS *rs)
 	free(rs->index_of);
 	free(rs->genpoly);
 	free(rs);
-}
-
-void free_rs_cache(void)
-{
-	RS *rs, *next;
-
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_lock(&rslist_mutex);
-#endif
-	rs = rslist;
-	while(rs != NULL) {
-		next = rs->next;
-		free_rs_char(rs);
-		rs = next;
-	}
-	rslist = NULL;
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_unlock(&rslist_mutex);
-#endif
 }
 
 /* The guts of the Reed-Solomon encoder, meant to be #included

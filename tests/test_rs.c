@@ -2,11 +2,14 @@
 #include <string.h>
 #include "common.h"
 #include "../qrencode_inner.h"
+#include "../qrspec.h"
+#include "../mqrspec.h"
 #include "../qrinput.h"
-#include "../rscode.h"
+#include "../rsecc.h"
+#include "rscode.h"
 
 /* See pp. 73 of JIS X0510:2004 */
-void test_rscode1(void)
+void test_rscodeexample(void)
 {
 	QRinput *stream;
 	QRRawCode *code;
@@ -27,11 +30,88 @@ void test_rscode1(void)
 	QRraw_free(code);
 }
 
+static void compareRS(unsigned char data[])
+{
+	int i, j;
+	RS *rs;
+	int spec[5];
+	int dl, el;
+	unsigned char ecc_expected[256], ecc_rscodec[256];
+
+	for(i = 1; i <= QRSPEC_VERSION_MAX; i++) {
+		for(j = QR_ECLEVEL_L; j <= QR_ECLEVEL_H; j++) {
+			QRspec_getEccSpec(i, (QRecLevel)j, spec);
+			dl = QRspec_rsDataCodes1(spec);
+			el = QRspec_rsEccCodes1(spec);
+			rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
+			RSECC_encode(dl, el, data, ecc_rscodec);
+			encode_rs_char(rs, data, ecc_expected);
+			assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
+			free_rs_char(rs);
+
+			dl = QRspec_rsDataCodes2(spec);
+			el = QRspec_rsEccCodes2(spec);
+			if(dl != 0) {
+				rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
+				RSECC_encode(dl, el, data, ecc_rscodec);
+				encode_rs_char(rs, data, ecc_expected);
+				assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
+				free_rs_char(rs);
+			}
+		}
+	}
+}
+
+static void compareRSMQR(unsigned char data[])
+{
+	int i, j;
+	RS *rs;
+	int dl, el;
+	unsigned char ecc_expected[256], ecc_rscodec[256];
+
+	for(i = 1; i <= MQRSPEC_VERSION_MAX; i++) {
+		for(j = QR_ECLEVEL_L; j <= QR_ECLEVEL_Q; j++) {
+			dl = MQRspec_getDataLength(i, (QRecLevel)j);
+			el = MQRspec_getECCLength(i, (QRecLevel)j);
+			if(dl != 0) {
+				rs = init_rs(8, 0x11d, 0, 1, el, 255 - dl - el);
+				RSECC_encode(dl, el, data, ecc_rscodec);
+				encode_rs_char(rs, data, ecc_expected);
+				assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
+				free_rs_char(rs);
+			}
+		}
+	}
+}
+
+void test_allQRSizeAndECCLevel(void)
+{
+	int i;
+	unsigned char data[256];
+
+	testStart("Comparing with KA9Q's code: all QR Code sizes and ECC levels");
+	memset(data, 0, 256);
+	compareRS(data);
+	compareRSMQR(data);
+	memset(data, 0xaa, 256);
+	compareRS(data);
+	compareRSMQR(data);
+	memset(data, 0xff, 256);
+	compareRS(data);
+	compareRSMQR(data);
+	for(i=0; i<256; i++) {
+		data[i] = i;
+	}
+	compareRS(data);
+	compareRSMQR(data);
+	testFinish();
+}
+
 int main(void)
 {
-	test_rscode1();
+	test_rscodeexample();
+	test_allQRSizeAndECCLevel();
 
-	free_rs_cache();
 	report();
 
 	return 0;

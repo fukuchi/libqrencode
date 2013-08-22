@@ -1,6 +1,30 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 3.4.3 (2013.8.12)
+-------------------------
+* New option "--rle" has been added to the command line tool (Thanks to Daniel
+  Dörrhöfer)
+* Bug fixes. (Thanks to Hassan Hajji, Emmanuel Blot, and ßlúèÇhîp)
+
+Release Note:
+This release contains a couple of bug fixes and a new minor feature of the
+command line tool. Some minor bugs in the library have been fixed.
+
+Run Length Encoding (RLE) for SVG output decreases the size of the output file,
+but it makes complicated to edit the image by SVG editors. A newly introduced
+command line option "--rle" enables RLE. RLE will not be applied if it is not
+given.
+
+Version 3.4.2 (2013.3.1)
+------------------------
+* Bug fix release. (Thanks to chisj, vlad417, Petr and Viona)	
+
+Release Note:
+Micro QR Code encoder had a bug that caused incorrect output (issue #25). Now
+the bug has been fixed. Memory leak bug (#24) and insufficient string splitting
+bug have been fixed.
+
 Version 3.4.1 (2012.10.17)
 --------------------------
 * Bug fix release.
@@ -44,7 +68,7 @@ QRcode_APIVersion() is requested by Matthew Baker for better support of Python
 ctypes binding. Check them out at https://code.google.com/p/libqrencode-ctypes/
 
 Version 3.2.1 (2012.4.1)
--------------------------
+------------------------
 * Bugs in configure script and libtool file has been fixed. (Thanks to Yutaka
   Niibe)
 
@@ -188,7 +212,7 @@ API changes:
   - QRinput_setVersion
 
 Version 2.0.0 (2008.1.24)
---------------------------
+-------------------------
 Summary:
 * "-i" option to ignore case distinctions has been added to qrencode and
   view_qrcode.

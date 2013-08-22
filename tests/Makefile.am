@@ -9,7 +9,7 @@ noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  $(sdlPROGRAMS)
 noinst_LIBRARIES = libdecoder.a
 DECODER_LIBS = libdecoder.a $(LIBICONV)
-noinst_HEADERS = common.h
+noinst_HEADERS = common.h rscode.h
 if HAVE_LIBPTHREAD
 noinst_PROGRAMS += pthread_qrencode
 endif
@@ -33,7 +33,7 @@ test_qrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
 test_mqrspec_SOURCES = test_mqrspec.c
 test_mqrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_rs_SOURCES = test_rs.c
+test_rs_SOURCES = test_rs.c rscode.c
 test_rs_LDADD = ../libqrencode.la
 
 test_qrencode_SOURCES = test_qrencode.c

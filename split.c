@@ -140,6 +140,7 @@ static int Split_eatAn(const char *string, QRinput *input, QRencodeMode hint)
 			}
 			dif = QRinput_estimateBitsModeAn(p - string) /* + 4 + la */
 				+ QRinput_estimateBitsModeNum(q - p) + 4 + ln
+				+ (isalnum(*q)?(4 + ln):0)
 				- QRinput_estimateBitsModeAn(q - string) /* - 4 - la */;
 			if(dif < 0) {
 				break;
@@ -192,10 +193,12 @@ static int Split_eat8(const char *string, QRinput *input, QRencodeMode hint)
 	int ret;
 	int run;
 	int dif;
-	int la, ln;
+	int la, ln, l8;
+	int swcost;
 
 	la = QRspec_lengthIndicator(QR_MODE_AN, input->version);
 	ln = QRspec_lengthIndicator(QR_MODE_NUM, input->version);
+	l8 = QRspec_lengthIndicator(QR_MODE_8, input->version);
 
 	p = string + 1;
 	while(*p != '\0') {
@@ -208,8 +211,14 @@ static int Split_eat8(const char *string, QRinput *input, QRencodeMode hint)
 			while(isdigit(*q)) {
 				q++;
 			}
+			if(Split_identifyMode(q, hint) == QR_MODE_8) {
+				swcost = 4 + l8;
+			} else {
+				swcost = 0;
+			}
 			dif = QRinput_estimateBitsMode8(p - string) /* + 4 + l8 */
 				+ QRinput_estimateBitsModeNum(q - p) + 4 + ln
+				+ swcost
 				- QRinput_estimateBitsMode8(q - string) /* - 4 - l8 */;
 			if(dif < 0) {
 				break;
@@ -221,8 +230,14 @@ static int Split_eat8(const char *string, QRinput *input, QRencodeMode hint)
 			while(isalnum(*q)) {
 				q++;
 			}
+			if(Split_identifyMode(q, hint) == QR_MODE_8) {
+				swcost = 4 + l8;
+			} else {
+				swcost = 0;
+			}
 			dif = QRinput_estimateBitsMode8(p - string) /* + 4 + l8 */
 				+ QRinput_estimateBitsModeAn(q - p) + 4 + la
+				+ swcost
 				- QRinput_estimateBitsMode8(q - string) /* - 4 - l8 */;
 			if(dif < 0) {
 				break;

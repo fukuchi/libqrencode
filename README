@@ -1,4 +1,4 @@
-libqrencode 3.4.1 - QR Code encoding library
+libqrencode 3.4.3 - QR Code encoding library
 
 GENERAL INFORMATION
 ===================
@@ -134,8 +134,11 @@ Ralf Ertzinger        - ASCII support patch
 Yutaka Niibe (gniibe) - various bug fix patches
 Dan Storm (Repox)     - SVG support patch
 Lennart Poettering (mezcalero)
-                      - Improved text art patch
-Yann Droneaud         - Improved input validation patch
+                      - improved text art patch
+Yann Droneaud         - improved input validation patch
+Viona                 - bug fix patch for string splitting
+Daniel Dörrhöfer      - RLE option
 Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan,
-Fred Steinhaeuser, Terry Burton
+Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji,
+Emmanuel Blot, ßlúèÇhîp, Heiko Becker
  - bug report / suggestion
