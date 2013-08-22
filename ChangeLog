@@ -1,3 +1,7 @@
+2013.08.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* configure.ac:
+	  - Avoid to use sdl-config. (Thanks to Heiko Becker)
+
 2013.08.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* rsecc.[ch], qrencode.c, tests/test_rc.c:
 	  - Code cleanups and refactoring.

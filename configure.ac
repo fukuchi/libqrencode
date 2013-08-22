@@ -80,8 +80,7 @@ fi
 
 if test x$build_tests = xyes ; then
 	SDL_REQUIRED_VERSION=1.2.0
-	AM_PATH_SDL($SDL_REQUIRED_VERSION,,AC_MSG_WARN([*** SDL $SDL_REQUIRED_VERSION or better is required.]))
-	AC_MSG_NOTICE([SDL check done.])
+	PKG_CHECK_MODULES(SDL, [sdl >= $SDL_REQUIRED_VERSION])
 	AM_ICONV_LINK
 fi
 AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
