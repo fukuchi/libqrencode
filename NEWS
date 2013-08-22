@@ -2,7 +2,7 @@ libqrencode NEWS - Overview of changes
 ======================================
 
 Version 3.4.3 (2013.8.12)
-------------------------
+-------------------------
 * New option "--rle" has been added to the command line tool (Thanks to Daniel
   Dörrhöfer)
 * Bug fixes. (Thanks to Hassan Hajji, Emmanuel Blot, and ßlúèÇhîp)
@@ -68,7 +68,7 @@ QRcode_APIVersion() is requested by Matthew Baker for better support of Python
 ctypes binding. Check them out at https://code.google.com/p/libqrencode-ctypes/
 
 Version 3.2.1 (2012.4.1)
--------------------------
+------------------------
 * Bugs in configure script and libtool file has been fixed. (Thanks to Yutaka
   Niibe)
 
@@ -212,7 +212,7 @@ API changes:
   - QRinput_setVersion
 
 Version 2.0.0 (2008.1.24)
---------------------------
+-------------------------
 Summary:
 * "-i" option to ignore case distinctions has been added to qrencode and
   view_qrcode.
