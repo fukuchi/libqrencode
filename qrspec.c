@@ -113,8 +113,9 @@ int QRspec_getMinimumVersion(int size, QRecLevel level)
 	int i;
 	int words;
 
-	for(i=1; i<= QRSPEC_VERSION_MAX; i++) {
+	for(i=1; i<= QRSPEC_VERSION_MAX+1; i++) {
 		words  = qrspecCapacity[i].words - qrspecCapacity[i].ec[level];
+		if(i >  QRSPEC_VERSION_MAX) return QRSPEC_VERSION_MAX;
 		if(words >= size) return i;
 	}
 
