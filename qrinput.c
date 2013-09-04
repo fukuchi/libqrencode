@@ -984,9 +984,6 @@ static int QRinput_estimateVersion(QRinput *input)
 		prev = version;
 		bits = QRinput_estimateBitStreamSize(input, prev);
 		version = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
-		if (version < 0) {
-			return -1;
-		}
 	} while (version > prev);
 
 	return version;
@@ -1165,10 +1162,7 @@ static int QRinput_convertData(QRinput *input)
 		bits = QRinput_createBitStream(input);
 		if(bits < 0) return -1;
 		ver = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
-		if(ver < 0) {
-			errno = ERANGE;
-			return -1;
-		} else if(ver > QRinput_getVersion(input)) {
+		if(ver > QRinput_getVersion(input)) {
 			QRinput_setVersion(input, ver);
 		} else {
 			break;
