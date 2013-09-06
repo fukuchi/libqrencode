@@ -28,7 +28,7 @@
 
 #include "bitstream.h"
 
-#define DEFAULT_BUFSIZE (16)
+#define DEFAULT_BUFSIZE (128)
 
 BitStream *BitStream_new(void)
 {

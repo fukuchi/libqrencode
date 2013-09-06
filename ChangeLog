@@ -1,3 +1,8 @@
+2013.09.06 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* bitstream.c:
+	  - Minimum length of bit buffer has been extended to 128. In many cases
+	    the library needs 128 bits at least to generate a symbol.
+
 2013.08.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
 	  - Avoid to use sdl-config. (Thanks to Heiko Becker)
