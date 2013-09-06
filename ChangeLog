@@ -1,3 +1,7 @@
+2013.09.06 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - bzero() has been replaced with memset(). (Thanks to Gavin Andresen)
+
 2013.08.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
 	  - Avoid to use sdl-config. (Thanks to Heiko Becker)
