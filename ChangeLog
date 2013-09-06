@@ -9,6 +9,12 @@
 	  - New tests for excessive or maximum input have been added.
 	* tests/test_qrinput.c:
 	  - A deprecatd test has been removed.
+	[reduce_malloc]
+	* bitstream.c:
+	  - Minimum length of bit buffer has been extended to 128. In many cases
+	    the library needs 128 bits at least to generate a symbol.
+	[master]
+	* merged reduce_malloc branch.
 
 2013.08.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
@@ -107,6 +113,10 @@
 	  - Added NUL checks for malloc-related bugs using failmalloc.
 	  - Added a new test for issue #25. (Thanks to vlad417)
 
+2012.10.21 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Unnecessary "goto ABORT" eliminated.
+
 2012.10.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
 	* NEWS:
@@ -146,6 +156,21 @@
 	  - Usage improved.
 	  - Inkscape-friendly SVG output.
 
+2012.09.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[reduce_malloc]
+	* bstream.h:
+	  - Added a new function "BitStream_reset()".
+	* qrinput.c:
+	  - Reduced the use of dynamic memory allocation.
+	  - Performance improved.
+	  - Interfaces of QRinput_getBitStream() and QRinput_mergeBitStream() have
+	    been changed.
+
+2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	[reduce_malloc]
+	* qrinput.c, tests/qrinput.c:
+	  - Reduced the use of dynamic memory allocation.
+
 2012.09.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Input validation improved. (Thanks to Yann Droneaud)
@@ -158,6 +183,9 @@
 	  - Added new test.
 	* tests/test_{monkey,qrspec}.c:
 	  - Warnings suppressed.
+	[reduce_malloc]
+	* bitstream.[ch]:
+	  - Reduced the use of dynamic memory allocation.
 
 2012.09.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
@@ -757,7 +785,7 @@
 	* Bumped version to 3.1.0.
 
 2009.04.30 Kentaro FUKUCHI <fukuchi@megaui.net>
-	* bistream.[ch]:
+	* bitstream.[ch]:
 	  - Internal representation of BitStream has been changed from
 	    NUL-terminated string to unsigned char array.
 	* tests/common.h, tests/test_{bitstream,qrinput}.c:

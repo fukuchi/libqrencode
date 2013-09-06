@@ -43,7 +43,7 @@ void printQRinputInfo(QRinput *input)
 {
 	QRinput_List *list;
 	BitStream *b;
-	int i;
+	int i, ret;
 
 	printf("QRinput info:\n");
 	printf(" version: %d\n", input->version);
@@ -55,8 +55,9 @@ void printQRinputInfo(QRinput *input)
 		list = list->next;
 	}
 	printf("  chunks: %d\n", i);
-	b = QRinput_mergeBitStream(input);
-	if(b != NULL) {
+	b = BitStream_new();
+	ret = QRinput_mergeBitStream(input, b);
+	if(ret == 0) {
 		printf("  bitstream-size: %d\n", BitStream_size(b));
 		BitStream_free(b);
 	}
