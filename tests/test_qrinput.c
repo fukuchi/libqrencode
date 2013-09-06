@@ -282,27 +282,6 @@ void test_encodeNumeric3(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
-void test_encodeTooLong(void)
-{
-	QRinput *stream;
-	unsigned char *data;
-	BitStream *bstream;
-
-	data = (unsigned char *)malloc(4297);
-	memset(data, 'A', 4297);
-
-	testStart("Encoding long string. (4297 bytes of alphanumeric)");
-	stream = QRinput_new();
-	QRinput_append(stream, QR_MODE_AN, 4297, data);
-	bstream = QRinput_mergeBitStream(stream);
-	testEndExp(bstream == NULL);
-	QRinput_free(stream);
-	if(bstream != NULL) {
-		BitStream_free(bstream);
-	}
-	free(data);
-}
-
 void test_encodeAnNum(void)
 {
 	QRinput *input;
@@ -946,7 +925,6 @@ int main(void)
 	test_encodeNumeric_versionup();
 	test_encode8();
 	test_encode8_versionup();
-	test_encodeTooLong();
 	test_encodeAn();
 	test_encodeAn2();
 	test_encodeKanji();

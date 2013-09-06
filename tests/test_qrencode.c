@@ -444,26 +444,59 @@ void test_encodeEmpty8(void)
 	if(qrcode != NULL) QRcode_free(qrcode);
 }
 
-void test_encodeTooLong(void)
+void test_encodeLongData(void)
 {
-	QRcode *code;
-	char *data;
+	QRinput *stream;
+	unsigned char data[7090];
+	int maxlength[4][4] = {{7089,5596,3993,3057},
+						   {4296,3391,2420,1852},
+						   {2953,2331,1663,1273},
+						   {1817*2,1435*2,1024*2, 784*2}};
+	int i, l, len, ret;
+	QRcode *qrcode;
 
-	testStart("Encode too large data");
-	data = (char *)malloc(4300);
-	memset(data, 'a', 4295);
-	memset(data + 4295, '0', 4);
-	data[4299] = '\0';
+	testStart("Encoding long data.");
 
-	code = QRcode_encodeString(data, 0, QR_ECLEVEL_L, QR_MODE_8, 0);
-	assert_null(code, "Too large data is incorrectly accepted.\n");
-	assert_equal(errno, ERANGE, "errno != ERANGE\n");
-	testFinish();
+	for(i=QR_MODE_NUM; i<=QR_MODE_KANJI; i++) {
+		if(i != QR_MODE_KANJI) {
+			memset(data, '0', maxlength[i][0]);
+		} else {
+			for(l=0; l<=maxlength[i][0]/2; l++) {
+				data[l*2] = 0x93; data[l*2+1] = 0x5f;
+			}
+		}
+		for(l=QR_ECLEVEL_L; l<=QR_ECLEVEL_H; l++) {
+			stream = QRinput_new2(0, l);
+			ret = QRinput_append(stream, i, maxlength[i][l], data);
+			assert_zero(ret, "Failed to add %d-byte %s to a QRinput\n", maxlength[i][l], modeStr[i]);
+			qrcode = QRcode_encodeInput(stream);
+			assert_nonnull(qrcode, "(QRcode_encodeInput) failed to encode %d-byte %s in level %d.\n", maxlength[i][l], modeStr[i], l);
+			if(qrcode != NULL) {
+				QRcode_free(qrcode);
+			}
+			QRinput_free(stream);
 
-	if(code != NULL) {
-		QRcode_free(code);
+			stream = QRinput_new2(0, l);
+			len = maxlength[i][l];
+			if(i == QR_MODE_KANJI) {
+				len += 2;
+			} else {
+				len += 1;
+			}
+			ret = QRinput_append(stream, i, len, data);
+			if(ret == 0) {
+				qrcode = QRcode_encodeInput(stream);
+				assert_null(qrcode, "(QRcode_encodeInput) incorrectly succeeded to encode %d-byte %s in level %d.\n", len, modeStr[i], l);
+				if(qrcode != NULL) {
+					printf("version: %d\n", qrcode->version);
+					QRcode_free(qrcode);
+				}
+			}
+			QRinput_free(stream);
+		}
 	}
-	free(data);
+
+	testFinish();
 }
 
 void test_01234567(void)
@@ -937,7 +970,7 @@ int main(void)
 	test_encodeEmpty();
 	test_encodeNull8();
 	test_encodeEmpty8();
-	test_encodeTooLong();
+	test_encodeLongData();
 	test_01234567();
 	test_invalid_input();
 //	print_01234567();

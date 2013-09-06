@@ -1,6 +1,14 @@
 2013.09.06 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - bzero() has been replaced with memset(). (Thanks to Gavin Andresen)
+	* qrspec.c, qrinput.c:
+	  - QRspec_getMinimumVersion() now returns maximum version number for
+	    excessive input, instead of -1. Closes #31. (Thanks to Danil
+		Dörrhöfer)
+	* tests/test_qrencode.c:
+	  - New tests for excessive or maximum input have been added.
+	* tests/test_qrinput.c:
+	  - A deprecatd test has been removed.
 
 2013.08.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
