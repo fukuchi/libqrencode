@@ -118,7 +118,7 @@ int QRspec_getMinimumVersion(int size, QRecLevel level)
 		if(words >= size) return i;
 	}
 
-	return -1;
+	return QRSPEC_VERSION_MAX;
 }
 
 int QRspec_getWidth(int version)
