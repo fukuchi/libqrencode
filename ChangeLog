@@ -1,3 +1,7 @@
+2013.09.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* tests/test_qrencode.c:
+	  - Small bug fix.
+
 2013.09.06 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - bzero() has been replaced with memset(). (Thanks to Gavin Andresen)

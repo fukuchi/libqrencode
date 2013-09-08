@@ -460,9 +460,9 @@ void test_encodeLongData(void)
 
 	for(i=QR_MODE_NUM; i<=QR_MODE_KANJI; i++) {
 		if(i != QR_MODE_KANJI) {
-			memset(data, '0', maxlength[i][0]);
+			memset(data, '0', maxlength[i][0] + 1);
 		} else {
-			for(l=0; l<=maxlength[i][0]/2; l++) {
+			for(l=0; l<=maxlength[i][0]/2+1; l++) {
 				data[l*2] = 0x93; data[l*2+1] = 0x5f;
 			}
 		}
