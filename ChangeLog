@@ -2,6 +2,8 @@
 	* qrinput.c:
 	  - Bug in QRinput_insertFNC1Header() has been fixed. (Thanks to David
 	    Binderman)
+	* qrinput.c, test/decoder.[ch]:
+	  - Code cleanup.
 
 2013.09.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_qrencode.c:
