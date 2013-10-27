@@ -1,3 +1,8 @@
+2013.10.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Bug in QRinput_insertFNC1Header() has been fixed. (Thanks to David
+	    Binderman)
+
 2013.09.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/test_qrencode.c:
 	  - Small bug fix.

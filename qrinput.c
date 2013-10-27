@@ -1243,7 +1243,7 @@ static int QRinput_insertFNC1Header(QRinput *input)
 		return -1;
 	}
 
-	if(input->head->mode != QR_MODE_STRUCTURE || input->head->mode != QR_MODE_ECI) {
+	if(input->head->mode != QR_MODE_STRUCTURE && input->head->mode != QR_MODE_ECI) {
 		entry->next = input->head;
 		input->head = entry;
 	} else {
