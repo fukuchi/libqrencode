@@ -558,7 +558,7 @@ void QRdata_dump(QRdata *data)
 	dumpChunks(data);
 }
 
-unsigned int QRcode_decodeVersion(QRcode *code)
+int QRcode_decodeVersion(QRcode *code)
 {
 	unsigned int v1, v2;
 	int x, y, width;
