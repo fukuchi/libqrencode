@@ -97,7 +97,7 @@ static void generator_init(int length)
 	generatorInitialized[length - min_length] = 1;
 }
 
-int RSECC_encode(int datalength, int ecclength, const unsigned char *data, unsigned char *ecc)
+int RSECC_encode(int data_length, int ecc_length, const unsigned char *data, unsigned char *ecc)
 {
 	int i, j;
 	unsigned char feedback;
@@ -107,24 +107,24 @@ int RSECC_encode(int datalength, int ecclength, const unsigned char *data, unsig
 		RSECC_init();
 	}
 
-	if(ecclength > max_length) return -1;
+	if(ecc_length > max_length) return -1;
 
-	memset(ecc, 0, ecclength);
-	if(!generatorInitialized[ecclength - min_length]) generator_init(ecclength);
-	gen = generator[ecclength - min_length];
+	memset(ecc, 0, ecc_length);
+	if(!generatorInitialized[ecc_length - min_length]) generator_init(ecc_length);
+	gen = generator[ecc_length - min_length];
 
-	for(i = 0; i < datalength; i++) {
+	for(i = 0; i < data_length; i++) {
 		feedback = aindex[data[i] ^ ecc[0]];
 		if(feedback != symbols) {
-			for(j = 1; j < ecclength; j++) {
-				ecc[j] ^= alpha[(feedback + gen[ecclength - j]) % symbols];
+			for(j = 1; j < ecc_length; j++) {
+				ecc[j] ^= alpha[(feedback + gen[ecc_length - j]) % symbols];
 			}
 		}
-		memmove(&ecc[0], &ecc[1], ecclength - 1);
+		memmove(&ecc[0], &ecc[1], ecc_length - 1);
 		if(feedback != symbols) {
-			ecc[ecclength - 1] = alpha[(feedback + gen[0]) % symbols];
+			ecc[ecc_length - 1] = alpha[(feedback + gen[0]) % symbols];
 		} else {
-			ecc[ecclength - 1] = 0;
+			ecc[ecc_length - 1] = 0;
 		}
 	}
 
