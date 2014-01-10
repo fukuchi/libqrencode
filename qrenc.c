@@ -1101,8 +1101,8 @@ int main(int argc, char **argv)
 	}
 
 	if(argc == 1) {
-		usage(1, 0);
-		exit(EXIT_SUCCESS);
+		fprintf(stderr, "Try `qrencode --help' for more information.\n");
+		exit(EXIT_FAILURE);
 	}
 
 	if(outfile == NULL && image_type == PNG_TYPE) {
