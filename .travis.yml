@@ -1,4 +1,6 @@
 language: c
 compiler:
   - gcc
-script: ./configure --with-tests && make
+script: 
+- ./autogen.sh
+- ./configure --with-tests && make
