@@ -84,14 +84,15 @@ static const struct option options[] = {
 
 static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
 
-static void usage(int help, int longopt)
+static void usage(int help, int longopt, int status)
 {
-	fprintf(stdout,
+	FILE *out = status ? stderr : stdout;
+	fprintf(out,
 "qrencode version %s\n"
 "Copyright (C) 2006-2013 Kentaro Fukuchi\n", QRcode_APIVersionString());
 	if(help) {
 		if(longopt) {
-			fprintf(stdout,
+			fprintf(out,
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h, --help   display the help message. -h displays only the help of short\n"
@@ -135,7 +136,7 @@ static void usage(int help, int longopt)
 "               standard input.\n"
 			);
 		} else {
-			fprintf(stdout,
+			fprintf(out,
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h           display this message.\n"
@@ -969,9 +970,9 @@ int main(int argc, char **argv)
 		switch(opt) {
 			case 'h':
 				if(lindex == 0) {
-					usage(1, 1);
+					usage(1, 1, EXIT_SUCCESS);
 				} else {
-					usage(1, 0);
+					usage(1, 0, EXIT_SUCCESS);
 				}
 				exit(EXIT_SUCCESS);
 				break;
@@ -1088,7 +1089,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			case 'V':
-				usage(0, 0);
+				usage(0, 0, EXIT_SUCCESS);
 				exit(EXIT_SUCCESS);
 				break;
 			case 0:
@@ -1101,7 +1102,7 @@ int main(int argc, char **argv)
 	}
 
 	if(argc == 1) {
-		fprintf(stderr, "Try `qrencode --help' for more information.\n");
+		usage(1, 0, EXIT_FAILURE);
 		exit(EXIT_FAILURE);
 	}
 
