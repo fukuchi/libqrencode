@@ -86,12 +86,12 @@ static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt)
 {
-	fprintf(stderr,
+	fprintf(stdout,
 "qrencode version %s\n"
 "Copyright (C) 2006-2013 Kentaro Fukuchi\n", QRcode_APIVersionString());
 	if(help) {
 		if(longopt) {
-			fprintf(stderr,
+			fprintf(stdout,
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h, --help   display the help message. -h displays only the help of short\n"
@@ -135,7 +135,7 @@ static void usage(int help, int longopt)
 "               standard input.\n"
 			);
 		} else {
-			fprintf(stderr,
+			fprintf(stdout,
 "Usage: qrencode [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h           display this message.\n"
