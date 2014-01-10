@@ -9,10 +9,10 @@ install:
 - ./configure --with-tests && make
 - sudo make install
 before_script:
-- cd ./tests
+- cd /home/travis/libqrencode/tests
 - ./create_frame_pattern frame
 script:
-- cd ./tests
+- cd /home/travis/libqrencode/tests
 - ./test_configure.sh
-- ./test_configure.sh
+- ./test_all.sh
 
