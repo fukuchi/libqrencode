@@ -1,7 +1,7 @@
 language: c
 compiler:
   - gcc
-install
+install:
 - apt-get install libsdl1.2-dev libpng12-dev
 script: 
 - ./autogen.sh
