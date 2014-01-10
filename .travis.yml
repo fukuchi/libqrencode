@@ -2,7 +2,8 @@ language: c
 compiler:
   - gcc
 install:
-- apt-get install libsdl1.2-dev libpng12-dev
+- apt-get install libsdl2-dev 
+- apt-get install libpng12-dev
 script: 
 - ./autogen.sh
 - ./configure --with-tests && make
