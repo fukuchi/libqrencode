@@ -12,8 +12,6 @@ before_script:
 - cd tests
 - ./create_frame_pattern frame
 script:
-- pwd
-- cd tests
 - ./test_configure.sh
 - ./test_all.sh
 
