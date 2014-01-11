@@ -2,7 +2,6 @@ language: c
 compiler:
   - gcc
 install:
-- sudo apt-get update
 - sudo apt-get install libsdl-image1.2-dev
 - sudo apt-get install libpng12-dev
 - ./autogen.sh
