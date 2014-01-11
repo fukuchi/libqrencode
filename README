@@ -1,5 +1,7 @@
 libqrencode 3.4.3 - QR Code encoding library
 
+!https://travis-ci.org/d4ndo/libqrencode.png?branch=travis!:https://travis-ci.org/d4ndo/libqrencode
+
 GENERAL INFORMATION
 ===================
 Libqrencode is a library for encoding data in a QR Code symbol, a 2D symbology
