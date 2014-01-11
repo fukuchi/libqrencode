@@ -9,12 +9,11 @@ install:
 - ./configure --with-tests && make
 - sudo make install
 before_script:
-- pwd
-- cd ~/build/d4ndo/libqrencode/tests
+- cd tests
 - ./create_frame_pattern frame
 script:
 - pwd
-- cd ~/build/d4ndo/libqrencode/tests
+- cd tests
 - ./test_configure.sh
 - ./test_all.sh
 
