@@ -1,6 +1,7 @@
 language: c
 compiler:
   - gcc
+  - clang
 install:
 - sudo apt-get update
 - sudo apt-get install libsdl-image1.2-dev
