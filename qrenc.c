@@ -1095,7 +1095,7 @@ int main(int argc, char **argv)
 			case 0:
 				break;
 			default:
-				fprintf(stderr, "Try `qrencode --help' for more information.\n");
+				fprintf(stderr, "Try \"qrencode --help\" for more information.\n");
 				exit(EXIT_FAILURE);
 				break;
 		}
