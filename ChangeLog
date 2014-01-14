@@ -1,3 +1,8 @@
+2014.01.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Merged pull request 78d44fd - commandline argument --help and -V is
+	    printed to stdout, instead of stderr.
+
 2014.01.04 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* rsecc.[ch]:
 	  - Code cleanups.
