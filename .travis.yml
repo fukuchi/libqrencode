@@ -1,0 +1,20 @@
+language: c
+ 
+compiler:
+- gcc
+
+install:
+- sudo apt-get update
+- sudo apt-get install libsdl-image1.2-dev
+- sudo apt-get install libpng12-dev
+- ./autogen.sh
+- ./configure --with-tests && make
+- sudo make install
+
+before_script:
+- cd tests
+- ./create_frame_pattern frame
+
+script:
+- ./test_configure.sh
+- ./test_all.sh
