@@ -494,17 +494,10 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static void writeSVG_writeRect(FILE *fp, int x, int y, int width, const char* col, float opacity)
+static void writeSVG_writeRect(FILE *fp, int x, int y, int width)
 {
-	if(fg_color[3] != 255) {
-		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-				"fill=\"#%s\" fill-opacity=\"%f\" />\n", 
-				x, y, width, col, opacity );
-	} else {
-		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-				"fill=\"#%s\" />\n", 
-				x, y, width, col );
-	}
+	fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" />\n",
+		x, y, width);
 }
 
 static int writeSVG(const QRcode *qrcode, const char *outfile)
@@ -552,16 +545,35 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			" xmlns=\"http://www.w3.org/2000/svg\">\n", 
 			realwidth / scale, realwidth / scale, symwidth, symwidth
 		   );
+	/* SVG CSS for styling */
+	fputs( "\t<style>", fp );
+
+	/* rects by default will be styled as foreground */
+	if(fg_color[3] != 255) {
+		fprintf(fp, "rect{fill:#%s;fill-opacity:%f}", fg, fg_opacity);
+	} else {
+		fprintf(fp, "rect{fill:#%s}", fg);
+	}
+
+	/* add style specification for the background as 'bg' class. fill-opacity
+	 * must be declared whenever the background opacity is different from
+	 * the foreground opacity.
+	 */
+
+	if(bg_color[3] != fg_color[3]) {
+		fprintf(fp, ".bg{fill:#%s;fill-opacity:%f}", bg, bg_opacity);
+	} else {
+		fprintf(fp, ".bg{fill:#%s}", bg);
+	}
+
+	fputs( "</style>\n", fp );
 
 	/* Make named group */
 	fputs( "\t<g id=\"QRcode\">\n", fp );
 
 	/* Make solid background */
-	if(bg_color[3] != 255) {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\" />\n", symwidth, symwidth, bg, bg_opacity);
-	} else {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" />\n", symwidth, symwidth, bg);
-	}
+	fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" class=\"bg\" />\n",
+		symwidth, symwidth);
 
 	/* Create new viewbox for QR data */
 	fputs( "\t\t<g id=\"Pattern\">\n", fp);
@@ -575,9 +587,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			/* no RLE */
 			for(x=0; x<qrcode->width; x++) {
 				if(*(row+x)&0x1) {
-					writeSVG_writeRect(fp,	margin + x,
-								margin + y, 1,
-								fg, fg_opacity);
+					writeSVG_writeRect(fp,	margin + x, margin + y, 1);
 				}
 			}
 		} else {
@@ -590,13 +600,13 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 					x0 = x;
 				} else {
 					if(!(*(row+x)&0x1)) {
-						writeSVG_writeRect(fp, x0 + margin, y + margin, x-x0, fg, fg_opacity);
+						writeSVG_writeRect(fp, x0 + margin, y + margin, x-x0);
 						pen = 0;
 					}
 				}
 			}
 			if( pen ) {
-				writeSVG_writeRect(fp, x0 + margin, y + margin, qrcode->width - x0, fg, fg_opacity);
+				writeSVG_writeRect(fp, x0 + margin, y + margin, qrcode->width - x0);
 			}
 		}
 	}
