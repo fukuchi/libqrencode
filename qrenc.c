@@ -553,22 +553,32 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			" xmlns=\"http://www.w3.org/2000/svg\">\n",
 			symwidth, symwidth);
 	}
+
 	/* SVG CSS for styling */
 	fputs( "\t<style>", fp );
 
-	/* rects by default will be styled as foreground */
-	if(fg_color[3] != 255) {
-		fprintf(fp, "rect{fill:#%s;fill-opacity:%f}", fg, fg_opacity);
-	} else {
-		fprintf(fp, "rect{fill:#%s}", fg);
-	}
-
-	/* add style specification for the background as 'bg' class. fill-opacity
-	 * must be declared whenever the background opacity is different from
-	 * the foreground opacity.
+	/* Style for the foreground elements. They are assumed to be the most
+	 * numerous, so we set their style without class specification.
+	 * When using RLE, we create a single path element for the foreground.
+	 * Otherwise, the foreground is assembled as collection of rectangle elements.
 	 */
+	const char* const fg_css_spec[] = {
+		"rect{fill:#%s;fill-opacity:%f}",
+		"rect{fill:#%s}",
+		"path{fill:none;stroke:#%s;stroke-opacity:%f}",
+		"path{fill:none;stroke:#%s}"
+	};
+	/* abuse x as index into fg_css_spec */
+	x = rle ? 2 : 0;
+	if (fg_color[3] == 255)
+		++x;
+	fprintf(fp, fg_css_spec[x], fg, fg_opacity);
 
-	if(bg_color[3] != fg_color[3]) {
+	/* Style for the background ('bg' class). In RLE mode, the opacity
+	 * only needs to be specified when it's not full; in non-RLE mode,
+	 * it must be declared if it's different from the foreground opacity.
+	 */
+	if( (rle && bg_color[3] != 255) || (!rle && bg_color[3] != fg_color[3])) {
 		fprintf(fp, ".bg{fill:#%s;fill-opacity:%f}", bg, bg_opacity);
 	} else {
 		fprintf(fp, ".bg{fill:#%s}", bg);
@@ -585,6 +595,13 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 
 	/* Create new viewbox for QR data */
 	fputs( "\t\t<g id=\"Pattern\">\n", fp);
+
+	/* If in RLE mode, start the path. We will draw it margin-less but translate it by the margin width.
+	 * Note that the y translation has an additional .5 because the path is stroked, so
+	 * it must be _centered_ in its coordinate. Horizontally this is not needed because
+	 * of the butt cap used by default. */
+	if (rle)
+		fprintf(fp, "\t\t\t<path transform=\"translate(%d,%d.5)\" d=\"", margin, margin);
 
 	/* Write data */
 	p = qrcode->data;
@@ -608,16 +625,24 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 					x0 = x;
 				} else {
 					if(!(*(row+x)&0x1)) {
-						writeSVG_writeRect(fp, x0 + margin, y + margin, x-x0);
+						fprintf(fp, "M%d,%dh%d", x0, y, x - x0);
 						pen = 0;
 					}
 				}
 			}
 			if( pen ) {
-				writeSVG_writeRect(fp, x0 + margin, y + margin, qrcode->width - x0);
+				fprintf(fp, "M%d,%dh%d", x0, y, qrcode->width - x0);
+			}
+			if (y < qrcode->width - 1) {
+				fprintf( fp, "\n\t\t\t\t" );
 			}
 		}
 	}
+
+	/* Close the path */
+	if (rle)
+		fputs( "\"/>\n", fp );
+
 	/* Close QR data viewbox */
 	fputs( "\t\t</g>\n", fp );
 
