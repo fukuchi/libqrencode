@@ -540,11 +540,19 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			QRcode_APIVersionString() );
 
 	/* SVG code start */
-	fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
+	/* Only set the width/height if dpi was non-zero */
+	if (scale != 0) {
+		fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
 			" preserveAspectRatio=\"none\" version=\"1.1\""\
 			" xmlns=\"http://www.w3.org/2000/svg\">\n", 
 			realwidth / scale, realwidth / scale, symwidth, symwidth
-		   );
+		       );
+	} else {
+		fprintf( fp, "<svg viewBox=\"0 0 %d %d\""\
+			" version=\"1.1\""\
+			" xmlns=\"http://www.w3.org/2000/svg\">\n",
+			symwidth, symwidth);
+	}
 	/* SVG CSS for styling */
 	fputs( "\t<style>", fp );
 
