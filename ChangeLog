@@ -1,6 +1,8 @@
 2014.02.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* .travis.yaml:
 	  - Configuration file for Travis CI. (Thanks to Danil Dörrhöfer)
+	* configure.ac:
+	  - Fixed some warnings.
 
 2014.01.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
