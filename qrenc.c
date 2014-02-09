@@ -504,7 +504,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 {
 	FILE *fp;
 	unsigned char *row, *p;
-	int x, y, x0, pen;
+	int x, y, x0, x1, pen, abs;
 	int symwidth, realwidth;
 	float scale;
 	char fg[7], bg[7];
@@ -619,19 +619,26 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			/* simple RLE */
 			pen = 0;
 			x0  = 0;
+			x1  = 0;
 			for(x=0; x<qrcode->width; x++) {
 				if( !pen ) {
 					pen = *(row+x)&0x1;
 					x0 = x;
 				} else {
 					if(!(*(row+x)&0x1)) {
-						fprintf(fp, "M%d,%dh%d", x0, y, x - x0);
+						/* motion is initially absolute */
+						abs = (x1 == 0);
+						fprintf(fp, "%c%d,%dh%d", abs ? 'M' : 'm',
+							(x0 - x1), abs ? y : 0, x - x0);
+						x1 = x;
 						pen = 0;
 					}
 				}
 			}
 			if( pen ) {
-				fprintf(fp, "M%d,%dh%d", x0, y, qrcode->width - x0);
+				abs = (x1 == 0);
+				fprintf(fp, "%c%d,%dh%d", abs ? 'M' : 'm',
+					(x0 - x1), abs ? y : 0, qrcode->width - x0);
 			}
 			if (y < qrcode->width - 1) {
 				fprintf( fp, "\n\t\t\t\t" );
