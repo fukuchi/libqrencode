@@ -43,9 +43,11 @@ Compile & install
 -----------------
 Just try
 
+```
 ./configure
 make
 make install
+```
 
 This compiles and installs the library and header file to the appropriate
 directories. By default, /usr/local/lib and /usr/local/include. You can change
@@ -123,23 +125,18 @@ countries.
 Reed-Solomon encoder is written by Phil Karn, KA9Q.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
-NANKI Haruo           - improved lower-case characteres encoding
-Philippe Delcroix     - improved mask evaluation
-Yusuke Mihara         - structured-append support
-David Dahl            - DPI and SVG support patch
-Adam Shepherd         - bug fix patch of the mask evaluation
-Josef Eisl (zapster)  - EPS support patch
-Colin (moshen)        - ANSI support patch
-Ralf Ertzinger        - ASCII support patch
-Yutaka Niibe (gniibe) - various bug fix patches
-Dan Storm (Repox)     - SVG support patch
-Lennart Poettering (mezcalero)
-                      - improved text art patch
-Yann Droneaud         - improved input validation patch
-Viona                 - bug fix patch for string splitting
-Daniel Dörrhöfer      - RLE option, some bug fixes, Travis configuration
-Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan,
-Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji,
-Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman,
-ralgozino
- - bug report / suggestion
+- NANKI Haruo           - improved lower-case characteres encoding
+- Philippe Delcroix     - improved mask evaluation
+- Yusuke Mihara         - structured-append support
+- David Dahl            - DPI and SVG support patch
+- Adam Shepherd         - bug fix patch of the mask evaluation
+- Josef Eisl (zapster)  - EPS support patch
+- Colin (moshen)        - ANSI support patch
+- Ralf Ertzinger        - ASCII support patch
+- Yutaka Niibe (gniibe) - various bug fix patches
+- Dan Storm (Repox)     - SVG support patch
+- Lennart Poettering (mezcalero) - improved text art patch
+- Yann Droneaud         - improved input validation patch
+- Viona                 - bug fix patch for string splitting
+- Daniel Dörrhöfer      - RLE option, some bug fixes, Travis configuration
+- Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, ralgozino - bug report / suggestion
