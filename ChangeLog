@@ -1,3 +1,7 @@
+2014.02.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* .travis.yaml:
+	  - Configuration file for Travis CI. (Thanks to Danil Dörrhöfer)
+
 2014.01.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Merged pull request 78d44fd - commandline argument --help and -V is
