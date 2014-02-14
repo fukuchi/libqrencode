@@ -1,3 +1,9 @@
+2014.02.14 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrinput.c:
+	  - Minor documentation fix.
+	* qrenc.c:
+	  - Error message improved.
+
 2014.02.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* .travis.yaml:
 	  - Configuration file for Travis CI. (Thanks to Danil Dörrhöfer)

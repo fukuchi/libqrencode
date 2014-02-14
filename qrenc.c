@@ -27,6 +27,7 @@
 #include <string.h>
 #include <png.h>
 #include <getopt.h>
+#include <errno.h>
 
 #include "qrencode.h"
 
@@ -89,7 +90,7 @@ static void usage(int help, int longopt, int status)
 	FILE *out = status ? stderr : stdout;
 	fprintf(out,
 "qrencode version %s\n"
-"Copyright (C) 2006-2013 Kentaro Fukuchi\n", QRcode_APIVersionString());
+"Copyright (C) 2006-2014 Kentaro Fukuchi\n", QRcode_APIVersionString());
 	if(help) {
 		if(longopt) {
 			fprintf(out,
@@ -803,7 +804,11 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 	
 	qrcode = encode(intext, length);
 	if(qrcode == NULL) {
-		perror("Failed to encode the input data");
+		if(errno == ERANGE) {
+			fprintf(stderr, "Failed to encode the input data: Input data too large\n");
+		} else {
+			perror("Failed to encode the input data");
+		}
 		exit(EXIT_FAILURE);
 	}
 	switch(image_type) {
@@ -903,7 +908,11 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 	
 	qrlist = encodeStructured(intext, length);
 	if(qrlist == NULL) {
-		perror("Failed to encode the input data");
+		if(errno == ERANGE) {
+			fprintf(stderr, "Failed to encode the input data: Input data too large\n");
+		} else {
+			perror("Failed to encode the input data");
+		}
 		exit(EXIT_FAILURE);
 	}
 

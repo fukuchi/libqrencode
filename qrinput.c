@@ -1095,7 +1095,7 @@ static int QRinput_createBitStream(QRinput *input, BitStream *bstream)
  * @retval -1 an error occurred and errno is set to indeicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
- * @throw ERANGE input is too large.
+ * @throw ERANGE input data is too large.
  */
 static int QRinput_convertData(QRinput *input, BitStream *bstream)
 {
