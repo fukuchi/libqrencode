@@ -1,8 +1,0 @@
-INSTALLATION
-============
-```
-autoreconf -vfi
-./autogen.sh
-./configure
-make && sudo make install
-```
