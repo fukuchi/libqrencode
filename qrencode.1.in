@@ -30,7 +30,7 @@ specify the size of dot (pixel). (default=3)
 specify error collectin level from L (lowest) to H (highest). (default=L)
 .TP
 .B \-v NUMBER, \-\-symversion=NUMBER
-specify the version of the symbol. (default=auto)
+specify the version of the symbol. (default=auto).See SYMBOL VERSIONS for more information
 .TP
 .B \-m NUMBER, \-\-margin=NUMBER
 specify the width of margin. (default=4)
@@ -77,6 +77,13 @@ display the version number and copyrights of the qrencode.
 .TP
 .B [STRING]
 input data. If it is not specified, data will be taken from standard input.
+.TP
+.B [SYMBOL VERSIONS]
+The symbol versions of QR Code range from Version 1 to Version 40.
+Each version has a different module configuration or number of modules,
+ranging from Version 1 (21 × 21 modules) up to Version 40 (177 × 177 modules).
+Each higher version number comprises 4 additional modules per side.
+See http://www.qrcode.com/en/about/version.html for a detailed version list.
 
 .SH EXAMPLES
 .TP
@@ -86,6 +93,9 @@ encode into a symbol version 1, level L.
 .B qrencode \-iSv 1 \-\-output=output.png
 read standard input and encode it into a structured-appended symbols in
 case-insensitive mode.
+.TP
+.B cat bigfile.txt | qrencode \-S -v 40 \-l L \-o output.png
+encode into a symbol version 40, level L.
 
 .SH AUTHOR
 Written by Kentaro Fukuchi.
