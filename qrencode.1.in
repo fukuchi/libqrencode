@@ -94,7 +94,7 @@ encode into a symbol version 1, level L.
 read standard input and encode it into a structured-appended symbols in
 case-insensitive mode.
 .TP
-.B cat bigfile.txt | qrencode \-S -v 40 \-l L \-o output.png
+.B cat bigfile.txt | qrencode \-S \-v 40 \-l L \-o output.png
 encode into a symbol version 40, level L.
 
 .SH AUTHOR
