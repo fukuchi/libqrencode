@@ -105,6 +105,8 @@ static void BitStream_writeBytes(unsigned char *dest, int size, unsigned char *d
 
 int BitStream_append(BitStream *bstream, BitStream *arg)
 {
+	int ret;
+
 	if(arg == NULL) {
 		return -1;
 	}
@@ -113,7 +115,8 @@ int BitStream_append(BitStream *bstream, BitStream *arg)
 	}
 
 	while(bstream->length + arg->length > bstream->datasize) {
-		BitStream_expand(bstream);
+		ret = BitStream_expand(bstream);
+		if(ret < 0) return ret;
 	}
 
 	memcpy(bstream->data + bstream->length, arg->data, arg->length);
