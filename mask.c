@@ -140,7 +140,6 @@ static int Mask_mask7(int width, const unsigned char *s, unsigned char *d)
 	MASKMAKER((((x*y)%3)+((x+y)&1))&1)
 }
 
-#define maskNum (8)
 typedef int MaskMaker(int, const unsigned char *, unsigned char *);
 static MaskMaker *maskMakers[maskNum] = {
 	Mask_mask0, Mask_mask1, Mask_mask2, Mask_mask3,

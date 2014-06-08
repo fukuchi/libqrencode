@@ -30,6 +30,7 @@
 #include <errno.h>
 
 #include "qrencode.h"
+#include "mask.h"
 
 #define INCHES_PER_METER (100.0/2.54)
 
@@ -42,6 +43,7 @@ static int dpi = 72;
 static int structured = 0;
 static int rle = 0;
 static int micro = 0;
+static int mask = -1;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 static unsigned int fg_color[4] = {0, 0, 0, 255};
@@ -68,6 +70,7 @@ static const struct option options[] = {
 	{"size"         , required_argument, NULL, 's'},
 	{"symversion"   , required_argument, NULL, 'v'},
 	{"margin"       , required_argument, NULL, 'm'},
+	{"mask"         , required_argument, NULL, 'a'},
 	{"dpi"          , required_argument, NULL, 'd'},
 	{"type"         , required_argument, NULL, 't'},
 	{"structured"   , no_argument      , NULL, 'S'},
@@ -83,7 +86,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
+static char *optstring = "ho:l:s:v:m:a:d:t:Skci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -112,6 +115,8 @@ static void usage(int help, int longopt, int status)
 "               specify the version of the symbol. (default=auto)\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
 "               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
+"  -M NUMBER, --mask=NUMBER\n"
+"               specify the mask. (default=-1 (auto-detected)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
 "  -t {PNG,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}, --type={...}\n"
@@ -783,15 +788,15 @@ static QRcode *encode(const unsigned char *intext, int length)
 
 	if(micro) {
 		if(eightbit) {
-			code = QRcode_encodeDataMQR(length, intext, version, level);
+			code = QRcode_encodeDataMQR(length, intext, version, level, mask);
 		} else {
-			code = QRcode_encodeStringMQR((char *)intext, version, level, hint, casesensitive);
+			code = QRcode_encodeStringMQR((char *)intext, version, level, hint, casesensitive, mask);
 		}
 	} else {
 		if(eightbit) {
-			code = QRcode_encodeData(length, intext, version, level);
+			code = QRcode_encodeData(length, intext, version, level, mask);
 		} else {
-			code = QRcode_encodeString((char *)intext, version, level, hint, casesensitive);
+			code = QRcode_encodeString((char *)intext, version, level, hint, casesensitive, mask);
 		}
 	}
 
@@ -1030,6 +1035,13 @@ int main(int argc, char **argv)
 				margin = atoi(optarg);
 				if(margin < 0) {
 					fprintf(stderr, "Invalid margin: %d\n", margin);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case 'a':
+				mask = atoi(optarg);
+				if(mask < -1 || mask >= maskNum) {
+					fprintf(stderr, "Invalid mask: %d\n", mask);
 					exit(EXIT_FAILURE);
 				}
 				break;

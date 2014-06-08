@@ -391,6 +391,7 @@ typedef struct _QRcode_List {
  * Create a symbol from the input data.
  * @warning This function is THREAD UNSAFE when pthread is disabled.
  * @param input input data.
+ * @param mask mask constant to use, or -1 for auto-select
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version. On error, NULL is returned,
  *         and errno is set to indicate the error. See Exceptions for the
@@ -398,7 +399,7 @@ typedef struct _QRcode_List {
  * @throw EINVAL invalid input object.
  * @throw ENOMEM unable to allocate memory for input objects.
  */
-extern QRcode *QRcode_encodeInput(QRinput *input);
+extern QRcode *QRcode_encodeInput(QRinput *input, int mask);
 
 /**
  * Create a symbol from the string. The library automatically parses the input
@@ -415,6 +416,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
  *             characters will be encoded as is. If you want to embed UTF-8
  *             string, choose this. Other mode will cause EINVAL error.
  * @param casesensitive case-sensitive(1) or not(0).
+ * @param mask mask constant to use, or -1 for auto-select
  * @return an instance of QRcode class. The version of the result QRcode may
  *         be larger than the designated version. On error, NULL is returned,
  *         and errno is set to indicate the error. See Exceptions for the
@@ -423,25 +425,25 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
  * @throw ENOMEM unable to allocate memory for input objects.
  * @throw ERANGE input data is too large.
  */
-extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
+extern QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive, int mask);
 
 /**
  * Same to QRcode_encodeString(), but encode whole data in 8-bit mode.
  * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
-extern QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level);
+extern QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level, int mask);
 
 /**
  * Micro QR Code version of QRcode_encodeString().
  * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
-extern QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive);
+extern QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive, int mask);
 
 /**
  * Micro QR Code version of QRcode_encodeString8bit().
  * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
-extern QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level);
+extern QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level, int mask);
 
 /**
  * Encode byte stream (may include '\0') in 8-bit mode.
@@ -451,17 +453,18 @@ extern QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecL
  * @param version version of the symbol. If 0, the library chooses the minimum
  *                version for the given input data.
  * @param level error correction level.
+ * @param mask mask constant to use, or -1 for auto-select
  * @throw EINVAL invalid input object.
  * @throw ENOMEM unable to allocate memory for input objects.
  * @throw ERANGE input data is too large.
  */
-extern QRcode *QRcode_encodeData(int size, const unsigned char *data, int version, QRecLevel level);
+extern QRcode *QRcode_encodeData(int size, const unsigned char *data, int version, QRecLevel level, int mask);
 
 /**
  * Micro QR Code version of QRcode_encodeData().
  * @warning This function is THREAD UNSAFE when pthread is disabled.
  */
-extern QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level);
+extern QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level, int mask);
 
 /**
  * Free the instance of QRcode class.

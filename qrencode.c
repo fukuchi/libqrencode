@@ -611,16 +611,16 @@ EXIT:
 	return qrcode;
 }
 
-QRcode *QRcode_encodeInput(QRinput *input)
+QRcode *QRcode_encodeInput(QRinput *input, int mask)
 {
 	if(input->mqr) {
-		return QRcode_encodeMaskMQR(input, -1);
+		return QRcode_encodeMaskMQR(input, mask);
 	} else {
-		return QRcode_encodeMask(input, -1);
+		return QRcode_encodeMask(input, mask);
 	}
 }
 
-static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLevel level, int mqr, QRencodeMode hint, int casesensitive)
+static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLevel level, int mqr, QRencodeMode hint, int casesensitive, int mask)
 {
 	QRinput *input;
 	QRcode *code;
@@ -647,23 +647,23 @@ static QRcode *QRcode_encodeStringReal(const char *string, int version, QRecLeve
 		QRinput_free(input);
 		return NULL;
 	}
-	code = QRcode_encodeInput(input);
+	code = QRcode_encodeInput(input, mask);
 	QRinput_free(input);
 
 	return code;
 }
 
-QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
+QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive, int mask)
 {
-	return QRcode_encodeStringReal(string, version, level, 0, hint, casesensitive);
+	return QRcode_encodeStringReal(string, version, level, 0, hint, casesensitive, mask);
 }
 
-QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
+QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive, int mask)
 {
-	return QRcode_encodeStringReal(string, version, level, 1, hint, casesensitive);
+	return QRcode_encodeStringReal(string, version, level, 1, hint, casesensitive, mask);
 }
 
-static QRcode *QRcode_encodeDataReal(const unsigned char *data, int length, int version, QRecLevel level, int mqr)
+static QRcode *QRcode_encodeDataReal(const unsigned char *data, int length, int version, QRecLevel level, int mqr, int mask)
 {
 	QRinput *input;
 	QRcode *code;
@@ -686,38 +686,38 @@ static QRcode *QRcode_encodeDataReal(const unsigned char *data, int length, int 
 		QRinput_free(input);
 		return NULL;
 	}
-	code = QRcode_encodeInput(input);
+	code = QRcode_encodeInput(input, mask);
 	QRinput_free(input);
 
 	return code;
 }
 
-QRcode *QRcode_encodeData(int size, const unsigned char *data, int version, QRecLevel level)
+QRcode *QRcode_encodeData(int size, const unsigned char *data, int version, QRecLevel level, int mask)
 {
-	return QRcode_encodeDataReal(data, size, version, level, 0);
+	return QRcode_encodeDataReal(data, size, version, level, 0, mask);
 }
 
-QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level)
+QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level, int mask)
 {
 	if(string == NULL) {
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 0);
+	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 0, mask);
 }
 
-QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level)
+QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level, int mask)
 {
-	return QRcode_encodeDataReal(data, size, version, level, 1);
+	return QRcode_encodeDataReal(data, size, version, level, 1, mask);
 }
 
-QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level)
+QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level, int mask)
 {
 	if(string == NULL) {
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 1);
+	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 1, mask);
 }
 
 
@@ -803,7 +803,7 @@ QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s)
 			tail->next = entry;
 			tail = tail->next;
 		}
-		tail->code = QRcode_encodeInput(list->input);
+		tail->code = QRcode_encodeInput(list->input, -1);
 		if(tail->code == NULL) {
 			goto ABORT;
 		}
