@@ -115,7 +115,7 @@ static void usage(int help, int longopt, int status)
 "               specify the version of the symbol. (default=auto)\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
 "               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
-"  -M NUMBER, --mask=NUMBER\n"
+"  -a NUMBER, --mask=NUMBER\n"
 "               specify the mask. (default=-1 (auto-detected)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
