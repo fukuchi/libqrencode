@@ -1,6 +1,8 @@
 2014.06.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrencode.c:
 	  - A memory leak bug has been fixed. (Thanks to @win32asm)
+	* bitstream.c:
+	  - Check return value of BitStream_expand. (PR #46, Thanks to @tklauser)
 
 2014.02.14 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
