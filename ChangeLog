@@ -1,3 +1,7 @@
+2014.06.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrencode.c:
+	  - A memory leak bug has been fixed. (Thanks to @win32asm)
+
 2014.02.14 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Minor documentation fix.
