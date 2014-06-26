@@ -107,7 +107,7 @@ static void usage(int help, int longopt)
 "               specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n\n"
 "  -v NUMBER, --symversion=NUMBER\n"
-"               specify the version of the symbol. (default=auto)\n\n"
+"               specify the version of the symbol. (default=auto) See SYMBOL VERSIONS for more information\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
 "               specify the width of the margins. (default=4 (2 for Micro)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
@@ -134,6 +134,12 @@ static void usage(int help, int longopt)
 "               display the version number and copyrights of the qrencode.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n"
+"  [SYMBOL VERSIONS]    The symbol versions of QR Code range from Version 1 to Version 40.\n"
+"               Each version has a different module configuration or number of modules,\n"
+"               ranging from Version 1 (21 × 21 modules) up to Version 40 (177 × 177 modules).\n"
+"               Each higher version number comprises 4 additional modules per side.\n"
+"               See http://www.qrcode.com/en/about/version.html for a detailed version list.\n"
+
 			);
 		} else {
 			fprintf(stderr,
