@@ -139,4 +139,4 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 - Yann Droneaud         - improved input validation patch
 - Viona                 - bug fix patch for string splitting
 - Daniel Dörrhöfer      - RLE option, some bug fixes, Travis configuration
-- Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, ralgozino - bug report / suggestion
+- Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, ralgozino, Sean McMurray, win32asm, Tobias Klauser, Antenore - bug report / suggestion
