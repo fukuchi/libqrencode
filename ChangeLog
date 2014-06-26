@@ -1,3 +1,8 @@
+2014.06.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c, qrencode.1.in:
+	  - Merged pull-request #44. (Thanks to Antenore)
+	  - Fixed some format issues.
+
 2014.06.22 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrencode.c:
 	  - A memory leak bug has been fixed. (Thanks to @win32asm)
