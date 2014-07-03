@@ -1,6 +1,10 @@
 2014.07.04 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* use/config.rpath:
 	  - Updated to the newer version bundled with gettext-0.18.3.2.
+	* acinclude.m4:
+	  - Added iconv.m4, lib-{link,ld,prefix}.m4 for Mac OS.
+	* autogen.sh:
+	  - mkdir m4 if not exist.
 
 2014.06.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.1.in:
