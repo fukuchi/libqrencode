@@ -360,17 +360,17 @@ extern int QRinput_setFNC1Second(QRinput *input, unsigned char appid);
  * the uchar is 1, the corresponding module is black. The other bits are
  * meaningless for usual applications, but here its specification is described.
  *
- * <pre>
- * MSB 76543210 LSB
- *     |||||||`- 1=black/0=white
- *     ||||||`-- data and ecc code area
- *     |||||`--- format information
- *     ||||`---- version information
- *     |||`----- timing pattern
- *     ||`------ alignment pattern
- *     |`------- finder pattern and separator
- *     `-------- non-data modules (format, timing, etc.)
- * </pre>
+ * @verbatim
+   MSB 76543210 LSB
+       |||||||`- 1=black/0=white
+       ||||||`-- data and ecc code area
+       |||||`--- format information
+       ||||`---- version information
+       |||`----- timing pattern
+       ||`------ alignment pattern
+       |`------- finder pattern and separator
+       `-------- non-data modules (format, timing, etc.)
+   @endverbatim
  */
 typedef struct {
 	int version;         ///< version of the symbol
