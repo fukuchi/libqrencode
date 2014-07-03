@@ -1,3 +1,7 @@
+2014.07.04 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* use/config.rpath:
+	  - Updated to the newer version bundled with gettext-0.18.3.2.
+
 2014.06.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.1.in:
 	  - Merged pull-request #44. (Thanks to Antenore)
