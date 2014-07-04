@@ -3,7 +3,7 @@
  *
  * Reed solomon error correction code encoder specialized for QR code.
  *
- * Copyright (C) 2013 Kentaro Fukuchi <kentaro@fukuchi.org>
+ * Copyright (C) 2014 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

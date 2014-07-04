@@ -1,4 +1,4 @@
-# libqrencode 3.4.3 - QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
+# libqrencode 3.9.0 - QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
 
 GENERAL INFORMATION
 ===================
