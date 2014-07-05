@@ -1,4 +1,4 @@
-.TH QRENCODE 1 "Jun. 27, 2014" "qrencode @VERSION@"
+.TH QRENCODE 1 "Jul. 6, 2014" "qrencode @VERSION@"
 .SH NAME
 qrencode \- Encode input data in a QR Code and save as a PNG or EPS image.
 .SH SYNOPSIS
@@ -39,10 +39,10 @@ specify the width of margin. (default=4)
 specify the DPI of the generated PNG. (default=72)
 .TP
 .PD 0
-.B \-t {PNG,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
+.B \-t {PNG,PNG32,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
 .TP
 .PD
-.B \-\-type={PNG,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
+.B \-\-type={PNG,PNG32,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
 specify the type of the generated image. (default=PNG)
 .TP
 .B \-S, \-\-structured

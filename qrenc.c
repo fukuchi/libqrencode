@@ -44,11 +44,12 @@ static int rle = 0;
 static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
-static unsigned int fg_color[4] = {0, 0, 0, 255};
-static unsigned int bg_color[4] = {255, 255, 255, 255};
+static unsigned char fg_color[4] = {0, 0, 0, 255};
+static unsigned char bg_color[4] = {255, 255, 255, 255};
 
 enum imageType {
 	PNG_TYPE,
+	PNG32_TYPE,
 	EPS_TYPE,
 	SVG_TYPE,
 	ANSI_TYPE,
@@ -115,7 +116,7 @@ static void usage(int help, int longopt, int status)
 "               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}, --type={...}\n"
+"  -t {PNG,PNG32,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}, --type={...}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
@@ -162,7 +163,7 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -179,20 +180,27 @@ static void usage(int help, int longopt, int status)
 	}
 }
 
-static int color_set(unsigned int color[4], const char *value)
+static int color_set(unsigned char color[4], const char *value)
 {
 	int len = strlen(value);
-	int count;
+	int i, count;
+	unsigned int col[3];
 	if(len == 6) {
-		count = sscanf(value, "%02x%02x%02x%n", &color[0], &color[1], &color[2], &len);
+		count = sscanf(value, "%02x%02x%02x%n", &col[0], &col[1], &col[2], &len);
 		if(count < 3 || len != 6) {
 			return -1;
 		}
+		for(i=0; i<3; i++) {
+			color[i] = col[i];
+		}
 		color[3] = 255;
 	} else if(len == 8) {
-		count = sscanf(value, "%02x%02x%02x%02x%n", &color[0], &color[1], &color[2], &color[3], &len);
+		count = sscanf(value, "%02x%02x%02x%02x%n", &col[0], &col[1], &col[2], &col[3], &len);
 		if(count < 4 || len != 8) {
 			return -1;
+		}
+		for(i=0; i<4; i++) {
+			color[i] = col[i];
 		}
 	} else {
 		return -1;
@@ -245,19 +253,36 @@ static FILE *openFile(const char *outfile)
 	return fp;
 }
 
-static int writePNG(QRcode *qrcode, const char *outfile)
+static void fillRow(unsigned char *row, int size, unsigned char color[])
+{
+	int i;
+
+	for(i = 0; i< size; i++) {
+		memcpy(row, color, 4);
+		row += 4;
+	}
+}
+
+static int writePNG(QRcode *qrcode, const char *outfile, enum imageType type)
 {
 	static FILE *fp; // avoid clobbering by setjmp.
 	png_structp png_ptr;
 	png_infop info_ptr;
-	png_colorp palette;
+	png_colorp palette = NULL;
 	png_byte alpha_values[2];
 	unsigned char *row, *p, *q;
 	int x, y, xx, yy, bit;
 	int realwidth;
 
 	realwidth = (qrcode->width + margin * 2) * size;
-	row = (unsigned char *)malloc((realwidth + 7) / 8);
+	if(type == PNG_TYPE) {
+		row = (unsigned char *)malloc((realwidth + 7) / 8);
+	} else if(type == PNG32_TYPE) {
+		row = (unsigned char *)malloc(realwidth * 4);
+	} else {
+		fprintf(stderr, "Internal error.\n");
+		exit(EXIT_FAILURE);
+	}
 	if(row == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -292,69 +317,111 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 		exit(EXIT_FAILURE);
 	}
 
-	palette = (png_colorp) malloc(sizeof(png_color) * 2);
-	if(palette == NULL) {
-		fprintf(stderr, "Failed to allocate memory.\n");
-		exit(EXIT_FAILURE);
+	if(type == PNG_TYPE) {
+		palette = (png_colorp) malloc(sizeof(png_color) * 2);
+		if(palette == NULL) {
+			fprintf(stderr, "Failed to allocate memory.\n");
+			exit(EXIT_FAILURE);
+		}
+		palette[0].red   = fg_color[0];
+		palette[0].green = fg_color[1];
+		palette[0].blue  = fg_color[2];
+		palette[1].red   = bg_color[0];
+		palette[1].green = bg_color[1];
+		palette[1].blue  = bg_color[2];
+		alpha_values[0] = fg_color[3];
+		alpha_values[1] = bg_color[3];
+		png_set_PLTE(png_ptr, info_ptr, palette, 2);
+		png_set_tRNS(png_ptr, info_ptr, alpha_values, 2, NULL);
 	}
-	palette[0].red   = fg_color[0];
-	palette[0].green = fg_color[1];
-	palette[0].blue  = fg_color[2];
-	palette[1].red   = bg_color[0];
-	palette[1].green = bg_color[1];
-	palette[1].blue  = bg_color[2];
-	alpha_values[0] = fg_color[3];
-	alpha_values[1] = bg_color[3];
-	png_set_PLTE(png_ptr, info_ptr, palette, 2);
-	png_set_tRNS(png_ptr, info_ptr, alpha_values, 2, NULL);
 
 	png_init_io(png_ptr, fp);
-	png_set_IHDR(png_ptr, info_ptr,
-			realwidth, realwidth,
-			1,
-			PNG_COLOR_TYPE_PALETTE,
-			PNG_INTERLACE_NONE,
-			PNG_COMPRESSION_TYPE_DEFAULT,
-			PNG_FILTER_TYPE_DEFAULT);
+	if(type == PNG_TYPE) {
+		png_set_IHDR(png_ptr, info_ptr,
+				realwidth, realwidth,
+				1,
+				PNG_COLOR_TYPE_PALETTE,
+				PNG_INTERLACE_NONE,
+				PNG_COMPRESSION_TYPE_DEFAULT,
+				PNG_FILTER_TYPE_DEFAULT);
+	} else {
+		png_set_IHDR(png_ptr, info_ptr,
+				realwidth, realwidth,
+				8,
+				PNG_COLOR_TYPE_RGB_ALPHA,
+				PNG_INTERLACE_NONE,
+				PNG_COMPRESSION_TYPE_DEFAULT,
+				PNG_FILTER_TYPE_DEFAULT);
+	}
 	png_set_pHYs(png_ptr, info_ptr,
 			dpi * INCHES_PER_METER,
 			dpi * INCHES_PER_METER,
 			PNG_RESOLUTION_METER);
 	png_write_info(png_ptr, info_ptr);
 
+	if(type == PNG_TYPE) {
 	/* top margin */
-	memset(row, 0xff, (realwidth + 7) / 8);
-	for(y=0; y<margin * size; y++) {
-		png_write_row(png_ptr, row);
-	}
-
-	/* data */
-	p = qrcode->data;
-	for(y=0; y<qrcode->width; y++) {
-		bit = 7;
 		memset(row, 0xff, (realwidth + 7) / 8);
-		q = row;
-		q += margin * size / 8;
-		bit = 7 - (margin * size % 8);
-		for(x=0; x<qrcode->width; x++) {
-			for(xx=0; xx<size; xx++) {
-				*q ^= (*p & 1) << bit;
-				bit--;
-				if(bit < 0) {
-					q++;
-					bit = 7;
-				}
-			}
-			p++;
-		}
-		for(yy=0; yy<size; yy++) {
+		for(y=0; y<margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
-	}
-	/* bottom margin */
-	memset(row, 0xff, (realwidth + 7) / 8);
-	for(y=0; y<margin * size; y++) {
-		png_write_row(png_ptr, row);
+
+		/* data */
+		p = qrcode->data;
+		for(y=0; y<qrcode->width; y++) {
+			bit = 7;
+			memset(row, 0xff, (realwidth + 7) / 8);
+			q = row;
+			q += margin * size / 8;
+			bit = 7 - (margin * size % 8);
+			for(x=0; x<qrcode->width; x++) {
+				for(xx=0; xx<size; xx++) {
+					*q ^= (*p & 1) << bit;
+					bit--;
+					if(bit < 0) {
+						q++;
+						bit = 7;
+					}
+				}
+				p++;
+			}
+			for(yy=0; yy<size; yy++) {
+				png_write_row(png_ptr, row);
+			}
+		}
+		/* bottom margin */
+		memset(row, 0xff, (realwidth + 7) / 8);
+		for(y=0; y<margin * size; y++) {
+			png_write_row(png_ptr, row);
+		}
+	} else {
+	/* top margin */
+		fillRow(row, realwidth, bg_color);
+		for(y=0; y<margin * size; y++) {
+			png_write_row(png_ptr, row);
+		}
+
+		/* data */
+		p = qrcode->data;
+		for(y=0; y<qrcode->width; y++) {
+			fillRow(row, realwidth, bg_color);
+			for(x=0; x<qrcode->width; x++) {
+				for(xx=0; xx<size; xx++) {
+					if(*p & 1) {
+						memcpy(&row[((margin + x) * size + xx) * 4], fg_color, 4);
+					}
+				}
+				p++;
+			}
+			for(yy=0; yy<size; yy++) {
+				png_write_row(png_ptr, row);
+			}
+		}
+		/* bottom margin */
+		fillRow(row, realwidth, bg_color);
+		for(y=0; y<margin * size; y++) {
+			png_write_row(png_ptr, row);
+		}
 	}
 
 	png_write_end(png_ptr, info_ptr);
@@ -362,7 +429,9 @@ static int writePNG(QRcode *qrcode, const char *outfile)
 
 	fclose(fp);
 	free(row);
-	free(palette);
+	if(palette) {
+		free(palette);
+	}
 
 	return 0;
 }
@@ -823,7 +892,8 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 	}
 	switch(image_type) {
 		case PNG_TYPE:
-			writePNG(qrcode, outfile);
+		case PNG32_TYPE:
+			writePNG(qrcode, outfile, image_type);
 			break;
 		case EPS_TYPE:
 			writeEPS(qrcode, outfile);
@@ -938,7 +1008,8 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 		}
 		switch(image_type) {
 			case PNG_TYPE: 
-				writePNG(p->code, filename);
+			case PNG32_TYPE: 
+				writePNG(p->code, filename, image_type);
 				break;
 			case EPS_TYPE: 
 				writeEPS(p->code, filename);
@@ -1051,7 +1122,9 @@ int main(int argc, char **argv)
 				}
 				break;
 			case 't':
-				if(strcasecmp(optarg, "png") == 0) {
+				if(strcasecmp(optarg, "png24") == 0) {
+					image_type = PNG32_TYPE;
+				} else if(strcasecmp(optarg, "png") == 0) {
 					image_type = PNG_TYPE;
 				} else if(strcasecmp(optarg, "eps") == 0) {
 					image_type = EPS_TYPE;

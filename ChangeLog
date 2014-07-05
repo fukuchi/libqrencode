@@ -1,3 +1,7 @@
+2014.07.06 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c, qrencode.1.in:
+	  - Added a new image type PNG32 (direct color mode). (Thanks to Greg Hart)
+
 2014.07.04 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* use/config.rpath:
 	  - Updated to the newer version bundled with gettext-0.18.3.2.
