@@ -429,9 +429,7 @@ static int writePNG(QRcode *qrcode, const char *outfile, enum imageType type)
 
 	fclose(fp);
 	free(row);
-	if(palette) {
-		free(palette);
-	}
+	free(palette);
 
 	return 0;
 }
