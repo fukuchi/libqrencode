@@ -1120,7 +1120,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			case 't':
-				if(strcasecmp(optarg, "png24") == 0) {
+				if(strcasecmp(optarg, "png32") == 0) {
 					image_type = PNG32_TYPE;
 				} else if(strcasecmp(optarg, "png") == 0) {
 					image_type = PNG_TYPE;
