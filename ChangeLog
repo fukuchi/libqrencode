@@ -1,3 +1,7 @@
+2014.07.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Code cleanups.
+
 2014.07.07 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Serious typo fix.
