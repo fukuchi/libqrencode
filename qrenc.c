@@ -369,7 +369,6 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 		/* data */
 		p = qrcode->data;
 		for(y=0; y<qrcode->width; y++) {
-			bit = 7;
 			memset(row, 0xff, (realwidth + 7) / 8);
 			q = row;
 			q += margin * size / 8;

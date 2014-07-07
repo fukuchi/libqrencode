@@ -59,6 +59,7 @@ static QRinput_List *QRinput_List_newEntry(QRencodeMode mode, int size, const un
 
 	entry->mode = mode;
 	entry->size = size;
+	entry->data = NULL;
 	if(size > 0) {
 		entry->data = (unsigned char *)malloc(size);
 		if(entry->data == NULL) {

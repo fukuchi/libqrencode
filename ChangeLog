@@ -1,6 +1,7 @@
 2014.07.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
-	* qrenc.c:
+	* qrenc.c, qrinput.c, tests/test_qrinput.c:
 	  - Code cleanups.
+	  - Some possible minor bugs has been fixed.
 
 2014.07.07 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:

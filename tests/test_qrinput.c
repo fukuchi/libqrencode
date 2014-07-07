@@ -569,8 +569,6 @@ void test_splitentry(void)
 
 	i2 = QRinput_dup(i1);
 	e = i2->head;
-
-	e = i2->head;
 	QRinput_splitEntry(e, 4);
 
 	size1 = size2 = 0;
@@ -628,8 +626,6 @@ void test_splitentry2(void)
 	QRinput_append(i1, QR_MODE_8, strlen(str), (unsigned char *)str);
 
 	i2 = QRinput_dup(i1);
-	e = i2->head;
-
 	e = i2->head;
 	QRinput_splitEntry(e, 4);
 
