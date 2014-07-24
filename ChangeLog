@@ -3,7 +3,7 @@
 	  - Code refactoring (QRinput_Struct_count has been added).
 	  - And more code cleanups.
 	  - Avoid to add a Structued-append chunk when only one symbol is
-	    generated.
+	    generated. (Thanks to Yoshimichi Inoue)
 	* tests/test_qrinput.c:
 	  - New test has been added.
 	* qrinput.c, qrencode.1.in:
@@ -12,6 +12,11 @@
 	  - printQRinputStruct() has been added.
 	* rsecc.{c,h}:
 	  - Copyright notice and credit has been corrected.
+	* README, README.md:
+	  - ACKNOWLEDGMENTS updates.
+	[3.4]
+	  - Bumped version to 3.4.4.
+	* Version 3.4.4 has ben released.
 
 2014.07.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrinput.c, tests/test_qrinput.c:
