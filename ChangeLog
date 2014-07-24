@@ -14,6 +14,11 @@
 	  - Bumped verstion to 3.4.4.
 	* Version 3.4.2 has been released.
 
+2014.06.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c, qrencode.1.in:
+	  - Merged pull-request #44. (Thanks to Antenore)
+	  - Fixed some format issues.
+
 2013.07.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
 	* configure.ac, README, NEWS: 
