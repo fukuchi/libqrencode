@@ -564,6 +564,24 @@ void test_struct_split_invalidVersion(void)
 	free(str);
 }
 
+void test_struct_singlestructure(void)
+{
+	QRinput *input;
+	QRinput_Struct *s;
+	char *str = "TEST";
+
+	testStart("Testing structured-append symbols. (single structure)");
+	input = QRinput_new2(10, QR_ECLEVEL_H);
+	QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
+	s = QRinput_splitQRinputToStruct(input);
+	assert_nonnull(s, "must return a code.");
+	assert_equal(s->size, 1, "size must be 1, but %d returned.", s->size);
+	printQRinputInfo(s->head->input);
+	testFinish();
+	if(s != NULL) QRinput_Struct_free(s);
+	QRinput_free(input);
+}
+
 void test_splitentry(void)
 {
 	QRinput *i1, *i2;
@@ -966,6 +984,7 @@ int main(void)
 	test_struct_split_example();
 	test_struct_split_tooLarge();
 	test_struct_split_invalidVersion();
+	test_struct_singlestructure();
 	test_parity();
 	test_parity2();
 	test_null_free();
