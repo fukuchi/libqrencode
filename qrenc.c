@@ -46,6 +46,8 @@ static QRencodeMode hint = QR_MODE_8;
 static unsigned int fg_color[4] = {0, 0, 0, 255};
 static unsigned int bg_color[4] = {255, 255, 255, 255};
 
+static int verbose = 0;
+
 enum imageType {
 	PNG_TYPE,
 	EPS_TYPE,
@@ -76,9 +78,10 @@ static const struct option options[] = {
 	{"8bit"         , no_argument      , NULL, '8'},
 	{"rle"          , no_argument      , &rle,   1},
 	{"micro"        , no_argument      , NULL, 'M'},
-	{"foreground"	, required_argument, NULL, 'f'},
-	{"background"	, required_argument, NULL, 'b'},
+	{"foreground"   , required_argument, NULL, 'f'},
+	{"background"   , required_argument, NULL, 'b'},
 	{"version"      , no_argument      , NULL, 'V'},
+	{"verbose"      , no_argument      , &verbose, 1},
 	{NULL, 0, NULL, 0}
 };
 
@@ -133,6 +136,8 @@ static void usage(int help, int longopt)
 "               Color output support available only in PNG and SVG.\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
+"      --verbose\n"
+"               display verbose information to stderr.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n\n"
 "*SYMBOL VERSIONS\n"
@@ -820,6 +825,11 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		perror("Failed to encode the input data");
 		exit(EXIT_FAILURE);
 	}
+
+	if(verbose) {
+		fprintf(stderr, "File: %s, Version: %d\n", (outfile!=NULL)?outfile:"(stdout)", qrcode->version);
+	}
+
 	switch(image_type) {
 		case PNG_TYPE:
 			writePNG(qrcode, outfile);
@@ -850,6 +860,7 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 			fprintf(stderr, "Unknown image type.\n");
 			exit(EXIT_FAILURE);
 	}
+
 	QRcode_free(qrcode);
 }
 
@@ -931,6 +942,11 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 		} else {
 			snprintf(filename, FILENAME_MAX, "%s-%02d", base, i);
 		}
+
+		if(verbose) {
+			fprintf(stderr, "File: %s, Version: %d\n", filename, p->code->version);
+		}
+
 		switch(image_type) {
 			case PNG_TYPE: 
 				writePNG(p->code, filename);
@@ -1083,9 +1099,6 @@ int main(int argc, char **argv)
 				break;
 			case '8':
 				eightbit = 1;
-				break;
-			case 'r':
-				rle = 1;
 				break;
 			case 'M':
 				micro = 1;

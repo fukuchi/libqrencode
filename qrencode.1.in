@@ -75,6 +75,9 @@ Color output support available only in PNG and SVG.
 .B \-V, \-\-version
 display the version number and copyrights of the qrencode.
 .TP
+.B \-\-verbose
+display verbose information to stderr.
+.TP
 .B [STRING]
 input data. If it is not specified, data will be taken from standard input.
 
