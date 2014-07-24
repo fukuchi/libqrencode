@@ -71,6 +71,20 @@ void printQRinputInfo(QRinput *input)
 	}
 }
 
+void printQRinputStruct(QRinput_Struct *s)
+{
+	QRinput_InputList *list;
+	int i = 1;
+
+	printf("Struct size: %d\n", s->size);
+	printf("Struct parity: %08x\n", s->parity);
+	for(list = s->head; list != NULL; list = list->next) {
+		printf("Symbol %d - ", i);
+		printQRinputInfo(list->input);
+		i++;
+	}
+}
+
 void printFrame(int width, unsigned char *frame)
 {
 	int x, y;

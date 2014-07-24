@@ -563,11 +563,13 @@ void test_struct_singlestructure(void)
 
 	testStart("Testing structured-append symbols. (single structure)");
 	input = QRinput_new2(10, QR_ECLEVEL_H);
-	QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
+	QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
 	s = QRinput_splitQRinputToStruct(input);
 	assert_nonnull(s, "must return a code.");
 	assert_equal(s->size, 1, "size must be 1, but %d returned.", s->size);
-	printQRinputInfo(s->head->input);
+	if(s->size != 1) {
+		printQRinputStruct(s);
+	}
 	testFinish();
 	if(s != NULL) QRinput_Struct_free(s);
 	QRinput_free(input);
