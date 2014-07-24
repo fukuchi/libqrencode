@@ -1,3 +1,9 @@
+2014.07.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* tests/URI_testset.inc, tests/test_split_urls.c, tests/Makefile.am,
+	  .gitignore:
+	  - A new test suite evaluating splitting efficiency has been added.
+	  - Still undertrial.
+
 2014.07.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Code refactoring (QRinput_Struct_count has been added).
