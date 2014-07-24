@@ -2,6 +2,10 @@
 	* qrinput.c:
 	  - Code refactoring (QRinput_Struct_count has been added).
 	  - And more code cleanups.
+	  - Avoid to add a Structued-append chunk when only one symbol is
+	    generated.
+	* tests/test_qrinput.c:
+	  - New test has been added.
 	* qrinput.c, qrencode.1.in:
 	  - Added new option, "verbose".
 
