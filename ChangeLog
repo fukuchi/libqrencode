@@ -1,7 +1,9 @@
 2014.07.24 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrinput.c:
 	  - Code refactoring (QRinput_Struct_count has been added).
-	  - and more code cleanups.
+	  - And more code cleanups.
+	* qrinput.c, qrencode.1.in:
+	  - Added new option, "verbose".
 
 2014.07.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrinput.c, tests/test_qrinput.c:
