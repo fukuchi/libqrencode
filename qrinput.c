@@ -1538,6 +1538,18 @@ static unsigned char QRinput_Struct_calcParity(QRinput_Struct *s)
 	return parity;
 }
 
+static int QRinput_Struct_count(QRinput_Struct *s)
+{
+	int num = 0;
+	QRinput_InputList *list;
+
+	for(list = s->head; list != NULL; list = list->next) {
+		num++;
+	}
+
+	return num;
+}
+
 static int QRinput_List_shrinkEntry(QRinput_List *entry, int bytes)
 {
 	unsigned char *data;
@@ -1683,12 +1695,7 @@ int QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct *s)
 	if(s->parity < 0) {
 		QRinput_Struct_calcParity(s);
 	}
-	num = 0;
-	list = s->head;
-	while(list != NULL) {
-		num++;
-		list = list->next;
-	}
+	num = QRinput_Struct_count(s);
 	i = 1;
 	list = s->head;
 	while(list != NULL) {
