@@ -6,6 +6,7 @@ noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_qrspec test_rs test_qrencode prof_qrencode \
 				  test_mqrspec test_split test_monkey test_mask test_mmask \
 				  create_frame_pattern create_mqr_frame_pattern \
+				  test_split_urls \
 				  $(sdlPROGRAMS)
 noinst_LIBRARIES = libdecoder.a
 DECODER_LIBS = libdecoder.a $(LIBICONV)
@@ -41,6 +42,9 @@ test_qrencode_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
 test_split_SOURCES = test_split.c
 test_split_LDADD = ../libqrencode.la
+
+test_split_urls_SOURCES = test_split_urls.c
+test_split_urls_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
 test_monkey_SOURCES = test_monkey.c
 test_monkey_LDADD = ../libqrencode.la $(DECODER_LIBS)

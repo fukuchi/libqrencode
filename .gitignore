@@ -36,6 +36,7 @@ tests/test_qrinput
 tests/test_qrspec
 tests/test_rs
 tests/test_split
+tests/test_split_urls
 tests/view_qrcode
 use/compile
 use/config.guess
