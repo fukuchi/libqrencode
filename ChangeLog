@@ -8,6 +8,8 @@
 	  - New test has been added.
 	* qrinput.c, qrencode.1.in:
 	  - Added new option, "verbose".
+	* tests/common.h:
+	  - printQRinputStruct() has been added.
 
 2014.06.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.1.in:
