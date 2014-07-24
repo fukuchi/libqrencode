@@ -10,6 +10,9 @@
 	  - Added new option, "verbose".
 	* tests/common.h:
 	  - printQRinputStruct() has been added.
+	[3.4]
+	  - Bumped verstion to 3.4.4.
+	* Version 3.4.2 has been released.
 
 2014.06.27 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.1.in:
