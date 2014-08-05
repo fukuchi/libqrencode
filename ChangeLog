@@ -5,6 +5,8 @@
 	    code.
 	* tests/view_qrcode.c:
 	  - Use SDL_WaitEvent() instead of SDL_PollEvent().
+	* tests/common.h:
+	  - Added show_QRcode() for testing purposes. (Thanks to Sunil Maganally)
 
 2014.07.25 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/URI_testset.inc, tests/test_split_urls.c, tests/Makefile.am,

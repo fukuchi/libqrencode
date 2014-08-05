@@ -199,4 +199,64 @@ void printBstream(BitStream *bstream)
 	}
 	printf("\n");
 }
+
+#if HAVE_SDL
+/* Experimental debug function */
+/* You can call show_QRcode(QRcode *code) to display the QR Code from anywhere
+ * in test code using SDL. */
+#include <SDL.h>
+static SDL_Surface *screen = NULL;
+
+static void draw_QRcode(QRcode *qrcode, int ox, int oy, int margin, int size)
+{
+	int x, y, width;
+	unsigned char *p;
+	SDL_Rect rect;
+
+	ox += margin * size;
+	oy += margin * size;
+	width = qrcode->width;
+	p = qrcode->data;
+	for(y=0; y<width; y++) {
+		for(x=0; x<width; x++) {
+			rect.x = ox + x * size;
+			rect.y = oy + y * size;
+			rect.w = size;
+			rect.h = size;
+			SDL_FillRect(screen, &rect, (*p&1)?0:0xffffff);
+			p++;
+		}
+	}
+}
+
+void show_QRcode(QRcode *qrcode)
+{
+	SDL_Event event;
+
+	if(!SDL_WasInit(SDL_INIT_VIDEO)) {
+		SDL_Init(SDL_INIT_VIDEO);
+		atexit(SDL_Quit);
+	}
+	int width = (qrcode->width + 4 * 2) * 4; //maring = 4, size = 4
+	screen = SDL_SetVideoMode(width, width, 32, 0);
+	SDL_FillRect(screen, NULL, 0xffffff);
+
+	draw_QRcode(qrcode, 0, 0, 4, 4);
+
+	SDL_Flip(screen);
+	fprintf(stderr, "Press any key on the QR Code window to proceed.\n");
+
+	int loop = 1;
+	while(loop) {
+		SDL_WaitEvent(&event);
+		if(event.type == SDL_KEYDOWN) {
+			loop = 0;
+		}
+	}
+}
+#else
+void show_QRcode() {
+}
+#endif
+
 #endif /* __COMMON_H__ */
