@@ -245,7 +245,6 @@ void test_padding2(void)
 	assert_equal(size, 152, "16byte: # of bit is incorrect (%d != 152).\n", size);
 	ret = ncmpBin(correct, bstream, 152);
 	assert_zero(ret, "Padding bits incorrect.\n");
-	printBstream(bstream);
 
 	QRinput_free(input);
 	BitStream_free(bstream);
@@ -263,7 +262,6 @@ void test_padding2(void)
 	assert_equal(size, 152, "15byte: # of bit is incorrect (%d != 152).\n", size);
 	ret = ncmpBin(correct, bstream, 152);
 	assert_zero(ret, "Padding bits incorrect.\n");
-	printBstream(bstream);
 
 	testFinish();
 
