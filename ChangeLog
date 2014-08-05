@@ -1,4 +1,8 @@
 2014.08.05 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* configure.ac, Makefile.am, tests/Makefile.am:
+	  - Added some conditional flags for configuration/building process.
+	  - HAVE_PNG and HAVE_SDL can be refered from both Makefile and program
+	    code.
 	* tests/view_qrcode.c:
 	  - Use SDL_WaitEvent() instead of SDL_PollEvent().
 

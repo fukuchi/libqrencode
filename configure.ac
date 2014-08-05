@@ -59,8 +59,16 @@ AC_ARG_WITH([tools], [AS_HELP_STRING([--with-tools], [build utility tools [defau
 
 AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
 if test x$build_tools = xyes ; then
-	PKG_CHECK_MODULES(png, "libpng")
+	PKG_CHECK_MODULES(png, "libpng", [AC_DEFINE([HAVE_PNG], [1], [Define to 1 if using libpng is enabled.])], [AC_DEFINE([HAVE_PNG], [0])])
+	if test x$png_CFLAGS = x ; then
+		echo "
+!!!!!!!!!!
+LIBPNG is required to build the utility tools. Temporarily disabled.
+!!!!!!!!!!
+"
+	fi
 fi
+AM_CONDITIONAL(HAVE_PNG, [test "x$png_CFLAGS" != "x" ])
 
 dnl --with-tests
 AC_ARG_WITH([tests], [AS_HELP_STRING([--with-tests], [build tests [default=no]])],
@@ -82,7 +90,7 @@ fi
 
 if test x$build_tests = xyes ; then
 	SDL_REQUIRED_VERSION=1.2.0
-	PKG_CHECK_MODULES(SDL, [sdl >= $SDL_REQUIRED_VERSION])
+	PKG_CHECK_MODULES(SDL, [sdl >= $SDL_REQUIRED_VERSION], [AC_DEFINE([HAVE_SDL], [1], [Define to 1 if using SDL is enabled.])], [AC_DEFINE([HAVE_SDL], [0])])
 	AM_ICONV_LINK
 fi
 AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
