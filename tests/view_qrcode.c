@@ -289,73 +289,71 @@ void view(int mode, QRinput *input)
 		}
 		loop = 1;
 		while(loop) {
-			usleep(10000);
-			while(SDL_PollEvent(&event)) {
-				if(event.type == SDL_KEYDOWN) {
-					switch(event.key.keysym.sym) {
-					case SDLK_RIGHT:
-						version++;
-						if(version > QRSPEC_VERSION_MAX)
-							version = QRSPEC_VERSION_MAX;
+			SDL_WaitEvent(&event);
+			if(event.type == SDL_KEYDOWN) {
+				switch(event.key.keysym.sym) {
+				case SDLK_RIGHT:
+					version++;
+					if(version > QRSPEC_VERSION_MAX)
+						version = QRSPEC_VERSION_MAX;
+					loop = 0;
+					break;
+				case SDLK_LEFT:
+					version--;
+					if(version < 1)
+						version = 1;
+					loop = 0;
+					break;
+				case SDLK_UP:
+					size++;
+					loop = 0;
+					break;
+				case SDLK_DOWN:
+					size--;
+					if(size < 1) size = 1;
+					loop = 0;
+					break;
+				case SDLK_0:
+				case SDLK_1:
+				case SDLK_2:
+				case SDLK_3:
+				case SDLK_4:
+				case SDLK_5:
+				case SDLK_6:
+				case SDLK_7:
+					if(!mode && !structured) {
+						mask = (event.key.keysym.sym - SDLK_0);
 						loop = 0;
-						break;
-					case SDLK_LEFT:
-						version--;
-						if(version < 1)
-							version = 1;
-						loop = 0;
-						break;
-					case SDLK_UP:
-						size++;
-						loop = 0;
-						break;
-					case SDLK_DOWN:
-						size--;
-						if(size < 1) size = 1;
-						loop = 0;
-						break;
-					case SDLK_0:
-					case SDLK_1:
-					case SDLK_2:
-					case SDLK_3:
-					case SDLK_4:
-					case SDLK_5:
-					case SDLK_6:
-					case SDLK_7:
-						if(!mode && !structured) {
-							mask = (event.key.keysym.sym - SDLK_0);
-							loop = 0;
-						}
-						break;
-					case SDLK_8:
-						if(!mode && !structured) {
-							mask = -1;
-							loop = 0;
-						}
-						break;
-					case SDLK_l:
-						level = QR_ECLEVEL_L;
-						loop = 0;
-						break;
-					case SDLK_m:
-						level = QR_ECLEVEL_M;
-						loop = 0;
-						break;
-					case SDLK_h:
-						level = QR_ECLEVEL_H;
-						loop = 0;
-						break;
-					case SDLK_q:
-						level = QR_ECLEVEL_Q;
-						loop = 0;
-						break;
-					case SDLK_ESCAPE:
-						loop = 0;
-						flag = 0;
-						break;
-					default:
-						break;
 					}
+					break;
+				case SDLK_8:
+					if(!mode && !structured) {
+						mask = -1;
+						loop = 0;
+					}
+					break;
+				case SDLK_l:
+					level = QR_ECLEVEL_L;
+					loop = 0;
+					break;
+				case SDLK_m:
+					level = QR_ECLEVEL_M;
+					loop = 0;
+					break;
+				case SDLK_h:
+					level = QR_ECLEVEL_H;
+					loop = 0;
+					break;
+				case SDLK_q:
+					level = QR_ECLEVEL_Q;
+					loop = 0;
+					break;
+				case SDLK_ESCAPE:
+					loop = 0;
+					flag = 0;
+					break;
+				default:
+					break;
 				}
 				if(event.type == SDL_QUIT) {
 					loop = 0;
