@@ -138,7 +138,7 @@ void test_maskEvaluation(void)
 	testFinish();
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	//print_masks();
 	test_masks();

@@ -957,7 +957,7 @@ void test_apiversion(void)
 	testFinish();
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_iterate();
 	test_iterate2();

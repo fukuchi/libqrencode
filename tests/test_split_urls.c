@@ -79,7 +79,7 @@ void test_bitstream_length() {
 	testEnd(err);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_bitstream_length();
 

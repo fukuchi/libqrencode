@@ -528,7 +528,7 @@ void test_split8N8(void)
 	QRinput_free(input3);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_split1();
 	test_split2();

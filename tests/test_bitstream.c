@@ -203,7 +203,7 @@ void test_append(void)
 	BitStream_free(bs2);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_null();
 	test_num();

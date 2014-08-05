@@ -139,7 +139,7 @@ void test_mix(void)
 	QRinput_free(gstream);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	gstream = QRinput_new();
 

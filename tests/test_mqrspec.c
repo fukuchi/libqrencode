@@ -162,7 +162,7 @@ void test_dataLength(void)
 	testEnd(err);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_newFrame();
 	test_newframe_invalid();

@@ -308,7 +308,7 @@ void test_format(void)
 	testEnd(err);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_eccTable();
 	test_eccTable2();

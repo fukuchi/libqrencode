@@ -107,7 +107,7 @@ void test_allQRSizeAndECCLevel(void)
 	testFinish();
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	test_rscodeexample();
 	test_allQRSizeAndECCLevel();

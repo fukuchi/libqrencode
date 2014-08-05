@@ -63,7 +63,7 @@ void prof_ver31to40(void)
 	timerStop();
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	prof_ver1to10();
 	prof_ver31to40();
