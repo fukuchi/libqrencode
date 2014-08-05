@@ -72,11 +72,11 @@ pthread_qrencode_LDADD = ../libqrencode.la $(LIBPTHREAD)
 if HAVE_PNG
 create_frame_pattern_SOURCES = create_frame_pattern.c
 create_frame_pattern_CFLAGS = $(png_CFLAGS) $(AM_CFLAGS)
-create_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS) $(AM_LDFLAGS)
+create_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
 
 create_mqr_frame_pattern_SOURCES = create_mqr_frame_pattern.c
 create_mqr_frame_pattern_CFLAGS = $(png_CFLAGS) $(AM_CFLAGS)
-create_mqr_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS) $(AM_LDFLAGS)
+create_mqr_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
 endif
 
 if HAVE_SDL

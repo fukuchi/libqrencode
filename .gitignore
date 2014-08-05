@@ -45,3 +45,4 @@ use/depcomp
 use/install-sh
 use/ltmain.sh
 use/missing
+html/
