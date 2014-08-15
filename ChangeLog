@@ -1,3 +1,7 @@
+2014.08.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* tests/view_qrcode.c:
+	  - Version number check improved for Micro QR Code.
+
 2014.08.05 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac, Makefile.am, tests/Makefile.am:
 	  - Added some conditional flags for configuration/building process.

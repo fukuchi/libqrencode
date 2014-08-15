@@ -15,7 +15,7 @@ static int casesensitive = 1;
 static int eightbit = 0;
 static int version = 1;
 static int size = 4;
-static int margin = 4;
+static int margin = -1;
 static int structured = 0;
 static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
@@ -500,6 +500,33 @@ int main(int argc, char **argv)
 	}
 	if(intext == NULL) {
 		intext = readStdin(&length);
+	}
+
+	if(micro && version > MQRSPEC_VERSION_MAX) {
+		fprintf(stderr, "Version should be less or equal to %d.\n", MQRSPEC_VERSION_MAX);
+		exit(EXIT_FAILURE);
+	} else if(!micro && version > QRSPEC_VERSION_MAX) {
+		fprintf(stderr, "Version should be less or equal to %d.\n", QRSPEC_VERSION_MAX);
+		exit(EXIT_FAILURE);
+	}
+
+	if(margin < 0) {
+		if(micro) {
+			margin = 2;
+		} else {
+			margin = 4;
+		}
+	}
+
+	if(micro) {
+		if(version == 0) {
+			fprintf(stderr, "Version must be specified to encode a Micro QR Code symbol.\n");
+			exit(EXIT_FAILURE);
+		}
+		if(structured) {
+			fprintf(stderr, "Micro QR Code does not support structured symbols.\n");
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
