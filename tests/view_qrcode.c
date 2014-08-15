@@ -13,7 +13,7 @@
 static SDL_Surface *screen = NULL;
 static int casesensitive = 1;
 static int eightbit = 0;
-static int version = 1;
+static int version = 0;
 static int size = 4;
 static int margin = -1;
 static int structured = 0;
@@ -61,9 +61,10 @@ static void usage(int help, int longopt)
 "               specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n\n"
 "  -v NUMBER, --symversion=NUMBER\n"
-"               specify the version of the symbol. (default=auto)\n\n"
+"               specify the version of the symbol. See SYMBOL VERSIONS for more\n"
+"               information. (default=auto)\n\n"
 "  -m NUMBER, --margin=NUMBER\n"
-"               specify the width of the margins. (default=4)\n\n"
+"               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -76,7 +77,15 @@ static void usage(int help, int longopt)
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
-"               standard input.\n"
+"               standard input.\n\n"
+"*SYMBOL VERSIONS\n"
+"               The symbol versions of QR Code range from Version 1 to Version\n"
+"               40. Each version has a different module configuration or number\n"
+"               of modules, ranging from Version 1 (21 x 21 modules) up to\n"
+"               Version 40 (177 x 177 modules). Each higher version number\n"
+"               comprises 4 additional modules per side by default. See\n"
+"               http://www.qrcode.com/en/about/version.html for a detailed\n"
+"               version list.\n"
 			);
 		} else {
 			fprintf(stderr,
@@ -88,7 +97,7 @@ static void usage(int help, int longopt)
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
 "  -v NUMBER    specify the version of the symbol. (default=auto)\n"
-"  -m NUMBER    specify the width of the margins. (default=4)\n"
+"  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
@@ -489,6 +498,7 @@ int main(int argc, char **argv)
 				break;
 		}
 	}
+
 	if(argc == 1) {
 		usage(1, 0);
 		exit(EXIT_SUCCESS);
@@ -529,18 +539,21 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if(structured) {
+		if(version == 0) {
+			fprintf(stderr, "Version must be specified to encode structured symbols.\n");
+			exit(EXIT_FAILURE);
+		}
+		if(argc - optind > 1) {
+			view_multiText(argv + optind, argc - optind);
+		} else {
+			view_simple(intext, length);
+		}
+	}
+
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
 		return -1;
-	}
-	if(structured && version < 1) {
-		fprintf(stderr, "Version number must be greater than 0 to encode structured symbols.\n");
-		exit(EXIT_FAILURE);
-	}
-	if(structured && (argc - optind > 1)) {
-		view_multiText(argv + optind, argc - optind);
-	} else {
-		view_simple(intext, length);
 	}
 
 	SDL_Quit();
