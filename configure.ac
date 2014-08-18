@@ -128,6 +128,15 @@ if test x$enable_mudflap = xyes; then
 	fi
 fi
 
+dnl --enable-asan
+AC_ARG_ENABLE([asan], [AS_HELP_STRING([--enable-asan], [use AddressSanitizer [default=no]])],
+ [], [enable_asan=no])
+
+if test x$enable_asan = xyes; then
+	CFLAGS="$CFLAGS -fsanitize=address -fno-omit-frame-pointer"
+	LDFLAGS="$LDFLAGS -fsanitize=address"
+fi
+
 
 dnl set CFLAGS
 CFLAGS="-Wall $CFLAGS"
