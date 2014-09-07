@@ -140,4 +140,4 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 - Viona                 - bug fix patch for string splitting
 - Daniel Dörrhöfer      - RLE option, some bug fixes, Travis configuration
 - Greg Hart             - PNG32 support patch
-- Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, ralgozino, Sean McMurray, win32asm, Tobias Klauser, Antenore, Yoshimichi Inoue, Sunil Maganally - bug report / suggestion
+- Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, chisj, vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, ralgozino, Sean McMurray, win32asm, Tobias Klauser, Antenore, Yoshimichi Inoue, Sunil Maganally, Norman Gray - bug report / suggestion

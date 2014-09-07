@@ -135,7 +135,7 @@ static void usage(int help, int longopt, int status)
 "      --background=RRGGBB[AA]\n"
 "               specify foreground/background color in hexadecimal notation.\n"
 "               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
-"               Color output support available only in PNG and SVG.\n\n"
+"               Color output support available only in PNG, EPS and SVG.\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "      --verbose\n"
@@ -460,8 +460,20 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 				"1 0 rlineto "
 				"0 -1 rlineto "
 				"fill "
-				"} bind def "
-				"%d %d scale ", size, size);
+				"} bind def\n");
+	/* set color */
+	fprintf(fp, "gsave\n");
+	fprintf(fp, "%f %f %f setrgbcolor\n",
+			(float)bg_color[0] / 255,
+			(float)bg_color[1] / 255,
+			(float)bg_color[2] / 255);
+	fprintf(fp, "%d %d scale\n", realwidth, realwidth);
+	fprintf(fp, "0 0 p\ngrestore\n");
+	fprintf(fp, "%f %f %f setrgbcolor\n",
+			(float)fg_color[0] / 255,
+			(float)fg_color[1] / 255,
+			(float)fg_color[2] / 255);
+	fprintf(fp, "%d %d scale\n", size, size);
 	
 	/* data */
 	p = qrcode->data;

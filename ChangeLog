@@ -1,3 +1,7 @@
+2014.09.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Added color support for EPS output.
+
 2014.08.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
 	  - Added new option "--enable-asan" that enables AddressSanitizer.
