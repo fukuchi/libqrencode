@@ -911,9 +911,3 @@ char *QRcode_APIVersionString(void)
 {
 	return VERSION;
 }
-
-void QRcode_clearCache(void)
-{
-	QRspec_clearCache();
-	MQRspec_clearCache();
-}

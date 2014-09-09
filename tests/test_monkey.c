@@ -562,7 +562,5 @@ int main(int argc, char **argv)
 	monkey_encode_kanji(loop);
 	monkey_split_structure(loop);
 
-	QRcode_clearCache();
-
 	return 0;
 }

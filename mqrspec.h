@@ -137,11 +137,6 @@ extern unsigned int MQRspec_getFormatInfo(int mask, int version, QRecLevel level
  */
 extern unsigned char *MQRspec_newFrame(int version);
 
-/**
- * Clear the frame cache. Typically for debug.
- */
-extern void MQRspec_clearCache(void);
-
 /******************************************************************************
  * Mode indicator
  *****************************************************************************/

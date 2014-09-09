@@ -994,8 +994,6 @@ int main(int argc, char **argv)
 	test_mqrencode();
 	test_apiversion();
 
-	QRcode_clearCache();
-
 	report();
 
 	return 0;

@@ -149,17 +149,10 @@ extern unsigned int QRspec_getFormatInfo(int mask, QRecLevel level);
 
 /**
  * Return a copy of initialized frame.
- * When the same version is requested twice or more, a copy of cached frame
- * is returned.
  * @param version
  * @return Array of unsigned char. You can free it by free().
  */
 extern unsigned char *QRspec_newFrame(int version);
-
-/**
- * Clear the frame cache. Typically for debug.
- */
-extern void QRspec_clearCache(void);
 
 /******************************************************************************
  * Mode indicator

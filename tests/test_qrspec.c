@@ -320,8 +320,6 @@ int main(int argc, char **argv)
 	//print_newFrame();
 	test_format();
 
-	QRspec_clearCache();
-
 	report();
 
 	return 0;

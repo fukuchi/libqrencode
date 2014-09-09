@@ -146,7 +146,5 @@ int main(int argc, char **argv)
 
 	report();
 
-	MQRspec_clearCache();
-
 	return 0;
 }

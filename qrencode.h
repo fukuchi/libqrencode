@@ -552,13 +552,6 @@ extern void QRcode_APIVersion(int *major_version, int *minor_version, int *micro
  */
 extern char *QRcode_APIVersionString(void);
 
-/**
- * Clear all caches. This is only for debug purpose. If you are attacking a
- * complicated memory leak bug, try this to reduce the reachable blocks record.
- * @warning This function is THREAD UNSAFE when pthread is disabled.
- */
-extern void QRcode_clearCache(void);
-
 #if defined(__cplusplus)
 }
 #endif

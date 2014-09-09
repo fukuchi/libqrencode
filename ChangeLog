@@ -4,6 +4,16 @@
 	* mask.[ch], tests/test_mask.c:
 	  - Run length calculation has been slightly improved.
 	  - Reduce malloc calls.
+	[noframecache]
+	* qrspec.[ch], mqrspec.[ch]:
+	  - Frame caches have been eliminated. It improves both memory efficiency
+	    and performance... Wait, caches were completely meaningless? orz...
+	* qrencode.[ch]:
+	  - QRcode_clearCache() has been eliminated.
+	* tests/prof_qrencode.c, tests/pthread_qrencode.c, tests/test_mask.c,
+	  tests/test_mmask.c, tests/test_monkey.c, tests/test_mqrspec.c,
+	  tests/test_qrencode.c, tests/test_qrspec.c:
+	  - Removed cache clearing calls.
 
 2014.09.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
