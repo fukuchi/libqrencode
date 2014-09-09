@@ -321,17 +321,21 @@ __STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
 
 unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 {
-	static unsigned char mask[QRSPEC_WIDTH_MAX * QRSPEC_WIDTH_MAX];
 	int i;
-	unsigned char *bestMask;
+	unsigned char *mask, *bestMask;
 	int minDemerit = INT_MAX;
 	int blacks;
 	int bratio;
 	int demerit;
 	int w2 = width * width;
 
+	mask = (unsigned char *)malloc(w2);
+	if(mask == NULL) return NULL;
 	bestMask = (unsigned char *)malloc(w2);
-	if(bestMask == NULL) return NULL;
+	if(bestMask == NULL) {
+		free(mask);
+		return NULL;
+	}
 
 	for(i=0; i<maskNum; i++) {
 //		n1 = n2 = n3 = n4 = 0;
@@ -348,5 +352,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 			memcpy(bestMask, mask, w2);
 		}
 	}
+	free(mask);
 	return bestMask;
 }
