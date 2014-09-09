@@ -32,9 +32,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#ifdef HAVE_LIBPTHREAD
-#include <pthread.h>
-#endif
 
 #include "qrspec.h"
 #include "qrinput.h"
