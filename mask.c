@@ -241,14 +241,12 @@ __STATIC int Mask_calcN2(int width, unsigned char *frame)
 	return demerit;
 }
 
-__STATIC int Mask_calcRunLength(int width, unsigned char *frame, int dir, int *runLength)
+__STATIC int Mask_calcRunLengthH(int width, unsigned char *frame, int *runLength)
 {
 	int head;
 	int i;
-	unsigned char *p;
-	int pitch;
+	unsigned char prev;
 
-	pitch = (dir==0)?1:width;
 	if(frame[0] & 1) {
 		runLength[0] = -1;
 		head = 1;
@@ -256,16 +254,44 @@ __STATIC int Mask_calcRunLength(int width, unsigned char *frame, int dir, int *r
 		head = 0;
 	}
 	runLength[head] = 1;
-	p = frame + pitch;
+	prev = frame[0];
 
 	for(i=1; i<width; i++) {
-		if((p[0] ^ p[-pitch]) & 1) {
+		if((frame[i] ^ prev) & 1) {
 			head++;
 			runLength[head] = 1;
+			prev = frame[i];
 		} else {
 			runLength[head]++;
 		}
-		p += pitch;
+	}
+
+	return head + 1;
+}
+
+__STATIC int Mask_calcRunLengthV(int width, unsigned char *frame, int *runLength)
+{
+	int head;
+	int i;
+	unsigned char prev;
+
+	if(frame[0] & 1) {
+		runLength[0] = -1;
+		head = 1;
+	} else {
+		head = 0;
+	}
+	runLength[head] = 1;
+	prev = frame[0];
+
+	for(i=1; i<width; i++) {
+		if((frame[i * width] ^ prev) & 1) {
+			head++;
+			runLength[head] = 1;
+			prev = frame[i * width];
+		} else {
+			runLength[head]++;
+		}
 	}
 
 	return head + 1;
@@ -281,12 +307,12 @@ __STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
 	demerit += Mask_calcN2(width, frame);
 
 	for(y=0; y<width; y++) {
-		length = Mask_calcRunLength(width, frame + y * width, 0, runLength);
+		length = Mask_calcRunLengthH(width, frame + y * width, runLength);
 		demerit += Mask_calcN1N3(length, runLength);
 	}
 
 	for(x=0; x<width; x++) {
-		length = Mask_calcRunLength(width, frame + x, 1, runLength);
+		length = Mask_calcRunLengthV(width, frame + x, runLength);
 		demerit += Mask_calcN1N3(length, runLength);
 	}
 

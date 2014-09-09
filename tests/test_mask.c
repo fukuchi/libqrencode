@@ -338,13 +338,13 @@ void test_calcRunLength(void)
 
 	testStart("Test runlength calc function");
 	for(i=0; i<6; i++) {
-		length = Mask_calcRunLength(width, pattern[i], 0, runLength);
+		length = Mask_calcRunLengthH(width, pattern[i], runLength);
 		assert_equal(expected[i][6], length, "Length incorrect: %d, expected %d.\n", length, expected[i][6]);
 		assert_zero(memcmp(runLength, expected[i], sizeof(int) * expected[i][6]), "Run length does not match: pattern %d, horizontal access.\n", i);
 		for(j=0; j<width; j++) {
 			frame[j * width] = pattern[i][j];
 		}
-		length = Mask_calcRunLength(width, frame, 1, runLength);
+		length = Mask_calcRunLengthV(width, frame, runLength);
 		assert_equal(expected[i][6], length, "Length incorrect: %d, expected %d.\n", length, expected[i][6]);
 		assert_zero(memcmp(runLength, expected[i], sizeof(int) * expected[i][6]), "Run length does not match: pattern %d, vertical access.\n", i);
 	}
@@ -376,12 +376,12 @@ void test_calcN1N3(void)
 
 	testStart("Test N3 penalty calculation");
 	for(i=0; i<6; i++) {
-		length = Mask_calcRunLength(15, pattern[i], 0, runLength);
+		length = Mask_calcRunLengthH(15, pattern[i], runLength);
 		demerit = Mask_calcN1N3(length, runLength);
 		assert_equal(pattern[i][15], demerit, "N3 penalty is wrong: %d, expected %d\n", demerit, pattern[i][15]);
 	}
 	for(i=0; i<5; i++) {
-		length = Mask_calcRunLength(18, pattern2[i], 0, runLength);
+		length = Mask_calcRunLengthH(18, pattern2[i], runLength);
 		demerit = Mask_calcN1N3(length, runLength);
 		assert_equal(pattern2[i][18], demerit, "N3 penalty is wrong: %d, expected %d\n", demerit, pattern2[i][18]);
 	}

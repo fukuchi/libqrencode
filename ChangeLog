@@ -1,3 +1,9 @@
+2014.09.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* NEWS:
+	  - Added an entry about 4.0.0. (not released yet)
+	* mask.[ch], tests/test_mask.c:
+	  - Run length calculation has been slightly improved.
+
 2014.09.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Added color support for EPS output.
