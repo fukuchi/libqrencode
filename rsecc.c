@@ -27,8 +27,15 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_LIBPTHREAD
+#include <pthread.h>
+#endif
 
 #include "rsecc.h"
+
+#ifdef HAVE_LIBPTHREAD
+static pthread_mutex_t RSECC_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
 
 static int initialized = 0;
 
@@ -105,14 +112,26 @@ int RSECC_encode(int data_length, int ecc_length, const unsigned char *data, uns
 	unsigned char feedback;
 	unsigned char *gen;
 
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&RSECC_mutex);
+#endif
 	if(!initialized) {
 		RSECC_init();
 	}
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&RSECC_mutex);
+#endif
 
 	if(ecc_length > max_length) return -1;
 
 	memset(ecc, 0, ecc_length);
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&RSECC_mutex);
+#endif
 	if(!generatorInitialized[ecc_length - min_length]) generator_init(ecc_length);
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&RSECC_mutex);
+#endif
 	gen = generator[ecc_length - min_length];
 
 	for(i = 0; i < data_length; i++) {
