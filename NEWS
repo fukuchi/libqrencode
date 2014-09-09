@@ -1,6 +1,22 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 4.0.0 (2014.x.x)
+------------------------
+* Memory efficiency has been improved.
+* Error correction code generating functions have been improved.
+* Command line tool "qrencode" has been improved:
+	* PNG32 (direct color mode). (Thanks to Greg Hart)
+	* EPS output now supports foreground and background color.
+* Various bug fixes.
+* Various fixes for developers.
+
+Release Note:
+While no API changes are introduced with this major update, we incremented the
+major version number of libqrencode to 4, because its internal are widely
+improved.
+
+
 Version 3.4.4 (2014.7.24)
 -------------------------
 * Bug fix release. (Thanks to Yoshimichi Inoue)
@@ -11,7 +27,6 @@ When only one symbol is generated in structured-append mode, the library had
 inserted unnecessary chunk to the symbol and some QR Code readers fail to read
 it. Now the library omits the chunk and generate a symbol identical to non-
 structured symbol.
-
 
 Version 3.4.3 (2013.8.12)
 -------------------------
@@ -117,7 +132,6 @@ Version 3.1.1 (2010.2.3)
 * A bug in the library has been fixed.
 
 Release Note:
-
 Libqrecode had generated incorrect QR Code in some cases. Symbols larger than
 version 5 (error correction level Q and H) were affected. In many cases this
 bug did not cause serious damage thanks to the error correction mechanism, but
@@ -132,7 +146,6 @@ Version 3.1.0 (2009.6.6)
 * Some memory leak bugs have been fixed.
 
 Release Note:
-
 This release focuses on the code cleanup and performance improve. Encoding time
 has been improved, drastically in large symbols. Basically this update only
 changes its internal code. The API is not changed, no need to recompile user
@@ -147,7 +160,6 @@ Version 3.0.3 (2008.6.1)
   for the detailed instruction.
 
 Release Note:
-
 This release improves the portability of our command line tool "qrencode".
 The library is not changed so that any applications using libqrencode are not
 affected.
@@ -186,7 +198,6 @@ Version 3.0.0 (2008.4.30)
 * Some bug fixes.
 
 Release Note:
-
 Now libqrencode supports "structured-append" of symbols. A large data set can
 be split into multiple QR code symbols. The basic usage of structured-append
 is not so different from the single symbol encoding: just call
@@ -242,7 +253,6 @@ Summary:
   - QRcode_encodeString8bit() has been added.
 
 Release Note:
-
 Previously libqrencode encodes lower-case alphabet characters in Alphabet-
 Numeric mode (upper-case alphabet and numeric) by default. According to the
 specification of QR code, however, it is clearly claimed that Alphabet-Numeric
