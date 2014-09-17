@@ -1,6 +1,6 @@
 2014.09.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
-	  - Added "-pthread" option to CFLAGS.
+	  - Added "-pthread" option to CFLAGS. (Thanks to Danomi Manchego)
 	* tests/Makefile.am:
 	  - Removed explicit "-lpthread" which is not required anymore.
 
