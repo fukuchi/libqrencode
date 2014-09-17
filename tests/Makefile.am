@@ -67,7 +67,7 @@ prof_qrencode_SOURCES = prof_qrencode.c
 prof_qrencode_LDADD = ../libqrencode.la
 
 pthread_qrencode_SOURCES = pthread_qrencode.c
-pthread_qrencode_LDADD = ../libqrencode.la $(LIBPTHREAD)
+pthread_qrencode_LDADD = ../libqrencode.la
 
 if HAVE_PNG
 create_frame_pattern_SOURCES = create_frame_pattern.c

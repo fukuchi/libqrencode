@@ -50,6 +50,7 @@ AM_CONDITIONAL([HAVE_LIBPTHREAD], [test "x$ac_cv_lib_pthread_pthread_mutex_init"
 # FIXME: isn't it able to integrate the followings to AC_CHECK_LIB?
 if test x$ac_cv_lib_pthread_pthread_mutex_init = xyes ; then
 	AC_DEFINE([HAVE_LIBPTHREAD], [1], [Define to 1 if using pthread is enabled.])
+	CFLAGS="$CFLAGS -pthread"
 fi
 
 

@@ -1,3 +1,9 @@
+2014.09.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* configure.ac:
+	  - Added "-pthread" option to CFLAGS.
+	* tests/Makefile.am:
+	  - Removed explicit "-lpthread" which is not required anymore.
+
 2014.09.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* NEWS:
 	  - Added an entry about 4.0.0. (not released yet)
