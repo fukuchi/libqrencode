@@ -25,7 +25,7 @@ endif
 
 EXTRA_DIST = frame
 
-libdecoder_a_SOURCES = decoder.c decoder.h
+libdecoder_a_SOURCES = decoder.c decoder.h rsecc_decoder.c rsecc_decoder.h
 
 test_qrinput_SOURCES = test_qrinput.c
 test_qrinput_LDADD = ../libqrencode.la $(DECODER_LIBS)
@@ -43,7 +43,7 @@ test_mqrspec_SOURCES = test_mqrspec.c
 test_mqrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
 test_rs_SOURCES = test_rs.c rscode.c
-test_rs_LDADD = ../libqrencode.la
+test_rs_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
 test_qrencode_SOURCES = test_qrencode.c
 test_qrencode_LDADD = ../libqrencode.la $(DECODER_LIBS)

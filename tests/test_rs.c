@@ -6,6 +6,8 @@
 #include "../mqrspec.h"
 #include "../qrinput.h"
 #include "../rsecc.h"
+#include "decoder.h"
+#include "rsecc_decoder.h"
 #include "rscode.h"
 
 /* See pp. 73 of JIS X0510:2004 */
@@ -47,7 +49,9 @@ static void compareRS(unsigned char data[])
 			RSECC_encode(dl, el, data, ecc_rscodec);
 			encode_rs_char(rs, data, ecc_expected);
 			assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
+			assert_zero(RSECC_decoder_checkSyndrome(dl, data, el, ecc_rscodec), "ECC error found.");
 			free_rs_char(rs);
+
 
 			dl = QRspec_rsDataCodes2(spec);
 			el = QRspec_rsEccCodes2(spec);
@@ -56,6 +60,7 @@ static void compareRS(unsigned char data[])
 				RSECC_encode(dl, el, data, ecc_rscodec);
 				encode_rs_char(rs, data, ecc_expected);
 				assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
+				assert_zero(RSECC_decoder_checkSyndrome(dl, data, el, ecc_rscodec), "ECC error found.");
 				free_rs_char(rs);
 			}
 		}
@@ -78,6 +83,7 @@ static void compareRSMQR(unsigned char data[])
 				RSECC_encode(dl, el, data, ecc_rscodec);
 				encode_rs_char(rs, data, ecc_expected);
 				assert_zero(memcmp(ecc_expected, ecc_rscodec, el), "Invalid ECC found: length %d.\n", el);
+				assert_zero(RSECC_decoder_checkSyndrome(dl, data, el, ecc_rscodec), "ECC error found.");
 				free_rs_char(rs);
 			}
 		}
@@ -109,6 +115,7 @@ void test_allQRSizeAndECCLevel(void)
 
 int main(int argc, char **argv)
 {
+	RSECC_decoder_init();
 	test_rscodeexample();
 	test_allQRSizeAndECCLevel();
 
