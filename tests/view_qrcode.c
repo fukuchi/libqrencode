@@ -539,21 +539,20 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if(structured) {
-		if(version == 0) {
-			fprintf(stderr, "Version must be specified to encode structured symbols.\n");
-			exit(EXIT_FAILURE);
-		}
-		if(argc - optind > 1) {
-			view_multiText(argv + optind, argc - optind);
-		} else {
-			view_simple(intext, length);
-		}
+	if(structured && version == 0) {
+		fprintf(stderr, "Version must be specified to encode structured symbols.\n");
+		exit(EXIT_FAILURE);
 	}
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
 		return -1;
+	}
+
+	if(structured && (argc - optind > 1)) {
+		view_multiText(argv + optind, argc - optind);
+	} else {
+		view_simple(intext, length);
 	}
 
 	SDL_Quit();
