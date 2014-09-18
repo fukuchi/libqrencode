@@ -9,7 +9,7 @@ Version 4.0.0 (2014.x.x)
 	* PNG32 (direct color mode). (Thanks to Greg Hart)
 	* EPS output now supports foreground and background color.
 * Various bug fixes.
-* Various fixes for developers.
+* Various improves for developers.
 
 Release Note:
 While no API changes are introduced with this major update, we incremented the
