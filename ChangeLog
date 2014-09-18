@@ -1,6 +1,8 @@
 2014.09.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/view_qrcode.c:
 	  - Rollbacked the previous change (6a4b2e3710b) around the main part.
+	* rsecc.c:
+	  - Some code cleanups.
 
 2014.09.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:

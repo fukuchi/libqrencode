@@ -81,22 +81,17 @@ void RSECC_init(void)
 
 static void generator_init(int length)
 {
-	int i, j, a;
+	int i, j;
 	int g[max_generatorSize + 1];
 
 	g[0] = 1;
-	a = 0;
-	for(i = 1; i <= length; i++) {
-		g[i] = 1;
-		for(j = i - 1; j > 0; j--) {
-			if(g[0] != 0) {
-				g[j] = g[j - 1] ^  alpha[(aindex[g[j]] + a) % symbols];
-			} else {
-				g[j] = g[j - 1];
-			}
+	for(i = 0; i < length; i++) {
+		g[i + 1] = 1;
+		/* Because g[0] never be zero, skipped some conditional checks. */
+		for(j = i; j > 0; j--) {
+			g[j] = g[j - 1] ^  alpha[(aindex[g[j]] + i) % symbols];
 		}
-		g[0] = alpha[(aindex[g[0]] + a) % symbols];
-		a++;
+		g[0] = alpha[(aindex[g[0]] + i) % symbols];
 	}
 
 	for(i = 0; i <= length; i++) {
