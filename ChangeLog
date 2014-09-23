@@ -1,8 +1,14 @@
+2014.09.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* README:
+	  - Some typo fixes. (Thanks to Danomi Manchego)
+
 2014.09.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* tests/view_qrcode.c:
 	  - Rollbacked the previous change (6a4b2e3710b) around the main part.
 	* rsecc.c:
 	  - Some code cleanups.
+	* tests/rsecc_decoder.[ch], tests/test_rs.c, Makefile.am:
+	  - Syndrome checker has been added.
 
 2014.09.17 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
