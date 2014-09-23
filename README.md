@@ -69,7 +69,7 @@ You can generate a manual of the library by using Doxygen.
 
 WARNINGS
 ========
-The library is distributed WITHOUT ANY WRRANTY.
+The library is distributed WITHOUT ANY WARRANTY.
 
 Micro QR Code support is EXPERIMENTAL.
 
@@ -125,7 +125,7 @@ countries.
 Reed-Solomon encoder is written by Phil Karn, KA9Q.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
-- NANKI Haruo           - improved lower-case characteres encoding
+- NANKI Haruo           - improved lower-case characters encoding
 - Philippe Delcroix     - improved mask evaluation
 - Yusuke Mihara         - structured-append support
 - David Dahl            - DPI and SVG support patch
