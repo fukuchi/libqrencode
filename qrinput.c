@@ -1537,7 +1537,7 @@ QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input)
 				list = next;
 			} else {
 				/* Current entry will go to the next input. */
-				prev->next = NULL;
+				if (prev) prev->next = NULL;
 				p->head = list;
 				p->tail = input->tail;
 				input->tail = prev;
