@@ -1,6 +1,9 @@
 *.gcno
 *.gcov
 *.gcda
+*.la
+*.lo
+*.o
 .deps/
 .libs/
 autom4te.cache/
@@ -11,7 +14,7 @@ config.log
 configure
 config.status
 config.h
-config.h.in
+config.h.in*
 aclocal.m4
 libtool
 stamp-h1
