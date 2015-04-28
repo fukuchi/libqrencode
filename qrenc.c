@@ -109,7 +109,7 @@ static void usage(int help, int longopt, int status)
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n\n"
 "  -r FILENAME, --readin=FILENAME\n"
-"               read nput data from FILENAME.\n"
+"               read input data from FILENAME.\n"
 "  -s NUMBER, --size=NUMBER\n"
 "               specify module size in dots (pixels). (default=3)\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
