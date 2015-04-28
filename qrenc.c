@@ -1238,6 +1238,10 @@ int main(int argc, char **argv)
 	}
 	if(intext == NULL) {
 		fp = infile == NULL ? stdin : fopen(infile,"r");
+		if(fp == 0) {
+			fprintf(stderr, "Can not read input file %s.\n", infile);
+			exit(EXIT_FAILURE);
+		}
 		intext = readFile(fp,&length);
 
 	}
