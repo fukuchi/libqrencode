@@ -67,6 +67,7 @@ static enum imageType image_type = PNG_TYPE;
 static const struct option options[] = {
 	{"help"         , no_argument      , NULL, 'h'},
 	{"output"       , required_argument, NULL, 'o'},
+	{"readin"       , required_argument, NULL, 'r'},
 	{"level"        , required_argument, NULL, 'l'},
 	{"size"         , required_argument, NULL, 's'},
 	{"symversion"   , required_argument, NULL, 'v'},
@@ -87,7 +88,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
+static char *optstring = "ho:r:l:s:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -107,6 +108,8 @@ static void usage(int help, int longopt, int status)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n\n"
+"  -r FILENAME, --readin=FILENAME\n"
+"               read nput data from FILENAME.\n"
 "  -s NUMBER, --size=NUMBER\n"
 "               specify module size in dots (pixels). (default=3)\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
@@ -162,6 +165,7 @@ static void usage(int help, int longopt, int status)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n"
+"  -r FILENAME  read nput data from FILENAME.\n"
 "  -s NUMBER    specify module size in dots (pixels). (default=3)\n"
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
@@ -214,7 +218,7 @@ static int color_set(unsigned char color[4], const char *value)
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
-static unsigned char *readStdin(int *length)
+static unsigned char *readFile(FILE *fp, int *length)
 {
 	unsigned char *buffer;
 	int ret;
@@ -224,12 +228,12 @@ static unsigned char *readStdin(int *length)
 		fprintf(stderr, "Memory allocation failed.\n");
 		exit(EXIT_FAILURE);
 	}
-	ret = fread(buffer, 1, MAX_DATA_SIZE, stdin);
+	ret = fread(buffer, 1, MAX_DATA_SIZE, fp);
 	if(ret == 0) {
 		fprintf(stderr, "No input data.\n");
 		exit(EXIT_FAILURE);
 	}
-	if(feof(stdin) == 0) {
+	if(feof(fp) == 0) {
 		fprintf(stderr, "Input data is too large.\n");
 		exit(EXIT_FAILURE);
 	}
@@ -1076,9 +1080,10 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 int main(int argc, char **argv)
 {
 	int opt, lindex = -1;
-	char *outfile = NULL;
+	char *outfile = NULL, *infile = NULL;
 	unsigned char *intext = NULL;
 	int length = 0;
+	FILE *fp;
 
 	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
@@ -1092,6 +1097,9 @@ int main(int argc, char **argv)
 				break;
 			case 'o':
 				outfile = optarg;
+				break;
+			case 'r':
+				infile = optarg;
 				break;
 			case 's':
 				size = atoi(optarg);
@@ -1229,7 +1237,9 @@ int main(int argc, char **argv)
 		length = strlen((char *)intext);
 	}
 	if(intext == NULL) {
-		intext = readStdin(&length);
+		fp = infile == NULL ? stdin : fopen(infile,"r");
+		intext = readFile(fp,&length);
+
 	}
 
 	if(micro && version > MQRSPEC_VERSION_MAX) {
