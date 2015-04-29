@@ -37,6 +37,7 @@ static int casesensitive = 1;
 static int eightbit = 0;
 static int version = 0;
 static int size = 3;
+static int width = 0;
 static int margin = -1;
 static int dpi = 72;
 static int structured = 0;
@@ -70,6 +71,7 @@ static const struct option options[] = {
 	{"readin"       , required_argument, NULL, 'r'},
 	{"level"        , required_argument, NULL, 'l'},
 	{"size"         , required_argument, NULL, 's'},
+	{"width"        , required_argument, NULL, 'w'},
 	{"symversion"   , required_argument, NULL, 'v'},
 	{"margin"       , required_argument, NULL, 'm'},
 	{"dpi"          , required_argument, NULL, 'd'},
@@ -88,7 +90,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:r:l:s:v:m:d:t:Skci8MV";
+static char *optstring = "ho:r:l:s:w:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -109,9 +111,11 @@ static void usage(int help, int longopt, int status)
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n\n"
 "  -r FILENAME, --readin=FILENAME\n"
-"               read input data from FILENAME.\n"
+"               read input data from FILENAME.\n\n"
 "  -s NUMBER, --size=NUMBER\n"
 "               specify module size in dots (pixels). (default=3)\n\n"
+"  -w NUMBER, --width=NUMBER\n"
+"               specify width size in pixels for png.\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
 "               specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n\n"
@@ -166,6 +170,7 @@ static void usage(int help, int longopt, int status)
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n"
 "  -r FILENAME  read nput data from FILENAME.\n"
+"  -w NUMBER    width of PNG.\n"
 "  -s NUMBER    specify module size in dots (pixels). (default=3)\n"
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
@@ -897,6 +902,7 @@ static QRcode *encode(const unsigned char *intext, int length)
 static void qrencode(const unsigned char *intext, int length, const char *outfile)
 {
 	QRcode *qrcode;
+	int realwidth;
 	
 	qrcode = encode(intext, length);
 	if(qrcode == NULL) {
@@ -910,6 +916,15 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 
 	if(verbose) {
 		fprintf(stderr, "File: %s, Version: %d\n", (outfile!=NULL)?outfile:"(stdout)", qrcode->version);
+	}
+
+	if(width > 0) {
+		size=width/(qrcode->width+margin*2);
+	}
+	if(verbose) {
+		realwidth = (qrcode->width + margin * 2) * size;
+		fprintf(stderr, "Dimensions (px): %dx%d\n", realwidth, realwidth);
+		fprintf(stderr, "Dimensions (in): %0.4f\" x%0.4f\" \n", realwidth/(float)dpi, realwidth/(float)dpi);
 	}
 
 	switch(image_type) {
@@ -1105,6 +1120,13 @@ int main(int argc, char **argv)
 				size = atoi(optarg);
 				if(size <= 0) {
 					fprintf(stderr, "Invalid size: %d\n", size);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case 'w':
+				width = atoi(optarg);
+				if(size <= 0) {
+					fprintf(stderr, "Invalid width: %d\n", size);
 					exit(EXIT_FAILURE);
 				}
 				break;
