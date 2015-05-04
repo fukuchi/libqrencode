@@ -37,6 +37,7 @@ static int casesensitive = 1;
 static int eightbit = 0;
 static int version = 0;
 static int size = 3;
+static int width = 0;
 static int margin = -1;
 static int dpi = 72;
 static int structured = 0;
@@ -67,8 +68,10 @@ static enum imageType image_type = PNG_TYPE;
 static const struct option options[] = {
 	{"help"         , no_argument      , NULL, 'h'},
 	{"output"       , required_argument, NULL, 'o'},
+	{"readin"       , required_argument, NULL, 'r'},
 	{"level"        , required_argument, NULL, 'l'},
 	{"size"         , required_argument, NULL, 's'},
+	{"width"        , required_argument, NULL, 'w'},
 	{"symversion"   , required_argument, NULL, 'v'},
 	{"margin"       , required_argument, NULL, 'm'},
 	{"dpi"          , required_argument, NULL, 'd'},
@@ -87,7 +90,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:l:s:v:m:d:t:Skci8MV";
+static char *optstring = "ho:r:l:s:w:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -107,8 +110,12 @@ static void usage(int help, int longopt, int status)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n\n"
+"  -r FILENAME, --readin=FILENAME\n"
+"               read input data from FILENAME.\n\n"
 "  -s NUMBER, --size=NUMBER\n"
 "               specify module size in dots (pixels). (default=3)\n\n"
+"  -w NUMBER, --width=NUMBER\n"
+"               specify width size in pixels for png.\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
 "               specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n\n"
@@ -162,6 +169,8 @@ static void usage(int help, int longopt, int status)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n"
+"  -r FILENAME  read nput data from FILENAME.\n"
+"  -w NUMBER    width of PNG.\n"
 "  -s NUMBER    specify module size in dots (pixels). (default=3)\n"
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
@@ -214,7 +223,7 @@ static int color_set(unsigned char color[4], const char *value)
 }
 
 #define MAX_DATA_SIZE (7090 * 16) /* from the specification */
-static unsigned char *readStdin(int *length)
+static unsigned char *readFile(FILE *fp, int *length)
 {
 	unsigned char *buffer;
 	int ret;
@@ -224,12 +233,12 @@ static unsigned char *readStdin(int *length)
 		fprintf(stderr, "Memory allocation failed.\n");
 		exit(EXIT_FAILURE);
 	}
-	ret = fread(buffer, 1, MAX_DATA_SIZE, stdin);
+	ret = fread(buffer, 1, MAX_DATA_SIZE, fp);
 	if(ret == 0) {
 		fprintf(stderr, "No input data.\n");
 		exit(EXIT_FAILURE);
 	}
-	if(feof(stdin) == 0) {
+	if(feof(fp) == 0) {
 		fprintf(stderr, "Input data is too large.\n");
 		exit(EXIT_FAILURE);
 	}
@@ -893,6 +902,7 @@ static QRcode *encode(const unsigned char *intext, int length)
 static void qrencode(const unsigned char *intext, int length, const char *outfile)
 {
 	QRcode *qrcode;
+	int realwidth;
 	
 	qrcode = encode(intext, length);
 	if(qrcode == NULL) {
@@ -906,6 +916,15 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 
 	if(verbose) {
 		fprintf(stderr, "File: %s, Version: %d\n", (outfile!=NULL)?outfile:"(stdout)", qrcode->version);
+	}
+
+	if(width > 0) {
+		size=width/(qrcode->width+margin*2);
+	}
+	if(verbose) {
+		realwidth = (qrcode->width + margin * 2) * size;
+		fprintf(stderr, "Dimensions (px): %dx%d\n", realwidth, realwidth);
+		fprintf(stderr, "Dimensions (in): %0.4f\" x%0.4f\" \n", realwidth/(float)dpi, realwidth/(float)dpi);
 	}
 
 	switch(image_type) {
@@ -1076,9 +1095,10 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 int main(int argc, char **argv)
 {
 	int opt, lindex = -1;
-	char *outfile = NULL;
+	char *outfile = NULL, *infile = NULL;
 	unsigned char *intext = NULL;
 	int length = 0;
+	FILE *fp;
 
 	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
@@ -1093,10 +1113,20 @@ int main(int argc, char **argv)
 			case 'o':
 				outfile = optarg;
 				break;
+			case 'r':
+				infile = optarg;
+				break;
 			case 's':
 				size = atoi(optarg);
 				if(size <= 0) {
 					fprintf(stderr, "Invalid size: %d\n", size);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case 'w':
+				width = atoi(optarg);
+				if(size <= 0) {
+					fprintf(stderr, "Invalid width: %d\n", size);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -1229,7 +1259,13 @@ int main(int argc, char **argv)
 		length = strlen((char *)intext);
 	}
 	if(intext == NULL) {
-		intext = readStdin(&length);
+		fp = infile == NULL ? stdin : fopen(infile,"r");
+		if(fp == 0) {
+			fprintf(stderr, "Can not read input file %s.\n", infile);
+			exit(EXIT_FAILURE);
+		}
+		intext = readFile(fp,&length);
+
 	}
 
 	if(micro && version > MQRSPEC_VERSION_MAX) {
