@@ -33,7 +33,7 @@ specify the size of dot (pixel). (default=3)
 specify error collectin level from L (lowest) to H (highest). (default=L)
 .TP
 .B \-v NUMBER, \-\-symversion=NUMBER
-specify the version of the symbol. See SYMBOL VERSIONS for more information. (default=auto)
+specify the minimum version of the symbol. See SYMBOL VERSIONS for more information. (default=auto)
 .TP
 .B \-m NUMBER, \-\-margin=NUMBER
 specify the width of margin. (default=4)
