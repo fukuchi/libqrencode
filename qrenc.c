@@ -189,7 +189,7 @@ static int color_set(unsigned char color[4], const char *value)
 {
 	int len = strlen(value);
 	int i, count;
-	unsigned int col[3];
+	unsigned int col[4];
 	if(len == 6) {
 		count = sscanf(value, "%02x%02x%02x%n", &col[0], &col[1], &col[2], &len);
 		if(count < 3 || len != 6) {
