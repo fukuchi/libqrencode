@@ -201,7 +201,7 @@ static int color_set(unsigned char color[4], const char *value)
 		if(count < 3 || len != 6) {
 			return -1;
 		}
-		for(i=0; i<3; i++) {
+		for(i = 0; i < 3; i++) {
 			color[i] = col[i];
 		}
 		color[3] = 255;
@@ -210,7 +210,7 @@ static int color_set(unsigned char color[4], const char *value)
 		if(count < 4 || len != 8) {
 			return -1;
 		}
-		for(i=0; i<4; i++) {
+		for(i = 0; i < 4; i++) {
 			color[i] = col[i];
 		}
 	} else {
@@ -264,11 +264,11 @@ static FILE *openFile(const char *outfile)
 	return fp;
 }
 
-static void fillRow(unsigned char *row, int size, const unsigned char color[])
+static void fillRow(unsigned char *row, int num, const unsigned char color[])
 {
 	int i;
 
-	for(i = 0; i< size; i++) {
+	for(i = 0; i < num; i++) {
 		memcpy(row, color, 4);
 		row += 4;
 	}
@@ -373,19 +373,19 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 	if(type == PNG_TYPE) {
 	/* top margin */
 		memset(row, 0xff, (realwidth + 7) / 8);
-		for(y=0; y<margin * size; y++) {
+		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
 
 		/* data */
 		p = qrcode->data;
-		for(y=0; y<qrcode->width; y++) {
+		for(y = 0; y < qrcode->width; y++) {
 			memset(row, 0xff, (realwidth + 7) / 8);
 			q = row;
 			q += margin * size / 8;
 			bit = 7 - (margin * size % 8);
-			for(x=0; x<qrcode->width; x++) {
-				for(xx=0; xx<size; xx++) {
+			for(x = 0; x < qrcode->width; x++) {
+				for(xx = 0; xx < size; xx++) {
 					*q ^= (*p & 1) << bit;
 					bit--;
 					if(bit < 0) {
@@ -395,41 +395,41 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 				}
 				p++;
 			}
-			for(yy=0; yy<size; yy++) {
+			for(yy = 0; yy < size; yy++) {
 				png_write_row(png_ptr, row);
 			}
 		}
 		/* bottom margin */
 		memset(row, 0xff, (realwidth + 7) / 8);
-		for(y=0; y<margin * size; y++) {
+		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
 	} else {
 	/* top margin */
 		fillRow(row, realwidth, bg_color);
-		for(y=0; y<margin * size; y++) {
+		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
 
 		/* data */
 		p = qrcode->data;
-		for(y=0; y<qrcode->width; y++) {
+		for(y = 0; y < qrcode->width; y++) {
 			fillRow(row, realwidth, bg_color);
-			for(x=0; x<qrcode->width; x++) {
-				for(xx=0; xx<size; xx++) {
+			for(x = 0; x < qrcode->width; x++) {
+				for(xx = 0; xx < size; xx++) {
 					if(*p & 1) {
 						memcpy(&row[((margin + x) * size + xx) * 4], fg_color, 4);
 					}
 				}
 				p++;
 			}
-			for(yy=0; yy<size; yy++) {
+			for(yy = 0; yy < size; yy++) {
 				png_write_row(png_ptr, row);
 			}
 		}
 		/* bottom margin */
 		fillRow(row, realwidth, bg_color);
-		for(y=0; y<margin * size; y++) {
+		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
 	}
@@ -483,11 +483,11 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	
 	/* data */
 	p = qrcode->data;
-	for(y=0; y<qrcode->width; y++) {
+	for(y = 0; y < qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 		yy = (margin + qrcode->width - y - 1);
 		
-		for(x=0; x<qrcode->width; x++) {
+		for(x = 0; x < qrcode->width; x++) {
 			if(*(row+x)&0x1) {
 				fprintf(fp, "%d %d p ", margin + x,  yy);
 			}
@@ -574,12 +574,12 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 
 	/* Write data */
 	p = qrcode->data;
-	for(y=0; y<qrcode->width; y++) {
+	for(y = 0; y < qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 
 		if( !rle ) {
 			/* no RLE */
-			for(x=0; x<qrcode->width; x++) {
+			for(x = 0; x < qrcode->width; x++) {
 				if(*(row+x)&0x1) {
 					writeSVG_writeRect(fp,	margin + x,
 								margin + y, 1,
@@ -590,7 +590,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			/* simple RLE */
 			pen = 0;
 			x0  = 0;
-			for(x=0; x<qrcode->width; x++) {
+			for(x = 0; x < qrcode->width; x++) {
 				if( !pen ) {
 					pen = *(row+x)&0x1;
 					x0 = x;
@@ -707,7 +707,7 @@ static void writeANSI_margin(FILE* fp, int realwidth,
 	strncpy(buffer, white, white_s);
 	memset(buffer + white_s, ' ', realwidth * 2);
 	strcpy(buffer + white_s + realwidth * 2, "\033[0m\n"); // reset to default colors
-	for(y=0; y<margin; y++ ){
+	for(y = 0; y < margin; y++ ){
 		fputs(buffer, fp);
 	}
 }
@@ -754,17 +754,17 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 
 	/* data */
 	p = qrcode->data;
-	for(y=0; y<qrcode->width; y++) {
+	for(y = 0; y < qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 
 		memset(buffer, 0, buffer_s);
 		strncpy(buffer, white, white_s);
-		for(x=0; x<margin; x++ ){
+		for(x = 0; x < margin; x++ ){
 			strncat(buffer, "  ", 2);
 		}
 		last = 0;
 
-		for(x=0; x<qrcode->width; x++) {
+		for(x = 0; x < qrcode->width; x++) {
 			if(*(row+x)&0x1) {
 				if( last != 1 ){
 					strncat(buffer, black, black_s);
@@ -782,7 +782,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 		if( last != 0 ){
 			strncat(buffer, white, white_s);
 		}
-		for(x=0; x<margin; x++ ){
+		for(x = 0; x < margin; x++ ){
 			strncat(buffer, "  ", 2);
 		}
 		strncat(buffer, "\033[0m\n", 5);
@@ -885,7 +885,7 @@ static void writeASCII_margin(FILE* fp, int realwidth, char* buffer, int invert)
 	memset(buffer, (invert?'#':' '), realwidth);
 	buffer[realwidth] = '\n';
 	buffer[realwidth + 1] = '\0';
-	for(y=0; y<h; y++ ){
+	for(y = 0; y < h; y++ ){
 		fputs(buffer, fp);
 	}
 }
@@ -922,14 +922,14 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 	writeASCII_margin(fp, realwidth, buffer, invert);
 
 	/* data */
-	for(y=0; y<qrcode->width; y++) {
+	for(y = 0; y < qrcode->width; y++) {
 		row = qrcode->data+(y*qrcode->width);
 		p = buffer;
 
 		memset(p, white, margin * 2);
 		p += margin * 2;
 
-		for(x=0; x<qrcode->width; x++) {
+		for(x = 0; x < qrcode->width; x++) {
 			if(row[x]&0x1) {
 				*p++ = black;
 				*p++ = black;

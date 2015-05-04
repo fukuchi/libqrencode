@@ -40,7 +40,7 @@ __STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int ma
 
 	format = QRspec_getFormatInfo(mask, level);
 
-	for(i=0; i<8; i++) {
+	for(i = 0; i < 8; i++) {
 		if(format & 1) {
 			blacks += 2;
 			v = 0x85;
@@ -55,7 +55,7 @@ __STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int ma
 		}
 		format= format >> 1;
 	}
-	for(i=0; i<7; i++) {
+	for(i = 0; i < 7; i++) {
 		if(format & 1) {
 			blacks += 2;
 			v = 0x85;
@@ -87,8 +87,8 @@ __STATIC int Mask_writeFormatInformation(int width, unsigned char *frame, int ma
 	int x, y;\
 	int b = 0;\
 \
-	for(y=0; y<width; y++) {\
-		for(x=0; x<width; x++) {\
+	for(y = 0; y < width; y++) {\
+		for(x = 0; x < width; x++) {\
 			if(*s & 0x80) {\
 				*d = *s;\
 			} else {\
@@ -191,7 +191,7 @@ __STATIC int Mask_calcN1N3(int length, int *runLength)
 	int demerit = 0;
 	int fact;
 
-	for(i=0; i<length; i++) {
+	for(i = 0; i < length; i++) {
 		if(runLength[i] >= 5) {
 			demerit += N1 + (runLength[i] - 5);
 			//n1 += N1 + (runLength[i] - 5);
@@ -226,8 +226,8 @@ __STATIC int Mask_calcN2(int width, unsigned char *frame)
 	int demerit = 0;
 
 	p = frame + width + 1;
-	for(y=1; y<width; y++) {
-		for(x=1; x<width; x++) {
+	for(y = 1; y < width; y++) {
+		for(x = 1; x < width; x++) {
 			b22 = p[0] & p[-1] & p[-width] & p [-width-1];
 			w22 = p[0] | p[-1] | p[-width] | p [-width-1];
 			if((b22 | (w22 ^ 1))&1) {
@@ -256,7 +256,7 @@ __STATIC int Mask_calcRunLengthH(int width, unsigned char *frame, int *runLength
 	runLength[head] = 1;
 	prev = frame[0];
 
-	for(i=1; i<width; i++) {
+	for(i = 1; i < width; i++) {
 		if((frame[i] ^ prev) & 1) {
 			head++;
 			runLength[head] = 1;
@@ -284,7 +284,7 @@ __STATIC int Mask_calcRunLengthV(int width, unsigned char *frame, int *runLength
 	runLength[head] = 1;
 	prev = frame[0];
 
-	for(i=1; i<width; i++) {
+	for(i = 1; i < width; i++) {
 		if((frame[i * width] ^ prev) & 1) {
 			head++;
 			runLength[head] = 1;
@@ -306,12 +306,12 @@ __STATIC int Mask_evaluateSymbol(int width, unsigned char *frame)
 
 	demerit += Mask_calcN2(width, frame);
 
-	for(y=0; y<width; y++) {
+	for(y = 0; y < width; y++) {
 		length = Mask_calcRunLengthH(width, frame + y * width, runLength);
 		demerit += Mask_calcN1N3(length, runLength);
 	}
 
-	for(x=0; x<width; x++) {
+	for(x = 0; x < width; x++) {
 		length = Mask_calcRunLengthV(width, frame + x, runLength);
 		demerit += Mask_calcN1N3(length, runLength);
 	}
@@ -337,7 +337,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		return NULL;
 	}
 
-	for(i=0; i<maskNum; i++) {
+	for(i = 0; i < maskNum; i++) {
 //		n1 = n2 = n3 = n4 = 0;
 		demerit = 0;
 		blacks = maskMakers[i](width, frame, mask);

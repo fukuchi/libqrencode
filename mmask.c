@@ -39,12 +39,12 @@ __STATIC void MMask_writeFormatInformation(int version, int width, unsigned char
 
 	format = MQRspec_getFormatInfo(mask, version, level);
 
-	for(i=0; i<8; i++) {
+	for(i = 0; i < 8; i++) {
 		v = 0x84 | (format & 1);
 		frame[width * (i + 1) + 8] = v;
 		format = format >> 1;
 	}
-	for(i=0; i<7; i++) {
+	for(i = 0; i < 7; i++) {
 		v = 0x84 | (format & 1);
 		frame[width * 8 + 7 - i] = v;
 		format = format >> 1;
@@ -54,8 +54,8 @@ __STATIC void MMask_writeFormatInformation(int version, int width, unsigned char
 #define MASKMAKER(__exp__) \
 	int x, y;\
 \
-	for(y=0; y<width; y++) {\
-		for(x=0; x<width; x++) {\
+	for(y = 0; y < width; y++) {\
+		for(x = 0; x < width; x++) {\
 			if(*s & 0x80) {\
 				*d = *s;\
 			} else {\
@@ -132,12 +132,12 @@ __STATIC int MMask_evaluateSymbol(int width, unsigned char *frame)
 	int sum1 = 0, sum2 = 0;
 
 	p = frame + width * (width - 1);
-	for(x=1; x<width; x++) {
+	for(x = 1; x < width; x++) {
 		sum1 += (p[x] & 1);
 	}
 
 	p = frame + width * 2 - 1;
-	for(y=1; y<width; y++) {
+	for(y = 1; y < width; y++) {
 		sum2 += (*p & 1);
 		p += width;
 	}
@@ -159,7 +159,7 @@ unsigned char *MMask_mask(int version, unsigned char *frame, QRecLevel level)
 	if(mask == NULL) return NULL;
 	bestMask = NULL;
 
-	for(i=0; i<maskNum; i++) {
+	for(i = 0; i < maskNum; i++) {
 		score = 0;
 		maskMakers[i](width, frame, mask);
 		MMask_writeFormatInformation(version, width, mask, i, level);

@@ -110,7 +110,7 @@ int QRspec_getMinimumVersion(int size, QRecLevel level)
 	int i;
 	int words;
 
-	for(i=1; i<= QRSPEC_VERSION_MAX; i++) {
+	for(i = 1; i <= QRSPEC_VERSION_MAX; i++) {
 		words  = qrspecCapacity[i].words - qrspecCapacity[i].ec[level];
 		if(words >= size) return i;
 	}
@@ -298,8 +298,8 @@ static void QRspec_putAlignmentMarker(unsigned char *frame, int width, int ox, i
 
 	frame += (oy - 2) * width + ox - 2;
 	s = finder;
-	for(y=0; y<5; y++) {
-		for(x=0; x<5; x++) {
+	for(y = 0; y < 5; y++) {
+		for(x = 0; x < 5; x++) {
 			frame[x] = s[x];
 		}
 		frame += width;
@@ -328,16 +328,16 @@ static void QRspec_putAlignmentPattern(int version, unsigned char *frame, int wi
 	}
 
 	cx = alignmentPattern[version][0];
-	for(x=1; x<w - 1; x++) {
+	for(x = 1; x < w - 1; x++) {
 		QRspec_putAlignmentMarker(frame, width,  6, cx);
 		QRspec_putAlignmentMarker(frame, width, cx,  6);
 		cx += d;
 	}
 
 	cy = alignmentPattern[version][0];
-	for(y=0; y<w-1; y++) {
+	for(y = 0; y < w-1; y++) {
 		cx = alignmentPattern[version][0];
-		for(x=0; x<w-1; x++) {
+		for(x = 0; x < w-1; x++) {
 			QRspec_putAlignmentMarker(frame, width, cx, cy);
 			cx += d;
 		}
@@ -413,8 +413,8 @@ static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
 
 	frame += oy * width + ox;
 	s = finder;
-	for(y=0; y<7; y++) {
-		for(x=0; x<7; x++) {
+	for(y = 0; y < 7; y++) {
+		for(x = 0; x < 7; x++) {
 			frame[x] = s[x];
 		}
 		frame += width;
@@ -442,7 +442,7 @@ static unsigned char *QRspec_createFrame(int version)
 	/* Separator */
 	p = frame;
 	q = frame + width * (width - 7);
-	for(y=0; y<7; y++) {
+	for(y = 0; y < 7; y++) {
 		p[7] = 0xc0;
 		p[width - 8] = 0xc0;
 		q[7] = 0xc0;
@@ -456,19 +456,19 @@ static unsigned char *QRspec_createFrame(int version)
 	memset(frame + width * 8, 0x84, 9);
 	memset(frame + width * 9 - 8, 0x84, 8);
 	p = frame + 8;
-	for(y=0; y<8; y++) {
+	for(y = 0; y < 8; y++) {
 		*p = 0x84;
 		p += width;
 	}
 	p = frame + width * (width - 7) + 8;
-	for(y=0; y<7; y++) {
+	for(y = 0; y < 7; y++) {
 		*p = 0x84;
 		p += width;
 	}
 	/* Timing pattern */
 	p = frame + width * 6 + 8;
 	q = frame + width * 8 + 6;
-	for(x=1; x<width-15; x++) {
+	for(x = 1; x < width-15; x++) {
 		*p =  0x90 | (x & 1);
 		*q =  0x90 | (x & 1);
 		p++;
@@ -483,8 +483,8 @@ static unsigned char *QRspec_createFrame(int version)
 
 		p = frame + width * (width - 11);
 		v = verinfo;
-		for(x=0; x<6; x++) {
-			for(y=0; y<3; y++) {
+		for(x = 0; x < 6; x++) {
+			for(y = 0; y < 3; y++) {
 				p[width * y + x] = 0x88 | (v & 1);
 				v = v >> 1;
 			}
@@ -492,8 +492,8 @@ static unsigned char *QRspec_createFrame(int version)
 
 		p = frame + width - 11;
 		v = verinfo;
-		for(y=0; y<6; y++) {
-			for(x=0; x<3; x++) {
+		for(y = 0; y < 6; y++) {
+			for(x = 0; x < 3; x++) {
 				p[x] = 0x88 | (v & 1);
 				v = v >> 1;
 			}

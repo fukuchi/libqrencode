@@ -175,8 +175,8 @@ static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)
 
 	frame += oy * width + ox;
 	s = finder;
-	for(y=0; y<7; y++) {
-		for(x=0; x<7; x++) {
+	for(y = 0; y < 7; y++) {
+		for(x = 0; x < 7; x++) {
 			frame[x] = s[x];
 		}
 		frame += width;
@@ -199,7 +199,7 @@ static unsigned char *MQRspec_createFrame(int version)
 	putFinderPattern(frame, width, 0, 0);
 	/* Separator */
 	p = frame;
-	for(y=0; y<7; y++) {
+	for(y = 0; y < 7; y++) {
 		p[7] = 0xc0;
 		p += width;
 	}
@@ -207,14 +207,14 @@ static unsigned char *MQRspec_createFrame(int version)
 	/* Mask format information area */
 	memset(frame + width * 8 + 1, 0x84, 8);
 	p = frame + width + 8;
-	for(y=0; y<7; y++) {
+	for(y = 0; y < 7; y++) {
 		*p = 0x84;
 		p += width;
 	}
 	/* Timing pattern */
 	p = frame + 8;
 	q = frame + width * 8;
-	for(x=1; x<width-7; x++) {
+	for(x = 1; x < width-7; x++) {
 		*p =  0x90 | (x & 1);
 		*q =  0x90 | (x & 1);
 		p++;

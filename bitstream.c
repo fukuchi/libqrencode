@@ -71,7 +71,7 @@ static void BitStream_writeNum(unsigned char *dest, int bits, unsigned int num)
 
 	p = dest;
 	mask = 1 << (bits - 1);
-	for(i=0; i<bits; i++) {
+	for(i = 0; i < bits; i++) {
 		if(num & mask) {
 			*p = 1;
 		} else {
@@ -89,9 +89,9 @@ static void BitStream_writeBytes(unsigned char *dest, int size, unsigned char *d
 	unsigned char *p;
 
 	p = dest;
-	for(i=0; i<size; i++) {
+	for(i = 0; i < size; i++) {
 		mask = 0x80;
-		for(j=0; j<8; j++) {
+		for(j = 0; j < 8; j++) {
 			if(data[i] & mask) {
 				*p = 1;
 			} else {
@@ -175,9 +175,9 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	bytes = size  / 8;
 
 	p = bstream->data;
-	for(i=0; i<bytes; i++) {
+	for(i = 0; i < bytes; i++) {
 		v = 0;
-		for(j=0; j<8; j++) {
+		for(j = 0; j < 8; j++) {
 			v = v << 1;
 			v |= *p;
 			p++;
@@ -186,7 +186,7 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	}
 	if(size & 7) {
 		v = 0;
-		for(j=0; j<(size & 7); j++) {
+		for(j = 0; j < (size & 7); j++) {
 			v = v << 1;
 			v |= *p;
 			p++;
