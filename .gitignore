@@ -1,3 +1,6 @@
+*.[oa]
+*.lo
+*.la
 *.gcno
 *.gcov
 *.gcda
@@ -46,3 +49,5 @@ use/install-sh
 use/ltmain.sh
 use/missing
 html/
+massif.out.*
+gmon.out

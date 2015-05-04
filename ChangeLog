@@ -19,6 +19,9 @@
 	  - Updated the list of contributors.
 	* tests/Makefile.am
 	  - Added URI_testset.inc to EXTRA_DIST.
+	* .gitignore
+	  - Added some patterns to ignore some generated files. (Thanks to
+	    @tklauser, closes #64)
 
 2014.09.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README, README.md:
