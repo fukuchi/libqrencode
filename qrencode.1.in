@@ -30,7 +30,7 @@ read input data from FILENAME.
 specify the size of dot (pixel). (default=3)
 .TP
 .B \-l {LMQH}, \-\-level={LMQH}
-specify error collection level from L (lowest) to H (highest). (default=L)
+specify error correction level from L (lowest) to H (highest). (default=L)
 .TP
 .B \-v NUMBER, \-\-symversion=NUMBER
 specify the minimum version of the symbol. See SYMBOL VERSIONS for more information. (default=auto)
