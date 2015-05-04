@@ -7,6 +7,16 @@
 	  - Merge pull request #67 from siggi-heltau/patch-1
 	  - The variable name "new" has been renamed to "newstring" because "new"
 	    is a reserved word in C++. (Thanks to @siggi-heltau)
+	* qrenc.c:
+	  - Added -r option to read input data from a file in addition to STDIN
+	    and the command line. (cherry-picked from #68)
+		(Thanks to Robert Petersen)
+	  - Typo fix. (cherry-picked from #68) (Thanks to Robert Petersen)
+	  - long option "readin" has been changed to "read-from".
+	* qrencode.1.in:
+	  - Updated the usage.
+	* README:
+	  - Updated the list of contributors.
 
 2014.09.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README, README.md:
