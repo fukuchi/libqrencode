@@ -1,6 +1,9 @@
 2015.05.05 Kentaro Fukuchi <kentaro@fukuchi.org>
-	* qrencode.1.in:
-	  - Usage improved. (Thanks to @minus7)
+	* qrencode.1.in, qrenc.c:
+	  - Usage improved. (closes #62) (Thanks to @minus7)
+	* README:
+	  - The list of contributors updated: '@' prefix added for github
+	    usernames.
 
 2015.05.04 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c:
