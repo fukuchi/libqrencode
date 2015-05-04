@@ -54,6 +54,7 @@ enum imageType {
 	PNG32_TYPE,
 	EPS_TYPE,
 	SVG_TYPE,
+	XPM_TYPE,
 	ANSI_TYPE,
 	ANSI256_TYPE,
 	ASCII_TYPE,
@@ -172,7 +173,7 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the minimum version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,PNG32,EPS,SVG,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -617,6 +618,86 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
+static int writeXPM(const QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	int x, xx, y, yy, realwidth, realmargin;
+	char *row;
+	char fg[7], bg[7];
+	unsigned char *p;
+
+	fp = openFile(outfile);
+
+	realwidth = (qrcode->width + margin * 2) * size;
+	realmargin = margin * size;
+
+	row = malloc(realwidth + 1);
+	if (!row ) {
+		fprintf(stderr, "Failed to allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
+	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
+
+	fputs("/* XPM */\n", fp);
+	fputs("static const char *const qrcode_xpm[] = {\n", fp);
+	fputs("/* width height ncolors chars_per_pixel */\n", fp);
+	fprintf(fp, "\"%d %d 2 1\",\n", realwidth, realwidth);
+
+	fputs("/* colors */\n", fp);
+	fprintf(fp, "\"F c #%s\",\n", fg);
+	fprintf(fp, "\"B c #%s\",\n", bg);
+
+	fputs("/* pixels */\n", fp);
+	memset(row, 'B', realwidth);
+	row[realwidth] = '\0';
+
+	for (y = 0; y < realmargin; y++) {
+		fprintf(fp, "\"%s\",\n", row);
+	}
+
+	p = qrcode->data;
+	for (y = 0; y < qrcode->width; y++) {
+		for (yy = 0; yy < size; yy++) {
+			fputs("\"", fp);
+
+			for (x = 0; x < margin; x++) {
+				for (xx = 0; xx < size; xx++) {
+					fputs("B", fp);
+				}
+			}
+
+			for (x = 0; x < qrcode->width; x++) {
+				for (xx = 0; xx < size; xx++) {
+					if (p[(y * qrcode->width) + x] & 0x1) {
+						fputs("F", fp);
+					} else {
+						fputs("B", fp);
+					}
+				}
+			}
+
+			for (x = 0; x < margin; x++) {
+				for (xx = 0; xx < size; xx++) {
+					fputs("B", fp);
+				}
+			}
+
+			fputs("\",\n", fp);
+		}
+	}
+
+	for (y = 0; y < realmargin; y++) {
+		fprintf(fp, "\"%s\"%s\n", row, y < (size - 1) ? "," : "};");
+	}
+
+	free(row);
+	fclose(fp);
+
+	return 0;
+}
+
 static void writeANSI_margin(FILE* fp, int realwidth,
                              char* buffer, const char* white, int white_s )
 {
@@ -923,6 +1004,9 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case SVG_TYPE:
 			writeSVG(qrcode, outfile);
 			break;
+		case XPM_TYPE:
+			writeXPM(qrcode, outfile);
+			break;
 		case ANSI_TYPE:
 		case ANSI256_TYPE:
 			writeANSI(qrcode, outfile);
@@ -978,6 +1062,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			break;
 		case SVG_TYPE:
 			type_suffix = ".svg";
+			break;
+		case XPM_TYPE:
+			type_suffix = ".xpm";
 			break;
 		case ANSI_TYPE:
 		case ANSI256_TYPE:
@@ -1044,6 +1131,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				break;
 			case SVG_TYPE: 
 				writeSVG(p->code, filename);
+				break;
+			case XPM_TYPE:
+				writeXPM(p->code, filename);
 				break;
 			case ANSI_TYPE:
 			case ANSI256_TYPE:
@@ -1162,6 +1252,8 @@ int main(int argc, char **argv)
 					image_type = EPS_TYPE;
 				} else if(strcasecmp(optarg, "svg") == 0) {
 					image_type = SVG_TYPE;
+				} else if(strcasecmp(optarg, "xpm") == 0) {
+					image_type = XPM_TYPE;
 				} else if(strcasecmp(optarg, "ansi") == 0) {
 					image_type = ANSI_TYPE;
 				} else if(strcasecmp(optarg, "ansi256") == 0) {
