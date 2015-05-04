@@ -67,7 +67,7 @@ static enum imageType image_type = PNG_TYPE;
 static const struct option options[] = {
 	{"help"         , no_argument      , NULL, 'h'},
 	{"output"       , required_argument, NULL, 'o'},
-	{"readin"       , required_argument, NULL, 'r'},
+	{"read-from"    , required_argument, NULL, 'r'},
 	{"level"        , required_argument, NULL, 'l'},
 	{"size"         , required_argument, NULL, 's'},
 	{"symversion"   , required_argument, NULL, 'v'},
@@ -108,8 +108,8 @@ static void usage(int help, int longopt, int status)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n\n"
-"  -r FILENAME, --readin=FILENAME\n"
-"               read input data from FILENAME.\n"
+"  -r FILENAME, --read-from=FILENAME\n"
+"               read input data from FILENAME.\n\n"
 "  -s NUMBER, --size=NUMBER\n"
 "               specify module size in dots (pixels). (default=3)\n\n"
 "  -l {LMQH}, --level={LMQH}\n"
@@ -165,7 +165,7 @@ static void usage(int help, int longopt, int status)
 "               will be output to standard output. If -S is given, structured\n"
 "               symbols are written to FILENAME-01.png, FILENAME-02.png, ...\n"
 "               (suffix is removed from FILENAME, if specified)\n"
-"  -r FILENAME  read nput data from FILENAME.\n"
+"  -r FILENAME  read input data from FILENAME.\n"
 "  -s NUMBER    specify module size in dots (pixels). (default=3)\n"
 "  -l {LMQH}    specify error correction level from L (lowest) to H (highest).\n"
 "               (default=L)\n"
