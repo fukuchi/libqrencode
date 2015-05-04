@@ -17,6 +17,8 @@
 	  - Updated the usage.
 	* README:
 	  - Updated the list of contributors.
+	* tests/Makefile.am
+	  - Added URI_testset.inc to EXTRA_DIST.
 
 2014.09.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README, README.md:

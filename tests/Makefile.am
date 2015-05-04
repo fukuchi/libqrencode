@@ -23,7 +23,7 @@ if HAVE_LIBPTHREAD
 noinst_PROGRAMS += pthread_qrencode
 endif
 
-EXTRA_DIST = frame
+EXTRA_DIST = frame URI_testset.inc
 
 libdecoder_a_SOURCES = decoder.c decoder.h rsecc_decoder.c rsecc_decoder.h
 
