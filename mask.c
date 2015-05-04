@@ -339,7 +339,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 
 	for(i=0; i<maskNum; i++) {
 //		n1 = n2 = n3 = n4 = 0;
-		demerit = 0;
 		blacks = maskMakers[i](width, frame, mask);
 		blacks += Mask_writeFormatInformation(width, mask, i, level);
 		bratio = (200 * blacks + w2) / w2 / 2; /* (int)(100*blacks/w2+0.5) */
