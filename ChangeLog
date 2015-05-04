@@ -1,3 +1,13 @@
+2015.05.04 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Merge pull request #63 from tklauser/qrenc-array-overflow-fix
+	  - qrenc: Fix array overrun in color_set (Thanks to @tklauser and
+	    @win32asm)
+	* split.c:
+	  - Merge pull request #67 from siggi-heltau/patch-1
+	  - The variable name "new" has been renamed to "newstring" because "new"
+	    is a reserved word in C++. (Thanks to @siggi-heltau)
+
 2014.09.23 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* README, README.md:
 	  - Some typo fixes. (Thanks to Danomi Manchego)
