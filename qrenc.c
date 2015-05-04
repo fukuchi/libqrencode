@@ -500,24 +500,17 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static void writeSVG_writeRect(FILE *fp, int x, int y, int width, const char* col, float opacity)
+static void writeSVG_writeRect(FILE *fp, int x, int y, int width)
 {
-	if(fg_color[3] != 255) {
-		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-				"fill=\"#%s\" fill-opacity=\"%f\" />\n", 
-				x, y, width, col, opacity );
-	} else {
-		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-				"fill=\"#%s\" />\n", 
-				x, y, width, col );
-	}
+	fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" />\n",
+		x, y, width);
 }
 
 static int writeSVG(const QRcode *qrcode, const char *outfile)
 {
 	FILE *fp;
 	unsigned char *row, *p;
-	int x, y, x0, pen;
+	int x, y, x0, x1, pen, abs;
 	int symwidth, realwidth;
 	float scale;
 	char fg[7], bg[7];
@@ -553,24 +546,68 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			QRcode_APIVersionString() );
 
 	/* SVG code start */
-	fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
+	/* Only set the width/height if dpi was non-zero */
+	if (scale != 0) {
+		fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
 			" preserveAspectRatio=\"none\" version=\"1.1\""\
 			" xmlns=\"http://www.w3.org/2000/svg\">\n", 
 			realwidth / scale, realwidth / scale, symwidth, symwidth
-		   );
+		       );
+	} else {
+		fprintf( fp, "<svg viewBox=\"0 0 %d %d\""\
+			" version=\"1.1\""\
+			" xmlns=\"http://www.w3.org/2000/svg\">\n",
+			symwidth, symwidth);
+	}
+
+	/* SVG CSS for styling */
+	fputs( "\t<style>", fp );
+
+	/* Style for the foreground elements. They are assumed to be the most
+	 * numerous, so we set their style without class specification.
+	 * When using RLE, we create a single path element for the foreground.
+	 * Otherwise, the foreground is assembled as collection of rectangle elements.
+	 */
+	const char* const fg_css_spec[] = {
+		"rect{fill:#%s;fill-opacity:%f}",
+		"rect{fill:#%s}",
+		"path{fill:none;stroke:#%s;stroke-opacity:%f}",
+		"path{fill:none;stroke:#%s}"
+	};
+	/* abuse x as index into fg_css_spec */
+	x = rle ? 2 : 0;
+	if (fg_color[3] == 255)
+		++x;
+	fprintf(fp, fg_css_spec[x], fg, fg_opacity);
+
+	/* Style for the background ('bg' class). In RLE mode, the opacity
+	 * only needs to be specified when it's not full; in non-RLE mode,
+	 * it must be declared if it's different from the foreground opacity.
+	 */
+	if( (rle && bg_color[3] != 255) || (!rle && bg_color[3] != fg_color[3])) {
+		fprintf(fp, ".bg{fill:#%s;fill-opacity:%f}", bg, bg_opacity);
+	} else {
+		fprintf(fp, ".bg{fill:#%s}", bg);
+	}
+
+	fputs( "</style>\n", fp );
 
 	/* Make named group */
 	fputs( "\t<g id=\"QRcode\">\n", fp );
 
 	/* Make solid background */
-	if(bg_color[3] != 255) {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\" />\n", symwidth, symwidth, bg, bg_opacity);
-	} else {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" />\n", symwidth, symwidth, bg);
-	}
+	fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" class=\"bg\" />\n",
+		symwidth, symwidth);
 
 	/* Create new viewbox for QR data */
 	fputs( "\t\t<g id=\"Pattern\">\n", fp);
+
+	/* If in RLE mode, start the path. We will draw it margin-less but translate it by the margin width.
+	 * Note that the y translation has an additional .5 because the path is stroked, so
+	 * it must be _centered_ in its coordinate. Horizontally this is not needed because
+	 * of the butt cap used by default. */
+	if (rle)
+		fprintf(fp, "\t\t\t<path transform=\"translate(%d,%d.5)\" d=\"", margin, margin);
 
 	/* Write data */
 	p = qrcode->data;
@@ -581,31 +618,44 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			/* no RLE */
 			for(x=0; x<qrcode->width; x++) {
 				if(*(row+x)&0x1) {
-					writeSVG_writeRect(fp,	margin + x,
-								margin + y, 1,
-								fg, fg_opacity);
+					writeSVG_writeRect(fp,	margin + x, margin + y, 1);
 				}
 			}
 		} else {
 			/* simple RLE */
 			pen = 0;
 			x0  = 0;
+			x1  = 0;
 			for(x=0; x<qrcode->width; x++) {
 				if( !pen ) {
 					pen = *(row+x)&0x1;
 					x0 = x;
 				} else {
 					if(!(*(row+x)&0x1)) {
-						writeSVG_writeRect(fp, x0 + margin, y + margin, x-x0, fg, fg_opacity);
+						/* motion is initially absolute */
+						abs = (x1 == 0);
+						fprintf(fp, "%c%d,%dh%d", abs ? 'M' : 'm',
+							(x0 - x1), abs ? y : 0, x - x0);
+						x1 = x;
 						pen = 0;
 					}
 				}
 			}
 			if( pen ) {
-				writeSVG_writeRect(fp, x0 + margin, y + margin, qrcode->width - x0, fg, fg_opacity);
+				abs = (x1 == 0);
+				fprintf(fp, "%c%d,%dh%d", abs ? 'M' : 'm',
+					(x0 - x1), abs ? y : 0, qrcode->width - x0);
+			}
+			if (y < qrcode->width - 1) {
+				fprintf( fp, "\n\t\t\t\t" );
 			}
 		}
 	}
+
+	/* Close the path */
+	if (rle)
+		fputs( "\"/>\n", fp );
+
 	/* Close QR data viewbox */
 	fputs( "\t\t</g>\n", fp );
 
