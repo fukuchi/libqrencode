@@ -141,7 +141,7 @@ Daniel Dörrhöfer      - RLE option, some bug fixes, Travis configuration
 Greg Hart             - PNG32 support patch
 @siggi-heltau         - bug fix patch
 Tobias Klauser (@tklauser)
-                      - bug fix patch
+                      - bug fix patch, XPM support patch
 Robert Petersen (@ripetersen)
                       - added ability to read input data from a file
 Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan,

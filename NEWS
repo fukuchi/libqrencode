@@ -1,12 +1,13 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 4.0.0 (2014.x.x)
+Version 4.0.0 (2015.x.x)
 ------------------------
 * Memory efficiency has been improved.
 * Error correction code generating functions have been improved.
 * Command line tool "qrencode" has been improved:
-	* PNG32 (direct color mode). (Thanks to Greg Hart)
+	* XPM support. (Thanks to Tobias Klauser)
+	* PNG32 (direct color mode) support. (Thanks to Greg Hart)
 	* EPS output now supports foreground and background color.
 * Various bug fixes.
 * Various improves for developers.
