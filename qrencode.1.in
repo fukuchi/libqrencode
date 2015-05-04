@@ -23,6 +23,9 @@ display help message.
 .B \-o FILENAME, \-\-output=FILENAME
 write image to FILENAME. If '\-' is specified, the result will be output to standard output. If \-S is given, structured symbols are written to FILENAME-01.png, FILENAME-02.png, ... (suffix is removed from FILENAME, if specified)
 .TP
+.B \-r FILENAME, \-\-read\-from=FILENAME
+read input data from FILENAME.
+.TP
 .B \-s NUMBER, \-\-size=NUMBER
 specify the size of dot (pixel). (default=3)
 .TP
@@ -97,8 +100,8 @@ encode into a symbol version 1, level L.
 read standard input and encode it into a structured-appended symbols in
 case-insensitive mode.
 .TP
-.B cat bigfile.txt | qrencode \-S \-v 40 \-l L \-o output.png
-encode into a symbol version 40, level L.
+.B qrencode \-S \-v 40 \-l L \-r bigfile.txt \-o output.png
+read input data from bigfile.txt and encode into a symbol version 40, level L.
 
 .SH AUTHOR
 Written by Kentaro Fukuchi.
