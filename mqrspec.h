@@ -35,24 +35,24 @@
 
 /**
  * Return maximum data code length (bits) for the version.
- * @param version
- * @param level
+ * @param version version of the symbol
+ * @param level error correction level
  * @return maximum size (bits)
  */
 extern int MQRspec_getDataLengthBit(int version, QRecLevel level);
 
 /**
  * Return maximum data code length (bytes) for the version.
- * @param version
- * @param level
+ * @param version version of the symbol
+ * @param level error correction level
  * @return maximum size (bytes)
  */
 extern int MQRspec_getDataLength(int version, QRecLevel level);
 
 /**
  * Return maximum error correction code length (bytes) for the version.
- * @param version
- * @param level
+ * @param version version of the symbol
+ * @param level error correction level
  * @return ECC size (bytes)
  */
 extern int MQRspec_getECCLength(int version, QRecLevel level);
@@ -60,21 +60,21 @@ extern int MQRspec_getECCLength(int version, QRecLevel level);
 /**
  * Return a version number that satisfies the input code length.
  * @param size input code length (byte)
- * @param level
+ * @param level error correction level
  * @return version number
  */
 extern int MQRspec_getMinimumVersion(int size, QRecLevel level);
 
 /**
  * Return the width of the symbol for the version.
- * @param version
+ * @param version version of the symbol
  * @return width
  */
 extern int MQRspec_getWidth(int version);
 
 /**
  * Return the numer of remainder bits.
- * @param version
+ * @param version version of the symbol
  * @return number of remainder bits
  */
 extern int MQRspec_getRemainder(int version);
@@ -85,16 +85,16 @@ extern int MQRspec_getRemainder(int version);
 
 /**
  * Return the size of lenght indicator for the mode and version.
- * @param mode
- * @param version
+ * @param mode encode mode
+ * @param version vesion of the symbol
  * @return the size of the appropriate length indicator (bits).
  */
 extern int MQRspec_lengthIndicator(QRencodeMode mode, int version);
 
 /**
  * Return the maximum length for the mode and version.
- * @param mode
- * @param version
+ * @param mode encode mode
+ * @param version vesion of the symbol
  * @return the maximum length (bytes)
  */
 extern int MQRspec_maximumWords(QRencodeMode mode, int version);
@@ -106,7 +106,7 @@ extern int MQRspec_maximumWords(QRencodeMode mode, int version);
 /**
  * Return BCH encoded version information pattern that is used for the symbol
  * of version 7 or greater. Use lower 18 bits.
- * @param version
+ * @param version vesion of the symbol
  * @return BCH encoded version information pattern
  */
 extern unsigned int MQRspec_getVersionPattern(int version);
@@ -117,9 +117,9 @@ extern unsigned int MQRspec_getVersionPattern(int version);
 
 /**
  * Return BCH encoded format information pattern.
- * @param mask
- * @param version
- * @param level
+ * @param mask mask number
+ * @param version version of the symbol
+ * @param level error correction level
  * @return BCH encoded format information pattern
  */
 extern unsigned int MQRspec_getFormatInfo(int mask, int version, QRecLevel level);
@@ -132,7 +132,7 @@ extern unsigned int MQRspec_getFormatInfo(int mask, int version, QRecLevel level
  * Return a copy of initialized frame.
  * When the same version is requested twice or more, a copy of cached frame
  * is returned.
- * @param version
+ * @param version version of the symbol
  * @return Array of unsigned char. You can free it by free().
  */
 extern unsigned char *MQRspec_newFrame(int version);
