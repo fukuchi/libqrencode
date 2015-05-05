@@ -2,6 +2,8 @@
 	* qrenc.c:
 	  - New option "--svg-path" has been added, that uses a single path
 	    instead of multiple rectangles to draw the modules.
+	* tests/test_qrenc.sh, tests/test_images/.gitignore:
+	  - Added an unfinished test script for qrencode has been added.
 
 2015.05.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrencode.1.in, qrenc.c:
