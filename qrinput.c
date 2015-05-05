@@ -729,7 +729,7 @@ static int QRinput_encodeModeStructure(QRinput_List *entry, BitStream *bstream, 
  * FNC1
  *****************************************************************************/
 
-static int QRinput_checkModeFNC1Second(int size, const unsigned char *data)
+static int QRinput_checkModeFNC1Second(int size)
 {
 	if(size != 1) return -1;
 
@@ -836,7 +836,7 @@ int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 		case QR_MODE_FNC1FIRST:
 			return 0;
 		case QR_MODE_FNC1SECOND:
-			return QRinput_checkModeFNC1Second(size, data);
+			return QRinput_checkModeFNC1Second(size);
 		case QR_MODE_NUL:
 			break;
 	}
