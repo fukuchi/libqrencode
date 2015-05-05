@@ -122,7 +122,8 @@ ACKNOWLEDGMENTS
 QR Code is registered trademarks of DENSO WAVE INCORPORATED in JAPAN and other
 countries.
 
-Reed-Solomon encoder is written by Phil Karn, KA9Q.
+Reed-Solomon encoder is rewritten by Kentaro Fukuchi, referring to the FEC
+library developed by Phil Karn (KA9Q).
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
 - NANKI Haruo           - improved lower-case characters encoding
@@ -143,4 +144,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 - @siggi-heltau         - bug fix patch
 - Tobias Klauser (@tklauser) - bug fix patch, XPM support patch
 - Robert Petersen (@ripetersen) - added ability to read input data from a file
+- @Oblomov              - improved SVG support patch
 - Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, @ralgozino, Sean McMurray, @win32asm, Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray, Danomi Manchego, Vlad Bespalov, @minus7, Ian Sweet - bug report / suggestion
