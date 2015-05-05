@@ -472,7 +472,7 @@ extern void QRcode_free(QRcode *qrcode);
 /**
  * Create structured symbols from the input data.
  * @warning This function is THREAD UNSAFE when pthread is disabled.
- * @param s
+ * @param s input data, structured.
  * @return a singly-linked list of QRcode.
  */
 extern QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s);
@@ -539,9 +539,9 @@ extern void QRcode_List_free(QRcode_List *qrlist);
 
 /**
  * Return a string that identifies the library version.
- * @param major_version
- * @param minor_version
- * @param micro_version
+ * @param major_version major version number
+ * @param minor_version minor version number
+ * @param micro_version micro version number
  */
 extern void QRcode_APIVersion(int *major_version, int *minor_version, int *micro_version);
 

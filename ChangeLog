@@ -8,7 +8,7 @@
 	* qrenc.c:
 	  - X Pixmap (XPM) support has been added. (closes #52)
 	    (Thanks to @tklauser)
-	* qrspec.h, mqrspec.h:
+	* qrspec.h, mqrspec.h, qrencode.h:
 	  - empty descriptions of some @params are filled.
 	* Some code cleanups.
 
