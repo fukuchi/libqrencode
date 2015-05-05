@@ -296,7 +296,7 @@ void test_format(void)
 	for(version=1; version<=QRSPEC_VERSION_MAX; version++) {
 		frame = QRspec_newFrame(version);
 		width = QRspec_getWidth(version);
-		for(level=0; level<4; level++) {
+		for(level=QR_ECLEVEL_L; level<=QR_ECLEVEL_H; level++) {
 			for(mask=0; mask<8; mask++) {
 				masked = Mask_makeMask(width, frame, mask, level);
 				code = QRcode_new(version, width, masked);
