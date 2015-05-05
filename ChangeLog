@@ -10,6 +10,8 @@
 	    (Thanks to @tklauser)
 	* qrspec.h, mqrspec.h, qrencode.h:
 	  - empty descriptions of some @params are filled.
+	* rsecc.[ch], README:
+	  - Short note about the credit has been improved.
 	* Some code cleanups.
 
 2015.05.04 Kentaro Fukuchi <kentaro@fukuchi.org>
