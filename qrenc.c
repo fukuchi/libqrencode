@@ -41,6 +41,7 @@ static int margin = -1;
 static int dpi = 72;
 static int structured = 0;
 static int rle = 0;
+static int svg_path = 0;
 static int micro = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
@@ -81,6 +82,7 @@ static const struct option options[] = {
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
 	{"rle"          , no_argument      , &rle,   1},
+	{"svg-path"     , no_argument      , &svg_path, 1},
 	{"micro"        , no_argument      , NULL, 'M'},
 	{"foreground"   , required_argument, NULL, 'f'},
 	{"background"   , required_argument, NULL, 'b'},
@@ -135,6 +137,8 @@ static void usage(int help, int longopt, int status)
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
 "      --rle    enable run-length encoding for SVG.\n\n"
+"      --svg-path\n"
+"               use single path to draw modules for SVG.\n\n"
 "  -M, --micro  encode in a Micro QR Code. (experimental)\n\n"
 "      --foreground=RRGGBB[AA]\n"
 "      --background=RRGGBB[AA]\n"
@@ -452,7 +456,7 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	int realwidth;
 
 	fp = openFile(outfile);
-   
+
 	realwidth = (qrcode->width + margin * 2) * size;
 	/* EPS file header */
 	fprintf(fp, "%%!PS-Adobe-2.0 EPSF-1.2\n"
@@ -500,16 +504,20 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static void writeSVG_writeRect(FILE *fp, int x, int y, int width, const char* col, float opacity)
+static void writeSVG_drawModules(FILE *fp, int x, int y, int width, const char* col, float opacity)
 {
-	if(fg_color[3] != 255) {
-		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-				"fill=\"#%s\" fill-opacity=\"%f\" />\n", 
-				x, y, width, col, opacity );
+	if(svg_path) {
+		fprintf(fp, "M%d,%dh%d", x, y, width);
 	} else {
-		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-				"fill=\"#%s\" />\n", 
-				x, y, width, col );
+		if(fg_color[3] != 255) {
+			fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
+					"fill=\"#%s\" fill-opacity=\"%f\"/>\n",
+					x, y, width, col, opacity );
+		} else {
+			fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
+					"fill=\"#%s\"/>\n",
+					x, y, width, col );
+		}
 	}
 }
 
@@ -539,38 +547,46 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	/* XML declaration */
 	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
 
-	/* DTD 
-	   No document type specified because "while a DTD is provided in [the SVG] 
-	   specification, the use of DTDs for validating XML documents is known to be 
-	   problematic. In particular, DTDs do not handle namespaces gracefully. It 
-	   is *not* recommended that a DOCTYPE declaration be included in SVG 
-	   documents." 
+	/* DTD
+	   No document type specified because "while a DTD is provided in [the SVG]
+	   specification, the use of DTDs for validating XML documents is known to
+	   be problematic. In particular, DTDs do not handle namespaces gracefully.
+	   It is *not* recommended that a DOCTYPE declaration be included in SVG
+	   documents."
 	   http://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
 	*/
 
 	/* Vanity remark */
-	fprintf( fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html.en) -->\n", 
-			QRcode_APIVersionString() );
+	fprintf(fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html) -->\n", QRcode_APIVersionString());
 
 	/* SVG code start */
-	fprintf( fp, "<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
+	fprintf(fp,
+			"<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
 			" preserveAspectRatio=\"none\" version=\"1.1\""\
-			" xmlns=\"http://www.w3.org/2000/svg\">\n", 
+			" xmlns=\"http://www.w3.org/2000/svg\">\n",
 			realwidth / scale, realwidth / scale, symwidth, symwidth
 		   );
 
 	/* Make named group */
-	fputs( "\t<g id=\"QRcode\">\n", fp );
+	fputs("\t<g id=\"QRcode\">\n", fp);
 
 	/* Make solid background */
 	if(bg_color[3] != 255) {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\" />\n", symwidth, symwidth, bg, bg_opacity);
+		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\"/>\n", symwidth, symwidth, bg, bg_opacity);
 	} else {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" />\n", symwidth, symwidth, bg);
+		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\"/>\n", symwidth, symwidth, bg);
 	}
 
-	/* Create new viewbox for QR data */
-	fputs( "\t\t<g id=\"Pattern\">\n", fp);
+	if(svg_path) {
+		if(fg_color[3] != 255) {
+			fprintf(fp, "\t\t<path style=\"stroke:#%s;stroke-opacity:%f\" transform=\"translate(%d,%d.5)\" d=\"", fg, fg_opacity, margin, margin);
+		} else {
+			fprintf(fp, "\t\t<path style=\"stroke:#%s\" transform=\"translate(%d,%d.5)\" d=\"", fg, margin, margin);
+		}
+	} else {
+		/* Create new viewbox for QR data */
+		fprintf(fp, "\t\t<g id=\"Pattern\" transform=\"translate(%d,%d)\">\n", margin, margin);
+	}
 
 	/* Write data */
 	p = qrcode->data;
@@ -581,9 +597,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			/* no RLE */
 			for(x = 0; x < qrcode->width; x++) {
 				if(*(row+x)&0x1) {
-					writeSVG_writeRect(fp,	margin + x,
-								margin + y, 1,
-								fg, fg_opacity);
+					writeSVG_drawModules(fp, x, y, 1, fg, fg_opacity);
 				}
 			}
 		} else {
@@ -596,25 +610,30 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 					x0 = x;
 				} else {
 					if(!(*(row+x)&0x1)) {
-						writeSVG_writeRect(fp, x0 + margin, y + margin, x-x0, fg, fg_opacity);
+						writeSVG_drawModules(fp, x0, y, x-x0, fg, fg_opacity);
 						pen = 0;
 					}
 				}
 			}
 			if( pen ) {
-				writeSVG_writeRect(fp, x0 + margin, y + margin, qrcode->width - x0, fg, fg_opacity);
+				writeSVG_drawModules(fp, x0, y, qrcode->width - x0, fg, fg_opacity);
 			}
 		}
 	}
-	/* Close QR data viewbox */
-	fputs( "\t\t</g>\n", fp );
+
+	if(svg_path) {
+		fputs("\"/>\n", fp);
+	} else {
+		/* Close QR data viewbox */
+		fputs("\t\t</g>\n", fp);
+	}
 
 	/* Close group */
-	fputs( "\t</g>\n", fp );
+	fputs("\t</g>\n", fp);
 
 	/* Close SVG code */
-	fputs( "</svg>\n", fp );
-	fclose( fp );
+	fputs("</svg>\n", fp);
+	fclose(fp);
 
 	return 0;
 }
@@ -1123,14 +1142,14 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 		}
 
 		switch(image_type) {
-			case PNG_TYPE: 
-			case PNG32_TYPE: 
+			case PNG_TYPE:
+			case PNG32_TYPE:
 				writePNG(p->code, filename, image_type);
 				break;
-			case EPS_TYPE: 
+			case EPS_TYPE:
 				writeEPS(p->code, filename);
 				break;
-			case SVG_TYPE: 
+			case SVG_TYPE:
 				writeSVG(p->code, filename);
 				break;
 			case XPM_TYPE:

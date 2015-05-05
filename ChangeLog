@@ -1,3 +1,8 @@
+2015.05.06 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - New option "--svg-path" has been added, that uses a single path
+	    instead of multiple rectangles to draw the modules.
+
 2015.05.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrencode.1.in, qrenc.c:
 	  - Usage improved. (closes #62) (Thanks to @minus7)
