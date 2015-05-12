@@ -9,6 +9,7 @@ Version 4.0.0 (2015.x.x)
 	* XPM support. (Thanks to Tobias Klauser)
 	* PNG32 (direct color mode) support. (Thanks to Greg Hart)
 	* EPS output now supports foreground and background color.
+	* New options "-r" and "--svg-path" have been added.
 * Various bug fixes.
 * Various improves for developers.
 

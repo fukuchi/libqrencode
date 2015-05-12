@@ -3,6 +3,8 @@
 	  - Typo fix.
 	* README, README.md:
 	  - Text format improved.
+	* NEWS:
+	  - Slightly updated.
 
 2015.05.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c:
