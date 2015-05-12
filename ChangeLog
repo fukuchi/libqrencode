@@ -1,6 +1,8 @@
 2015.05.13 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.c:
 	  - Typo fix.
+	* README, README.md:
+	  - Text format improved.
 
 2015.05.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c:

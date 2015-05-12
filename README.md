@@ -126,23 +126,33 @@ Reed-Solomon encoder is rewritten by Kentaro Fukuchi, referring to the FEC
 library developed by Phil Karn (KA9Q).
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
-- NANKI Haruo           - improved lower-case characters encoding
-- Philippe Delcroix     - improved mask evaluation
-- Yusuke Mihara         - structured-append support
-- David Dahl            - DPI and SVG support patch
-- Adam Shepherd         - bug fix patch of the mask evaluation
-- Josef Eisl (@zapster) - EPS support patch
-- Colin (@moshen)       - ANSI support patch
-- Ralf Ertzinger        - ASCII support patch
-- Yutaka Niibe (@gniibe)- various bug fix patches
-- Dan Storm (@Repox)    - SVG support patch
-- Lennart Poettering (@mezcalero) - improved text art patch
-- Yann Droneaud         - improved input validation patch
-- Viona                 - bug fix patch for string splitting
-- Daniel Dörrhöfer      - RLE option, some bug fixes, Travis configuration
-- Greg Hart             - PNG32 support patch
-- @siggi-heltau         - bug fix patch
-- Tobias Klauser (@tklauser) - bug fix patch, XPM support patch
-- Robert Petersen (@ripetersen) - added ability to read input data from a file
-- @Oblomov              - improved SVG support patch
-- Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker, Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr, Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen, David Binderman, @ralgozino, Sean McMurray, @win32asm, Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray, Danomi Manchego, Vlad Bespalov, @minus7, Ian Sweet - bug report / suggestion
+* NANKI Haruo           - improved lower-case characters encoding
+* Philippe Delcroix     - improved mask evaluation
+* Yusuke Mihara         - structured-append support
+* David Dahl            - DPI and SVG support patch
+* Adam Shepherd         - bug fix patch of the mask evaluation
+* Josef Eisl (@zapster) - EPS support patch
+* Colin (@moshen)       - ANSI support patch
+* Ralf Ertzinger        - ASCII support patch
+* Yutaka Niibe (@gniibe)- various bug fix patches
+* Dan Storm (@Repox)    - SVG support patch
+* Lennart Poettering (@mezcalero)
+                        - improved text art patch
+* Yann Droneaud         - improved input validation patch
+* Viona                 - bug fix patch for string splitting
+* Daniel Dörrhöfer (@d4ndo)
+                        - RLE option, some bug fixes, Travis configuration
+* Greg Hart             - PNG32 support patch
+* @siggi-heltau         - bug fix patch
+* Tobias Klauser (@tklauser)
+                        - bug fix patch, XPM support patch
+* Robert Petersen (@ripetersen)
+                        - added ability to read input data from a file
+* @Oblomov              - improved SVG support patch
+* Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
+  Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
+  Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
+  David Binderman, @ralgozino, Sean McMurray, @win32asm, Antenore Gatta,
+  Yoshimichi Inoue, Sunil Maganally, Norman Gray, Danomi Manchego,
+  Vlad Bespalov, @minus7, Ian Sweet
+                        - bug report / suggestion
