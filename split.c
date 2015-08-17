@@ -75,10 +75,8 @@ static QRencodeMode Split_identifyMode(const char *string, QRencodeMode hint)
 	return QR_MODE_8;
 }
 
-static int Split_eatNum(const char *string, QRinput *input, QRencodeMode hint);
 static int Split_eatAn(const char *string, QRinput *input, QRencodeMode hint);
 static int Split_eat8(const char *string, QRinput *input, QRencodeMode hint);
-static int Split_eatKanji(const char *string, QRinput *input, QRencodeMode hint);
 
 static int Split_eatNum(const char *string, QRinput *input,QRencodeMode hint)
 {
