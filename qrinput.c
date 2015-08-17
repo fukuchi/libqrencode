@@ -772,7 +772,7 @@ static int QRinput_estimateBitsModeECI(unsigned char *data)
 {
 	unsigned int ecinum;
 
-	ecinum = QRinput_decodeECIfromByteArray(data);;
+	ecinum = QRinput_decodeECIfromByteArray(data);
 
 	/* See Table 4 of JISX 0510:2004 pp.17. */
 	if(ecinum < 128) {
@@ -789,7 +789,7 @@ static int QRinput_encodeModeECI(QRinput_List *entry, BitStream *bstream)
 	int ret, words;
 	unsigned int ecinum, code;
 
-	ecinum = QRinput_decodeECIfromByteArray(entry->data);;
+	ecinum = QRinput_decodeECIfromByteArray(entry->data);
 
 	/* See Table 4 of JISX 0510:2004 pp.17. */
 	if(ecinum < 128) {
