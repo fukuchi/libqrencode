@@ -768,7 +768,7 @@ static unsigned int QRinput_decodeECIfromByteArray(unsigned char *data)
 	return ecinum;
 }
 
-int QRinput_estimateBitsModeECI(unsigned char *data)
+static int QRinput_estimateBitsModeECI(unsigned char *data)
 {
 	unsigned int ecinum;
 
