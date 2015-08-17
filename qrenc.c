@@ -561,7 +561,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 
 	/* SVG code start */
 	fprintf(fp,
-			"<svg width=\"%0.2fcm\" height=\"%0.2fcm\" viewBox=\"0 0 %d %d\""\
+			"<svg width=\"%.2fcm\" height=\"%.2fcm\" viewBox=\"0 0 %d %d\""\
 			" preserveAspectRatio=\"none\" version=\"1.1\""\
 			" xmlns=\"http://www.w3.org/2000/svg\">\n",
 			realwidth / scale, realwidth / scale, symwidth, symwidth
