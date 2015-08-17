@@ -1,13 +1,13 @@
 /*
  * qrencode - QR Code encoder
  *
- * Micro QR Code specification in convenient format. 
+ * Micro QR Code specification in convenient format.
  * Copyright (C) 2006-2011 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * The following data / specifications are taken from
  * "Two dimensional symbol -- QR-code -- Basic Specification" (JIS X0510:2004)
  *  or
- * "Automatic identification and data capture techniques -- 
+ * "Automatic identification and data capture techniques --
  *  QR Code 2005 bar code symbology specification" (ISO/IEC 18004:2006)
  *
  * This library is free software; you can redistribute it and/or

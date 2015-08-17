@@ -484,13 +484,13 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 			(float)fg_color[1] / 255,
 			(float)fg_color[2] / 255);
 	fprintf(fp, "%d %d scale\n", size, size);
-	
+
 	/* data */
 	p = qrcode->data;
 	for(y = 0; y < qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 		yy = (margin + qrcode->width - y - 1);
-		
+
 		for(x = 0; x < qrcode->width; x++) {
 			if(*(row+x)&0x1) {
 				fprintf(fp, "%d %d p ", margin + x,  yy);
@@ -998,7 +998,7 @@ static QRcode *encode(const unsigned char *intext, int length)
 static void qrencode(const unsigned char *intext, int length, const char *outfile)
 {
 	QRcode *qrcode;
-	
+
 	qrcode = encode(intext, length);
 	if(qrcode == NULL) {
 		if(errno == ERANGE) {
@@ -1115,7 +1115,7 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			*q = '\0';
 		}
 	}
-	
+
 	qrlist = encodeStructured(intext, length);
 	if(qrlist == NULL) {
 		if(errno == ERANGE) {

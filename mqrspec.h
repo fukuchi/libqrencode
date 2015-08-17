@@ -1,7 +1,7 @@
 /*
  * qrencode - QR Code encoder
  *
- * Micro QR Code specification in convenient format. 
+ * Micro QR Code specification in convenient format.
  * Copyright (C) 2006-2011 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or

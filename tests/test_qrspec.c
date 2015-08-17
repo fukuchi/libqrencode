@@ -283,7 +283,7 @@ static unsigned int calcFormatInfo(int mask, QRecLevel level)
 		code = code >> 1;
 		b = b >> 1;
 	}
-	
+
 	return (data | ecc) ^ 0x5412;
 }
 

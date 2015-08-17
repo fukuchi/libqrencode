@@ -47,7 +47,7 @@ given.
 
 Version 3.4.2 (2013.3.1)
 ------------------------
-* Bug fix release. (Thanks to chisj, vlad417, Petr and Viona)	
+* Bug fix release. (Thanks to chisj, vlad417, Petr and Viona)
 
 Release Note:
 Micro QR Code encoder had a bug that caused incorrect output (issue #25). Now

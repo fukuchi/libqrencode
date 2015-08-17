@@ -47,7 +47,7 @@ static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mod
 	int i;
 	int length = 0;
 	int lbits;
-	
+
 	if(mqr) {
 		lbits = MQRspec_lengthIndicator(mode, version);
 	} else {
