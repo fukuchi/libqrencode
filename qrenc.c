@@ -46,6 +46,7 @@ static int rle = 0;
 static int svg_path = 0;
 static int micro = 0;
 static int inline_svg = 0;
+static int ascii_plus = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 static unsigned char fg_color[4] = {0, 0, 0, 255};
@@ -58,6 +59,7 @@ enum imageType {
 	PNG32_TYPE,
 	EPS_TYPE,
 	SVG_TYPE,
+	FSVG1_TYPE,
 	XPM_TYPE,
 	ANSI_TYPE,
 	ANSI256_TYPE,
@@ -84,6 +86,7 @@ static const struct option options[] = {
 	{"type"         , required_argument, NULL, 't'},
 	{"structured"   , no_argument      , NULL, 'S'},
 	{"kanji"        , no_argument      , NULL, 'k'},
+	{"ascii-plus"   , required_argument, NULL, 'A'},
 	{"casesensitive", no_argument      , NULL, 'c'},
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
@@ -98,7 +101,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:r:l:s:v:m:d:t:Skci8MV";
+static char *optstring = "ho:r:l:s:v:m:d:t:A:Skci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -132,12 +135,13 @@ static void usage(int help, int longopt, int status)
 "               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8},\n"
-"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1},\n"
+"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
+"  -A NUMBER, --ascii-plus=NUMBER shows in ascii type the internal structure of the qrcode.\n\n"
 "  -c, --casesensitive\n"
 "               encode lower-case alphabet characters in 8-bit mode. (default)\n\n"
 "  -i, --ignorecase\n"
@@ -186,10 +190,11 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the minimum version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
+"  -A NUMBER, --ascii-plus=NUMBER shows in ascii type the internal structure of the qrcode.\n\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
@@ -529,6 +534,229 @@ static void writeSVG_drawModules(FILE *fp, int x, int y, int width, const char* 
 					x, y, width, col );
 		}
 	}
+}
+
+static void writeFSVG1_drawModules(FILE *fp, int x, int y, const char* color)
+{
+	fprintf(fp,"    <path\
+	       style='fill:#%s;fill-opacity:0.25;fill-rule:evenodd;stroke:none;filter:url(#filterBlur)'\
+	       d='M %d,%d\
+		m 0,7 \
+		c 0,0 0,0 0,0\
+		l 0,3 \
+		l 3,0 \
+		c 0,0 0,0 0,0 \
+		c 0,-1.5 -1.5,-3 -3,-3 \
+		z '\
+	       />\
+	    <path\
+	       inkscape:connector-curvature='0'\
+	       style='fill:#%s;fill-opacity:0.25;fill-rule:evenodd;stroke:none;filter:url(#filterBlur)'\
+	       d='M %d,%d\
+		m 7,10\
+		c 0,0 0,0 0,0\
+		l 3,0\
+		l 0,-3\
+		c 0,0 0,0 0,0 \
+		c -1.5,0 -3,1.5 -3,3\
+		z'\
+	       />\
+	    <path\
+	       inkscape:connector-curvature='0'\
+	       style='fill:#%s;fill-opacity:0.25;fill-rule:evenodd;stroke:none;filter:url(#filterBlur)'\
+	       d='M %d,%d\
+		m 10,3 \
+		c 0,0 0,0 0,0 \
+		l 0,-3 \
+		l -3,0 \
+		c 0,0 0,0 0,0 \
+		c 0,1.5 1.5,3 3,3 \
+		z'\
+	       />\
+	    <path\
+	       inkscape:connector-curvature='0'\
+	       style='fill:#%s;fill-opacity:0.25;fill-rule:evenodd;stroke:none;filter:url(#filterBlur)'\
+	       d='M %d,%d\
+		m 3,0 c 0,0 0,0 0,0 \
+		l -3,0\
+		l 0,3 \
+		c 0,0 0,0 0,0 \
+		c 1.5,0 3,-1.5 3,-3 \
+		z'\
+	       />",
+		color,x*10,y*10,
+		color,x*10,y*10,
+		color,x*10,y*10,
+		color,x*10,y*10
+	);
+	fprintf(fp,"    <path\
+	       style='fill:#%s;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:0.7;filter:url(#filterBlur)'\
+	       d='M %d,%d\
+		m 0,5  \
+		c 0,-5 1.5,2 3,-2 \
+		c 0.5,-1.5 -0.5,-3 2,-3  \
+		c 5,0 -2,1.5 2,3 \
+		c 1.5,0.5 3,-0.5 3,2  \
+		c 0,5 -1.5,-2 -3,2 \
+		c -0.5,1.5 0.5,3 -2,3  \
+		c -5,0 2,-1.5 -2,-3 \
+		c -1.5,-0.5 -3,0.5 -3,-2  \
+		z'\
+	       inkscape:connector-curvature='0' />",color,x*10,y*10
+	);
+}
+
+static int writeFSVG1(const QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	unsigned char *row, *p;
+	int x, y;
+	int symwidth, realwidth;
+	char fg[7], bg[7];
+
+	size=10; //size forced due to design of dots.
+
+	fp = openFile(outfile);
+
+	symwidth = qrcode->width + margin * 2;
+	realwidth = symwidth * size;
+
+	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
+	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
+
+	/* XML declaration */
+	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
+
+	/* DTD
+	   No document type specified because "while a DTD is provided in [the SVG]
+	   specification, the use of DTDs for validating XML documents is known to
+	   be problematic. In particular, DTDs do not handle namespaces gracefully.
+	   It is *not* recommended that a DOCTYPE declaration be included in SVG
+	   documents."
+	   http://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
+	*/
+
+	/* Vanity remark */
+	fprintf(fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html) -->\n", QRcode_APIVersionString());
+
+	/* SVG code start */
+	fprintf(fp, "<svg\
+	   xmlns:dc='http://purl.org/dc/elements/1.1/'\
+	   xmlns:cc='http://creativecommons.org/ns#'\
+	   xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'\
+	   xmlns:svg='http://www.w3.org/2000/svg'\
+	   xmlns='http://www.w3.org/2000/svg'\
+	   xmlns:xlink='http://www.w3.org/1999/xlink'\
+	   xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd'\
+	   xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape'\
+	   width='%d'\
+	   height='%d'\
+	   id='svg4106'\
+	   version='1.1'\
+	   inkscape:version='0.48.4 r9939'\
+	   sodipodi:docname='dot4.svg'>\
+	  <defs\
+	     id='defs4108'>\
+	    <linearGradient\
+	       id='linearGradientWhite'>\
+	      <stop\
+		 style='stop-color:#ffffff;stop-opacity:1;'\
+		 offset='0'\
+		 id='stop5139' />\
+	      <stop\
+		 style='stop-color:#ffffff;stop-opacity:0.75;'\
+		 offset='1'\
+		 id='stop5141' />\
+	    </linearGradient>\
+	    <radialGradient\
+	       inkscape:collect='always'\
+	       xlink:href='#linearGradientWhite'\
+	       id='radialGradientWhite'\
+	       cx='5'\
+	       cy='5'\
+	       fx='5'\
+	       fy='5'\
+	       r='5'\
+	       gradientUnits='userSpaceOnUse' />\
+	    <linearGradient\
+	       id='linearGradientBlack'>\
+	      <stop\
+		 style='stop-color:#000000;stop-opacity:1;'\
+		 offset='0'\
+		 id='stop5139' />\
+	      <stop\
+		 style='stop-color:#500000;stop-opacity:0.85;'\
+		 offset='1'\
+		 id='stop5141' />\
+	    </linearGradient>\
+	    <radialGradient\
+	       inkscape:collect='always'\
+	       xlink:href='#linearGradientBlack'\
+	       id='radialGradientBlack'\
+	       cx='5'\
+	       cy='5'\
+	       fx='5'\
+	       fy='5'\
+	       r='5'\
+	       gradientUnits='userSpaceOnUse' />\
+	    <filter\
+	       inkscape:collect='always' id='filterBlur' >\
+	      <feGaussianBlur\
+		 inkscape:collect='always'\
+		 stdDeviation='0.2'\
+		 id='feGaussianBlur' />\
+	    </filter>\
+	  </defs>\
+	  <sodipodi:namedview\
+	     id='base'\
+	     pagecolor='#ffffff'\
+	     bordercolor='#666666'\
+	     borderopacity='1.0'\
+	     inkscape:pageopacity='0.0'\
+	     inkscape:pageshadow='2'\
+	     inkscape:document-units='px'\
+	     inkscape:current-layer='layer1'\
+	     showgrid='false'\
+	     inkscape:showpageshadow='false'\
+	     inkscape:window-maximized='0' />\
+	  <metadata\
+	     id='metadata4111'>\
+	    <rdf:RDF>\
+	      <cc:Work\
+		 rdf:about=''>\
+		<dc:format>image/svg+xml</dc:format>\
+		<dc:type\
+		   rdf:resource='http://purl.org/dc/dcmitype/StillImage' />\
+		<dc:title></dc:title>\
+	      </cc:Work>\
+	    </rdf:RDF>\
+	  </metadata>\
+	  <g\
+	     inkscape:label='Calque 1'\
+	     inkscape:groupmode='layer'\
+	     id='QRcode'>" ,realwidth , realwidth 
+	);
+
+	/* Write data */
+	p = qrcode->data;
+	for(y = 0; y < qrcode->width+2*margin; y++) {
+		row = (p+((y-margin)*qrcode->width));
+		for(x = 0; x < qrcode->width+2*margin; x++) {
+			if(y>=margin && y-margin<qrcode->width && x>=margin && x-margin<qrcode->width) {
+				if(*(row+x-margin)&0x1) writeFSVG1_drawModules(fp,x,y,fg);
+				else writeFSVG1_drawModules(fp,x,y,bg);
+			} else writeFSVG1_drawModules(fp,x,y,bg);
+		}
+	}
+
+	/* Close group */
+	fputs("\t</g>\n", fp);
+
+	/* Close SVG code */
+	fputs("</svg>\n", fp);
+	fclose(fp);
+
+	return 0;
 }
 
 static int writeSVG(const QRcode *qrcode, const char *outfile)
@@ -978,10 +1206,12 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 
 		for(x = 0; x < qrcode->width; x++) {
 			if(row[x]&0x1) {
-				*p++ = black;
+				if(ascii_plus)*p++=ascii_plus&row[x]?'1':' ';
+				else *p++ = black;
 				*p++ = black;
 			} else {
-				*p++ = white;
+				if(ascii_plus)*p++=ascii_plus&row[x]?'1':' ';
+				else *p++ = white;
 				*p++ = white;
 			}
 		}
@@ -1050,6 +1280,9 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case SVG_TYPE:
 			writeSVG(qrcode, outfile);
 			break;
+		case FSVG1_TYPE:
+			writeFSVG1(qrcode, outfile);
+			break;
 		case XPM_TYPE:
 			writeXPM(qrcode, outfile);
 			break;
@@ -1116,6 +1349,7 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			type_suffix = ".eps";
 			break;
 		case SVG_TYPE:
+		case FSVG1_TYPE:
 			type_suffix = ".svg";
 			break;
 		case XPM_TYPE:
@@ -1188,6 +1422,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				break;
 			case SVG_TYPE:
 				writeSVG(p->code, filename);
+				break;
+			case FSVG1_TYPE:
+				writeFSVG1(p->code, filename);
 				break;
 			case XPM_TYPE:
 				writeXPM(p->code, filename);
@@ -1316,6 +1553,8 @@ int main(int argc, char **argv)
 					image_type = EPS_TYPE;
 				} else if(strcasecmp(optarg, "svg") == 0) {
 					image_type = SVG_TYPE;
+				} else if(strcasecmp(optarg, "fsvg1") == 0) {
+					image_type = FSVG1_TYPE;
 				} else if(strcasecmp(optarg, "xpm") == 0) {
 					image_type = XPM_TYPE;
 				} else if(strcasecmp(optarg, "ansi") == 0) {
@@ -1346,6 +1585,9 @@ int main(int argc, char **argv)
 				break;
 			case 'k':
 				hint = QR_MODE_KANJI;
+				break;
+			case 'A':
+				ascii_plus = atoi(optarg);
 				break;
 			case 'c':
 				casesensitive = 1;
