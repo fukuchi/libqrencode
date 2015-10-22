@@ -60,6 +60,8 @@ enum imageType {
 	EPS_TYPE,
 	SVG_TYPE,
 	FSVG1_TYPE,
+	FSVG2_TYPE,
+	FSVG3_TYPE,
 	XPM_TYPE,
 	ANSI_TYPE,
 	ANSI256_TYPE,
@@ -135,8 +137,8 @@ static void usage(int help, int longopt, int status)
 "               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1},\n"
-"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1,FSVG2,FSVG3},\n"
+"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1,FSVG2,FSVG3}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
@@ -190,7 +192,7 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the minimum version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8,FSVG1,FSVG2,FSVG3}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -606,6 +608,57 @@ static void writeFSVG1_drawModules(FILE *fp, int x, int y, const char* color)
 	);
 }
 
+static void writeFSVG2_drawModules(FILE *fp, int x, int y, const char* color)
+{
+	fprintf(fp,"<circle\
+		style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
+		cx='%d'\
+		cy='%d'\
+		r='3.5' />"
+		,color,x*10+5,y*10+5
+	);
+}
+
+static void writeFSVG3_drawModules(FILE *fp, int x, int y, const char* color)
+{
+	fprintf(fp,"<ellipse\
+       style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
+       cx='%f'\
+       cy='%f'\
+       rx='1.5936617'\
+       ry='1.5510435' />\
+    <ellipse\
+       style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
+       cx='%f'\
+       cy='%f'\
+       rx='1.0950857'\
+       ry='1.3209438' />\
+    <ellipse\
+       style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
+       cx='%f'\
+       cy='%f'\
+       rx='3.3014879'\
+       ry='2.6740706' />\
+    <ellipse\
+       style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
+       cx='%f'\
+       cy='%f'\
+       rx='1.1217953'\
+       ry='1.2442437' />\
+    <ellipse\
+       style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
+       cx='%f'\
+       cy='%f'\
+       rx='1.6737897'\
+       ry='1.448777' />"
+		,color,x*10+1.8436925,y*10+1.755784
+		,color,x*10+1.2843877,y*10+6.8829622
+		,color,x*10+5.0531077,y*10+4.9817958
+		,color,x*10+7.2622757,y*10+8.4027872
+		,color,x*10+8.0230665,y*10+1.6966467
+	);
+}
+
 static int writeFSVG1(const QRcode *qrcode, const char *outfile)
 {
 	FILE *fp;
@@ -746,6 +799,312 @@ static int writeFSVG1(const QRcode *qrcode, const char *outfile)
 				if(*(row+x-margin)&0x1) writeFSVG1_drawModules(fp,x,y,fg);
 				else writeFSVG1_drawModules(fp,x,y,bg);
 			} else writeFSVG1_drawModules(fp,x,y,bg);
+		}
+	}
+
+	/* Close group */
+	fputs("\t</g>\n", fp);
+
+	/* Close SVG code */
+	fputs("</svg>\n", fp);
+	fclose(fp);
+
+	return 0;
+}
+
+static int writeFSVG2(const QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	unsigned char *row, *p;
+	int x, y;
+	int symwidth, realwidth;
+	char fg[7], bg[7];
+
+	size=10; //size forced due to design of dots.
+
+	fp = openFile(outfile);
+
+	symwidth = qrcode->width + margin * 2;
+	realwidth = symwidth * size;
+
+	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
+	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
+
+	/* XML declaration */
+	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
+
+	/* DTD
+	   No document type specified because "while a DTD is provided in [the SVG]
+	   specification, the use of DTDs for validating XML documents is known to
+	   be problematic. In particular, DTDs do not handle namespaces gracefully.
+	   It is *not* recommended that a DOCTYPE declaration be included in SVG
+	   documents."
+	   http://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
+	*/
+
+	/* Vanity remark */
+	fprintf(fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html) -->\n", QRcode_APIVersionString());
+
+	/* SVG code start */
+	fprintf(fp, "<svg\
+	   xmlns:dc='http://purl.org/dc/elements/1.1/'\
+	   xmlns:cc='http://creativecommons.org/ns#'\
+	   xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'\
+	   xmlns:svg='http://www.w3.org/2000/svg'\
+	   xmlns='http://www.w3.org/2000/svg'\
+	   xmlns:xlink='http://www.w3.org/1999/xlink'\
+	   xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd'\
+	   xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape'\
+	   width='%d'\
+	   height='%d'\
+	   id='svg4106'\
+	   version='1.1'\
+	   inkscape:version='0.48.4 r9939'\
+	   sodipodi:docname='dot4.svg'>\
+	  <defs\
+	     id='defs4108'>\
+	    <linearGradient\
+	       id='linearGradientWhite'>\
+	      <stop\
+		 style='stop-color:#ffffff;stop-opacity:1;'\
+		 offset='0'\
+		 id='stop5139' />\
+	      <stop\
+		 style='stop-color:#ffffff;stop-opacity:0.75;'\
+		 offset='1'\
+		 id='stop5141' />\
+	    </linearGradient>\
+	    <radialGradient\
+	       inkscape:collect='always'\
+	       xlink:href='#linearGradientWhite'\
+	       id='radialGradientWhite'\
+	       cx='5'\
+	       cy='5'\
+	       fx='5'\
+	       fy='5'\
+	       r='5'\
+	       gradientUnits='userSpaceOnUse' />\
+	    <linearGradient\
+	       id='linearGradientBlack'>\
+	      <stop\
+		 style='stop-color:#000000;stop-opacity:1;'\
+		 offset='0'\
+		 id='stop5139' />\
+	      <stop\
+		 style='stop-color:#500000;stop-opacity:0.85;'\
+		 offset='1'\
+		 id='stop5141' />\
+	    </linearGradient>\
+	    <radialGradient\
+	       inkscape:collect='always'\
+	       xlink:href='#linearGradientBlack'\
+	       id='radialGradientBlack'\
+	       cx='5'\
+	       cy='5'\
+	       fx='5'\
+	       fy='5'\
+	       r='5'\
+	       gradientUnits='userSpaceOnUse' />\
+	    <filter\
+	       inkscape:collect='always' id='filterBlur' >\
+	      <feGaussianBlur\
+		 inkscape:collect='always'\
+		 stdDeviation='0.2'\
+		 id='feGaussianBlur' />\
+	    </filter>\
+	  </defs>\
+	  <sodipodi:namedview\
+	     id='base'\
+	     pagecolor='#ffffff'\
+	     bordercolor='#666666'\
+	     borderopacity='1.0'\
+	     inkscape:pageopacity='0.0'\
+	     inkscape:pageshadow='2'\
+	     inkscape:document-units='px'\
+	     inkscape:current-layer='layer1'\
+	     showgrid='false'\
+	     inkscape:showpageshadow='false'\
+	     inkscape:window-maximized='0' />\
+	  <metadata\
+	     id='metadata4111'>\
+	    <rdf:RDF>\
+	      <cc:Work\
+		 rdf:about=''>\
+		<dc:format>image/svg+xml</dc:format>\
+		<dc:type\
+		   rdf:resource='http://purl.org/dc/dcmitype/StillImage' />\
+		<dc:title></dc:title>\
+	      </cc:Work>\
+	    </rdf:RDF>\
+	  </metadata>\
+	  <g\
+	     inkscape:label='Calque 1'\
+	     inkscape:groupmode='layer'\
+	     id='QRcode'>" ,realwidth , realwidth 
+	);
+
+	/* Write data */
+	p = qrcode->data;
+	for(y = 0; y < qrcode->width+2*margin; y++) {
+		row = (p+((y-margin)*qrcode->width));
+		for(x = 0; x < qrcode->width+2*margin; x++) {
+			if(y>=margin && y-margin<qrcode->width && x>=margin && x-margin<qrcode->width) {
+				if(*(row+x-margin)&0x1) writeFSVG2_drawModules(fp,x,y,fg);
+				else writeFSVG2_drawModules(fp,x,y,bg);
+			} else writeFSVG2_drawModules(fp,x,y,bg);
+		}
+	}
+
+	/* Close group */
+	fputs("\t</g>\n", fp);
+
+	/* Close SVG code */
+	fputs("</svg>\n", fp);
+	fclose(fp);
+
+	return 0;
+}
+
+static int writeFSVG3(const QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	unsigned char *row, *p;
+	int x, y;
+	int symwidth, realwidth;
+	char fg[7], bg[7];
+
+	size=10; //size forced due to design of dots.
+
+	fp = openFile(outfile);
+
+	symwidth = qrcode->width + margin * 2;
+	realwidth = symwidth * size;
+
+	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
+	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
+
+	/* XML declaration */
+	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
+
+	/* DTD
+	   No document type specified because "while a DTD is provided in [the SVG]
+	   specification, the use of DTDs for validating XML documents is known to
+	   be problematic. In particular, DTDs do not handle namespaces gracefully.
+	   It is *not* recommended that a DOCTYPE declaration be included in SVG
+	   documents."
+	   http://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
+	*/
+
+	/* Vanity remark */
+	fprintf(fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html) -->\n", QRcode_APIVersionString());
+
+	/* SVG code start */
+	fprintf(fp, "<svg\
+	   xmlns:dc='http://purl.org/dc/elements/1.1/'\
+	   xmlns:cc='http://creativecommons.org/ns#'\
+	   xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'\
+	   xmlns:svg='http://www.w3.org/2000/svg'\
+	   xmlns='http://www.w3.org/2000/svg'\
+	   xmlns:xlink='http://www.w3.org/1999/xlink'\
+	   xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd'\
+	   xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape'\
+	   width='%d'\
+	   height='%d'\
+	   id='svg4106'\
+	   version='1.1'\
+	   inkscape:version='0.48.4 r9939'\
+	   sodipodi:docname='dot4.svg'>\
+	  <defs\
+	     id='defs4108'>\
+	    <linearGradient\
+	       id='linearGradientWhite'>\
+	      <stop\
+		 style='stop-color:#ffffff;stop-opacity:1;'\
+		 offset='0'\
+		 id='stop5139' />\
+	      <stop\
+		 style='stop-color:#ffffff;stop-opacity:0.75;'\
+		 offset='1'\
+		 id='stop5141' />\
+	    </linearGradient>\
+	    <radialGradient\
+	       inkscape:collect='always'\
+	       xlink:href='#linearGradientWhite'\
+	       id='radialGradientWhite'\
+	       cx='5'\
+	       cy='5'\
+	       fx='5'\
+	       fy='5'\
+	       r='5'\
+	       gradientUnits='userSpaceOnUse' />\
+	    <linearGradient\
+	       id='linearGradientBlack'>\
+	      <stop\
+		 style='stop-color:#000000;stop-opacity:1;'\
+		 offset='0'\
+		 id='stop5139' />\
+	      <stop\
+		 style='stop-color:#500000;stop-opacity:0.85;'\
+		 offset='1'\
+		 id='stop5141' />\
+	    </linearGradient>\
+	    <radialGradient\
+	       inkscape:collect='always'\
+	       xlink:href='#linearGradientBlack'\
+	       id='radialGradientBlack'\
+	       cx='5'\
+	       cy='5'\
+	       fx='5'\
+	       fy='5'\
+	       r='5'\
+	       gradientUnits='userSpaceOnUse' />\
+	    <filter\
+	       inkscape:collect='always' id='filterBlur' >\
+	      <feGaussianBlur\
+		 inkscape:collect='always'\
+		 stdDeviation='0.2'\
+		 id='feGaussianBlur' />\
+	    </filter>\
+	  </defs>\
+	  <sodipodi:namedview\
+	     id='base'\
+	     pagecolor='#ffffff'\
+	     bordercolor='#666666'\
+	     borderopacity='1.0'\
+	     inkscape:pageopacity='0.0'\
+	     inkscape:pageshadow='2'\
+	     inkscape:document-units='px'\
+	     inkscape:current-layer='layer1'\
+	     showgrid='false'\
+	     inkscape:showpageshadow='false'\
+	     inkscape:window-maximized='0' />\
+	  <metadata\
+	     id='metadata4111'>\
+	    <rdf:RDF>\
+	      <cc:Work\
+		 rdf:about=''>\
+		<dc:format>image/svg+xml</dc:format>\
+		<dc:type\
+		   rdf:resource='http://purl.org/dc/dcmitype/StillImage' />\
+		<dc:title></dc:title>\
+	      </cc:Work>\
+	    </rdf:RDF>\
+	  </metadata>\
+	  <g\
+	     inkscape:label='Calque 1'\
+	     inkscape:groupmode='layer'\
+	     id='QRcode'>" ,realwidth , realwidth 
+	);
+
+	/* Write data */
+	p = qrcode->data;
+	for(y = 0; y < qrcode->width+2*margin; y++) {
+		row = (p+((y-margin)*qrcode->width));
+		for(x = 0; x < qrcode->width+2*margin; x++) {
+			if(y>=margin && y-margin<qrcode->width && x>=margin && x-margin<qrcode->width) {
+				if(*(row+x-margin)&0x1) writeFSVG3_drawModules(fp,x,y,fg);
+				else writeFSVG3_drawModules(fp,x,y,bg);
+			} else writeFSVG3_drawModules(fp,x,y,bg);
 		}
 	}
 
@@ -1283,6 +1642,12 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case FSVG1_TYPE:
 			writeFSVG1(qrcode, outfile);
 			break;
+		case FSVG2_TYPE:
+			writeFSVG2(qrcode, outfile);
+			break;
+		case FSVG3_TYPE:
+			writeFSVG3(qrcode, outfile);
+			break;
 		case XPM_TYPE:
 			writeXPM(qrcode, outfile);
 			break;
@@ -1555,6 +1920,10 @@ int main(int argc, char **argv)
 					image_type = SVG_TYPE;
 				} else if(strcasecmp(optarg, "fsvg1") == 0) {
 					image_type = FSVG1_TYPE;
+				} else if(strcasecmp(optarg, "fsvg2") == 0) {
+					image_type = FSVG2_TYPE;
+				} else if(strcasecmp(optarg, "fsvg3") == 0) {
+					image_type = FSVG3_TYPE;
 				} else if(strcasecmp(optarg, "xpm") == 0) {
 					image_type = XPM_TYPE;
 				} else if(strcasecmp(optarg, "ansi") == 0) {
