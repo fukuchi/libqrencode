@@ -25,9 +25,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <png.h>
 #include <getopt.h>
 #include <errno.h>
+#if HAVE_PNG
+#include <png.h>
+#endif
 
 #include "qrencode.h"
 
@@ -270,6 +272,7 @@ static FILE *openFile(const char *outfile)
 	return fp;
 }
 
+#if HAVE_PNG
 static void fillRow(unsigned char *row, int num, const unsigned char color[])
 {
 	int i;
@@ -279,9 +282,11 @@ static void fillRow(unsigned char *row, int num, const unsigned char color[])
 		row += 4;
 	}
 }
+#endif
 
 static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType type)
 {
+#if HAVE_PNG
 	static FILE *fp; // avoid clobbering by setjmp.
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -448,6 +453,10 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 	free(palette);
 
 	return 0;
+#else
+	fputs("PNG output is disabled at compile time. No output generated.\n", stderr);
+	return 0;
+#endif
 }
 
 static int writeEPS(const QRcode *qrcode, const char *outfile)

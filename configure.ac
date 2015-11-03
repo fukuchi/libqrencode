@@ -53,15 +53,19 @@ if test x$ac_cv_lib_pthread_pthread_mutex_init = xyes ; then
 	CFLAGS="$CFLAGS -pthread"
 fi
 
+AC_ARG_WITH(png,
+    [AC_HELP_STRING([--without-png],
+                    [disable PNG support])],
+    [with_png=$withval], [with_png=yes])
 
 dnl --with-tools
 AC_ARG_WITH([tools], [AS_HELP_STRING([--with-tools], [build utility tools [default=yes]])],
  [build_tools=$withval], [build_tools=yes])
 
 AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
-if test x$build_tools = xyes ; then
+if test x$build_tools = xyes && test x$with_png = xyes ; then
 	PKG_CHECK_MODULES(png, "libpng", [AC_DEFINE([HAVE_PNG], [1], [Define to 1 if using libpng is enabled.])], [AC_DEFINE([HAVE_PNG], [0])])
-	if test x$png_CFLAGS = x ; then
+	if test x$png_CFLAGS = x && test x$with_png = xyes ; then
 		echo "
 !!!!!!!!!!
 LIBPNG is required to build the utility tools. Temporarily disabled.

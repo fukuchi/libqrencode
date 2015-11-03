@@ -31,11 +31,9 @@ EXTRA_DIST = libqrencode.pc.in autogen.sh configure.ac acinclude.m4 \
 			 qrencode.1.in Doxyfile tests/test_all.sh
 
 if BUILD_TOOLS
-if HAVE_PNG
 bin_PROGRAMS = qrencode
 qrencode_SOURCES = qrenc.c
 qrencode_CFLAGS = $(png_CFLAGS)
 qrencode_LDADD = libqrencode.la $(png_LIBS)
 man1_MANS = qrencode.1
-endif
 endif

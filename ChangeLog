@@ -6,6 +6,8 @@
 	  - Added support for UTF8i and ANSIUTF8i formats that provide reverse
 	    mappings of UTF8 and ANSIUTF8 formats respective. This is useful for
 		black-on-white media.
+	* configure.ac, Makefile.am, qrenc.c, rsecc.c:
+	  - Added new configure option "--without-png". (closes #70)
 
 2015.05.13 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.c:
