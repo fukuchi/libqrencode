@@ -61,7 +61,9 @@ enum imageType {
 	ASCII_TYPE,
 	ASCIIi_TYPE,
 	UTF8_TYPE,
-	ANSIUTF8_TYPE
+	ANSIUTF8_TYPE,
+	UTF8i_TYPE,
+	ANSIUTF8i_TYPE
 };
 
 static enum imageType image_type = PNG_TYPE;
@@ -818,25 +820,43 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 }
 
 static void writeUTF8_margin(FILE* fp, int realwidth, const char* white,
-                             const char *reset)
+                             const char *reset, const char* full)
 {
 	int x, y;
 
 	for (y = 0; y < margin/2; y++) {
 		fputs(white, fp);
 		for (x = 0; x < realwidth; x++)
-			fputs("\342\226\210", fp);
+			fputs(full, fp);
 		fputs(reset, fp);
 		fputc('\n', fp);
 	}
 }
 
-static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi)
+static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi, int invert)
 {
 	FILE *fp;
 	int x, y;
 	int realwidth;
 	const char *white, *reset;
+	const char *empty, *lowhalf, *uphalf, *full;
+
+	empty = " ";
+	lowhalf = "\342\226\204";
+	uphalf = "\342\226\200";
+	full = "\342\226\210";
+
+	if (invert) {
+		const char *tmp;
+
+		tmp = empty;
+		empty = full;
+		full = tmp;
+
+		tmp = lowhalf;
+		lowhalf = uphalf;
+		uphalf = tmp;
+	}
 
 	if (use_ansi){
 		white = "\033[40;37;1m";
@@ -851,7 +871,7 @@ static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi)
 	realwidth = (qrcode->width + margin * 2);
 
 	/* top margin */
-	writeUTF8_margin(fp, realwidth, white, reset);
+	writeUTF8_margin(fp, realwidth, white, reset, full);
 
 	/* data */
 	for(y = 0; y < qrcode->width; y += 2) {
@@ -861,34 +881,35 @@ static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi)
 
 		fputs(white, fp);
 
-		for (x = 0; x < margin; x++)
-			fputs("\342\226\210", fp);
+		for (x = 0; x < margin; x++) {
+			fputs(full, fp);
+		};
 
 		for (x = 0; x < qrcode->width; x++) {
 			if(row1[x] & 1) {
 				if(y < qrcode->width - 1 && row2[x] & 1) {
-					fputc(' ', fp);
+					fputs(empty, fp);
 				} else {
-					fputs("\342\226\204", fp);
+					fputs(lowhalf, fp);
 				}
 			} else {
 				if(y < qrcode->width - 1 && row2[x] & 1) {
-					fputs("\342\226\200", fp);
+					fputs(uphalf, fp);
 				} else {
-					fputs("\342\226\210", fp);
+					fputs(full, fp);
 				}
 			}
 		}
 
 		for (x = 0; x < margin; x++)
-			fputs("\342\226\210", fp);
+			fputs(full, fp);
 
 		fputs(reset, fp);
 		fputc('\n', fp);
 	}
 
 	/* bottom margin */
-	writeUTF8_margin(fp, realwidth, white, reset);
+	writeUTF8_margin(fp, realwidth, white, reset, full);
 
 	fclose(fp);
 
@@ -1038,10 +1059,16 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 			writeASCII(qrcode, outfile,  0);
 			break;
 		case UTF8_TYPE:
-			writeUTF8(qrcode, outfile, 0);
+			writeUTF8(qrcode, outfile, 0, 0);
 			break;
 		case ANSIUTF8_TYPE:
-			writeUTF8(qrcode, outfile, 1);
+			writeUTF8(qrcode, outfile, 1, 0);
+			break;
+		case UTF8i_TYPE:
+			writeUTF8(qrcode, outfile, 0, 1);
+			break;
+		case ANSIUTF8i_TYPE:
+			writeUTF8(qrcode, outfile, 1, 1);
 			break;
 		default:
 			fprintf(stderr, "Unknown image type.\n");
@@ -1091,6 +1118,8 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 		case ASCII_TYPE:
 		case UTF8_TYPE:
 		case ANSIUTF8_TYPE:
+		case UTF8i_TYPE:
+		case ANSIUTF8i_TYPE:
 			type_suffix = ".txt";
 			break;
 		default:
@@ -1166,10 +1195,16 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 				writeASCII(p->code, filename, 0);
 				break;
 			case UTF8_TYPE:
-				writeUTF8(p->code, filename, 0);
+				writeUTF8(p->code, filename, 0, 0);
 				break;
 			case ANSIUTF8_TYPE:
-				writeUTF8(p->code, filename, 0);
+				writeUTF8(p->code, filename, 0, 0);
+				break;
+			case UTF8i_TYPE:
+				writeUTF8(p->code, filename, 0, 1);
+				break;
+			case ANSIUTF8i_TYPE:
+				writeUTF8(p->code, filename, 0, 1);
 				break;
 
 			default:
@@ -1286,6 +1321,10 @@ int main(int argc, char **argv)
 					image_type = UTF8_TYPE;
 				} else if(strcasecmp(optarg, "ansiutf8") == 0) {
 					image_type = ANSIUTF8_TYPE;
+				} else if(strcasecmp(optarg, "utf8i") == 0) {
+					image_type = UTF8i_TYPE;
+				} else if(strcasecmp(optarg, "ansiutf8i") == 0) {
+					image_type = ANSIUTF8i_TYPE;
 				} else {
 					fprintf(stderr, "Invalid image type: %s\n", optarg);
 					exit(EXIT_FAILURE);
