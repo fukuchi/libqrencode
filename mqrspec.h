@@ -84,7 +84,7 @@ extern int MQRspec_getRemainder(int version);
  *****************************************************************************/
 
 /**
- * Return the size of lenght indicator for the mode and version.
+ * Return the size of length indicator for the mode and version.
  * @param mode encode mode
  * @param version vesion of the symbol
  * @return the size of the appropriate length indicator (bits).
