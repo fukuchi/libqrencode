@@ -1,3 +1,12 @@
+2015.11.04 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* qrspec.h, mqrspec.h:
+	  - Typo fix. (Thanks to @qianchenglenger)
+	* qrenc.c:
+	  - Merged pull-request #74. (Thanks to @mgorny)
+	  - Added support for UTF8i and ANSIUTF8i formats that provide reverse
+	    mappings of UTF8 and ANSIUTF8 formats respective. This is useful for
+		black-on-white media.
+
 2015.05.13 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.c:
 	  - Typo fix.
