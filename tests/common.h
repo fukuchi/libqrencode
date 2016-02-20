@@ -205,13 +205,17 @@ void printBstream(BitStream *bstream)
 /* You can call show_QRcode(QRcode *code) to display the QR Code from anywhere
  * in test code using SDL. */
 #include <SDL.h>
-static SDL_Surface *screen = NULL;
 
-static void draw_QRcode(QRcode *qrcode, int ox, int oy, int margin, int size)
+static void draw_QRcode(QRcode *qrcode, int ox, int oy, int margin, int size, SDL_Surface *surface)
 {
 	int x, y, width;
 	unsigned char *p;
 	SDL_Rect rect;
+	Uint32 color[2];
+
+	color[0] = SDL_MapRGBA(surface->format, 255, 255, 255, 255);
+	color[1] = SDL_MapRGBA(surface->format, 0, 0, 0, 255);
+	SDL_FillRect(surface, NULL, color[0]);
 
 	ox += margin * size;
 	oy += margin * size;
@@ -223,7 +227,7 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy, int margin, int size)
 			rect.y = oy + y * size;
 			rect.w = size;
 			rect.h = size;
-			SDL_FillRect(screen, &rect, (*p&1)?0:0xffffff);
+			SDL_FillRect(surface, &rect, color[*p&1]);
 			p++;
 		}
 	}
@@ -232,18 +236,26 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy, int margin, int size)
 void show_QRcode(QRcode *qrcode)
 {
 	SDL_Event event;
+	SDL_Window *window;
+	SDL_Renderer *renderer;
+	SDL_Surface *surface;
+	SDL_Texture *texture;
 
 	if(!SDL_WasInit(SDL_INIT_VIDEO)) {
 		SDL_Init(SDL_INIT_VIDEO);
 		atexit(SDL_Quit);
 	}
 	int width = (qrcode->width + 4 * 2) * 4; //maring = 4, size = 4
-	screen = SDL_SetVideoMode(width, width, 32, 0);
-	SDL_FillRect(screen, NULL, 0xffffff);
+	SDL_CreateWindowAndRenderer(width, width, SDL_WINDOW_SHOWN, &window, &renderer);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderClear(renderer);
+	surface = SDL_CreateRGBSurface(0, width, width, 32, 0, 0, 0, 0);
 
-	draw_QRcode(qrcode, 0, 0, 4, 4);
+	draw_QRcode(qrcode, 0, 0, 4, 4, surface);
 
-	SDL_Flip(screen);
+	texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
+	SDL_RenderPresent(renderer);
 	fprintf(stderr, "Press any key on the QR Code window to proceed.\n");
 
 	int loop = 1;
@@ -253,6 +265,10 @@ void show_QRcode(QRcode *qrcode)
 			loop = 0;
 		}
 	}
+
+	SDL_FreeSurface(surface);
+	SDL_DestroyTexture(texture);
+	SDL_DestroyRenderer(renderer);
 }
 #else
 void show_QRcode() {

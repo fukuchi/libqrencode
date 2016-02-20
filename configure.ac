@@ -94,8 +94,8 @@ echo "/* #undef WITH_TESTS */" >>confdefs.h
 fi
 
 if test x$build_tests = xyes ; then
-	SDL_REQUIRED_VERSION=1.2.0
-	PKG_CHECK_MODULES(SDL, [sdl >= $SDL_REQUIRED_VERSION], [AC_DEFINE([HAVE_SDL], [1], [Define to 1 if using SDL is enabled.])], [AC_DEFINE([HAVE_SDL], [0])])
+	SDL_REQUIRED_VERSION=2.0.0
+	PKG_CHECK_MODULES(SDL, [sdl2 >= $SDL_REQUIRED_VERSION], [AC_DEFINE([HAVE_SDL], [1], [Define to 1 if using SDL is enabled.])], [AC_DEFINE([HAVE_SDL], [0])])
 	AM_ICONV_LINK
 fi
 AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])

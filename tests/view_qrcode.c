@@ -10,7 +10,10 @@
 #include "../split.h"
 #include "../qrencode_inner.h"
 
-static SDL_Surface *screen = NULL;
+static SDL_Window *window;
+static SDL_Renderer *renderer;
+static SDL_Texture *texture = NULL;
+static SDL_Surface *surface = NULL;
 static int casesensitive = 1;
 static int eightbit = 0;
 static int version = 0;
@@ -145,6 +148,7 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 	int x, y, width;
 	unsigned char *p;
 	SDL_Rect rect;
+	Uint32 color;
 
 	ox += margin * size;
 	oy += margin * size;
@@ -156,7 +160,15 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 			rect.y = oy + y * size;
 			rect.w = size;
 			rect.h = size;
-			SDL_FillRect(screen, &rect, (*p&1)?0:0xffffff);
+			if(*p & 1) {
+				//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+				color = SDL_MapRGBA(surface->format, 0, 0, 0, 255);
+			} else {
+				//SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+				color = SDL_MapRGBA(surface->format, 255, 255, 255, 255);
+			}
+			//SDL_RenderFillRect(renderer, &rect);
+			SDL_FillRect(surface, &rect, color);
 			p++;
 		}
 	}
@@ -181,12 +193,19 @@ void draw_singleQRcode(QRinput *stream, int mask)
 		width = (qrcode->width + margin * 2) * size;
 	}
 
-	screen = SDL_SetVideoMode(width, width, 32, 0);
-	SDL_FillRect(screen, NULL, 0xffffff);
+	SDL_SetWindowSize(window, width, width);
+	if(surface != NULL) {
+		SDL_FreeSurface(surface);
+	}
+	surface = SDL_CreateRGBSurface(0, width, width, 32, 0, 0, 0, 0);
+	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255, 255));
 	if(qrcode) {
 		draw_QRcode(qrcode, 0, 0);
 	}
-	SDL_Flip(screen);
+	if(texture != NULL) {
+		SDL_DestroyTexture(texture);
+	}
+	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	QRcode_free(qrcode);
 }
 
@@ -204,8 +223,12 @@ void draw_structuredQRcode(QRinput_Struct *s)
 	w = (n < 4)?n:4;
 	h = (n - 1) / 4 + 1;
 
-	screen = SDL_SetVideoMode(swidth * w, swidth * h, 32, 0);
-	SDL_FillRect(screen, NULL, 0xffffff);
+	SDL_SetWindowSize(window, swidth * w, swidth * h);
+	if(surface != NULL) {
+		SDL_FreeSurface(surface);
+	}
+	surface = SDL_CreateRGBSurface(0, swidth * w, swidth * h, 32, 0, 0, 0, 0);
+	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255, 255));
 
 	p = qrcodes;
 	for(i=0; i<n; i++) {
@@ -214,7 +237,10 @@ void draw_structuredQRcode(QRinput_Struct *s)
 		draw_QRcode(p->code, x, y);
 		p = p->next;
 	}
-	SDL_Flip(screen);
+	if(texture != NULL) {
+		SDL_DestroyTexture(texture);
+	}
+	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	QRcode_List_free(qrcodes);
 }
 
@@ -280,26 +306,34 @@ void view(int mode, QRinput *input)
 	int mask = -1;
 	SDL_Event event;
 	int loop;
+	int codeChanged = 1;
 
 	while(flag) {
-		if(mode) {
-			draw_structuredQRcodeFromText(textc, textv);
-		} else {
-			if(structured) {
-				draw_structuredQRcodeFromQRinput(input);
+		if(codeChanged) {
+			if(mode) {
+				draw_structuredQRcodeFromText(textc, textv);
 			} else {
-				draw_singleQRcode(input, mask);
+				if(structured) {
+					draw_structuredQRcodeFromQRinput(input);
+				} else {
+					draw_singleQRcode(input, mask);
+				}
+			}
+			if(mode || structured) {
+				printf("Version %d, Level %c.\n", version, levelChar[level]);
+			} else {
+				printf("Version %d, Level %c, Mask %d.\n", version, levelChar[level], mask);
 			}
 		}
-		if(mode || structured) {
-			printf("Version %d, Level %c.\n", version, levelChar[level]);
-		} else {
-			printf("Version %d, Level %c, Mask %d.\n", version, levelChar[level], mask);
-		}
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
 		loop = 1;
+		codeChanged = 0;
 		while(loop) {
 			SDL_WaitEvent(&event);
 			if(event.type == SDL_KEYDOWN) {
+				codeChanged = 1;
 				switch(event.key.keysym.sym) {
 				case SDLK_RIGHT:
 					version++;
@@ -369,6 +403,18 @@ void view(int mode, QRinput *input)
 					flag = 0;
 				}
 			}
+			if (event.type == SDL_WINDOWEVENT) {
+				switch (event.window.event) {
+					case SDL_WINDOWEVENT_SHOWN:
+					case SDL_WINDOWEVENT_EXPOSED:
+					case SDL_WINDOWEVENT_SIZE_CHANGED:
+					case SDL_WINDOWEVENT_RESIZED:
+						loop = 0;
+						break;
+					default:
+						break;
+				}
+			}
 		}
 	}
 }
@@ -415,6 +461,7 @@ int main(int argc, char **argv)
 	int opt, lindex = -1;
 	unsigned char *intext = NULL;
 	int length = 0;
+	int ret;
 
 	while((opt = getopt_long(argc, argv, optstring, options, &lindex)) != -1) {
 		switch(opt) {
@@ -548,6 +595,14 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Failed initializing SDL: %s\n", SDL_GetError());
 		return -1;
 	}
+
+	ret = SDL_CreateWindowAndRenderer(100, 100, SDL_WINDOW_SHOWN, &window, &renderer);
+	if(ret < 0) {
+		fprintf(stderr, "Failed to create a window: %s\n", SDL_GetError());
+		return -1;
+	}
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	if(structured && (argc - optind > 1)) {
 		view_multiText(argv + optind, argc - optind);
