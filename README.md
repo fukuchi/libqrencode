@@ -46,7 +46,8 @@ Just try
 ```
 ./configure
 make
-make install
+sudo make install
+sudo ldconfig
 ```
 
 This compiles and installs the library and header file to the appropriate
@@ -154,5 +155,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
   David Binderman, @ralgozino, Sean McMurray, @win32asm, Antenore Gatta,
   Yoshimichi Inoue, Sunil Maganally, Norman Gray, Danomi Manchego,
-  Vlad Bespalov, @minus7, Ian Sweet
+  Vlad Bespalov, @minus7, Ian Sweet, Ronald Michaels
                         - bug report / suggestion

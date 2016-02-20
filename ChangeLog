@@ -1,8 +1,8 @@
 2016.02.21 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac, tests/common.h, tests/view_qrcode.c:
 	  - Migrated from SDL 1.2 to 2.0.
-	* README:
-	  - Modified the install instruction. (Thanks to Ronald Michaels)
+	* README, README.md:
+	  - Improved the install instruction. (Thanks to Ronald Michaels)
 
 2015.11.04 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrspec.h, mqrspec.h:
