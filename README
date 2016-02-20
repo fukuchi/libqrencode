@@ -45,7 +45,8 @@ Just try
 
 ./configure
 make
-make install
+sudo make install
+sudo ldconfig
 
 This compiles and installs the library and header file to the appropriate
 directories. By default, /usr/local/lib and /usr/local/include. You can change
