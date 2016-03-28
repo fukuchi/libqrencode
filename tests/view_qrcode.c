@@ -375,6 +375,12 @@ void view(int mode, QRinput *input)
 						loop = 0;
 					}
 					break;
+				case SDLK_9:
+					if(!mode && !structured) {
+						mask = -2;
+						loop = 0;
+					}
+					break;
 				case SDLK_l:
 					level = QR_ECLEVEL_L;
 					loop = 0;

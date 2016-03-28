@@ -1,3 +1,7 @@
+2016.03.29 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* tests/view_qrcode.c:
+	  - Added mask=-2 mode for debug purpose.
+
 2016.02.21 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac, tests/common.h, tests/view_qrcode.c:
 	  - Migrated from SDL 1.2 to 2.0.
