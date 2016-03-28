@@ -1,3 +1,7 @@
+2015.03.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
+	* autogen.sh:
+	  - mkdir m4 directory if it does not exist. (picking ecf124c6)
+
 2014.08.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
 	  - Added new option "--enable-asan" that enables AddressSanitizer.

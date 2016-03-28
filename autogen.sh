@@ -21,6 +21,10 @@ if [ ! -d use ]; then
     mkdir use
 fi
 
+if [ ! -d m4 ]; then
+    mkdir m4
+fi
+
 autoheader
 
 aclocal $ACLOCAL_OPT
