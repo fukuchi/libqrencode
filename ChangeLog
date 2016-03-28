@@ -1,6 +1,15 @@
 2015.03.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* autogen.sh:
 	  - mkdir m4 directory if it does not exist. (picking ecf124c6)
+	* bitstream.c, qrencode.c:
+	  - Incorrect bit padding has been fixed. (picking 734fd125)
+	    (Thanks to Yuji Ueno)
+	* tests/test_bitstream.c, tests/test_qrencode.c:
+	  - Incorrect bit padding has been fixed. (picking 734fd125)
+	* README:
+	  - ACKNOWLEDGMENTS has been updated. (picking 734fd125)
+	* README.md:
+	  - ACKNOWLEDGMENTS has been updated. (picking 734fd125)
 
 2014.08.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:

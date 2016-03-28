@@ -128,7 +128,7 @@ void test_toByte_4bitpadding(void)
 	bstream = BitStream_new();
 	BitStream_appendNum(bstream, 4, 0xb);
 	result = BitStream_toByte(bstream);
-	assert_equal(result[0], 0xb, "incorrect paddings\n");
+	assert_equal(result[0], 0xb0, "incorrect paddings\n");
 	BitStream_free(bstream);
 	free(result);
 
@@ -136,7 +136,7 @@ void test_toByte_4bitpadding(void)
 	BitStream_appendNum(bstream, 12, 0x335);
 	result = BitStream_toByte(bstream);
 	assert_equal(result[0], 0x33, "incorrect paddings\n");
-	assert_equal(result[1], 0x05, "incorrect paddings\n");
+	assert_equal(result[1], 0x50, "incorrect paddings\n");
 	BitStream_free(bstream);
 	free(result);
 

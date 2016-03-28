@@ -550,7 +550,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	MQRRawCode *raw;
 	unsigned char *frame, *masked, *p, code, bit;
 	FrameFiller *filler;
-	int i, j;
+	int i, j, length;
 	QRcode *qrcode = NULL;
 
 	if(!input->mqr) {
@@ -586,22 +586,17 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	/* inteleaved data and ecc codes */
 	for(i=0; i<raw->dataLength + raw->eccLength; i++) {
 		code = MQRraw_getCode(raw);
+		bit = 0x80;
 		if(raw->oddbits && i == raw->dataLength - 1) {
-			bit = 1 << (raw->oddbits - 1);
-			for(j=0; j<raw->oddbits; j++) {
-				p = FrameFiller_next(filler);
-				if(p == NULL) goto EXIT;
-				*p = 0x02 | ((bit & code) != 0);
-				bit = bit >> 1;
-			}
+			length = raw->oddbits;
 		} else {
-			bit = 0x80;
-			for(j=0; j<8; j++) {
-				p = FrameFiller_next(filler);
-				if(p == NULL) goto EXIT;
-				*p = 0x02 | ((bit & code) != 0);
-				bit = bit >> 1;
-			}
+			length = 8;
+		}
+		for(j=0; j<length; j++) {
+			p = FrameFiller_next(filler);
+			if(p == NULL) goto EXIT;
+			*p = 0x02 | ((bit & code) != 0);
+			bit = bit >> 1;
 		}
 	}
 	MQRraw_free(raw);
