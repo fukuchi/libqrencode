@@ -8,8 +8,6 @@
 	  - Incorrect bit padding has been fixed. (picking 734fd125)
 	* README:
 	  - ACKNOWLEDGMENTS has been updated. (picking 734fd125)
-	* README.md:
-	  - ACKNOWLEDGMENTS has been updated. (picking 734fd125)
 
 2014.08.18 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac:
