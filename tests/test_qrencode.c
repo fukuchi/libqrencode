@@ -688,7 +688,7 @@ void test_mqrraw_new(void)
 {
 	QRinput *stream;
 	char *num = "01234";
-	unsigned char datacode[] = {0xa0, 0x62, 0x02};
+	unsigned char datacode[] = {0xa0, 0x62, 0x20};
 	MQRRawCode *raw;
 
 	testStart("Test MQRRaw_new()");

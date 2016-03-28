@@ -159,7 +159,7 @@ int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 
 unsigned char *BitStream_toByte(BitStream *bstream)
 {
-	int i, j, size, bytes;
+	int i, j, size, bytes, oddbits;
 	unsigned char *data, v;
 	unsigned char *p;
 
@@ -184,14 +184,15 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 		}
 		data[i] = v;
 	}
-	if(size & 7) {
+	oddbits = size & 7;
+	if(oddbits > 0) {
 		v = 0;
-		for(j = 0; j < (size & 7); j++) {
+		for(j = 0; j < oddbits; j++) {
 			v = v << 1;
 			v |= *p;
 			p++;
 		}
-		data[bytes] = v;
+		data[bytes] = v << (8 - oddbits);
 	}
 
 	return data;

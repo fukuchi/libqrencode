@@ -513,7 +513,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	int width, version;
 	MQRRawCode *raw;
 	unsigned char *frame, *masked, *p, code, bit;
-	int i, j;
+	int i, j, length;
 	QRcode *qrcode = NULL;
 	FrameFiller filler;
 
@@ -545,29 +545,27 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	/* inteleaved data and ecc codes */
 	for(i = 0; i < raw->dataLength + raw->eccLength; i++) {
 		code = MQRraw_getCode(raw);
+		bit = 0x80;
 		if(raw->oddbits && i == raw->dataLength - 1) {
-			bit = 1 << (raw->oddbits - 1);
-			for(j = 0; j < raw->oddbits; j++) {
-				p = FrameFiller_next(&filler);
-				if(p == NULL) goto EXIT;
-				*p = 0x02 | ((bit & code) != 0);
-				bit = bit >> 1;
-			}
+			length = raw->oddbits;
 		} else {
-			bit = 0x80;
-			for(j = 0; j < 8; j++) {
-				p = FrameFiller_next(&filler);
-				if(p == NULL) goto EXIT;
-				*p = 0x02 | ((bit & code) != 0);
-				bit = bit >> 1;
-			}
+			length = 8;
+		}
+		for(j = 0; j < length; j++) {
+			p = FrameFiller_next(&filler);
+			if(p == NULL) goto EXIT;
+			*p = 0x02 | ((bit & code) != 0);
+			bit = bit >> 1;
 		}
 	}
 	MQRraw_free(raw);
 	raw = NULL;
 
 	/* masking */
-	if(mask < 0) {
+	if(mask == -2) { // just for debug purpose
+		masked = (unsigned char *)malloc(width * width);
+		memcpy(masked, frame, width * width);
+	} else if(mask < 0) {
 		masked = MMask_mask(version, frame, input->level);
 	} else {
 		masked = MMask_makeMask(version, frame, mask, input->level);

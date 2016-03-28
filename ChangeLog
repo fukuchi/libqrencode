@@ -1,6 +1,15 @@
 2016.03.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* tests/view_qrcode.c:
 	  - Added mask=-2 mode for debug purpose.
+	* bitstream.c, qrencode.c:
+	  - Incorrect bit padding has been fixed. (Thanks to Yuji Ueno)
+	* tests/test_bitstream.c, tests/test_qrencode.c:
+	  - Incorrect bit padding has been fixed.
+	* README:
+	  - ACKNOWLEDGMENTS has been updated.
+	* README.md:
+	  - ACKNOWLEDGMENTS has been updated.
+	  - Some missed contributors have been added to README.md.
 
 2016.02.21 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac, tests/common.h, tests/view_qrcode.c:
