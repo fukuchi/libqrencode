@@ -159,7 +159,9 @@ void test_encode_an(int num)
 
 		snprintf(buf, 256, "monkey-result-bits-%d.dat", num);
 		fp = fopen(buf, "w");
-		p = QRcode_extractBits(qrcode, &y);
+		bstream = QRcode_extractBits(qrcode);
+		y = bstream->length;
+		p = bstream->data;
 		c = 0;
 		for(x=0; x<y; x++) {
 			fputc((p[x]&1)?'1':'0', fp);
@@ -172,7 +174,7 @@ void test_encode_an(int num)
 			}
 		}
 		fclose(fp);
-		free(p);
+		BitStream_free(bstream);
 	}
 	QRdata_free(qrdata);
 	QRcode_free(qrcode);

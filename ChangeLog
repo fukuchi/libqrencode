@@ -1,6 +1,8 @@
 2016.03.30 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* bitstream.[ch], tests/test_bitstream.c:
 	  - Added new function BitStream_newWithBits() and tests for it.
+	* tests/decoder.[ch], tests/test_monkey.c:
+	  - Code refactoring.
 
 2016.03.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* tests/view_qrcode.c:

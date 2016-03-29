@@ -36,13 +36,13 @@ void QRdata_free(QRdata *data);
 int QRcode_decodeVersion(QRcode *code);
 int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask);
 unsigned char *QRcode_unmask(QRcode *code);
-unsigned char *QRcode_extractBits(QRcode *code, int *length);
+BitStream *QRcode_extractBits(QRcode *code);
 QRdata *QRcode_decodeBits(QRcode *code);
 QRdata *QRcode_decode(QRcode *code);
 
 int QRcode_decodeFormatMQR(QRcode *code, int *vesion, QRecLevel *level, int *mask);
 unsigned char *QRcode_unmaskMQR(QRcode *code);
-unsigned char *QRcode_extractBitsMQR(QRcode *code, int *length);
+BitStream *QRcode_extractBitsMQR(QRcode *code, int *dataLength, int *eccLength, int *version, QRecLevel *level);
 QRdata *QRcode_decodeBitsMQR(QRcode *code);
 QRdata *QRcode_decodeMQR(QRcode *code);
 

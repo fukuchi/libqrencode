@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iconv.h>
+#include "../config.h"
 #include "../qrspec.h"
 #include "../bitstream.h"
 #include "../mask.h"
@@ -766,8 +767,9 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 	return &p[y * w + x];
 }
 
-static unsigned char *extractBits(int width, unsigned char *frame, int spec[5])
+static BitStream *extractBits(int width, unsigned char *frame, int spec[5])
 {
+	BitStream *bstream;
 	unsigned char *bits, *p, *q;
 	FrameFiller *filler;
 	int i, j;
@@ -800,12 +802,16 @@ static unsigned char *extractBits(int width, unsigned char *frame, int spec[5])
 	}
 	free(filler);
 
-	return bits;
+	bstream = BitStream_newWithBits(words * 8, bits);
+	free(bits);
+
+	return bstream;
 }
 
-unsigned char *QRcode_extractBits(QRcode *code, int *length)
+BitStream *QRcode_extractBits(QRcode *code)
 {
-	unsigned char *unmasked, *bits;
+	BitStream *bstream;
+	unsigned char *unmasked;
 	int spec[5];
 	int ret, version, mask;
 	QRecLevel level;
@@ -816,15 +822,14 @@ unsigned char *QRcode_extractBits(QRcode *code, int *length)
 	if(ret < 0) return NULL;
 
 	QRspec_getEccSpec(version, level, spec);
-	*length = QRspec_rsDataLength(spec) * 8;
 
 	unmasked = unmask(code, level, mask);
 	if(unmasked == NULL) return NULL;
 
-	bits = extractBits(code->width, unmasked, spec);
+	bstream = extractBits(code->width, unmasked, spec);
 	free(unmasked);
 
-	return bits;
+	return bstream;
 }
 
 static void printBits(int length, unsigned char *bits)
@@ -869,7 +874,8 @@ static int checkRemainderWords(int length, unsigned char *bits, int remainder)
 
 QRdata *QRcode_decodeBits(QRcode *code)
 {
-	unsigned char *unmasked, *bits;
+	BitStream *bstream;
+	unsigned char *unmasked;
 	int spec[5];
 	int ret, version, mask;
 	int length;
@@ -887,18 +893,18 @@ QRdata *QRcode_decodeBits(QRcode *code)
 	unmasked = unmask(code, level, mask);
 	if(unmasked == NULL) return NULL;
 
-	bits = extractBits(code->width, unmasked, spec);
+	bstream = extractBits(code->width, unmasked, spec);
 	free(unmasked);
 
 	qrdata = QRdata_new();
 	qrdata->version = version;
 	qrdata->level = level;
-	ret = QRdata_decodeBits(qrdata, length, bits);
+	ret = QRdata_decodeBitStream(qrdata, bstream);
 	if(ret > 0) {
-		checkRemainderWords(length, bits, ret);
+		checkRemainderWords(length, bstream->data, ret);
 	}
 
-	free(bits);
+	BitStream_free(bstream);
 
 	return qrdata;
 }
@@ -979,14 +985,15 @@ unsigned char *QRcode_unmaskMQR(QRcode *code)
 	return unmaskMQR(code, level, mask);
 }
 
-static unsigned char *extractBitsMQR(int width, unsigned char *frame, int version, QRecLevel level)
+static BitStream *extractBitsMQR(int width, unsigned char *frame, int version, QRecLevel level)
 {
+	BitStream *bstream;
 	unsigned char *bits;
 	FrameFiller *filler;
 	int i;
 	int size;
 
-	size = MQRspec_getDataLengthBit(version, level);
+	size = MQRspec_getDataLengthBit(version, level) + MQRspec_getECCLength(version, level) * 8;
 	bits = (unsigned char *)malloc(size);
 	filler = FrameFiller_new(width, frame, 1);
 	for(i=0; i<size; i++) {
@@ -994,26 +1001,30 @@ static unsigned char *extractBitsMQR(int width, unsigned char *frame, int versio
 	}
 	free(filler);
 
-	return bits;
+	bstream = BitStream_newWithBits(size, bits);
+	free(bits);
+
+	return bstream;
 }
 
-unsigned char *MQRcode_extractBits(QRcode *code, int *length)
+BitStream *QRcode_extractBitsMQR(QRcode *code, int *dataLength, int *eccLength, int *version, QRecLevel *level)
 {
-	unsigned char *unmasked, *bits;
-	int ret, version, mask;
-	QRecLevel level;
+	BitStream *bstream;
+	unsigned char *unmasked;
+	int ret, mask;
 
-	ret = QRcode_decodeFormatMQR(code, &version, &level, &mask);
+	ret = QRcode_decodeFormatMQR(code, version, level, &mask);
 	if(ret < 0) return NULL;
 
-	unmasked = unmaskMQR(code, level, mask);
+	unmasked = unmaskMQR(code, *level, mask);
 	if(unmasked == NULL) return NULL;
 
-	*length = MQRspec_getDataLengthBit(version, level);
-	bits = extractBitsMQR(code->width, unmasked, version, level);
+	*dataLength = MQRspec_getDataLengthBit(*version, *level);
+	*eccLength = MQRspec_getECCLength(*version, *level) * 8;
+	bstream = extractBitsMQR(code->width, unmasked, *version, *level);
 	free(unmasked);
 
-	return bits;
+	return bstream;
 }
 
 static int checkRemainderWordsMQR(int length, unsigned char *bits, int remainder, int version)
@@ -1064,31 +1075,29 @@ static int checkRemainderWordsMQR(int length, unsigned char *bits, int remainder
 
 QRdata *QRcode_decodeBitsMQR(QRcode *code)
 {
-	unsigned char *unmasked, *bits;
-	int ret, version, mask;
-	int length;
+	BitStream *bstream;
+	int ret, version, dataLength, eccLength;
 	QRecLevel level;
 	QRdata *qrdata;
 
-	ret = QRcode_decodeFormatMQR(code, &version, &level, &mask);
-	if(ret < 0) return NULL;
-
-	unmasked = unmaskMQR(code, level, mask);
-	if(unmasked == NULL) return NULL;
-
-	length = MQRspec_getDataLengthBit(version, level);
-	bits = extractBitsMQR(code->width, unmasked, version, level);
-	free(unmasked);
+	bstream = QRcode_extractBitsMQR(code, &dataLength, &eccLength, &version, &level);
+	if(bstream == NULL) {
+		return NULL;
+	}
 
 	qrdata = QRdata_newMQR();
 	qrdata->version = version;
 	qrdata->level = level;
-	ret = QRdata_decodeBits(qrdata, length, bits);
+	ret = QRdata_decodeBits(qrdata, dataLength, bstream->data);
 	if(ret > 0) {
-		checkRemainderWordsMQR(length, bits, ret, version);
+		ret = checkRemainderWordsMQR(dataLength, bstream->data, ret, version);
+		if(ret < 0) {
+			QRdata_free(qrdata);
+			qrdata = NULL;
+		}
 	}
 
-	free(bits);
+	BitStream_free(bstream);
 
 	return qrdata;
 }
@@ -1097,7 +1106,9 @@ QRdata *QRcode_decodeMQR(QRcode *code)
 {
 	QRdata *qrdata;
 	qrdata = QRcode_decodeBitsMQR(code);
-	QRdata_concatChunks(qrdata);
+	if(qrdata != NULL) {
+		QRdata_concatChunks(qrdata);
+	}
 
 	return qrdata;
 }
