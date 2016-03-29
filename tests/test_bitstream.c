@@ -203,6 +203,35 @@ void test_append(void)
 	BitStream_free(bs2);
 }
 
+void test_newWithBits(void)
+{
+	BitStream *bstream;
+	unsigned char data[4] = {0, 1, 0, 1};
+
+	testStart("New with bits");
+
+	bstream = BitStream_newWithBits(4, data);
+	assert_equal(bstream->length, 4, "Internal bit length is incorrect.\n");
+	assert_equal(bstream->datasize, 4, "Internal buffer size is incorrect.\n");
+	assert_zero(cmpBin("0101", bstream), "Internal data is incorrect.\n");
+
+	testFinish();
+}
+
+void test_newWithBits_size0(void)
+{
+	BitStream *bstream;
+
+	testStart("New with bits (size = 0)");
+
+	bstream = BitStream_newWithBits(0, NULL);
+	assert_equal(bstream->length, 0, "Internal bit length is incorrect.\n");
+	assert_nonzero(bstream->datasize, "Internal buffer size is incorrect.\n");
+	assert_nonnull(bstream->data, "Internal buffer not allocated.\n");
+
+	testFinish();
+}
+
 int main(int argc, char **argv)
 {
 	test_null();
@@ -214,6 +243,8 @@ int main(int argc, char **argv)
 	test_toByte_4bitpadding();
 	test_size();
 	test_append();
+	test_newWithBits();
+	test_newWithBits_size0();
 
 	report();
 

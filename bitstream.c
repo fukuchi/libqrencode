@@ -48,6 +48,31 @@ BitStream *BitStream_new(void)
 	return bstream;
 }
 
+#ifdef WITH_TESTS
+BitStream *BitStream_newWithBits(int size, unsigned char *bits)
+{
+	BitStream *bstream;
+
+	if(size < 0) return NULL;
+	if(size == 0) return BitStream_new();
+
+	bstream = (BitStream *)malloc(sizeof(BitStream));
+	if(bstream == NULL) return NULL;
+
+	bstream->data = (unsigned char *)malloc(size);
+	if(bstream->data == NULL) {
+		free(bstream);
+		return NULL;
+	}
+
+	bstream->length = size;
+	bstream->datasize = size;
+	memcpy(bstream->data, bits, size);
+
+	return bstream;
+}
+#endif
+
 static int BitStream_expand(BitStream *bstream)
 {
 	unsigned char *data;
