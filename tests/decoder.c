@@ -340,17 +340,17 @@ static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int ver
 	return NULL;
 }
 
-void dumpNum(DataChunk *chunk)
+static void dumpNum(DataChunk *chunk)
 {
 	printf("%s\n", chunk->data);
 }
 
-void dumpAn(DataChunk *chunk)
+static void dumpAn(DataChunk *chunk)
 {
 	printf("%s\n", chunk->data);
 }
 
-void dump8(DataChunk *chunk)
+static void dump8(DataChunk *chunk)
 {
 	int i, j;
 	unsigned char c;
@@ -389,7 +389,7 @@ void dump8(DataChunk *chunk)
 	}
 }
 
-void dumpKanji(DataChunk *chunk)
+static void dumpKanji(DataChunk *chunk)
 {
 	iconv_t conv;
 	char *inbuf, *outbuf, *outp;
@@ -437,7 +437,7 @@ static void dumpChunk(DataChunk *chunk)
 	}
 }
 
-void dumpChunks(QRdata *qrdata)
+static void dumpChunks(QRdata *qrdata)
 {
 	DataChunk *chunk;
 
@@ -477,7 +477,7 @@ void QRdata_concatChunks(QRdata *qrdata)
 	qrdata->data = data;
 }
 
-int appendChunk(QRdata *qrdata, int *bits_length, unsigned char **bits)
+static int appendChunk(QRdata *qrdata, int *bits_length, unsigned char **bits)
 {
 	DataChunk *chunk;
 
