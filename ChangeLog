@@ -7,6 +7,8 @@
 	* tests/decoder.[ch]:
 	  - eccResult has been added to QRdata.
 	  - Code refactoring.
+	* tests/decoder.[ch], tests/datachunk.[ch], tests/Makefile.am:
+	  - Code refactoring.
 
 2016.03.30 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* bitstream.[ch], tests/test_bitstream.c:

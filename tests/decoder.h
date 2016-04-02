@@ -2,14 +2,7 @@
 #define __DECODER_H__
 
 #include "../qrencode.h"
-
-typedef struct _DataChunk {
-	QRencodeMode mode;
-	int size;
-	int bits;
-	unsigned char *data;
-	struct _DataChunk *next;
-} DataChunk;
+#include "datachunk.h"
 
 typedef struct {
 	int size;

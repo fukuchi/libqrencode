@@ -25,7 +25,7 @@ endif
 
 EXTRA_DIST = frame URI_testset.inc
 
-libdecoder_a_SOURCES = decoder.c decoder.h rsecc_decoder.c rsecc_decoder.h
+libdecoder_a_SOURCES = decoder.c decoder.h datachunk.c datachunk.h rsecc_decoder.c rsecc_decoder.h
 
 test_qrinput_SOURCES = test_qrinput.c
 test_qrinput_LDADD = ../libqrencode.la $(DECODER_LIBS)
