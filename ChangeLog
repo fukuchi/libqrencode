@@ -1,3 +1,8 @@
+2016.04.02 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* tests/common.h:
+	  - Code refactoring.
+	  - New debug functions have been added.
+
 2016.03.30 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* bitstream.[ch], tests/test_bitstream.c:
 	  - Added new function BitStream_newWithBits() and tests for it.

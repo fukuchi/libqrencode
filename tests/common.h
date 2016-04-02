@@ -102,6 +102,27 @@ void printQRcode(QRcode *code)
 	printFrame(code->width, code->data);
 }
 
+void printQRRawCodeFromQRinput(QRinput *input)
+{
+	QRRawCode *raw;
+	int i;
+
+	puts("QRRawCode dump image:");
+	raw = QRraw_new(input);
+	if(raw == NULL) {
+		puts("Failed to generate QRRawCode from this input.\n");
+		return;
+	}
+	for(i=0; i<raw->dataLength; i++) {
+		printf(" %02x", raw->datacode[i]);
+	}
+	for(i=0; i<raw->eccLength; i++) {
+		printf(" %02x", raw->ecccode[i]);
+	}
+	printf("\n");
+	QRraw_free(raw);
+}
+
 void testStartReal(const char *func, const char *name)
 {
 	tests++;
@@ -189,15 +210,19 @@ int cmpBin(char *correct, BitStream *bstream)
 	return ncmpBin(correct, bstream, len);
 }
 
-void printBstream(BitStream *bstream)
+void printBinary(unsigned char *data, int length)
 {
-	int i, size;
+	int i;
 
-	size = BitStream_size(bstream);
-	for(i=0; i<size; i++) {
-		printf(bstream->data[i]?"1":"0");
+	for(i=0; i<length; i++) {
+		printf(data[i]?"1":"0");
 	}
 	printf("\n");
+}
+
+void printBstream(BitStream *bstream)
+{
+	printBinary(bstream->data, BitStream_size(bstream));
 }
 
 #if HAVE_SDL
