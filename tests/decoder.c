@@ -808,7 +808,7 @@ static BitStream *extractBits(int width, unsigned char *frame, int spec[5])
 	return bstream;
 }
 
-BitStream *QRcode_extractBits(QRcode *code)
+BitStream *QRcode_extractBits(QRcode *code, int *dataLength, int *eccLength)
 {
 	BitStream *bstream;
 	unsigned char *unmasked;
@@ -828,6 +828,9 @@ BitStream *QRcode_extractBits(QRcode *code)
 
 	bstream = extractBits(code->width, unmasked, spec);
 	free(unmasked);
+
+	*dataLength = QRspec_rsDataLength(spec) * 8;
+	*eccLength = QRspec_rsEccLength(spec) * 8;
 
 	return bstream;
 }

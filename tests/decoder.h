@@ -36,7 +36,7 @@ void QRdata_free(QRdata *data);
 int QRcode_decodeVersion(QRcode *code);
 int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask);
 unsigned char *QRcode_unmask(QRcode *code);
-BitStream *QRcode_extractBits(QRcode *code);
+BitStream *QRcode_extractBits(QRcode *code, int *dataLength, int *eccLength);
 QRdata *QRcode_decodeBits(QRcode *code);
 QRdata *QRcode_decode(QRcode *code);
 

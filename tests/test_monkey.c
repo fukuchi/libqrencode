@@ -84,7 +84,8 @@ void test_encode_an(int num)
 	ret = memcmp(qrdata->data, data, len);
 	if(ret != 0) {
 		unsigned char *frame, *p;
-		int x,y, c;
+		int x,y,c;
+		int dataLength, eccLength;
 		QRinput *input;
 		QRcode *origcode;
 		BitStream *bstream;
@@ -159,7 +160,7 @@ void test_encode_an(int num)
 
 		snprintf(buf, 256, "monkey-result-bits-%d.dat", num);
 		fp = fopen(buf, "w");
-		bstream = QRcode_extractBits(qrcode);
+		bstream = QRcode_extractBits(qrcode, &dataLength, &eccLength);
 		y = bstream->length;
 		p = bstream->data;
 		c = 0;

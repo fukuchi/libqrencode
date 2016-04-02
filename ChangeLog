@@ -2,6 +2,8 @@
 	* tests/common.h:
 	  - Code refactoring.
 	  - New debug functions have been added.
+	* tests/decoder.[ch], tests/test_monkey.c:
+	  - QRcode_extractBits() has been extended. This will be used later.
 
 2016.03.30 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* bitstream.[ch], tests/test_bitstream.c:
