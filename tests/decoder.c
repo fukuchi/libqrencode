@@ -507,6 +507,8 @@ QRdata *QRdata_new(void)
 	qrdata = (QRdata *)calloc(sizeof(QRdata), 1);
 	if(qrdata == NULL) return NULL;
 
+	qrdata->eccResult = 0;
+
 	return qrdata;
 }
 
@@ -514,8 +516,9 @@ QRdata *QRdata_newMQR(void)
 {
 	QRdata *qrdata;
 
-	qrdata = (QRdata *)calloc(sizeof(QRdata), 1);
+	qrdata = QRdata_new();
 	if(qrdata == NULL) return NULL;
+
 	qrdata->mqr = 1;
 
 	return qrdata;

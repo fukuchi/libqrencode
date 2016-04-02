@@ -18,6 +18,7 @@ typedef struct {
 	int version;
 	QRecLevel level;
 	DataChunk *chunks, *last;
+	int eccResult;
 } QRdata;
 
 struct FormatInfo {
