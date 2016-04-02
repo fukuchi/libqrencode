@@ -8,6 +8,7 @@
 #include "../mask.h"
 #include "../mqrspec.h"
 #include "../mmask.h"
+#include "common.h"
 #include "decoder.h"
 
 static unsigned int bitToInt(unsigned char *bits, int length)
@@ -673,16 +674,6 @@ BitStream *QRcode_extractBits(QRcode *code, int *dataLength, int *eccLength)
 	return bstream;
 }
 
-static void printBits(int length, unsigned char *bits)
-{
-	int i;
-
-	for(i=0; i<length; i++) {
-		putchar((bits[i]&1)?'1':'0');
-	}
-	putchar('\n');
-}
-
 static int checkRemainderWords(int length, unsigned char *bits, int remainder)
 {
 	int rbits, words;
@@ -695,7 +686,7 @@ static int checkRemainderWords(int length, unsigned char *bits, int remainder)
 	for(i=0; i<rbits; i++) {
 		if((bits[i]&1) != 0) {
 			printf("Terminating code includes 1-bit.\n");
-			printBits(remainder, bits);
+			printBinary(bits, remainder);
 			return -1;
 		}
 	}
@@ -704,7 +695,7 @@ static int checkRemainderWords(int length, unsigned char *bits, int remainder)
 		v = (unsigned char)bitToInt(p, 8);
 		if(v != ((i&1)?0x11:0xec)) {
 			printf("Remainder codewords wrong.\n");
-			printBits(remainder, bits);
+			printBinary(bits, remainder);
 			return -1;
 		}
 		p += 8;
@@ -886,7 +877,7 @@ static int checkRemainderWordsMQR(int length, unsigned char *bits, int remainder
 	for(i=0; i<rbits; i++) {
 		if((bits[i]&1) != 0) {
 			printf("Terminating code includes 1-bit.\n");
-			printBits(remainder, bits);
+			printBinary(bits, remainder);
 			return -1;
 		}
 	}
@@ -897,7 +888,7 @@ static int checkRemainderWordsMQR(int length, unsigned char *bits, int remainder
 		v = (unsigned char)bitToInt(p, 8);
 		if(v != ((i&1)?0x11:0xec)) {
 			printf("Remainder codewords wrong.\n");
-			printBits(remainder, bits);
+			printBinary(bits, remainder);
 			return -1;
 		}
 		p += 8;

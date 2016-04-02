@@ -27,59 +27,59 @@ EXTRA_DIST = frame URI_testset.inc
 
 libdecoder_a_SOURCES = decoder.c decoder.h datachunk.c datachunk.h rsecc_decoder.c rsecc_decoder.h
 
-test_qrinput_SOURCES = test_qrinput.c
+test_qrinput_SOURCES = test_qrinput.c common.c
 test_qrinput_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_bitstream_SOURCES = test_bitstream.c
+test_bitstream_SOURCES = test_bitstream.c common.c
 test_bitstream_LDADD = ../libqrencode.la
 
-test_estimatebit_SOURCES = test_estimatebit.c
+test_estimatebit_SOURCES = test_estimatebit.c common.c
 test_estimatebit_LDADD = ../libqrencode.la
 
-test_qrspec_SOURCES = test_qrspec.c
+test_qrspec_SOURCES = test_qrspec.c common.c
 test_qrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_mqrspec_SOURCES = test_mqrspec.c
+test_mqrspec_SOURCES = test_mqrspec.c common.c
 test_mqrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_rs_SOURCES = test_rs.c rscode.c
+test_rs_SOURCES = test_rs.c rscode.c common.c
 test_rs_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_qrencode_SOURCES = test_qrencode.c
+test_qrencode_SOURCES = test_qrencode.c common.c
 test_qrencode_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_split_SOURCES = test_split.c
+test_split_SOURCES = test_split.c common.c
 test_split_LDADD = ../libqrencode.la
 
-test_split_urls_SOURCES = test_split_urls.c
+test_split_urls_SOURCES = test_split_urls.c common.c
 test_split_urls_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_monkey_SOURCES = test_monkey.c
+test_monkey_SOURCES = test_monkey.c common.c
 test_monkey_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_mask_SOURCES = test_mask.c
+test_mask_SOURCES = test_mask.c common.c
 test_mask_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-test_mmask_SOURCES = test_mmask.c
+test_mmask_SOURCES = test_mmask.c common.c
 test_mmask_LDADD = ../libqrencode.la $(DECODER_LIBS)
 
-prof_qrencode_SOURCES = prof_qrencode.c
+prof_qrencode_SOURCES = prof_qrencode.c common.c
 prof_qrencode_LDADD = ../libqrencode.la
 
-pthread_qrencode_SOURCES = pthread_qrencode.c
+pthread_qrencode_SOURCES = pthread_qrencode.c common.c
 pthread_qrencode_LDADD = ../libqrencode.la
 
 if HAVE_PNG
-create_frame_pattern_SOURCES = create_frame_pattern.c
+create_frame_pattern_SOURCES = create_frame_pattern.c common.c
 create_frame_pattern_CFLAGS = $(png_CFLAGS) $(AM_CFLAGS)
 create_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
 
-create_mqr_frame_pattern_SOURCES = create_mqr_frame_pattern.c
+create_mqr_frame_pattern_SOURCES = create_mqr_frame_pattern.c common.c
 create_mqr_frame_pattern_CFLAGS = $(png_CFLAGS) $(AM_CFLAGS)
 create_mqr_frame_pattern_LDADD = ../libqrencode.la $(png_LIBS)
 endif
 
 if HAVE_SDL
-view_qrcode_SOURCES = view_qrcode.c
+view_qrcode_SOURCES = view_qrcode.c common.c
 view_qrcode_LDADD = ../libqrencode.la
 endif
