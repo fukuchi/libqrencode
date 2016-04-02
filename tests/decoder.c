@@ -320,36 +320,6 @@ static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int ver
 	return NULL;
 }
 
-
-void QRdata_concatChunks(QRdata *qrdata)
-{
-	int idx;
-	unsigned char *data;
-	DataChunk *chunk;
-	int size = 0;
-
-	chunk = qrdata->chunks;
-	while(chunk != NULL) {
-		size += chunk->size;
-		chunk = chunk->next;
-	}
-	if(size <= 0) {
-		return;
-	}
-
-	data = malloc(size + 1);
-	chunk = qrdata->chunks;
-	idx = 0;
-	while(chunk != NULL) {
-		memcpy(&data[idx], chunk->data, chunk->size);
-		idx += chunk->size;
-		chunk = chunk->next;
-	}
-	data[size] = '\0';
-	qrdata->size = size;
-	qrdata->data = data;
-}
-
 static int appendChunk(QRdata *qrdata, int *bits_length, unsigned char **bits)
 {
 	DataChunk *chunk;
@@ -399,15 +369,7 @@ QRdata *QRdata_newMQR(void)
 
 void QRdata_free(QRdata *qrdata)
 {
-	DataChunk *chunk, *next;
-
-	chunk = qrdata->chunks;
-	while(chunk != NULL) {
-		next = chunk->next;
-		DataChunk_free(chunk);
-		chunk = next;
-	}
-
+	DataChunk_freeList(qrdata->chunks);
 	if(qrdata->data != NULL) {
 		free(qrdata->data);
 	}
@@ -786,6 +748,11 @@ QRdata *QRcode_decodeBits(QRcode *code)
 	BitStream_free(bstream);
 
 	return qrdata;
+}
+
+void QRdata_concatChunks(QRdata *qrdata)
+{
+	qrdata->data = DataChunk_concatChunkList(qrdata->chunks, &qrdata->size);
 }
 
 QRdata *QRcode_decode(QRcode *code)

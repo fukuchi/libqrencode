@@ -24,6 +24,17 @@ void DataChunk_free(DataChunk *chunk)
 	}
 }
 
+void DataChunk_freeList(DataChunk *list)
+{
+	DataChunk *next;
+
+	while(list != NULL) {
+		next = list->next;
+		DataChunk_free(list);
+		list = next;
+	}
+}
+
 static void dumpNum(DataChunk *chunk)
 {
 	printf("%s\n", chunk->data);
@@ -127,4 +138,37 @@ void DataChunk_dumpChunkList(DataChunk *list)
 		dumpChunk(list);
 		list = list->next;
 	}
+}
+
+int DataChunk_totalSize(DataChunk *list)
+{
+	int size = 0;
+
+	while(list != NULL) {
+		size += list->size;
+		list = list->next;
+	}
+
+	return size;
+}
+
+unsigned char *DataChunk_concatChunkList(DataChunk *list, int *retsize)
+{
+	int size, idx;
+	unsigned char *data;
+
+	size = DataChunk_totalSize(list);
+	if(size <= 0) return NULL;
+
+	data = (unsigned char *)malloc(size + 1);
+	idx = 0;
+	while(list != NULL) {
+		memcpy(&data[idx], list->data, list->size);
+		idx += list->size;
+		list = list->next;
+	}
+	data[size] = '\0';
+
+	*retsize = size;
+	return data;
 }
