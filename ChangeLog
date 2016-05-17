@@ -3,6 +3,8 @@
 	  - iconv.m4 has been updated to serial 19.
 	* configure.ac, Makefile.am, tests/Makefile.am:
 	  - MinGW support has been improved.
+	* README, README.md:
+	  - ACKNOWLEDGMENTS has been updated.
 
 2016.05.15 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac:
