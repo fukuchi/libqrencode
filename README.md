@@ -35,9 +35,9 @@ INSTALL
 
 Requirements
 ------------
-Some test programs or utility tools uses SDL or PNG, but the library itself
-has no dependencies. You can skip compiling those tools if you want not to
-install programs using SDL or PNG.
+While the command-line utility and some test programs use libpng or SDL 2.0,
+the libqrencode library itself has no dependencies. You can skip compiling
+tests and/or tools if you want not to install programs using SDL or PNG.
 
 Compile & install
 -----------------
@@ -152,6 +152,8 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 * @Oblomov              - improved SVG support patch
 * @mgorny               - reverse mappings of UTF8 and ANSIUTF8.
 * @EckoEdc              - MinGW support patch.
+* Sebastian Buchwald (@UniQP)
+                        - Various code cleanups.
 * Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
   Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
