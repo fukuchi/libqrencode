@@ -75,7 +75,7 @@ static unsigned int calcFormatInfo(int type, int mask)
 		code = code >> 1;
 		b = b >> 1;
 	}
-	
+
 	return (data | ecc) ^ 0x4445;
 }
 

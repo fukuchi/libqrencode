@@ -29,7 +29,7 @@ static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mod
 	int i;
 	int length = 0;
 	int lbits;
-	
+
 	if(mqr) {
 		lbits = MQRspec_lengthIndicator(mode, version);
 	} else {
@@ -247,7 +247,7 @@ static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int versio
 	if(*bits_length < 4) {
 		return NULL;
 	}
-	val = bitToInt(*bits, 4);;
+	val = bitToInt(*bits, 4);
 	*bits_length -= 4;
 	*bits += 4;
 	switch(val) {

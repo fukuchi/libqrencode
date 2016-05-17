@@ -316,7 +316,7 @@
 
 2013.07.29 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
-	* configure.ac, README, NEWS: 
+	* configure.ac, README, NEWS:
 	  - Bumped version to 3.4.3.
 
 2013.07.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
@@ -362,7 +362,7 @@
 
 2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4, master]
-	* configure.ac, README, NEWS: 
+	* configure.ac, README, NEWS:
 	  - Bumped version to 3.4.2.
 
 2013.02.16 Kentaro FUKUCHI <kentaro@fukuchi.org>
@@ -403,7 +403,7 @@
 	  - HAVE_LIBPTHREAD was not correctly defined in config.h.in.
 	* tests/test_configure.sh:
 	  - New test script checking autoconf-related scripts has been added.
-	* configure.ac, README, NEWS: 
+	* configure.ac, README, NEWS:
 	  - Bumped version to 3.4.1.
 
 2012.10.15 Kentaro FUKUCHI <kentaro@fukuchi.org>
@@ -422,7 +422,7 @@
 
 2012.10.09 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.4]
-	* configure.ac, README, NEWS: 
+	* configure.ac, README, NEWS:
 	  - Bumped version to 3.4.0.
 	* qrencode.1.in:
 	  - Added SVG option to --type.
@@ -979,7 +979,7 @@
 	  - Number of malloc()s in RSblock_initBlock() has been integrated to
 	    one malloc() in QRraw_new().
 	* rscode.c:
-	  - A very small code improvement. 
+	  - A very small code improvement.
 	* qrinput.[ch]:
 	  - More return value checks.
 	  - Code cleanups.

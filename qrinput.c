@@ -423,7 +423,7 @@ static int QRinput_encodeModeNum(QRinput_List *entry, BitStream *bstream, int ve
 	} else {
 		ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_NUM);
 		if(ret < 0) return -1;
-	
+
 		ret = BitStream_appendNum(bstream, QRspec_lengthIndicator(QR_MODE_NUM, version), entry->size);
 		if(ret < 0) return -1;
 	}
@@ -744,7 +744,7 @@ static int QRinput_encodeModeFNC1Second(QRinput_List *entry, BitStream *bstream)
 
 	ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_FNC1SECOND);
 	if(ret < 0) return -1;
-	
+
 	ret = BitStream_appendBytes(bstream, 1, entry->data);
 	if(ret < 0) return -1;
 
@@ -768,11 +768,11 @@ static unsigned int QRinput_decodeECIfromByteArray(unsigned char *data)
 	return ecinum;
 }
 
-int QRinput_estimateBitsModeECI(unsigned char *data)
+static int QRinput_estimateBitsModeECI(unsigned char *data)
 {
 	unsigned int ecinum;
 
-	ecinum = QRinput_decodeECIfromByteArray(data);;
+	ecinum = QRinput_decodeECIfromByteArray(data);
 
 	/* See Table 4 of JISX 0510:2004 pp.17. */
 	if(ecinum < 128) {
@@ -789,7 +789,7 @@ static int QRinput_encodeModeECI(QRinput_List *entry, BitStream *bstream)
 	int ret, words;
 	unsigned int ecinum, code;
 
-	ecinum = QRinput_decodeECIfromByteArray(entry->data);;
+	ecinum = QRinput_decodeECIfromByteArray(entry->data);
 
 	/* See Table 4 of JISX 0510:2004 pp.17. */
 	if(ecinum < 128) {
@@ -805,7 +805,7 @@ static int QRinput_encodeModeECI(QRinput_List *entry, BitStream *bstream)
 
 	ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_ECI);
 	if(ret < 0) return -1;
-	
+
 	ret = BitStream_appendNum(bstream, words * 8, code);
 	if(ret < 0) return -1;
 
@@ -1406,7 +1406,7 @@ int QRinput_Struct_appendInput(QRinput_Struct *s, QRinput *input)
 void QRinput_Struct_free(QRinput_Struct *s)
 {
 	QRinput_InputList *list, *next;
-	
+
 	if(s != NULL) {
 		list = s->head;
 		while(list != NULL) {
