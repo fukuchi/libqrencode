@@ -35,9 +35,11 @@ AC_PROG_LIBTOOL
 AC_PROG_RANLIB
 PKG_PROG_PKG_CONFIG
 
-case "${host}" in
-*mingw*) LDFLAGS+="-no-undefined -avoid-version -Wl,--nxcompat -Wl,--dynamicbase"
+case "${target}" in
+*-*-mingw*)
+	mingw=yes
 esac
+AM_CONDITIONAL(MINGW, [test "x$mingw" = "xyes" ])
 
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
 

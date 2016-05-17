@@ -28,7 +28,7 @@ EXTRA_DIST = frame URI_testset.inc
 libdecoder_a_SOURCES = decoder.c decoder.h datachunk.c datachunk.h rsecc_decoder.c rsecc_decoder.h
 
 test_qrinput_SOURCES = test_qrinput.c common.c
-test_qrinput_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_qrinput_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_bitstream_SOURCES = test_bitstream.c common.c
 test_bitstream_LDADD = ../libqrencode.la
@@ -37,31 +37,31 @@ test_estimatebit_SOURCES = test_estimatebit.c common.c
 test_estimatebit_LDADD = ../libqrencode.la
 
 test_qrspec_SOURCES = test_qrspec.c common.c
-test_qrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_qrspec_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_mqrspec_SOURCES = test_mqrspec.c common.c
-test_mqrspec_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_mqrspec_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_rs_SOURCES = test_rs.c rscode.c common.c
-test_rs_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_rs_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_qrencode_SOURCES = test_qrencode.c common.c
-test_qrencode_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_qrencode_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_split_SOURCES = test_split.c common.c
 test_split_LDADD = ../libqrencode.la
 
 test_split_urls_SOURCES = test_split_urls.c common.c
-test_split_urls_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_split_urls_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_monkey_SOURCES = test_monkey.c common.c
-test_monkey_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_monkey_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_mask_SOURCES = test_mask.c common.c
-test_mask_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_mask_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_mmask_SOURCES = test_mmask.c common.c
-test_mmask_LDADD = ../libqrencode.la $(DECODER_LIBS)
+test_mmask_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 prof_qrencode_SOURCES = prof_qrencode.c common.c
 prof_qrencode_LDADD = ../libqrencode.la

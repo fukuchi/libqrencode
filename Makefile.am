@@ -37,3 +37,7 @@ qrencode_CFLAGS = $(png_CFLAGS)
 qrencode_LDADD = libqrencode.la $(png_LIBS)
 man1_MANS = qrencode.1
 endif
+
+if MINGW
+libqrencode_la_LDFLAGS += -no-undefined -avoid-version -Wl,--nxcompat -Wl,--dynamicbase
+endif
