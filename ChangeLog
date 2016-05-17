@@ -5,6 +5,8 @@
 	  - MinGW support has been improved.
 	* README, README.md:
 	  - ACKNOWLEDGMENTS has been updated.
+	* qrencode.c:
+	  - Memory leak bug fixed. (Closes #81. Thanks to @win32asm)
 
 2016.05.15 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac:

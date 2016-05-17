@@ -575,6 +575,9 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	}
 
 	qrcode = QRcode_new(version, width, masked);
+	if(qrcode == NULL) {
+		free(masked);
+	}
 
 EXIT:
 	MQRraw_free(raw);
