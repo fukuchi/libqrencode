@@ -1248,7 +1248,6 @@ int main(int argc, char **argv)
 					usage(1, 0, EXIT_SUCCESS);
 				}
 				exit(EXIT_SUCCESS);
-				break;
 			case 'o':
 				outfile = optarg;
 				break;
@@ -1290,7 +1289,6 @@ int main(int argc, char **argv)
 					default:
 						fprintf(stderr, "Invalid level: %s\n", optarg);
 						exit(EXIT_FAILURE);
-						break;
 				}
 				break;
 			case 'm':
@@ -1372,13 +1370,11 @@ int main(int argc, char **argv)
 			case 'V':
 				usage(0, 0, EXIT_SUCCESS);
 				exit(EXIT_SUCCESS);
-				break;
 			case 0:
 				break;
 			default:
 				fprintf(stderr, "Try \"qrencode --help\" for more information.\n");
 				exit(EXIT_FAILURE);
-				break;
 		}
 	}
 
