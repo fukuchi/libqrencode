@@ -329,15 +329,13 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 				y = 9;
 			}
 		}
-	} else {
-		if(y == w) {
-			y = w - 1;
-			x -= 2;
-			filler->dir = -1;
-			if(!filler->mqr && x == 6) {
-				x--;
-				y -= 8;
-			}
+	} else if(y == w) {
+		y = w - 1;
+		x -= 2;
+		filler->dir = -1;
+		if(!filler->mqr && x == 6) {
+			x--;
+			y -= 8;
 		}
 	}
 	if(x < 0 || y < 0) return NULL;

@@ -619,11 +619,9 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 				if( !pen ) {
 					pen = *(row+x)&0x1;
 					x0 = x;
-				} else {
-					if(!(*(row+x)&0x1)) {
-						writeSVG_drawModules(fp, x0, y, x-x0, fg, fg_opacity);
-						pen = 0;
-					}
+				} else if(!(*(row+x)&0x1)) {
+					writeSVG_drawModules(fp, x0, y, x-x0, fg, fg_opacity);
+					pen = 0;
 				}
 			}
 			if( pen ) {
@@ -800,11 +798,9 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 					strncat(buffer, black, black_s);
 					last = 1;
 				}
-			} else {
-				if( last != 0 ){
-					strncat(buffer, white, white_s);
-					last = 0;
-				}
+			} else if( last != 0 ){
+				strncat(buffer, white, white_s);
+				last = 0;
 			}
 			strncat(buffer, "  ", 2);
 		}
@@ -901,12 +897,10 @@ static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi, in
 				} else {
 					fputs(lowhalf, fp);
 				}
+			} else if(y < qrcode->width - 1 && row2[x] & 1) {
+				fputs(uphalf, fp);
 			} else {
-				if(y < qrcode->width - 1 && row2[x] & 1) {
-					fputs(uphalf, fp);
-				} else {
-					fputs(full, fp);
-				}
+				fputs(full, fp);
 			}
 		}
 
@@ -1014,12 +1008,10 @@ static QRcode *encode(const unsigned char *intext, int length)
 		} else {
 			code = QRcode_encodeStringMQR((char *)intext, version, level, hint, casesensitive);
 		}
+	} else if(eightbit) {
+		code = QRcode_encodeData(length, intext, version, level);
 	} else {
-		if(eightbit) {
-			code = QRcode_encodeData(length, intext, version, level);
-		} else {
-			code = QRcode_encodeString((char *)intext, version, level, hint, casesensitive);
-		}
+		code = QRcode_encodeString((char *)intext, version, level, hint, casesensitive);
 	}
 
 	return code;
