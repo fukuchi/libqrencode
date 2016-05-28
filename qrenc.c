@@ -892,7 +892,7 @@ static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi, in
 
 		for (x = 0; x < margin; x++) {
 			fputs(full, fp);
-		};
+		}
 
 		for (x = 0; x < qrcode->width; x++) {
 			if(row1[x] & 1) {
