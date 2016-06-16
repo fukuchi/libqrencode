@@ -8,6 +8,10 @@
 .libs/
 autom4te.cache/
 m4/
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
 Makefile
 Makefile.in
 config.log
