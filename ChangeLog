@@ -1,3 +1,12 @@
+2016.09.18 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* CMakeLists.txt:
+	  - Merged #83. (Thansk to @misery)
+	  - This allows CMake users building the library without configure script.
+	    IF you are using incomplete UNIX-like environment and configure script
+		does not work as expected, try CMake.
+	* README, README.md:
+	  - Added some notes about CMake.
+
 2016.05.18 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* acinclude.m4:
 	  - iconv.m4 has been updated to serial 19.
