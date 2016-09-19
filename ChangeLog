@@ -7,10 +7,12 @@
 	    (follows C99 standard)
 	* configure.ac, *.c:
 	  - Renamed __STATIC macro to STATIC_IN_RELEASE. (follows C99 standard)
+	* qrencode.c:
+	  - Removed unnecessary 'extern' from some functions.
 
 2016.09.18 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* CMakeLists.txt:
-	  - Merged #83. (Thansk to @misery)
+	  - Merged #83. (Thanks to @misery)
 	  - This allows CMake users building the library without configure script.
 	    IF you are using incomplete UNIX-like environment and configure script
 		does not work as expected, try CMake.

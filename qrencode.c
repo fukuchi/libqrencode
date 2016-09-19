@@ -351,7 +351,7 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 }
 
 #ifdef WITH_TESTS
-extern unsigned char *FrameFiller_test(int version)
+unsigned char *FrameFiller_test(int version)
 {
 	int width;
 	unsigned char *frame, *p;
@@ -376,7 +376,7 @@ extern unsigned char *FrameFiller_test(int version)
 	return frame;
 }
 
-extern unsigned char *FrameFiller_testMQR(int version)
+unsigned char *FrameFiller_testMQR(int version)
 {
 	int width;
 	unsigned char *frame, *p;
