@@ -31,7 +31,7 @@
 #include "mqrspec.h"
 #include "mmask.h"
 
-__STATIC void MMask_writeFormatInformation(int version, int width, unsigned char *frame, int mask, QRecLevel level)
+STATIC_IN_RELEASE void MMask_writeFormatInformation(int version, int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned int format;
 	unsigned char v;
@@ -125,7 +125,7 @@ unsigned char *MMask_makeMask(int version, unsigned char *frame, int mask, QRecL
 	return masked;
 }
 
-__STATIC int MMask_evaluateSymbol(int width, unsigned char *frame)
+STATIC_IN_RELEASE int MMask_evaluateSymbol(int width, unsigned char *frame)
 {
 	int x, y;
 	unsigned char *p;

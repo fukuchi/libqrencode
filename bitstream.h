@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __BITSTREAM_H__
-#define __BITSTREAM_H__
+#ifndef BITSTREAM_H
+#define BITSTREAM_H
 
 typedef struct {
 	int length;
@@ -40,4 +40,4 @@ extern int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *da
 extern unsigned char *BitStream_toByte(BitStream *bstream);
 extern void BitStream_free(BitStream *bstream);
 
-#endif /* __BITSTREAM_H__ */
+#endif /* BITSTREAM_H */

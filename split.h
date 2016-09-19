@@ -25,8 +25,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __SPLIT_H__
-#define __SPLIT_H__
+#ifndef SPLIT_H
+#define SPLIT_H
 
 #include "qrencode.h"
 
@@ -44,4 +44,4 @@
 extern int Split_splitStringToQRinput(const char *string, QRinput *input,
 		QRencodeMode hint, int casesensitive);
 
-#endif /* __SPLIT_H__ */
+#endif /* SPLIT_H */

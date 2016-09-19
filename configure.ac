@@ -88,14 +88,14 @@ AC_ARG_WITH([tests], [AS_HELP_STRING([--with-tests], [build tests [default=no]])
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes" ])
 AH_VERBATIM([tests],
 [/* Define to 'static' if no test programs will be compiled. */
-#define __STATIC static
+#define STATIC_IN_RELEASE static
 #undef WITH_TESTS
    ])
 if test x$build_tests = xyes ; then
-echo "#define __STATIC" >>confdefs.h
+echo "#define STATIC_IN_RELEASE" >>confdefs.h
 echo "#define WITH_TESTS 1" >>confdefs.h
 else
-echo "#define __STATIC static" >>confdefs.h
+echo "#define STATIC_IN_RELEASE static" >>confdefs.h
 echo "/* #undef WITH_TESTS */" >>confdefs.h
 fi
 

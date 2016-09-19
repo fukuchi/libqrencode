@@ -96,8 +96,8 @@
  * encoding symbols.
  */
 
-#ifndef __QRENCODE_H__
-#define __QRENCODE_H__
+#ifndef QRENCODE_H
+#define QRENCODE_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -556,4 +556,4 @@ extern char *QRcode_APIVersionString(void);
 }
 #endif
 
-#endif /* __QRENCODE_H__ */
+#endif /* QRENCODE_H */

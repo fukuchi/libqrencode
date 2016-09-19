@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __MASK_H__
-#define __MASK_H__
+#ifndef MASK_H
+#define MASK_H
 
 extern unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level);
 extern unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level);
@@ -35,4 +35,4 @@ extern int Mask_writeFormatInformation(int width, unsigned char *frame, int mask
 extern unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask);
 #endif
 
-#endif /* __MASK_H__ */
+#endif /* MASK_H */

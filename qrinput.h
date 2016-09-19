@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __QRINPUT_H__
-#define __QRINPUT_H__
+#ifndef QRINPUT_H
+#define QRINPUT_H
 
 #include "qrencode.h"
 #include "bitstream.h"
@@ -120,4 +120,4 @@ extern int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits);
 extern int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int index, unsigned char parity);
 #endif
 
-#endif /* __QRINPUT_H__ */
+#endif /* QRINPUT_H */

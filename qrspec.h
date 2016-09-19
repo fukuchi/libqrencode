@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __QRSPEC_H__
-#define __QRSPEC_H__
+#ifndef QRSPEC_H
+#define QRSPEC_H
 
 #include "qrencode.h"
 
@@ -171,4 +171,4 @@ extern unsigned char *QRspec_newFrame(int version);
 #define QRSPEC_MODEID_STRUCTURE  3
 #define QRSPEC_MODEID_TERMINATOR 0
 
-#endif /* __QRSPEC_H__ */
+#endif /* QRSPEC_H */

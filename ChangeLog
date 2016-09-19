@@ -2,6 +2,11 @@
 	* qrenc.c, qrencode.c, split.c:
 	  - Merged #82. (Thanks to @UniQP)
 	  - Various code cleanups.
+	* *.h:
+	  - Removed double underscores (__) from macro names in include guards.
+	    (follows C99 standard)
+	* configure.ac, *.c:
+	  - Renamed __STATIC macro to STATIC_IN_RELEASE. (follows C99 standard)
 
 2016.09.18 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* CMakeLists.txt:

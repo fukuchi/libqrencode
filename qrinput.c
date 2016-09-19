@@ -245,7 +245,7 @@ int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned c
  * @throw EINVAL invalid parameter.
  * @throw ENOMEM unable to allocate memory.
  */
-__STATIC int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int number, unsigned char parity)
+STATIC_IN_RELEASE int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int number, unsigned char parity)
 {
 	QRinput_List *entry;
 	unsigned char buf[3];
@@ -910,7 +910,7 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
  * @param version version of the symbol
  * @return number of bits
  */
-__STATIC int QRinput_estimateBitStreamSize(QRinput *input, int version)
+STATIC_IN_RELEASE int QRinput_estimateBitStreamSize(QRinput *input, int version)
 {
 	QRinput_List *list;
 	int bits = 0;
@@ -951,7 +951,7 @@ static int QRinput_estimateVersion(QRinput *input)
  * @param bits
  * @return required length of code words in bytes.
  */
-__STATIC int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits)
+STATIC_IN_RELEASE int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits)
 {
 	int payload, size, chunks, remain, maxsize;
 
@@ -1263,7 +1263,7 @@ static int QRinput_insertFNC1Header(QRinput *input)
  * @return merged bit stream
  */
 
-__STATIC int QRinput_mergeBitStream(QRinput *input, BitStream *bstream)
+STATIC_IN_RELEASE int QRinput_mergeBitStream(QRinput *input, BitStream *bstream)
 {
 	if(input->mqr) {
 		if(QRinput_createBitStream(input, bstream) < 0) {
@@ -1289,7 +1289,7 @@ __STATIC int QRinput_mergeBitStream(QRinput *input, BitStream *bstream)
  * @return padded merged bit stream
  */
 
-__STATIC int QRinput_getBitStream(QRinput *input, BitStream *bstream)
+STATIC_IN_RELEASE int QRinput_getBitStream(QRinput *input, BitStream *bstream)
 {
 	int ret;
 
@@ -1449,7 +1449,7 @@ static int QRinput_List_shrinkEntry(QRinput_List *entry, int bytes)
 	return 0;
 }
 
-__STATIC int QRinput_splitEntry(QRinput_List *entry, int bytes)
+STATIC_IN_RELEASE int QRinput_splitEntry(QRinput_List *entry, int bytes)
 {
 	QRinput_List *e;
 	int ret;

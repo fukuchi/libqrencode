@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __MQRSPEC_H__
-#define __MQRSPEC_H__
+#ifndef MQRSPEC_H
+#define MQRSPEC_H
 
 #include "qrencode.h"
 
@@ -149,4 +149,4 @@ extern unsigned char *MQRspec_newFrame(int version);
 #define MQRSPEC_MODEID_8         2
 #define MQRSPEC_MODEID_KANJI     3
 
-#endif /* __MQRSPEC_H__ */
+#endif /* MQRSPEC_H */

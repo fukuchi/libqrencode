@@ -23,9 +23,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __RSECC_H__
-#define __RSECC_H__
+#ifndef RSECC_H
+#define RSECC_H
 
 extern int RSECC_encode(int data_length, int ecc_length, const unsigned char *data, unsigned char *ecc);
 
-#endif /* __RSECC_H__ */
+#endif /* RSECC_H */
