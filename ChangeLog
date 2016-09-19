@@ -1,3 +1,8 @@
+2016.09.19 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* qrenc.c, qrencode.c, split.c:
+	  - Merged #82. (Thanks to @UniQP)
+	  - Various code cleanups.
+
 2016.09.18 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* CMakeLists.txt:
 	  - Merged #83. (Thansk to @misery)
