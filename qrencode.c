@@ -329,15 +329,13 @@ static unsigned char *FrameFiller_next(FrameFiller *filler)
 				y = 9;
 			}
 		}
-	} else {
-		if(y == w) {
-			y = w - 1;
-			x -= 2;
-			filler->dir = -1;
-			if(!filler->mqr && x == 6) {
-				x--;
-				y -= 8;
-			}
+	} else if(y == w) {
+		y = w - 1;
+		x -= 2;
+		filler->dir = -1;
+		if(!filler->mqr && x == 6) {
+			x--;
+			y -= 8;
 		}
 	}
 	if(x < 0 || y < 0) return NULL;
@@ -464,7 +462,7 @@ __STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 	}
 	FrameFiller_set(&filler, width, frame, 0);
 
-	/* inteleaved data and ecc codes */
+	/* interleaved data and ecc codes */
 	for(i = 0; i < raw->dataLength + raw->eccLength; i++) {
 		code = QRraw_getCode(raw);
 		bit = 0x80;
@@ -542,7 +540,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	}
 	FrameFiller_set(&filler, width, frame, 1);
 
-	/* inteleaved data and ecc codes */
+	/* interleaved data and ecc codes */
 	for(i = 0; i < raw->dataLength + raw->eccLength; i++) {
 		code = MQRraw_getCode(raw);
 		bit = 0x80;
