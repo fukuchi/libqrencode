@@ -3,18 +3,26 @@ language: c
 compiler:
 - gcc
 
-install:
+before_install:
 - sudo apt-get update
 - sudo apt-get install libsdl-image1.2-dev
 - sudo apt-get install libpng12-dev
+
+install:
 - ./autogen.sh
 - ./configure --with-tests && make
 - sudo make install
-
-before_script:
-- cd tests
-- ./create_frame_pattern frame
+- mkdir build && cd build
+- wget https://cmake.org/files/v3.1/cmake-3.1.0-Linux-x86_64.tar.gz
+- tar xf cmake-3.1.0-Linux-x86_64.tar.gz
+- ./cmake-3.1.0-Linux-x86_64/bin/cmake .. -DBUILD_SHARED_LIBS=on -DBUILD_TESTING=on && make
+- DESTDIR=$PWD/install make install
 
 script:
+- cd $TRAVIS_BUILD_DIR/tests
+- ./create_frame_pattern frame
 - ./test_configure.sh
 - ./test_all.sh
+- cd $TRAVIS_BUILD_DIR/build/tests
+- ./create_frame_pattern frame
+- make test

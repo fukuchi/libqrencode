@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iconv.h>
+#if HAVE_CONFIG_H
 #include "../config.h"
+#endif
 #include "../qrspec.h"
 #include "../bitstream.h"
 #include "../mask.h"
