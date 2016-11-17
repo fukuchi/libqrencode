@@ -15,16 +15,16 @@ Version 4.0.0 (2016.x.x)
 * Various performance improvements.
 
 Release Note:
-While the API is not changed from previous major release, we incremented the
-major version number of libqrencode to 4.
+While the API has not been changed since the previous major release, we
+incremented the major version number of libqrencode to 4.
 
 This release improves the performance of code generation. Its memory footprint
 is also reduced.
 
 Now you can build libqrencode with CMake optionally.
 
-If you are going to build the test programs, please note that required SDL
-version is changed from 1.2 to 2.0.
+When building the test programs, please note that the required SDL version has
+changed from 1.2 to 2.0.
 
 
 Version 3.4.4 (2014.7.24)
