@@ -6,7 +6,9 @@
 #define __COMMON_H__
 
 #include <stdlib.h>
+#if HAVE_CONFIG_H
 #include "../config.h"
+#endif
 #include "../qrencode.h"
 #include "../qrinput.h"
 #include "../bitstream.h"
