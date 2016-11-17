@@ -2,6 +2,8 @@
 	* CMakeLists.txt, tests/CMakeLists.txt, travis.yml, tests/common.h,
 	  tests/decoder.c, .gitignore:
 	  -  Merged #85. (Thanks to @misery)
+	* NEWS:
+	  - Release note for version 4 has been updated.
 
 2016.09.19 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.c, split.c:
