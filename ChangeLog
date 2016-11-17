@@ -1,3 +1,8 @@
+2016.11.17 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* CMakeLists.txt, tests/CMakeLists.txt, travis.yml, tests/common.h,
+	  tests/decoder.c, .gitignore:
+	  -  Merged #85. (Thanks to @misery)
+
 2016.09.19 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c, qrencode.c, split.c:
 	  - Merged #82. (Thanks to @UniQP)
