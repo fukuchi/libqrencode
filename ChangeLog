@@ -1,7 +1,11 @@
+2016.11.20 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* tests/test_qrinput.c, tests/test_qrspec.c:
+	  - Some warnings suppresed.
+
 2016.11.17 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* CMakeLists.txt, tests/CMakeLists.txt, travis.yml, tests/common.h,
 	  tests/decoder.c, .gitignore:
-	  -  Merged #85. (Thanks to @misery)
+	  - Merged #85. (Thanks to @misery)
 	* NEWS:
 	  - Release note for version 4 has been updated.
 

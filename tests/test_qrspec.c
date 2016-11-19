@@ -145,7 +145,7 @@ void test_newframe(void)
 		assert_zero(memcmp(frame, buf, len), "frame pattern mismatch (version %d)\n", i);
 		qrcode = QRcode_new(i, width, frame);
 		version = QRcode_decodeVersion(qrcode);
-		assert_equal(version, i, "Decoded version number is wrong: %d, expected %d.\n", version, i);
+		assert_equal(version, (unsigned int)i, "Decoded version number is wrong: %d, expected %d.\n", version, i);
 		QRcode_free(qrcode);
 	}
 

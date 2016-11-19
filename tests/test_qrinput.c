@@ -57,7 +57,7 @@ int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
 
 void test_encodeKanji(void)
 {
-	char str[5]= {0x93, 0x5f,0xe4, 0xaa, 0x00};
+	char str[5]= {0x93, 0x5f, 0xe4, 0xaa, 0x00};
 	char *correct = "10000000001001101100111111101010101010";
 
 	testStart("Encoding kanji stream.");
