@@ -1,33 +1,33 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.1.0)
 
-PROJECT(QREncodingLibrary VERSION 4.0.0 LANGUAGES C)
-
-
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-
-OPTION(GPROF "Generate extra code to write profile information" OFF)
-IF(GPROF)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
-ENDIF()
-
-OPTION(COVERAGE "Generate extra code to write coverage information" OFF)
-IF(COVERAGE)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-ENDIF()
-
-OPTION(ASAN "Use AddressSanitizer" OFF)
-IF(ASAN)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
-ENDIF()
-
-ADD_DEFINITIONS(-DMAJOR_VERSION=${PROJECT_VERSION_MAJOR})
-ADD_DEFINITIONS(-DMINOR_VERSION=${PROJECT_VERSION_MINOR})
-ADD_DEFINITIONS(-DMICRO_VERSION=${PROJECT_VERSION_PATCH})
-ADD_DEFINITIONS(-DVERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-ADD_DEFINITIONS(-DSTATIC_IN_RELEASE=)
+project(QREncodingLibrary VERSION 4.0.0 LANGUAGES C)
 
 
-SET(LIB_FILES qrencode.c
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+
+option(GPROF "Generate extra code to write profile information" OFF)
+if(GPROF)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+endif()
+
+option(COVERAGE "Generate extra code to write coverage information" OFF)
+if(COVERAGE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+endif()
+
+option(ASAN "Use AddressSanitizer" OFF)
+if(ASAN)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+endif()
+
+add_definitions(-DMAJOR_VERSION=${PROJECT_VERSION_MAJOR})
+add_definitions(-DMINOR_VERSION=${PROJECT_VERSION_MINOR})
+add_definitions(-DMICRO_VERSION=${PROJECT_VERSION_PATCH})
+add_definitions(-DVERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+add_definitions(-DSTATIC_IN_RELEASE=)
+
+
+set(LIB_FILES qrencode.c
               qrinput.c
               bitstream.c
               qrspec.c
@@ -36,43 +36,43 @@ SET(LIB_FILES qrencode.c
               mask.c
               mqrspec.c
               mmask.c)
-ADD_LIBRARY(qrencode ${LIB_FILES})
-OPTION(BUILD_SHARED_LIBS "Enable build of shared libraries")
+add_library(qrencode ${LIB_FILES})
+option(BUILD_SHARED_LIBS "Enable build of shared libraries")
 
 
-SET(EXE_FILES qrenc.c)
-ADD_EXECUTABLE(qrenc ${EXE_FILES} ${PNG_LIBRARIES})
-SET_TARGET_PROPERTIES(qrenc PROPERTIES OUTPUT_NAME "qrencode")
-TARGET_LINK_LIBRARIES(qrenc qrencode)
+set(EXE_FILES qrenc.c)
+add_executable(qrenc ${EXE_FILES} ${PNG_LIBRARIES})
+set_target_properties(qrenc PROPERTIES OUTPUT_NAME "qrencode")
+target_link_libraries(qrenc qrencode)
 
 
-ADD_DEFINITIONS(-DHAVE_SDL=0)
+add_definitions(-DHAVE_SDL=0)
 
-FIND_PACKAGE(PNG)
-IF(PNG_FOUND)
-    ADD_DEFINITIONS(-DHAVE_PNG=1)
-    IF(TARGET PNG::PNG)
-        TARGET_LINK_LIBRARIES(qrenc PNG::PNG)
-    ELSE()
+find_package(PNG)
+if(PNG_FOUND)
+    add_definitions(-DHAVE_PNG=1)
+    if(TARGET PNG::PNG)
+        target_link_libraries(qrenc PNG::PNG)
+    else()
         TARGET_INCLUDE_DIRECTORIES(qrenc SYSTEM PUBLIC ${PNG_INCLUDE_DIRS})
-        TARGET_LINK_LIBRARIES(qrenc ${PNG_LIBRARIES})
-        ADD_DEFINITIONS(${PNG_DEFINITIONS})
-    ENDIF()
-ENDIF()
+        target_link_libraries(qrenc ${PNG_LIBRARIES})
+        add_definitions(${PNG_DEFINITIONS})
+    endif()
+endif(PNG_FOUND)
 
-INSTALL(TARGETS qrenc DESTINATION bin)
-CONFIGURE_FILE(qrencode.1.in qrencode.1 @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/qrencode.1 DESTINATION share/man/man1)
-IF(BUILD_SHARED_LIBS)
-    CONFIGURE_FILE(libqrencode.pc.in libqrencode.pc @ONLY)
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libqrencode.pc DESTINATION lib/pkgconfig)
-    INSTALL(TARGETS qrencode DESTINATION lib)
-    INSTALL(FILES qrencode.h DESTINATION include)
-ENDIF()
+install(TARGETS qrenc DESTINATION bin)
+configure_file(qrencode.1.in qrencode.1 @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qrencode.1 DESTINATION share/man/man1)
+if(BUILD_SHARED_LIBS)
+    configure_file(libqrencode.pc.in libqrencode.pc @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libqrencode.pc DESTINATION lib/pkgconfig)
+    install(TARGETS qrencode DESTINATION lib)
+    install(FILES qrencode.h DESTINATION include)
+endif(BUILD_SHARED_LIBS)
 
 
-IF(BUILD_TESTING)
-    ENABLE_TESTING()
-    ADD_DEFINITIONS(-DWITH_TESTS=)
-    ADD_SUBDIRECTORY(tests)
-ENDIF()
+if(BUILD_TESTING)
+    enable_testing()
+    add_definitions(-DWITH_TESTS=)
+    add_subdirectory(tests)
+endif(BUILD_TESTING)
