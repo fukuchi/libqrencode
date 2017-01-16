@@ -68,7 +68,7 @@ else()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ICONV DEFAULT_MSG ICONV_TEST ICONV_INCLUDE_DIR ICONV_COMPILES)
+find_package_handle_standard_args(ICONV DEFAULT_MSG ICONV_TEST ICONV_INCLUDE_DIR)
 
 if(ICONV_FOUND)
     set(ICONV_INCLUDE_DIRS ${ICONV_INCLUDE_DIR})
