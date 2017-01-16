@@ -25,6 +25,8 @@
 #
 
 include(CheckFunctionExists)
+include(CheckCXXSourceCompiles)
+
 if(ICONV_INCLUDE_DIR)
   set(ICONV_FIND_QUIETLY TRUE)
 endif()
@@ -111,9 +113,7 @@ if(ICONV_FOUND)
         # Display a useful message first time we come through here
         message(STATUS "One (and only one) of the ICONV_ACCEPTS_... tests must pass")
     endif()
-    
-    include(CheckCXXSourceCompiles)
-    
+
     check_cxx_source_compiles(
         "#include <iconv.h>
          int main() {
