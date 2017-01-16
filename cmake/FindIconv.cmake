@@ -105,41 +105,41 @@ if(ICONV_FOUND)
     endif()
 endif()
 
-if(ICONV_FOUND)
-    set(CMAKE_REQUIRED_INCLUDES ${ICONV_INCLUDE_DIR})
-    set(CMAKE_REQUIRED_LIBRARIES ${ICONV_LIBRARIES})
-
-    if (NOT DEFINED ICONV_ACCEPTS_NONCONST_INPUT)
-        # Display a useful message first time we come through here
-        message(STATUS "One (and only one) of the ICONV_ACCEPTS_... tests must pass")
-    endif()
-
-    check_c_source_compiles(
-        "#include <iconv.h>
-         int main() {
-            char *p = 0;
-            iconv(iconv_t(-1), &p, 0, 0, 0);
-         }"
-        ICONV_ACCEPTS_NONCONST_INPUT)
-
-    check_c_source_compiles(
-        "#include <iconv.h>
-         int main() {
-            char const *p = 0;
-            iconv(iconv_t(-1), &p, 0, 0, 0);
-         }"
-        ICONV_ACCEPTS_CONST_INPUT)
-
-    if (ICONV_LIBRARY)
-        list(REMOVE_ITEM CMAKE_REQUIRED_LIBRARIES ${ICONV_LIBRARY})
-        list(REMOVE_DUPLICATES CMAKE_REQUIRED_LIBRARIES)
-    endif()
-
-    if(NOT ICONV_ACCEPTS_CONST_INPUT AND NOT ICONV_ACCEPTS_NONCONST_INPUT)
-      MESSAGE(FATAL_ERROR "Unable to determine iconv() signature")
-    elseif(ICONV_ACCEPTS_CONST_INPUT AND ICONV_ACCEPTS_NONCONST_INPUT)
-      MESSAGE(FATAL_ERROR "Unable to determine iconv() signature - both test cases passed!")
-    endif()
-endif()
+#if(ICONV_FOUND)
+#    set(CMAKE_REQUIRED_INCLUDES ${ICONV_INCLUDE_DIR})
+#    set(CMAKE_REQUIRED_LIBRARIES ${ICONV_LIBRARIES})
+#
+#    if (NOT DEFINED ICONV_ACCEPTS_NONCONST_INPUT)
+#        # Display a useful message first time we come through here
+#        message(STATUS "One (and only one) of the ICONV_ACCEPTS_... tests must pass")
+#    endif()
+#
+#    check_c_source_compiles(
+#        "#include <iconv.h>
+#         int main() {
+#            char *p = 0;
+#            iconv(iconv_t(-1), &p, 0, 0, 0);
+#         }"
+#        ICONV_ACCEPTS_NONCONST_INPUT)
+#
+#    check_c_source_compiles(
+#        "#include <iconv.h>
+#         int main() {
+#            char const *p = 0;
+#            iconv(iconv_t(-1), &p, 0, 0, 0);
+#         }"
+#        ICONV_ACCEPTS_CONST_INPUT)
+#
+#    if (ICONV_LIBRARY)
+#        list(REMOVE_ITEM CMAKE_REQUIRED_LIBRARIES ${ICONV_LIBRARY})
+#        list(REMOVE_DUPLICATES CMAKE_REQUIRED_LIBRARIES)
+#    endif()
+#
+#    if(NOT ICONV_ACCEPTS_CONST_INPUT AND NOT ICONV_ACCEPTS_NONCONST_INPUT)
+#      MESSAGE(FATAL_ERROR "Unable to determine iconv() signature")
+#    elseif(ICONV_ACCEPTS_CONST_INPUT AND ICONV_ACCEPTS_NONCONST_INPUT)
+#      MESSAGE(FATAL_ERROR "Unable to determine iconv() signature - both test cases passed!")
+#    endif()
+#endif()
 
 mark_as_advanced(ICONV_LIBRARY ICONV_INCLUDE_DIR)
