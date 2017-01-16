@@ -25,7 +25,7 @@
 #
 
 include(CheckFunctionExists)
-include(CheckCXXSourceCompiles)
+include(CheckCSourceCompiles)
 
 if(ICONV_INCLUDE_DIR)
   set(ICONV_FIND_QUIETLY TRUE)
@@ -114,7 +114,7 @@ if(ICONV_FOUND)
         message(STATUS "One (and only one) of the ICONV_ACCEPTS_... tests must pass")
     endif()
 
-    check_cxx_source_compiles(
+    check_c_source_compiles(
         "#include <iconv.h>
          int main() {
             char *p = 0;
@@ -122,7 +122,7 @@ if(ICONV_FOUND)
          }"
         ICONV_ACCEPTS_NONCONST_INPUT)
 
-    check_cxx_source_compiles(
+    check_c_source_compiles(
         "#include <iconv.h>
          int main() {
             char const *p = 0;
