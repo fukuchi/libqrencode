@@ -58,6 +58,8 @@ add_definitions(-DSTATIC_IN_RELEASE=)
 add_definitions(-DHAVE_SDL=0)
 
 if(MSVC)
+    set(CMAKE_DEBUG_POSTFIX "d")
+
     add_definitions(-Dstrcasecmp=_stricmp)
     add_definitions(-Dstrncasecmp=_strnicmp)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
