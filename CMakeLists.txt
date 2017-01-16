@@ -26,6 +26,8 @@ check_include_file(stdlib.h   HAVE_STDLIB_H  )
 check_include_file(strings.h  HAVE_STRINGS_H )
 check_include_file(string.h   HAVE_STRING_H  )
 check_include_file(getopt.h   HAVE_GETOPT_H  )
+check_include_file(sys/time.h HAVE_SYS_TIME_H)
+
 check_function_exists(strdup HAVE_STRDUP)
 
 if(HAVE_STRDUP)
