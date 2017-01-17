@@ -62,25 +62,16 @@ if(ICONV_INCLUDE_DIR AND EXISTS "${ICONV_INCLUDE_DIR}/iconv.h")
 endif()
 
 check_function_exists(iconv_open ICONV_IN_GLIBC)
-
-if(ICONV_IN_GLIBC)
-    set(ICONV_TEST "In glibc")
-else()
-    set(ICONV_TEST ${ICONV_LIBRARY})
+if(ICONV_IN_GLIBC AND NOT ICONV_LIBRARY)
+    set(ICONV_LIBRARY " ")
 endif()
 
 # handle the QUIETLY and REQUIRED arguments and set ICONV_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-if(ICONV_LIBRARY)
-    find_package_handle_standard_args(ICONV
-        REQUIRED_VARS ICONV_LIBRARY ICONV_INCLUDE_DIR
-        VERSION_VAR ICONV_VERSION_STRING)
-elseif(ICONV_IN_GLIBC)
-    find_package_handle_standard_args(ICONV
-        REQUIRED_VARS ICONV_INCLUDE_DIR
-        VERSION_VAR ICONV_VERSION_STRING)
-endif()
+find_package_handle_standard_args(ICONV
+    REQUIRED_VARS ICONV_LIBRARY ICONV_INCLUDE_DIR
+    VERSION_VAR ICONV_VERSION_STRING)
 
 if(NOT ICONV_FOUND)
     return()
