@@ -20,12 +20,12 @@ if(HAVE_SDL)
     target_link_libraries(view_qrcode qrencode)
 endif(HAVE_SDL)
 
-if(HAVE_SYS_TIME_H)
+if(TARGET Threads::Threads)
     add_executable(prof_qrencode prof_qrencode.c ${TEST_COMMON_FILES})
-    target_link_libraries(prof_qrencode qrencode)
+    target_link_libraries(prof_qrencode qrencode Threads::Threads)
 
     add_executable(pthread_qrencode pthread_qrencode.c ${TEST_COMMON_FILES})
-    target_link_libraries(pthread_qrencode qrencode)
+    target_link_libraries(pthread_qrencode qrencode Threads::Threads)
 endif()
 
 MAKE_TEST(test_bitstream)
@@ -42,11 +42,23 @@ if(TARGET ICONV::ICONV)
     MAKE_TEST(test_qrinput decoder)
     MAKE_TEST(test_qrspec decoder)
     MAKE_TEST(test_mqrspec decoder)
-    MAKE_TEST(test_rs decoder)
     MAKE_TEST(test_qrencode decoder)
     MAKE_TEST(test_split_urls decoder)
     MAKE_TEST(test_monkey decoder)
-    MAKE_TEST(test_mask decoder)
-    MAKE_TEST(test_mmask decoder)
+
+    include(CheckCSourceCompiles)
+    check_c_source_compiles(
+        "int main(){
+            const int w = 1;
+            char buf[w];
+            return 0;
+        }"
+        FIXED_SIZE_BUFFER_INITIALIZATION)
+    
+    if(FIXED_SIZE_BUFFER_INITIALIZATION)
+        MAKE_TEST(test_mask decoder)
+        MAKE_TEST(test_mmask decoder)
+        MAKE_TEST(test_rs decoder)
+    endif()
 endif()
 
