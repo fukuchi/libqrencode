@@ -106,14 +106,12 @@ install(FILES qrencode.h DESTINATION include)
 install(TARGETS qrencode DESTINATION lib)
 
 ## Build utility tools
-if(WITH_TOOLS AND PNG_FOUND)
+if(WITH_TOOLS AND TARGET PNG::PNG)
     add_definitions(-DHAVE_PNG=1)
-    add_definitions(${PNG_DEFINITIONS})
     add_executable(qrenc qrenc.c)
     set_target_properties(qrenc PROPERTIES OUTPUT_NAME qrencode)
-    
-    target_include_directories(qrenc SYSTEM PUBLIC ${PNG_INCLUDE_DIRS})
-    target_link_libraries(qrenc qrencode ${PNG_LIBRARIES})
+
+    target_link_libraries(qrenc qrencode PNG::PNG)
 
     if(MSVC)
         target_link_libraries(qrenc ${GETOPT_LIBRARIES})
@@ -150,7 +148,7 @@ message(STATUS " Dependencies:"                                               )
 message(STATUS " .. Thread library of the system  = ${CMAKE_THREAD_LIBS_INIT}")
 message(STATUS " .. Iconv ....................... = ${ICONV_FOUND}"           )
 message(STATUS " .... Iconv includes ............ = ${ICONV_INCLUDE_DIR}"     )
-message(STATUS " .... Iconv library ............. = ${ICONV_LIBRARIES}"       )
+message(STATUS " .... Iconv library ............. = ${ICONV_TEST}"            )
 message(STATUS " .. ZLIB ........................ = ${ZLIB_FOUND}"            )
 message(STATUS " .. PNG ......................... = ${PNG_FOUND}"             )
 message(STATUS " .... PNG includes .............. = ${PNG_INCLUDE_DIR}"       )
