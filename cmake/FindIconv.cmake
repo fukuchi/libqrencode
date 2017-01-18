@@ -44,9 +44,21 @@ endif()
 unset(ICONV_NAMES)
 unset(ICONV_NAMES_DEBUG)
 
-if(ICONV_INCLUDE_DIR AND EXISTS "${ICONV_INCLUDE_DIR}/iconv.h")
+#iconv version
+find_program(ICONV_EXECUTABLE iconv)
+if(ICONV_EXECUTABLE)
+    execute_process(COMMAND ${ICONV_EXECUTABLE} --version
+                    OUTPUT_VARIABLE iconv_version
+                    ERROR_QUIET
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    message(STATUS "${iconv_version}")
+    if (iconv_version MATCHES "^iconv.*([1-9][0-9]*[.][0-9]+[.0-9]*[)]?)[\n\r]|$")
+        set(ICONV_VERSION_STRING "${CMAKE_MATCH_1}")
+    endif()
+    unset(iconv_version)
+elseif(ICONV_INCLUDE_DIR AND EXISTS "${ICONV_INCLUDE_DIR}/iconv.h")
     file(STRINGS "${ICONV_INCLUDE_DIR}/iconv.h" ICONV_H REGEX "^#define _LIBICONV_VERSION 0x([0-9]+)")
-    string(REGEX MATCH "q#define _LIBICONV_VERSION 0x([0-9][0-9])([0-9][0-9])?([0-9][0-9])?.*" temp_match "${ICONV_H}")
+    string(REGEX MATCH "#define _LIBICONV_VERSION 0x([0-9][0-9])([0-9][0-9])?([0-9][0-9])?.*" temp_match "${ICONV_H}")
     unset(temp_match)
     if(CMAKE_MATCH_0)
         set(ICONV_VERSION_MAJOR "${CMAKE_MATCH_1}")
@@ -77,7 +89,7 @@ find_package_handle_standard_args(ICONV
     REQUIRED_VARS ICONV_FOUND_ANY ICONV_INCLUDE_DIR
     VERSION_VAR ICONV_VERSION_STRING)
 
-mark_as_advanced(ICONV_LIBRARY ICONV_INCLUDE_DIR)
+mark_as_advanced(ICONV_LIBRARY ICONV_INCLUDE_DIR ICONV_EXECUTABLE)
 
 if(NOT ICONV_FOUND)
     return()
