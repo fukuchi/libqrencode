@@ -51,7 +51,6 @@ if(ICONV_EXECUTABLE)
                     OUTPUT_VARIABLE iconv_version
                     ERROR_QUIET
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
-    message(STATUS "${iconv_version}")
     if (iconv_version MATCHES "^iconv.*([1-9][0-9]*[.][0-9]+[.0-9]*[)]?)[\n\r]|$")
         set(ICONV_VERSION_STRING "${CMAKE_MATCH_1}")
     endif()
