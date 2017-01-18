@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
+#cmake_minimum_required(VERSION 3.5.0) for better FindPNG module
 
 project(QRencode VERSION 3.9.0 LANGUAGES C)
 
@@ -18,8 +19,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 find_package(Threads)
 find_package(PNG)
 find_package(Iconv)
-
-## Check for system include files
+#for cmake under 3.5 versoin
+if(NOT TARGET PNG::PNG)
+    find_package(PNG-3.5)
+endif()
+# Check for system include files
 include(CheckIncludeFile)
 include(CheckFunctionExists)
 
