@@ -14,7 +14,7 @@ endif
 noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
 				  test_qrspec test_rs test_qrencode prof_qrencode \
 				  test_mqrspec test_split test_monkey test_mask test_mmask \
-				  test_split_urls \
+				  test_split_urls test_invalid_terminator \
 				  $(pngPROGRAMS) $(sdlPROGRAMS)
 noinst_LIBRARIES = libdecoder.a
 DECODER_LIBS = libdecoder.a $(LIBICONV)
@@ -53,6 +53,9 @@ test_split_LDADD = ../libqrencode.la
 
 test_split_urls_SOURCES = test_split_urls.c common.c
 test_split_urls_LDADD = $(DECODER_LIBS) ../libqrencode.la
+
+test_invalid_terminator_SOURCES = test_invalid_terminator.c common.c
+test_invalid_terminator_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_monkey_SOURCES = test_monkey.c common.c
 test_monkey_LDADD = $(DECODER_LIBS) ../libqrencode.la

@@ -194,6 +194,17 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, i
 	*bits += sizeInBit;
 
 	return chunk;
+
+}
+static DataChunk *decodeTerminator(int *bits_length, unsigned char **bits, int version, int mqr)
+{
+	DataChunk *chunk;
+
+	chunk = DataChunk_new(QR_MODE_NUL);
+	chunk->size = 0;
+	chunk->data = NULL;
+
+	return chunk;
 }
 
 static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int version, int mqr)
@@ -252,9 +263,10 @@ static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int versio
 	val = bitToInt(*bits, 4);
 	*bits_length -= 4;
 	*bits += 4;
+	printf("mode: %d\n", val);
 	switch(val) {
 		case 0:
-			return NULL;
+			return decodeTerminator(bits_length, bits, version, 0);
 		case 1:
 			return decodeNum(bits_length, bits, version, 0);
 		case 2:
