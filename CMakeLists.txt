@@ -7,6 +7,7 @@ option(WITH_TESTS "Build tests"  NO )
 option(GPROF "Generate extra code to write profile information" OFF)
 option(COVERAGE "Generate extra code to write coverage information" OFF)
 option(ASAN "Use AddressSanitizer" OFF)
+option(BUILD_SHARED_LIBS "Enable build of shared libraries" NO)
 
 if(BUILD_TESTING)
     set(WITH_TESTS ON)
@@ -95,7 +96,14 @@ set(QRENCODE_HDRS qrencode_inner.h
                   mqrspec.h
                   mmask.h)
 
-add_library(qrencode ${QRENCODE_SRCS} ${QRENCODE_HDRS})
+if(BUILD_SHARED_LIBS)
+	if(MSVC)
+		set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+	endif()
+	add_library(qrencode SHARED ${QRENCODE_SRCS} ${QRENCODE_HDRS})
+else()
+	add_library(qrencode ${QRENCODE_SRCS} ${QRENCODE_HDRS})
+endif()
 
 configure_file(qrencode.1.in qrencode.1 @ONLY)
 configure_file(libqrencode.pc.in libqrencode.pc @ONLY)
