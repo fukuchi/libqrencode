@@ -29,8 +29,6 @@ qrencode.spec
 libqrencode.pc
 tests/create_frame_pattern
 tests/create_mqr_frame_pattern
-tests/frame
-tests/mqrframe
 tests/pthread_qrencode
 tests/prof_qrencode
 tests/test_bitstream
