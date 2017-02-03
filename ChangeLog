@@ -9,6 +9,7 @@
 	  - Empty frame data "tests/frame" has been included in the source tree.
 	* .travis.yml
 	  - Stopped creating empty frame data.
+	  - Bug fix.
 
 2016.11.20 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* tests/test_qrinput.c, tests/test_qrspec.c:

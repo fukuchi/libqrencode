@@ -23,4 +23,5 @@ script:
 - ./test_configure.sh
 - ./test_all.sh
 - cd $TRAVIS_BUILD_DIR/build/tests
+- cp $TRAVIS_BUILD_DIR/tests/frame ./
 - make test
