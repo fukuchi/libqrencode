@@ -1,3 +1,11 @@
+2017.02.03 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* CMakeLists.txt, cmake/FIND*.cmake, tests/CMakeLists.txt:
+	  - Merged #91. (Thanks to @aleksey-nikolaev)
+	  - CMake support has been improved greatly.
+	* README, README.md:
+	  - ACKNOWLEDGMENTS has been updated.
+	  - Some text cleanups.
+
 2016.11.20 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* tests/test_qrinput.c, tests/test_qrspec.c:
 	  - Some warnings suppresed.

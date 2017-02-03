@@ -157,12 +157,14 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 * Robert Petersen (@ripetersen)
                         - added ability to read input data from a file
 * @Oblomov              - improved SVG support patch
-* @mgorny               - reverse mappings of UTF8 and ANSIUTF8.
-* @EckoEdc              - MinGW support patch.
+* @mgorny               - reverse mappings of UTF8 and ANSIUTF8
+* @EckoEdc              - MinGW support patch
 * Sebastian Buchwald (@UniQP)
-                        - Various code cleanups.
+                        - Various code cleanups
 * André Klitzing (@misery)
-                        - CMake support.
+                        - CMake support
+* Alexey Nikolaev (@aleksey-nikolaev)
+                        - improved CMake support
 * Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
   Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
