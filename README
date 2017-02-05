@@ -64,6 +64,9 @@ If the configure script does not work well, try CMake contributed by André.
 cmake .
 make
 
+When you want to run the tests, give "--with-tests" option to configure,
+or "-DWITH_TESTS=YES" to cmake.
+
 
 USAGE
 =====

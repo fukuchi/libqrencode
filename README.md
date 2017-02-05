@@ -68,6 +68,9 @@ cmake .
 make
 ```
 
+When you want to run the tests, give "--with-tests" option to `configure`,
+or "-DWITH\_TESTS=YES" to `cmake`.
+
 
 USAGE
 =====

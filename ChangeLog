@@ -1,4 +1,8 @@
 2017.02.03 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* README, README.md:
+	  - Added some notes to compile test programs. (closes #93)
+
+2017.02.03 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* CMakeLists.txt, cmake/FIND*.cmake, tests/CMakeLists.txt:
 	  - Merged #91. (Thanks to @aleksey-nikolaev)
 	  - CMake support has been improved greatly.
