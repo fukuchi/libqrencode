@@ -186,7 +186,7 @@ and the future releases will include gnulib.
 
 Version 3.0.2 (2008.5.18)
 -------------------------
-* Some compile-time warnings/erros with g++ have been fixed.
+* Some compile-time warnings/errors with g++ have been fixed.
   (Thanks to wangsai)
 * The bit order of "Version information" has been corrected.
   Symbols greater than version 6 were affected. (Thanks to Paul Janssesn)

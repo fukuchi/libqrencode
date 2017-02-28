@@ -224,7 +224,7 @@
 2014.08.05 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* configure.ac, Makefile.am, tests/Makefile.am:
 	  - Added some conditional flags for configuration/building process.
-	  - HAVE_PNG and HAVE_SDL can be refered from both Makefile and program
+	  - HAVE_PNG and HAVE_SDL can be referred from both Makefile and program
 	    code.
 	* tests/view_qrcode.c:
 	  - Use SDL_WaitEvent() instead of SDL_PollEvent().
@@ -619,7 +619,7 @@
 
 2012.01.19 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	[3.2.1]
-	* cofigure.ac, qrencode.[hc], qrenc.c, tests/test_qrencode.c:
+	* configure.ac, qrencode.[hc], qrenc.c, tests/test_qrencode.c:
 	  - QRcode_APIVersion() and QRcode_APIVersionString() have been added.
 	  - New macro values {MAJOR,MINOR,MICRO}_VERSION have been introduced.
 	  - New tests have been added.
@@ -787,7 +787,7 @@
 	  - MODE_INDICATOR_SIZE has been added.
 	  - QRinput_isSplittableMode() has been added.
 	* qrspec.c:
-	  - QRspec_maximumWords() now returns 0 if the entry cannot be splitted.
+	  - QRspec_maximumWords() now returns 0 if the entry cannot be split.
 	  - Now includes "qrinput.h" for QRinput_isSplittableMode().
 
 2010.01.25 Kentaro FUKUCHI <fukuchi@megaui.net>
@@ -1103,7 +1103,7 @@
 	* tests/test_bitstream.c:
 	  - test_null() has been added.
 	* qrinput.c:
-	  - A possible memory leak has been eliminated. It happend when a wrong
+	  - A possible memory leak has been eliminated. It happened when a wrong
 	    version number was given.
 	* tests/test_qriput.c:
 	  - Memory leaks have been eliminated.
@@ -1278,7 +1278,7 @@
 	  - Documentation improvements.
 
 2008.04.13 Kentaro FUKUCHI <fukuchi@megaui.net>
-	* qrencode.c, qrencode_innter.h, tests/view_qrcode.c:
+	* qrencode.c, qrencode_inner.h, tests/view_qrcode.c:
 	  - Changed API of QRcode_encodeMask().
 	* qrencode.[ch], qrinput.[ch], split.[ch]:
 	  - Some functions now set errno appropriately.
