@@ -3,6 +3,8 @@
 	  - Typos fixed. (merged #95) (Thanks to @jwilk)
 	* README, README.md:
 	  - ACKNOWLEDGMENTS has been updated.
+	* README, README.md, qrenc.c, qrencode.1.in, qrencode.spec.in:
+	  - The URI to the primary site has been updated. (http->https)
 
 2017.02.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* README, README.md:

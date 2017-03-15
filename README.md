@@ -111,7 +111,7 @@ CONTACT
 =======
 Visit the homepage at:
 
-http://fukuchi.org/works/qrencode/
+https://fukuchi.org/works/qrencode/
 
 for new releases. The git repository is available at:
 

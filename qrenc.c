@@ -568,7 +568,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	*/
 
 	/* Vanity remark */
-	fprintf(fp, "<!-- Created with qrencode %s (http://fukuchi.org/works/qrencode/index.html) -->\n", QRcode_APIVersionString());
+	fprintf(fp, "<!-- Created with qrencode %s (https://fukuchi.org/works/qrencode/index.html) -->\n", QRcode_APIVersionString());
 
 	/* SVG code start */
 	fprintf(fp,

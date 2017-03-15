@@ -8,8 +8,8 @@ Summary:        Libqrencode is a library for encoding data in a QR Code symbol, 
 
 Group:          System Environment/Libraries
 License:        LGPLv2+
-URL:            http://fukuchi.org/works/qrencode/
-Source0:        http://fukuchi.org/works/qrencode/%{name}-%{version}.tar.gz
+URL:            https://fukuchi.org/works/qrencode/
+Source0:        https://fukuchi.org/works/qrencode/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
