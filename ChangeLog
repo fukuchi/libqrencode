@@ -1,3 +1,9 @@
+2017.03.15 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* ChangeLog, NEWS, TODO:
+	  - Typos fixed. (merged #95) (Thanks to @jwilk)
+	* README, README.md:
+	  - ACKNOWLEDGMENTS has been updated.
+
 2017.02.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* README, README.md:
 	  - Added some notes to compile test programs. (closes #93)
