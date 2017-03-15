@@ -5,6 +5,8 @@
 	  - ACKNOWLEDGMENTS has been updated.
 	* README, README.md, qrenc.c, qrencode.1.in, qrencode.spec.in:
 	  - The URI to the primary site has been updated. (http->https)
+	* CMakeLists.txt:
+	  - Add version of shared library. (merged #96) (Thanks to @vanillahsu)
 
 2017.02.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* README, README.md:
