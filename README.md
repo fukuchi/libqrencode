@@ -44,6 +44,7 @@ Compile & install
 Just try
 
 ```
+./autogen.sh
 ./configure
 make
 sudo make install
