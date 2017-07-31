@@ -199,10 +199,29 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, i
 static DataChunk *decodeTerminator(int *bits_length, unsigned char **bits, int version, int mqr)
 {
 	DataChunk *chunk;
+	int i, v;
 
 	chunk = DataChunk_new(QR_MODE_NUL);
 	chunk->size = 0;
 	chunk->data = NULL;
+
+	while(*bits_length > 0 && (**bits & 1) == 0) {
+		*bits += 1;
+		*bits_length -= 1;
+	}
+
+	i = 0;
+	while(*bits_length >= 8) {
+		v = bitToInt(*bits, 8);
+		if(v != ((i&1)?0x11:0xec)) {
+			printf("Incorrect padding bits: 0x%02x\n", v);
+			break;
+		} else {
+			*bits += 8;
+			*bits_length -= 8;
+		}
+		i++;
+	}
 
 	return chunk;
 }
@@ -263,7 +282,6 @@ static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int versio
 	val = bitToInt(*bits, 4);
 	*bits_length -= 4;
 	*bits += 4;
-	printf("mode: %d\n", val);
 	switch(val) {
 		case 0:
 			return decodeTerminator(bits_length, bits, version, 0);
@@ -280,6 +298,7 @@ static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int versio
 	}
 
 	printf("Invalid mode in a chunk: %d\n", val);
+	printBinary(*bits - 4, *bits_length + 4);
 
 	return NULL;
 }
@@ -313,7 +332,7 @@ static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int ver
 	}
 	val = bitToInt(*bits, modebits);
 	if(version == 4 && val > 3) {
-		printf("Invalid mode number %d.\n", val);
+		printf("Invalid mode number (MQR): %d\n", val);
 	}
 	*bits_length -= modebits;
 	*bits += modebits;
@@ -330,7 +349,7 @@ static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int ver
 			break;
 	}
 
-	printf("Invalid mode in a chunk: %d\n", val);
+	printf("Invalid mode in a chunk (MQR): %d\n", val);
 
 	return NULL;
 }

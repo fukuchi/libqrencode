@@ -11,15 +11,12 @@ static int size = 3;
 static unsigned char fg_color[4] = {0, 0, 0, 255};
 static unsigned char bg_color[4] = {255, 255, 255, 255};
 
-static int writeXPM(const QRcode *qrcode)
+static int writeXPM(const QRcode *qrcode, FILE *fp)
 {
-	FILE *fp;
 	int x, xx, y, yy, realwidth, realmargin;
 	char *row;
 	char fg[7], bg[7];
 	unsigned char *p;
-
-	fp = stdout;
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	realmargin = margin * size;
@@ -86,12 +83,11 @@ static int writeXPM(const QRcode *qrcode)
 	}
 
 	free(row);
-//	fclose(fp);
 
 	return 0;
 }
 
-void test_invalid_terminator()
+void tinkering_invalid_terminator()
 {
 	QRinput *input;
 	QRcode *qrcode;
@@ -101,12 +97,15 @@ void test_invalid_terminator()
 
 	input = QRinput_new2(5, QR_ECLEVEL_H);
 	ret = QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
+	if(ret) fprintf(stderr, "Failed to encode 1st string.");
 	ret = QRinput_append(input, QR_MODE_NUL, 0, NULL);
+	if(ret) fprintf(stderr, "Failed to encode the terminator.");
 	ret = QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
+	if(ret) fprintf(stderr, "Failed to encode 2nd string.");
 
 	qrcode = QRcode_encodeInput(input);
 	if(qrcode != NULL) {
-		writeXPM(qrcode);
+		writeXPM(qrcode, stdout);
 	}
 	qrdata = QRcode_decode(qrcode);
 	if(qrdata == NULL) {
@@ -122,6 +121,6 @@ void test_invalid_terminator()
 
 int main(int argc, char **argv)
 {
-	test_invalid_terminator();
+	tinkering_invalid_terminator();
 	return 0;
 }
