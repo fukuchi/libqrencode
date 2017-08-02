@@ -13,6 +13,55 @@
 #include "common.h"
 #include "decoder.h"
 
+typedef struct {
+	int length;
+	int ptr;
+	unsigned char *data;
+} Scanner;
+
+static Scanner *Scanner_new(int length, unsigned char *data)
+{
+	Scanner *scanner;
+
+	scanner = (Scanner *)malloc(sizeof(Scanner));
+	if(scanner == NULL) return NULL;
+
+	scanner->data = (unsigned char *)malloc(length);
+	if(scanner->data == NULL) {
+		free(scanner);
+		return NULL;
+	}
+
+	scanner->length = length;
+	scanner->ptr = 0;
+	memcpy(scanner->data, data, length);
+
+	return scanner;
+}
+
+static void Scanner_free(Scanner *scanner)
+{
+	if(scanner != NULL) {
+		free(scanner->data);
+		free(scanner);
+	}
+}
+
+static unsigned char *Scanner_head(Scanner *scanner)
+{
+	return scanner->data + scanner->ptr;
+}
+
+static void Scanner_forward(Scanner *scanner, int bits)
+{
+	scanner->ptr += bits;
+}
+
+static int Scanner_remaining(Scanner *scanner)
+{
+	return scanner->length - scanner->ptr;
+}
+
 static unsigned int bitToInt(unsigned char *bits, int length)
 {
 	int i;
@@ -26,11 +75,12 @@ static unsigned int bitToInt(unsigned char *bits, int length)
 	return val;
 }
 
-static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mode, int version, int mqr)
+static int decodeLength(Scanner *scanner, QRencodeMode mode, int version, int mqr)
 {
 	int i;
 	int length = 0;
 	int lbits;
+	unsigned char *head;
 
 	if(mqr) {
 		lbits = MQRspec_lengthIndicator(mode, version);
@@ -38,24 +88,24 @@ static int decodeLength(int *bits_length, unsigned char **bits, QRencodeMode mod
 		lbits = QRspec_lengthIndicator(mode, version);
 	}
 
-	if(*bits_length < lbits) {
-		printf("Bit length is too short: %d\n", *bits_length);
+	if(Scanner_remaining(scanner) < lbits) {
+		printf("Bit length is too short: %d\n", Scanner_remaining(scanner));
 		return 0;
 	}
 
 	length = 0;
+	head = Scanner_head(scanner);
 	for(i=0; i<lbits; i++) {
 		length = length << 1;
-		length += (*bits)[i];
+		length += head[i];
 	}
 
-	*bits_length -= lbits;
-	*bits += lbits;
+	Scanner_forward(scanner, lbits);
 
 	return length;
 }
 
-static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version, int mqr)
+static DataChunk *decodeNum(Scanner *scanner, int version, int mqr)
 {
 	int i;
 	int size, sizeInBit, words, remain;
@@ -64,7 +114,7 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version,
 	unsigned int val;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_NUM, version, mqr);
+	size = decodeLength(scanner, QR_MODE_NUM, version, mqr);
 	if(size < 0) return NULL;
 
 	words = size / 3;
@@ -75,13 +125,13 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version,
 	} else if(remain == 1) {
 		sizeInBit += 4;
 	}
-	if(*bits_length < sizeInBit) {
-		printf("Bit length is too short: %d, expected %d.\n", *bits_length, sizeInBit);
+	if(Scanner_remaining(scanner) < sizeInBit) {
+		printf("Bit length is too short: %d, expected %d.\n", Scanner_remaining(scanner), sizeInBit);
 		return NULL;
 	}
 
 	buf = (char *)malloc(size + 1);
-	p = *bits;
+	p = Scanner_head(scanner);
 	q = buf;
 	for(i=0; i<words; i++) {
 		val = bitToInt(p, 10);
@@ -101,8 +151,7 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version,
 	chunk = DataChunk_new(QR_MODE_NUM);
 	chunk->size = size;
 	chunk->data = (unsigned char *)buf;
-	*bits_length -= sizeInBit;
-	*bits += sizeInBit;
+	Scanner_forward(scanner, sizeInBit);
 
 	return chunk;
 }
@@ -115,7 +164,7 @@ static const char decodeAnTable[45] = {
 	'+', '-', '.', '/', ':'
 };
 
-static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version, int mqr)
+static DataChunk *decodeAn(Scanner *scanner, int version, int mqr)
 {
 	int i;
 	int size, sizeInBit, words, remain;
@@ -125,19 +174,19 @@ static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version, 
 	int ch, cl;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_AN, version, mqr);
+	size = decodeLength(scanner, QR_MODE_AN, version, mqr);
 	if(size < 0) return NULL;
 
 	words = size / 2;
 	remain = size - words * 2;
 	sizeInBit = words * 11 + remain * 6;
-	if(*bits_length < sizeInBit) {
-		printf("Bit length is too short: %d, expected %d.\n", *bits_length, sizeInBit);
+	if(Scanner_remaining(scanner) < sizeInBit) {
+		printf("Bit length is too short: %d, expected %d.\n", Scanner_remaining(scanner), sizeInBit);
 		return NULL;
 	}
 
 	buf = (char *)malloc(size + 1);
-	p = *bits;
+	p = Scanner_head(scanner);
 	q = buf;
 	for(i=0; i<words; i++) {
 		val = bitToInt(p, 11);
@@ -155,13 +204,12 @@ static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version, 
 	chunk = DataChunk_new(QR_MODE_AN);
 	chunk->size = size;
 	chunk->data = (unsigned char *)buf;
-	*bits_length -= sizeInBit;
-	*bits += sizeInBit;
+	Scanner_forward(scanner, sizeInBit);
 
 	return chunk;
 }
 
-static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, int mqr)
+static DataChunk *decode8(Scanner *scanner, int version, int mqr)
 {
 	int i;
 	int size, sizeInBit;
@@ -169,17 +217,17 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, i
 	unsigned char *buf, *q;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_8, version, mqr);
+	size = decodeLength(scanner, QR_MODE_8, version, mqr);
 	if(size < 0) return NULL;
 
 	sizeInBit = size * 8;
-	if(*bits_length < sizeInBit) {
-		printf("Bit length is too short: %d, expected %d.\n", *bits_length, sizeInBit);
+	if(Scanner_remaining(scanner) < sizeInBit) {
+		printf("Bit length is too short: %d, expected %d.\n", Scanner_remaining(scanner), sizeInBit);
 		return NULL;
 	}
 
 	buf = (unsigned char *)malloc(size);
-	p = *bits;
+	p = Scanner_head(scanner);
 	q = buf;
 	for(i=0; i<size; i++) {
 		*q = (unsigned char)bitToInt(p, 8);
@@ -190,43 +238,13 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, i
 	chunk = DataChunk_new(QR_MODE_8);
 	chunk->size = size;
 	chunk->data = buf;
-	*bits_length -= sizeInBit;
-	*bits += sizeInBit;
+	Scanner_forward(scanner, sizeInBit);
 
 	return chunk;
 
 }
-static DataChunk *decodeTerminator(int *bits_length, unsigned char **bits, int version, int mqr)
-{
-	DataChunk *chunk;
-	int i, v;
 
-	chunk = DataChunk_new(QR_MODE_NUL);
-	chunk->size = 0;
-	chunk->data = NULL;
-
-	while(*bits_length > 0 && (**bits & 1) == 0) {
-		*bits += 1;
-		*bits_length -= 1;
-	}
-
-	i = 0;
-	while(*bits_length >= 8) {
-		v = bitToInt(*bits, 8);
-		if(v != ((i&1)?0x11:0xec)) {
-			printf("Incorrect padding bits: 0x%02x\n", v);
-			break;
-		} else {
-			*bits += 8;
-			*bits_length -= 8;
-		}
-		i++;
-	}
-
-	return chunk;
-}
-
-static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int version, int mqr)
+static DataChunk *decodeKanji(Scanner *scanner, int version, int mqr)
 {
 	int i;
 	int size, sizeInBit;
@@ -236,17 +254,17 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 	int ch, cl;
 	DataChunk *chunk;
 
-	size = decodeLength(bits_length, bits, QR_MODE_KANJI, version, mqr);
+	size = decodeLength(scanner, QR_MODE_KANJI, version, mqr);
 	if(size < 0) return NULL;
 
 	sizeInBit = size * 13;
-	if(*bits_length < sizeInBit) {
-		printf("Bit length is too short: %d, expected %d.\n", *bits_length, sizeInBit);
+	if(Scanner_remaining(scanner) < sizeInBit) {
+		printf("Bit length is too short: %d, expected %d.\n", Scanner_remaining(scanner), sizeInBit);
 		return NULL;
 	}
 
 	buf = (char *)malloc(size * 2 + 1);
-	p = *bits;
+	p = Scanner_head(scanner);
 	q = buf;
 	for(i=0; i<size; i++) {
 		val = bitToInt(p, 13);
@@ -266,62 +284,102 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 	chunk = DataChunk_new(QR_MODE_KANJI);
 	chunk->size = size * 2;
 	chunk->data = (unsigned char *)buf;
-	*bits_length -= sizeInBit;
-	*bits += sizeInBit;
+	Scanner_forward(scanner, sizeInBit);
 
 	return chunk;
 }
 
-static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int version)
+static DataChunk *decodeTerminator(Scanner *scanner, int version, int mqr)
+{
+	DataChunk *chunk;
+	int i, v, pad;
+	unsigned char *p;
+
+	chunk = DataChunk_new(QR_MODE_NUL);
+	chunk->size = 0;
+	chunk->data = NULL;
+
+	pad = 8 - scanner->ptr % 8;
+	if(pad == 8) pad = 0;
+	p = Scanner_head(scanner);
+
+	if(bitToInt(p, pad) != 0) {
+		return chunk;
+	}
+
+	if(Scanner_remaining(scanner) < pad + 8) {
+		return chunk;
+	}
+
+	if(bitToInt(p, pad + 8) != 0xec) {
+		return chunk;
+	}
+
+	Scanner_forward(scanner, pad);
+
+	i = 0;
+	while(Scanner_remaining(scanner) >= 8) {
+		v = bitToInt(Scanner_head(scanner), 8);
+		if(v != ((i&1)?0x11:0xec)) {
+			printf("Remainder codewords wrong: %d.\n", Scanner_remaining(scanner));
+			printBinary(Scanner_head(scanner), Scanner_remaining(scanner));
+			break;
+		}
+		Scanner_forward(scanner, 8);
+		i++;
+	}
+
+	return chunk;
+}
+
+static DataChunk *decodeChunk(Scanner *scanner, int version)
 {
 	int val;
 
-	if(*bits_length < 4) {
+	if(Scanner_remaining(scanner) < 4) {
 		return NULL;
 	}
-	val = bitToInt(*bits, 4);
-	*bits_length -= 4;
-	*bits += 4;
+	val = bitToInt(Scanner_head(scanner), 4);
+	Scanner_forward(scanner, 4);
 	switch(val) {
 		case 0:
-			return decodeTerminator(bits_length, bits, version, 0);
+			return decodeTerminator(scanner, version, 0);
 		case 1:
-			return decodeNum(bits_length, bits, version, 0);
+			return decodeNum(scanner, version, 0);
 		case 2:
-			return decodeAn(bits_length, bits, version, 0);
+			return decodeAn(scanner, version, 0);
 		case 4:
-			return decode8(bits_length, bits, version, 0);
+			return decode8(scanner, version, 0);
 		case 8:
-			return decodeKanji(bits_length, bits, version, 0);
+			return decodeKanji(scanner, version, 0);
 		default:
 			break;
 	}
 
 	printf("Invalid mode in a chunk: %d\n", val);
-	printBinary(*bits - 4, *bits_length + 4);
+	printBinary(Scanner_head(scanner) - 4, Scanner_remaining(scanner) + 4);
 
 	return NULL;
 }
 
-static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int version)
+static DataChunk *decodeChunkMQR(Scanner *scanner, int version)
 {
 	int modebits, termbits;
 	unsigned int val;
 
 	modebits = version - 1;
 	termbits = version * 2 + 1;
-	if(*bits_length >= termbits) {
-		val = bitToInt(*bits, termbits);
+	if(Scanner_remaining(scanner) >= termbits) {
+		val = bitToInt(Scanner_head(scanner), termbits);
 		if(val == 0) {
-			*bits += termbits;
-			*bits_length -= termbits;
+			Scanner_forward(scanner, termbits);
 			return NULL;
 		}
 	} else {
-		if(*bits_length < modebits) {
-			val = bitToInt(*bits, *bits_length);
+		if(Scanner_remaining(scanner) < modebits) {
+			val = bitToInt(Scanner_head(scanner), Scanner_remaining(scanner));
 		} else {
-			val = bitToInt(*bits, modebits);
+			val = bitToInt(Scanner_head(scanner), modebits);
 		}
 		if(val == 0) {
 			return NULL;
@@ -330,21 +388,20 @@ static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int ver
 			return NULL;
 		}
 	}
-	val = bitToInt(*bits, modebits);
+	val = bitToInt(Scanner_head(scanner), modebits);
 	if(version == 4 && val > 3) {
 		printf("Invalid mode number (MQR): %d\n", val);
 	}
-	*bits_length -= modebits;
-	*bits += modebits;
+	Scanner_forward(scanner, modebits);
 	switch(val) {
 		case 0:
-			return decodeNum(bits_length, bits, version, 1);
+			return decodeNum(scanner, version, 1);
 		case 1:
-			return decodeAn(bits_length, bits, version, 1);
+			return decodeAn(scanner, version, 1);
 		case 2:
-			return decode8(bits_length, bits, version, 1);
+			return decode8(scanner, version, 1);
 		case 3:
-			return decodeKanji(bits_length, bits, version, 1);
+			return decodeKanji(scanner, version, 1);
 		default:
 			break;
 	}
@@ -354,14 +411,14 @@ static DataChunk *decodeChunkMQR(int *bits_length, unsigned char **bits, int ver
 	return NULL;
 }
 
-static int appendChunk(QRdata *qrdata, int *bits_length, unsigned char **bits)
+static int appendChunk(QRdata *qrdata, Scanner *scanner)
 {
 	DataChunk *chunk;
 
 	if(qrdata->mqr) {
-		chunk = decodeChunkMQR(bits_length, bits, qrdata->version);
+		chunk = decodeChunkMQR(scanner, qrdata->version);
 	} else {
-		chunk = decodeChunk(bits_length, bits, qrdata->version);
+		chunk = decodeChunk(scanner, qrdata->version);
 	}
 	if(chunk == NULL) {
 		return 1;
@@ -412,11 +469,17 @@ void QRdata_free(QRdata *qrdata)
 
 static int QRdata_decodeBits(QRdata *qrdata, int length, unsigned char *bits)
 {
+	Scanner *scanner;
 	int ret = 0;
 
+	scanner = Scanner_new(length, bits);
+	if(scanner == NULL) return -1;
+
 	while(ret == 0) {
-		ret = appendChunk(qrdata, &length, &bits);
+		ret = appendChunk(qrdata, scanner);
 	}
+	length = Scanner_remaining(scanner);
+	Scanner_free(scanner);
 
 	return length;
 }
