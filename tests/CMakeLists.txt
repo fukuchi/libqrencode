@@ -37,6 +37,7 @@ endif()
 MAKE_TEST(test_bitstream)
 MAKE_TEST(test_estimatebit)
 MAKE_TEST(test_split)
+MAKE_TEST(tinkering)
 
 if(TARGET ICONV::ICONV)
     add_library(decoder 

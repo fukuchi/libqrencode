@@ -94,18 +94,52 @@ void tinkering_invalid_terminator()
 	QRdata *qrdata;
 	char str[] = "ABCDE";
 	int ret;
+	FILE *fp;
 
 	input = QRinput_new2(5, QR_ECLEVEL_H);
 	ret = QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
-	if(ret) fprintf(stderr, "Failed to encode 1st string.");
+	if(ret) fprintf(stderr, "Failed to encode 1st string.\n");
 	ret = QRinput_append(input, QR_MODE_NUL, 0, NULL);
-	if(ret) fprintf(stderr, "Failed to encode the terminator.");
+	if(ret) fprintf(stderr, "Failed to encode the terminator.\n");
 	ret = QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
-	if(ret) fprintf(stderr, "Failed to encode 2nd string.");
+	if(ret) fprintf(stderr, "Failed to encode 2nd string.\n");
 
 	qrcode = QRcode_encodeInput(input);
 	if(qrcode != NULL) {
-		writeXPM(qrcode, stdout);
+		fp = fopen("tinkering_TERM.xpm", "w");
+		writeXPM(qrcode, fp);
+		fclose(fp);
+	}
+	qrdata = QRcode_decode(qrcode);
+	if(qrdata == NULL) {
+		fprintf(stderr, "Something wrong.\n");
+	} else {
+		fprintf(stderr, "decoding\n");
+		QRdata_dump(qrdata);
+	}
+
+	if(qrdata != NULL) QRdata_free(qrdata);
+	if(qrcode != NULL) QRcode_free(qrcode);
+}
+
+void tinkering_NUL()
+{
+	QRinput *input;
+	QRcode *qrcode;
+	QRdata *qrdata;
+	char str[] = "ABCDE\0ABCDE";
+	int ret;
+	FILE *fp;
+
+	input = QRinput_new2(0, QR_ECLEVEL_H);
+	ret = QRinput_append(input, QR_MODE_8, 11, (unsigned char *)str);
+	if(ret) fprintf(stderr, "Failed to encode data including NUL.\n");
+
+	qrcode = QRcode_encodeInput(input);
+	if(qrcode != NULL) {
+		fp = fopen("tinkering_NUL.xpm", "w");
+		writeXPM(qrcode, fp);
+		fclose(fp);
 	}
 	qrdata = QRcode_decode(qrcode);
 	if(qrdata == NULL) {
@@ -122,5 +156,7 @@ void tinkering_invalid_terminator()
 int main(int argc, char **argv)
 {
 	tinkering_invalid_terminator();
+	tinkering_NUL();
+
 	return 0;
 }
