@@ -9,7 +9,7 @@ target_link_libraries(rscode common)
 macro(MAKE_TEST test_name)
     set(ADDITIONAL_LIBS "${ARGN}")
     add_executable(${test_name} ${test_name}.c)
-    target_link_libraries(${test_name} common ${ADDITIONAL_LIBS})
+    target_link_libraries(${test_name} ${ADDITIONAL_LIBS} common)
     add_test(${test_name} ${test_name})
 endmacro(MAKE_TEST)
 
