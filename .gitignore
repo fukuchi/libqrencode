@@ -10,6 +10,7 @@ autom4te.cache/
 m4/
 CMakeLists.txt.user
 CMakeCache.txt
+CTestTestfile.cmake
 CMakeFiles/
 cmake_install.cmake
 Makefile
@@ -27,6 +28,7 @@ qrencode
 qrencode.1
 qrencode.spec
 libqrencode.pc
+tests/CTestTestfile.cmake
 tests/create_frame_pattern
 tests/create_mqr_frame_pattern
 tests/pthread_qrencode
@@ -44,6 +46,7 @@ tests/test_rs
 tests/test_split
 tests/test_split_urls
 tests/view_qrcode
+tests/tinkering
 use/compile
 use/config.guess
 use/config.sub
