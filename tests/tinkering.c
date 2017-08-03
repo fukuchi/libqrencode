@@ -92,16 +92,17 @@ void tinkering_invalid_terminator()
 	QRinput *input;
 	QRcode *qrcode;
 	QRdata *qrdata;
-	char str[] = "ABCDE";
+	char *str = "I'm so happy.";
+	char *secret_str = "[SECRET TEXT]";
 	int ret;
 	FILE *fp;
 
 	input = QRinput_new2(5, QR_ECLEVEL_H);
-	ret = QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
+	ret = QRinput_append(input, QR_MODE_8, strlen(str), (unsigned char *)str);
 	if(ret) fprintf(stderr, "Failed to encode 1st string.\n");
 	ret = QRinput_append(input, QR_MODE_NUL, 0, NULL);
 	if(ret) fprintf(stderr, "Failed to encode the terminator.\n");
-	ret = QRinput_append(input, QR_MODE_AN, strlen(str), (unsigned char *)str);
+	ret = QRinput_append(input, QR_MODE_8, strlen(secret_str), (unsigned char *)secret_str);
 	if(ret) fprintf(stderr, "Failed to encode 2nd string.\n");
 
 	qrcode = QRcode_encodeInput(input);
@@ -127,12 +128,12 @@ void tinkering_NUL()
 	QRinput *input;
 	QRcode *qrcode;
 	QRdata *qrdata;
-	char str[] = "ABCDE\0ABCDE";
+	char str[] = "I'm so happy.\0[SECRET TEXT]";
 	int ret;
 	FILE *fp;
 
 	input = QRinput_new2(0, QR_ECLEVEL_H);
-	ret = QRinput_append(input, QR_MODE_8, 11, (unsigned char *)str);
+	ret = QRinput_append(input, QR_MODE_8, 27, (unsigned char *)str);
 	if(ret) fprintf(stderr, "Failed to encode data including NUL.\n");
 
 	qrcode = QRcode_encodeInput(input);

@@ -37,7 +37,6 @@ endif()
 MAKE_TEST(test_bitstream)
 MAKE_TEST(test_estimatebit)
 MAKE_TEST(test_split)
-MAKE_TEST(tinkering)
 
 if(TARGET ICONV::ICONV)
     add_library(decoder 
@@ -52,6 +51,7 @@ if(TARGET ICONV::ICONV)
     MAKE_TEST(test_qrencode decoder)
     MAKE_TEST(test_split_urls decoder)
     MAKE_TEST(test_monkey decoder)
+    MAKE_TEST(tinkering decoder)
 
     include(CheckCSourceCompiles)
     check_c_source_compiles(
