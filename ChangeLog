@@ -1,3 +1,10 @@
+2017.08.04 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* CMakeLists.txt:
+	  - Getopt.h is checked only by WITH_TOOLS. (merged #101) (Thanks to
+	    @KangLin)
+	* README, README.md:
+	  - ACKNOWLEDGMENTS has been updated.
+
 2017.03.15 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* ChangeLog, NEWS, TODO:
 	  - Typos fixed. (merged #95) (Thanks to @jwilk)
