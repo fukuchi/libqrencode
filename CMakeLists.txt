@@ -70,10 +70,12 @@ if(MSVC)
     add_definitions(-Dstrncasecmp=_strnicmp)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-
-    find_path(GETOPT_INCLUDE_DIR getopt.h PATH_SUFFIXES include)
-    find_library(GETOPT_LIBRARIES wingetopt PATH_SUFFIXES lib)
-    include_directories(${GETOPT_INCLUDE_DIR})
+    
+    if(WITH_TOOLS)
+	    find_path(GETOPT_INCLUDE_DIR getopt.h PATH_SUFFIXES include)
+	    find_library(GETOPT_LIBRARIES wingetopt PATH_SUFFIXES lib)
+	    include_directories(${GETOPT_INCLUDE_DIR})
+    endif(WITH_TOOLS)
 endif(MSVC)
 
 set(QRENCODE_SRCS qrencode.c
