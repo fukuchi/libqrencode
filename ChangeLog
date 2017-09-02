@@ -1,3 +1,7 @@
+2017.09.02 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* configure.ac:
+	  - Replaced AC_PROG_RANLIB with LT_INIT.
+
 2017.08.04 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* CMakeLists.txt:
 	  - Getopt.h is checked only by WITH_TOOLS. (merged #101) (Thanks to
