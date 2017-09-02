@@ -92,8 +92,8 @@ void tinkering_invalid_terminator()
 	QRinput *input;
 	QRcode *qrcode;
 	QRdata *qrdata;
-	char *str = "I'm so happy.";
-	char *secret_str = "[SECRET TEXT]";
+	char *str = "Pride and Prejudice";
+	char *secret_str = "and Zombies";
 	int ret;
 	FILE *fp;
 
@@ -128,12 +128,12 @@ void tinkering_NUL()
 	QRinput *input;
 	QRcode *qrcode;
 	QRdata *qrdata;
-	char str[] = "I'm so happy.\0[SECRET TEXT]";
+	char str[] = "Pride and Prejudice\0 and Zombies";
 	int ret;
 	FILE *fp;
 
 	input = QRinput_new2(0, QR_ECLEVEL_H);
-	ret = QRinput_append(input, QR_MODE_8, 27, (unsigned char *)str);
+	ret = QRinput_append(input, QR_MODE_8, 33, (unsigned char *)str);
 	if(ret) fprintf(stderr, "Failed to encode data including NUL.\n");
 
 	qrcode = QRcode_encodeInput(input);
