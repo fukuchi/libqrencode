@@ -1,7 +1,7 @@
 /*
  * qrencode - QR Code encoder
  *
- * Copyright (C) 2006-2014 Kentaro Fukuchi <kentaro@fukuchi.org>
+ * Copyright (C) 2006-2017 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -879,4 +879,9 @@ void QRcode_APIVersion(int *major_version, int *minor_version, int *micro_versio
 char *QRcode_APIVersionString(void)
 {
 	return VERSION;
+}
+
+void QRcode_clearCache(void)
+{
+	return;
 }
