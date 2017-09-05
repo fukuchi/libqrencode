@@ -130,8 +130,6 @@ extern unsigned int MQRspec_getFormatInfo(int mask, int version, QRecLevel level
 
 /**
  * Return a copy of initialized frame.
- * When the same version is requested twice or more, a copy of cached frame
- * is returned.
  * @param version version of the symbol
  * @return Array of unsigned char. You can free it by free().
  */

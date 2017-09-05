@@ -1,3 +1,7 @@
+2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* mqrspec.h:
+	  - Documentation update.
+
 2017.09.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac:
 	  - Replaced AC_PROG_RANLIB with LT_INIT.
