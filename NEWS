@@ -1,9 +1,10 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 4.0.0 (2016.x.x)
+Version 4.0.0 (2017.9.x)
 ------------------------
 * Memory efficiency has been improved.
+* QRcode_clearCache() has been deprecated.
 * Error correction code generating functions have been improved.
 * Command line tool "qrencode" has been improved:
 	* XPM support. (Thanks to Tobias Klauser)
@@ -16,15 +17,15 @@ Version 4.0.0 (2016.x.x)
 
 Release Note:
 While the API has not been changed since the previous major release, we
-incremented the major version number of libqrencode to 4.
+incremented the major version number of libqrencode to 4 because the
+implementation of the library has been largely changed.
 
-This release improves the performance of code generation. Its memory footprint
-is also reduced.
+This release improves the performance and memory footprints of code generation.
 
-Now you can build libqrencode with CMake optionally.
+Now you can build libqrencode with CMake.
 
-When building the test programs, please note that the required SDL version has
-changed from 1.2 to 2.0.
+If you build the test programs, please note that the required SDL version has
+been changed from 1.2 to 2.0.
 
 
 Version 3.4.4 (2014.7.24)

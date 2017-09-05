@@ -1,6 +1,13 @@
 2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.h:
 	  - Documentation update.
+	* qrencode.[ch]:
+	  - QRcode_clearCache() has been defined as a deprecated function for
+	    backward compatibility.
+	* qrenc.c:
+	  - Copyright year updated.
+	* NEWS:
+	  - Documentation update.
 
 2017.09.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac:
