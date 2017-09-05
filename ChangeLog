@@ -6,7 +6,7 @@
 	    backward compatibility.
 	* qrenc.c:
 	  - Copyright year updated.
-	* NEWS:
+	* NEWS, README, README.md:
 	  - Documentation update.
 
 2017.09.02 Kentaro Fukuchi <kentaro@fukuchi.org>

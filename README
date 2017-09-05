@@ -53,19 +53,19 @@ directories. By default, /usr/local/lib and /usr/local/include. You can change
 the destination directory by passing some options to the configure script.
 Run "./configure --help" to see the list of options.
 
-It also installs a binary "qrencode" to /usr/local/bin. If you want not to
-install it, give "--without-tools" option to the configure script.
+It also installs a command line tool "qrencode" to /usr/local/bin. If you want
+not to build it, give "--without-tools" option to the configure script.
 
 When you downloaded a development tree from github, it is required to run
 "autogen.sh" at first to generate configure script.
 
-If the configure script does not work well, try CMake contributed by André.
+If the configure script does not work well, try to use CMake.
 
 cmake .
 make
 
-When you want to run the tests, give "--with-tests" option to configure,
-or "-DWITH_TESTS=YES" to cmake.
+When you want to build the test programs, give "--with-tests" option to
+configure, or "-DWITH_TESTS=YES" to cmake.
 
 
 USAGE
@@ -88,7 +88,7 @@ application.
 
 LICENSING INFORMATION
 =====================
-Copyright (C) 2006-2012 Kentaro Fukuchi
+Copyright (C) 2006-2017 Kentaro Fukuchi
 
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the Free
