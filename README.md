@@ -133,8 +133,9 @@ ACKNOWLEDGMENTS
 QR Code is registered trademarks of DENSO WAVE INCORPORATED in JAPAN and other
 countries.
 
-Reed-Solomon encoder is rewritten by Kentaro Fukuchi, referring to the FEC
-library developed by Phil Karn (KA9Q).
+Reed-Solomon encoder included in this library is originally taken from FEC
+library developed by Phil Karn (KA9Q) and distributed under the terms of the
+GNU LGPL, then rewritten by Kentaro Fukuchi.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
 * NANKI Haruo           - improved lower-case characters encoding
