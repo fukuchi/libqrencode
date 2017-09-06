@@ -8,6 +8,8 @@
 	  - Copyright year updated.
 	* NEWS, README, README.md:
 	  - Documentation update.
+	* use/config.rpath:
+	  - Updated to the newer version bundled with gettext-0.19.8.1.
 
 2017.09.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* configure.ac:
