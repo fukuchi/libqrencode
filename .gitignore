@@ -10,6 +10,7 @@ autom4te.cache/
 m4/
 CMakeLists.txt.user
 CMakeCache.txt
+CTestTestfile.cmake
 CMakeFiles/
 cmake_install.cmake
 Makefile
