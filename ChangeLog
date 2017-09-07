@@ -10,8 +10,6 @@
 	  - Moved some EXTRA_DIST files from Makefile.am to tests/Makefile.am.
 	* makeREADME.sh:
 	  - Newly added.
-	* .gitignore:
-	  - Added 'CTestTestfile.cmake'.
 	* configure.ac, CMakeLists.txt, README, README.md:
 	  - Bumped version to 4.0.0, preparing for major update.
 	* .travis.yml:
@@ -19,6 +17,9 @@
 	* Makefile.am, README:
 	  - Added a new rule to generate README from README.md.
 	  - README is no longer needed in the source tree.
+	* .gitignore:
+	  - Added 'CTestTestfile.cmake'.
+	  - Added 'README'
 	* README.md:
 	  - Added Katsumi Saito, the contributor of SPEC file, has been added to
 	    the section of ACKNOWLEDGMENTS. We apologize for this lack of
