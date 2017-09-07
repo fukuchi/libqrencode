@@ -7,6 +7,8 @@ CONFIG_H="$BASEDIR/config.h"
 LIBQRENCODE_PC_IN="$BASEDIR/libqrencode.pc.in"
 LIBQRENCODE_PC="$BASEDIR/libqrencode.pc"
 
+echo "Testing configure scripts..."
+
 (cd $BASEDIR; ./autogen.sh)
 
 # test config.h.in
@@ -50,6 +52,10 @@ if test ! $? -eq 1; then
 	exit 1
 fi
 
+echo "All tests of configure script passed. Now reconfiguring..."
+
 (cd $BASEDIR; ./configure --with-tests > /dev/null)
+
+echo "Done."
 
 exit 0
