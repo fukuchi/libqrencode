@@ -10,3 +10,4 @@
 ./test_mqrspec
 ./test_mmask
 ./test_monkey
+./test_configure.sh
