@@ -1,4 +1,4 @@
-2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
+2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
 	  - Copyright year updated for the next major update.
 	* tests/test_configure.sh:
@@ -16,6 +16,13 @@
 	  - Bumped version to 4.0.0, preparing for major update.
 	* .travis.yml:
 	  - Configuration improved.
+	* Makefile.am, README:
+	  - Added a new rule to generate README from README.md.
+	  - README is no longer needed in the source tree.
+	* README.md:
+	  - Added Katsumi Saito, the contributor of SPEC file, has been added to
+	    the section of ACKNOWLEDGMENTS. We apologize for this lack of
+		acknowledgment.
 
 2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.h:

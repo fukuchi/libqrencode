@@ -139,6 +139,7 @@ GNU LGPL, then rewritten by Kentaro Fukuchi.
 Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 
 * NANKI Haruo           - improved lower-case characters encoding
+* Katsumi Saito         - SPEC file
 * Philippe Delcroix     - improved mask evaluation
 * Yusuke Mihara         - structured-append support
 * David Dahl            - DPI and SVG support patch
