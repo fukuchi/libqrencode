@@ -1,6 +1,19 @@
 2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
 	  - Copyright year updated for the next major update.
+	* tests/test_configure.sh:
+	  - Added some progress messages.
+	* tests/test_all.sh:
+	  - Added test_configure.sh to the list.
+	* Makefile.am, tests/Makefile.am:
+	  - Added some EXTRA_DIST files.
+	  - Moved some EXTRA_DIST files from Makefile.am to tests/Makefile.am.
+	* makeREADME.sh:
+	  - Newly added.
+	* .gitignore:
+	  - Added 'CTestTestfile.cmake'.
+	* configure.ac, CMakeLists.txt, README, README.md:
+	  - Bumped version to 4.0.0, preparing for major update.
 
 2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.h:
