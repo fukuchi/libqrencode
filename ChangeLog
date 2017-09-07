@@ -14,6 +14,8 @@
 	  - Added 'CTestTestfile.cmake'.
 	* configure.ac, CMakeLists.txt, README, README.md:
 	  - Bumped version to 4.0.0, preparing for major update.
+	* .travis.yml:
+	  - Configuration improved.
 
 2017.09.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* mqrspec.h:

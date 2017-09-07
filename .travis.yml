@@ -1,3 +1,5 @@
+dist: trusty
+sudo: required
 language: c
  
 compiler:
@@ -5,7 +7,6 @@ compiler:
 
 before_install:
 - sudo apt-get update
-- sudo apt-get install libsdl-image1.2-dev
 - sudo apt-get install libpng12-dev
 
 install:
@@ -13,14 +14,11 @@ install:
 - ./configure --with-tests && make
 - sudo make install
 - mkdir build && cd build
-- wget https://cmake.org/files/v3.1/cmake-3.1.0-Linux-x86_64.tar.gz
-- tar xf cmake-3.1.0-Linux-x86_64.tar.gz
-- ./cmake-3.1.0-Linux-x86_64/bin/cmake .. -DBUILD_SHARED_LIBS=on -DBUILD_TESTING=on && make
+- cmake .. -DWITH_TESTS=yes -DBUILD_SHARED_LIBS=on && make
 - DESTDIR=$PWD/install make install
 
 script:
 - cd $TRAVIS_BUILD_DIR/tests
-- ./test_configure.sh
 - ./test_all.sh
 - cd $TRAVIS_BUILD_DIR/build/tests
 - cp $TRAVIS_BUILD_DIR/tests/frame ./
