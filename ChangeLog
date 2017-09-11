@@ -12,6 +12,8 @@
 	    (See #102)
 	* qrencode.spec.in, Makefile.am, configure.ac:
 	  - SPEC file has been removed. (closes #105)
+	* Makefile.am:
+	  - The generation rule for README has been improved.
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
