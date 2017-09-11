@@ -14,6 +14,10 @@
 	  - SPEC file has been removed. (closes #105)
 	* Makefile.am:
 	  - The generation rule for README has been improved.
+	[4.0]
+	* 4.0 branch has been started.
+	* README.md:
+	  - Version number added to the 1st line.
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
