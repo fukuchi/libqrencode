@@ -18,6 +18,7 @@
 	* 4.0 branch has been started.
 	* README.md:
 	  - Version number added to the 1st line.
+	  - Fixed the URL to the badge of Travis CI.
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
