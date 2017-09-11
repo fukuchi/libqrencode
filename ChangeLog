@@ -1,3 +1,10 @@
+2017.09.11 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* qrenc.c:
+	  - Read buffer is now allocated as a static array to avoid malloc().
+	    Suppresses memory leak warnings. (Thanks to @c-273)
+	* README.md:
+	  - INSTALL and ACKNOWLEDGMENTS sections are updated.
+
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
 	  - Copyright year updated for the next major update.

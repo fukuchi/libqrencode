@@ -58,8 +58,8 @@ Run "./configure --help" to see the list of options.
 It also installs a command line tool "qrencode" to /usr/local/bin. If you want
 not to build it, give "--without-tools" option to the configure script.
 
-When you downloaded a development tree from github, it is required to run
-"autogen.sh" at first to generate configure script.
+When you downloaded the source code from github, run "autogen.sh" at first to
+generate configure script.
 
 If the configure script does not work well, try to use CMake.
 
@@ -125,8 +125,6 @@ or submit issues to:
 
 https://github.com/fukuchi/libqrencode/issues
 
-Questions of license compliance are also welcome.
-
 
 ACKNOWLEDGMENTS
 ===============
@@ -179,5 +177,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
   David Binderman, @ralgozino, Sean McMurray, Vlad Bespalov (@win32asm),
   Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray,
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
-  Yuji Ueno, Jakub Wilk, @KangLin
+  Yuji Ueno, Jakub Wilk, @KangLin, @c-273
                         - bug report / suggestion / typo fixes
