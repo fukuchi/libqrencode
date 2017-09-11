@@ -227,18 +227,13 @@ static int color_set(unsigned char color[4], const char *value)
 	return 0;
 }
 
-#define MAX_DATA_SIZE (7090 * 16) /* from the specification */
+#define MAX_DATA_SIZE (7090 * 2) /* timed by the safty factor 2 */
+static unsigned char data_buffer[MAX_DATA_SIZE];
 static unsigned char *readFile(FILE *fp, int *length)
 {
-	unsigned char *buffer;
 	int ret;
 
-	buffer = (unsigned char *)malloc(MAX_DATA_SIZE + 1);
-	if(buffer == NULL) {
-		fprintf(stderr, "Memory allocation failed.\n");
-		exit(EXIT_FAILURE);
-	}
-	ret = fread(buffer, 1, MAX_DATA_SIZE, fp);
+	ret = fread(data_buffer, 1, MAX_DATA_SIZE, fp);
 	if(ret == 0) {
 		fprintf(stderr, "No input data.\n");
 		exit(EXIT_FAILURE);
@@ -248,10 +243,10 @@ static unsigned char *readFile(FILE *fp, int *length)
 		exit(EXIT_FAILURE);
 	}
 
-	buffer[ret] = '\0';
+	data_buffer[ret] = '\0';
 	*length = ret;
 
-	return buffer;
+	return data_buffer;
 }
 
 static FILE *openFile(const char *outfile)
