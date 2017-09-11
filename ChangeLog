@@ -6,6 +6,10 @@
 	  - INSTALL and ACKNOWLEDGMENTS sections are updated.
 	* makeREADME.sh:
 	  - Now it removes the attention line for github.com users.
+	* tests/test_qrenc.sh:
+	  - Experimental test script for the command 'qrencode'.
+	  - Dedicated to @c-273, who warned the possible memory leaks of qrencode.
+	    (See #102)
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
