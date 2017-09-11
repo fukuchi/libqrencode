@@ -463,7 +463,17 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMask(QRinput *input, int mask)
 	FrameFiller_set(&filler, width, frame, 0);
 
 	/* interleaved data and ecc codes */
-	for(i = 0; i < raw->dataLength + raw->eccLength; i++) {
+	for(i = 0; i < raw->dataLength; i++) {
+		code = QRraw_getCode(raw);
+		bit = 0x80;
+		for(j = 0; j < 8; j++) {
+			p = FrameFiller_next(&filler);
+			if(p == NULL)  goto EXIT;
+			*p = ((bit & code) != 0);
+			bit = bit >> 1;
+		}
+	}
+	for(i = 0; i < raw->eccLength; i++) {
 		code = QRraw_getCode(raw);
 		bit = 0x80;
 		for(j = 0; j < 8; j++) {
@@ -541,7 +551,7 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 	FrameFiller_set(&filler, width, frame, 1);
 
 	/* interleaved data and ecc codes */
-	for(i = 0; i < raw->dataLength + raw->eccLength; i++) {
+	for(i = 0; i < raw->dataLength; i++) {
 		code = MQRraw_getCode(raw);
 		bit = 0x80;
 		if(raw->oddbits && i == raw->dataLength - 1) {
@@ -549,6 +559,17 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		} else {
 			length = 8;
 		}
+		for(j = 0; j < length; j++) {
+			p = FrameFiller_next(&filler);
+			if(p == NULL) goto EXIT;
+			*p = ((bit & code) != 0);
+			bit = bit >> 1;
+		}
+	}
+	for(i = 0; i < raw->eccLength; i++) {
+		code = MQRraw_getCode(raw);
+		bit = 0x80;
+		length = 8;
 		for(j = 0; j < length; j++) {
 			p = FrameFiller_next(&filler);
 			if(p == NULL) goto EXIT;

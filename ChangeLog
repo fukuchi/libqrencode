@@ -69,6 +69,16 @@
 	* README.md:
 	  - Version number added to the 1st line.
 	  - Fixed the URL to the badge of Travis CI.
+	[master]
+	* qrencode.[ch]:
+	  - Symbol data representation of QRcode object has slightly changed. This
+	    change does not affect to most applications.
+	  - If your application uses bits other than the LSB, read the comments of
+	    QRCode class carefully.
+	* tests/test_qrencode.c:
+	  - Modified correct pattern of a test referring non-LSB bits of QRCode.
+	* tests/view_qrcode.c:
+	  - Now you can identify the feature of modules by color.
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:

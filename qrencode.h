@@ -363,7 +363,7 @@ extern int QRinput_setFNC1Second(QRinput *input, unsigned char appid);
  * @verbatim
    MSB 76543210 LSB
        |||||||`- 1=black/0=white
-       ||||||`-- data and ecc code area
+       ||||||`-- 1=ecc/0=data code area
        |||||`--- format information
        ||||`---- version information
        |||`----- timing pattern
