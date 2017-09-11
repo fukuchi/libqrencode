@@ -4,6 +4,8 @@
 	    Suppresses memory leak warnings. (Thanks to @c-273)
 	* README.md:
 	  - INSTALL and ACKNOWLEDGMENTS sections are updated.
+	* makeREADME.sh:
+	  - Now it removes the attention line for github.com users.
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
