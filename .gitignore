@@ -27,7 +27,6 @@ libtool
 stamp-h1
 qrencode
 qrencode.1
-qrencode.spec
 libqrencode.pc
 tests/create_frame_pattern
 tests/create_mqr_frame_pattern

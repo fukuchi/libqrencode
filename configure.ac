@@ -41,7 +41,7 @@ case "${target}" in
 esac
 AM_CONDITIONAL(MINGW, [test "x$mingw" = "xyes" ])
 
-AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
+AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.1])
 
 AC_CHECK_FUNCS([strdup])
 

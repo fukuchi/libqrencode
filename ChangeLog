@@ -10,6 +10,8 @@
 	  - Experimental test script for the command 'qrencode'.
 	  - Dedicated to @c-273, who warned the possible memory leaks of qrencode.
 	    (See #102)
+	* qrencode.spec.in, Makefile.am, configure.ac:
+	  - SPEC file has been removed. (closes #105)
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:
