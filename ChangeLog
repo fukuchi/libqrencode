@@ -71,8 +71,8 @@
 	  - Fixed the URL to the badge of Travis CI.
 	[master]
 	* qrencode.[ch]:
-	  - Symbol data representation of QRcode object has slightly changed. This
-	    change does not affect to most applications.
+	  - Symbol data representation of QRcode object has been slightly changed.
+	    This change does not affect to most applications.
 	  - If your application uses bits other than the LSB, read the comments of
 	    QRCode class carefully.
 	* tests/test_qrencode.c:
