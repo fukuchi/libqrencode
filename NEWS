@@ -11,7 +11,8 @@ Version 4.0.0 (2017.9.21)
 	* PNG32 (direct color mode) support. (Thanks to Greg Hart)
 	* EPS output now supports foreground and background color.
 	* New options "-r" and "--svg-path" have been added.
-* CMake support has been added. (optional)
+	  (Thanks to Robert Petersen and @Oblomov)
+* CMake support has been added. (optional) (Thanks to @misery)
 * Various bug fixes.
 * Various performance improvements.
 
