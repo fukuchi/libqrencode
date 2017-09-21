@@ -1,3 +1,9 @@
+2017.09.21 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[4.0]
+	* qrencode.1.in, NEWS:
+	  - Release date has been updated.
+	* Version 4.0.0 has ben released.
+
 2017.09.11 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c:
 	  - Read buffer is now allocated as a static array to avoid malloc().

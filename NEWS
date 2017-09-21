@@ -1,7 +1,7 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 4.0.0 (2017.9.x)
+Version 4.0.0 (2017.9.21)
 ------------------------
 * Memory efficiency has been improved.
 * QRcode_clearCache() has been deprecated.

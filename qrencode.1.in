@@ -1,4 +1,4 @@
-.TH QRENCODE 1 "Jul. 6, 2014" "qrencode @VERSION@"
+.TH QRENCODE 1 "Sep. 21, 2017" "qrencode @VERSION@"
 .SH NAME
 qrencode \- Encode input data in a QR Code and save as a PNG or EPS image.
 .SH SYNOPSIS
