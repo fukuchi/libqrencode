@@ -1,4 +1,4 @@
-# libqrencode 4.0.0 - QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=4.0)](https://travis-ci.org/fukuchi/libqrencode)
+# libqrencode - QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
 
 **Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.0.0.
 
