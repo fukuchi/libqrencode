@@ -80,9 +80,9 @@ static void RSECC_init(void)
 	initialized = 1;
 }
 
-static void generator_init(int length)
+static void generator_init(size_t length)
 {
-	int i, j;
+	size_t i, j;
 	int g[max_generatorSize + 1];
 
 	g[0] = 1;
@@ -102,9 +102,9 @@ static void generator_init(int length)
 	generatorInitialized[length - min_length] = 1;
 }
 
-int RSECC_encode(int data_length, int ecc_length, const unsigned char *data, unsigned char *ecc)
+int RSECC_encode(size_t data_length, size_t ecc_length, const unsigned char *data, unsigned char *ecc)
 {
-	int i, j;
+	size_t i, j;
 	unsigned char feedback;
 	unsigned char *gen;
 

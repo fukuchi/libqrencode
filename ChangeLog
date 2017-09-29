@@ -1,3 +1,11 @@
+2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[4.0]
+	* README.md:
+	  - Format fixes.
+	* rsecc.[ch]:
+	  - Some variables' type changed from int to size_t. (closing #89 and
+	    #102)
+
 2017.09.21 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
 	* qrencode.1.in, NEWS:
