@@ -21,6 +21,7 @@ SPECIFICATION
 Libqrencode supports QR Code model 2, described in JIS (Japanese Industrial
 Standards) X0510:2004 or ISO/IEC 18004. Most of features in the specification
 are implemented such as:
+
 - Numeric, alphabet, Japanese kanji (Shift-JIS) or any 8 bit code can be
   embedded
 - Optimized encoding of a string
@@ -28,6 +29,7 @@ are implemented such as:
 - Micro QR Code (experimental)
 
 Currently the following features are not supported:
+
 - ECI and FNC1 mode
 - QR Code model 1 (deprecated)
 
