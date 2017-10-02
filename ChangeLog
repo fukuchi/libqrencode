@@ -13,6 +13,9 @@
 	  - Fixed some warnings.
 	* NEWS:
 	  - Format fixes.
+	* mask.[ch]:
+	  - Some variables' type changed from int to unsigned int. (closing #89 and
+	    #102)
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
