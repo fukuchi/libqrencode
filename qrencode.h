@@ -107,13 +107,13 @@ extern "C" {
  * Encoding mode.
  */
 typedef enum {
-	QR_MODE_NUL = -1,  ///< Terminator (NUL character). Internal use only
-	QR_MODE_NUM = 0,   ///< Numeric mode
-	QR_MODE_AN,        ///< Alphabet-numeric mode
-	QR_MODE_8,         ///< 8-bit data mode
-	QR_MODE_KANJI,     ///< Kanji (shift-jis) mode
-	QR_MODE_STRUCTURE, ///< Internal use only
-	QR_MODE_ECI,       ///< ECI mode
+	QR_MODE_NUL = -1,   ///< Terminator (NUL character). Internal use only
+	QR_MODE_NUM = 0,    ///< Numeric mode
+	QR_MODE_AN,         ///< Alphabet-numeric mode
+	QR_MODE_8,          ///< 8-bit data mode
+	QR_MODE_KANJI,      ///< Kanji (shift-jis) mode
+	QR_MODE_STRUCTURE,  ///< Internal use only
+	QR_MODE_ECI,        ///< ECI mode
 	QR_MODE_FNC1FIRST,  ///< FNC1, first position
 	QR_MODE_FNC1SECOND, ///< FNC1, second position
 } QRencodeMode;

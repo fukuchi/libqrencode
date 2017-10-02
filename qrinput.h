@@ -34,8 +34,8 @@ typedef struct _QRinput_List QRinput_List;
 
 struct _QRinput_List {
 	QRencodeMode mode;
-	int size;				///< Size of data chunk (byte).
-	unsigned char *data;	///< Data chunk.
+	int size;            ///< Size of data chunk (byte).
+	unsigned char *data; ///< Data chunk.
 	BitStream *bstream;
 	QRinput_List *next;
 };
@@ -64,7 +64,7 @@ struct _QRinput_InputList {
 };
 
 struct _QRinput_Struct {
-	int size;					///< number of structured symbols
+	int size; ///< number of structured symbols
 	int parity;
 	QRinput_InputList *head;
 	QRinput_InputList *tail;

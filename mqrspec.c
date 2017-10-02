@@ -40,8 +40,8 @@
  *****************************************************************************/
 
 typedef struct {
-	int width; //< Edge length of the symbol
-	int ec[4];  //< Number of ECC code (bytes)
+	int width; ///< Edge length of the symbol
+	int ec[4]; ///< Number of ECC code (bytes)
 } MQRspec_Capacity;
 
 /**

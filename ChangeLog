@@ -18,6 +18,8 @@
 	    #102)
 	* tests/test_mask.c:
 	  - Fixed some warnings.
+	* qrencode.h, qrinput.h, mqrspec.c:
+	  - Comment format fixes.
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
