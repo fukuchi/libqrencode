@@ -4,9 +4,9 @@
 #include "common.h"
 #include "../qrinput.h"
 
-QRinput *gstream;
+static QRinput *gstream;
 
-void test_numbit(void)
+static void test_numbit(void)
 {
 	QRinput *stream;
 	char num[9]="01234567";
@@ -22,7 +22,7 @@ void test_numbit(void)
 	QRinput_free(stream);
 }
 
-void test_numbit2(void)
+static void test_numbit2(void)
 {
 	QRinput *stream;
 	char num[17]="0123456789012345";
@@ -38,7 +38,7 @@ void test_numbit2(void)
 	QRinput_free(stream);
 }
 
-void test_numbit3(void)
+static void test_numbit3(void)
 {
 	QRinput *stream;
 	char *num;
@@ -59,7 +59,7 @@ void test_numbit3(void)
 	free(num);
 }
 
-void test_an(void)
+static void test_an(void)
 {
 	QRinput *stream;
 	char str[6]="AC-42";
@@ -75,7 +75,7 @@ void test_an(void)
 	QRinput_free(stream);
 }
 
-void test_8(void)
+static void test_8(void)
 {
 	QRinput *stream;
 	char str[9]="12345678";
@@ -91,7 +91,7 @@ void test_8(void)
 	QRinput_free(stream);
 }
 
-void test_structure(void)
+static void test_structure(void)
 {
 	QRinput *stream;
 	int bits;
@@ -106,7 +106,7 @@ void test_structure(void)
 	QRinput_free(stream);
 }
 
-void test_kanji(void)
+static void test_kanji(void)
 {
 	int res;
 
@@ -129,7 +129,7 @@ void test_kanji(void)
 	QRinput_free(stream);
 }
 
-void test_mix(void)
+static void test_mix(void)
 {
 	int bits;
 
@@ -139,7 +139,7 @@ void test_mix(void)
 	QRinput_free(gstream);
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	gstream = QRinput_new();
 

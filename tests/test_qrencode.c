@@ -30,7 +30,7 @@ typedef struct {
 
 #define drand(__scale__) ((__scale__) * (double)rand() / ((double)RAND_MAX + 1.0))
 
-int inputSize(QRinput *input)
+static int inputSize(QRinput *input)
 {
 	BitStream *bstream;
 	int size;
@@ -43,7 +43,7 @@ int inputSize(QRinput *input)
 	return size;
 }
 
-void test_qrraw_new(void)
+static void test_qrraw_new(void)
 {
 	int i;
 	QRinput *stream;
@@ -80,7 +80,7 @@ void test_qrraw_new(void)
 	testFinish();
 }
 
-void test_iterate()
+static void test_iterate()
 {
 	int i;
 	QRinput *stream;
@@ -108,7 +108,7 @@ void test_iterate()
 	testEnd(err);
 }
 
-void test_iterate2()
+static void test_iterate2()
 {
 	int i;
 	QRinput *stream;
@@ -153,7 +153,7 @@ void test_iterate2()
 	testEnd(err);
 }
 
-void print_filler(void)
+static void print_filler(void)
 {
 	int width;
 	int version = 7;
@@ -167,7 +167,7 @@ void print_filler(void)
 	free(frame);
 }
 
-void test_filler(void)
+static void test_filler(void)
 {
 	unsigned char *frame;
 	int i, j, w, e, length;
@@ -196,7 +196,7 @@ void test_filler(void)
 	testFinish();
 }
 
-void print_fillerMQR(void)
+static void print_fillerMQR(void)
 {
 	int width;
 	int version = 3;
@@ -211,7 +211,7 @@ void print_fillerMQR(void)
 	}
 }
 
-void test_fillerMQR(void)
+static void test_fillerMQR(void)
 {
 	unsigned char *frame;
 	int i, j, w, e, length;
@@ -243,7 +243,7 @@ void test_fillerMQR(void)
 	testFinish();
 }
 
-void test_format(void)
+static void test_format(void)
 {
 	unsigned char *frame;
 	unsigned int format;
@@ -336,7 +336,7 @@ unsigned int m1pat[8][21] = {
 	 0x1fc358, 0x10544b, 0x1749cf, 0x1758e7, 0x174ae5, 0x10472a, 0x1fd0ac}
 };
 
-void test_encode(void)
+static void test_encode(void)
 {
 	QRinput *stream;
 	char num[9] = "01234567";
@@ -372,7 +372,7 @@ ABORT:
 	testEnd(err);
 }
 
-void test_encode2(void)
+static void test_encode2(void)
 {
 	QRcode *qrcode;
 
@@ -382,7 +382,7 @@ void test_encode2(void)
 	QRcode_free(qrcode);
 }
 
-void test_encode3(void)
+static void test_encode3(void)
 {
 	QRcode *code1, *code2;
 	QRinput *input;
@@ -399,7 +399,7 @@ void test_encode3(void)
 	QRinput_free(input);
 }
 
-void test_encodeNull(void)
+static void test_encodeNull(void)
 {
 	QRcode *qrcode;
 
@@ -411,7 +411,7 @@ void test_encodeNull(void)
 }
 
 
-void test_encodeEmpty(void)
+static void test_encodeEmpty(void)
 {
 	QRcode *qrcode;
 
@@ -422,7 +422,7 @@ void test_encodeEmpty(void)
 	if(qrcode != NULL) QRcode_free(qrcode);
 }
 
-void test_encodeNull8(void)
+static void test_encodeNull8(void)
 {
 	QRcode *qrcode;
 
@@ -434,7 +434,7 @@ void test_encodeNull8(void)
 }
 
 
-void test_encodeEmpty8(void)
+static void test_encodeEmpty8(void)
 {
 	QRcode *qrcode;
 
@@ -445,7 +445,7 @@ void test_encodeEmpty8(void)
 	if(qrcode != NULL) QRcode_free(qrcode);
 }
 
-void test_encodeLongData(void)
+static void test_encodeLongData(void)
 {
 	QRinput *stream;
 	unsigned char data[7090];
@@ -500,7 +500,7 @@ void test_encodeLongData(void)
 	testFinish();
 }
 
-void test_01234567(void)
+static void test_01234567(void)
 {
 	QRinput *stream;
 	char num[9] = "01234567";
@@ -543,7 +543,7 @@ void test_01234567(void)
 	QRcode_free(qrcode);
 }
 
-void print_01234567(void)
+static void print_01234567(void)
 {
 	QRinput *stream;
 	char num[9] = "01234567";
@@ -557,7 +557,7 @@ void print_01234567(void)
 	QRcode_free(qrcode);
 }
 
-void test_invalid_input(void)
+static void test_invalid_input(void)
 {
 	QRinput *input;
 	QRcode *code;
@@ -594,7 +594,7 @@ void test_invalid_input(void)
 	testFinish();
 }
 
-void test_struct_semilong(void)
+static void test_struct_semilong(void)
 {
 	QRcode_List *codes, *list;
 	const char *str = "asdfasdfasdfasdfasdfASDFASDASDFASDFAsdfasdfasdfasdASDFASDFADSADadsfasdf";
@@ -628,7 +628,7 @@ void test_struct_semilong(void)
 	testFinish();
 }
 
-void test_struct_example(void)
+static void test_struct_example(void)
 {
 	QRcode_List *codes, *list;
 	const char *str = "an example of four Structured Append symbols,";
@@ -648,7 +648,7 @@ void test_struct_example(void)
 	QRcode_List_free(codes);
 }
 
-void test_null_free(void)
+static void test_null_free(void)
 {
 	testStart("Testing free NULL pointers");
 	assert_nothing(QRcode_free(NULL), "Check QRcode_free(NULL).\n");
@@ -657,7 +657,7 @@ void test_null_free(void)
 	testFinish();
 }
 
-void test_encodeTooLongMQR(void)
+static void test_encodeTooLongMQR(void)
 {
 	QRcode *code;
 	char *data[] = {"012345", "ABC0EFG", "0123456789", "0123456789ABCDEFG"};
@@ -684,7 +684,7 @@ void test_encodeTooLongMQR(void)
 	}
 }
 
-void test_mqrraw_new(void)
+static void test_mqrraw_new(void)
 {
 	QRinput *stream;
 	char *num = "01234";
@@ -709,7 +709,7 @@ void test_mqrraw_new(void)
 	testFinish();
 }
 
-void test_encodeData(void)
+static void test_encodeData(void)
 {
 	QRcode *qrcode;
 
@@ -725,7 +725,7 @@ void test_encodeData(void)
 	testFinish();
 }
 
-void test_formatInfo(void)
+static void test_formatInfo(void)
 {
 	QRcode *qrcode;
 	QRecLevel level;
@@ -743,7 +743,7 @@ void test_formatInfo(void)
 	testFinish();
 }
 
-void test_formatInfoMQR(void)
+static void test_formatInfoMQR(void)
 {
 	QRcode *qrcode;
 	QRecLevel level;
@@ -766,7 +766,7 @@ void test_formatInfoMQR(void)
 	testFinish();
 }
 
-void test_decodeSimple(void)
+static void test_decodeSimple(void)
 {
 	char *str = "AC-42";
 	QRcode *qrcode;
@@ -788,7 +788,7 @@ void test_decodeSimple(void)
 }
 
 
-void test_decodeLong(void)
+static void test_decodeLong(void)
 {
 	char *str = "12345678901234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ?????????????";
 	QRcode *qrcode;
@@ -809,7 +809,7 @@ void test_decodeLong(void)
 	testFinish();
 }
 
-void test_decodeVeryLong(void)
+static void test_decodeVeryLong(void)
 {
 	char str[4000];
 	int i;
@@ -837,7 +837,7 @@ void test_decodeVeryLong(void)
 	testFinish();
 }
 
-void test_decodeShortMQR(void)
+static void test_decodeShortMQR(void)
 {
 	char str[]="55";
 	QRcode *qrcode;
@@ -861,7 +861,7 @@ void test_decodeShortMQR(void)
 	testFinish();
 }
 
-void test_oddBitCalcMQR(void)
+static void test_oddBitCalcMQR(void)
 {
 	/* test issue #25 (odd bits calculation bug) */
 	/* test pattern contributed by vlad417 */
@@ -893,7 +893,7 @@ void test_oddBitCalcMQR(void)
 	testFinish();
 }
 
-void test_mqrencode(void)
+static void test_mqrencode(void)
 {
 	char *str = "MICROQR";
 	char pattern[] = {
@@ -940,7 +940,7 @@ void test_mqrencode(void)
 	testFinish();
 }
 
-void test_apiversion(void)
+static void test_apiversion(void)
 {
 	int major_version, minor_version, micro_version;
 	char *str, *str2;
@@ -957,7 +957,7 @@ void test_apiversion(void)
 	testFinish();
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	test_iterate();
 	test_iterate2();

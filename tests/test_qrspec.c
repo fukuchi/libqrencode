@@ -5,7 +5,7 @@
 #include "../qrencode_inner.h"
 #include "decoder.h"
 
-void print_eccTable(void)
+static void print_eccTable(void)
 {
 	int i, j;
 	int ecc;
@@ -38,7 +38,7 @@ void print_eccTable(void)
 	}
 }
 
-void test_eccTable(void)
+static void test_eccTable(void)
 {
 	int i, j;
 	int ecc;
@@ -69,7 +69,7 @@ void test_eccTable(void)
 	testEnd(err);
 }
 
-void test_eccTable2(void)
+static void test_eccTable2(void)
 {
 	int i;
 	int spec[5];
@@ -118,7 +118,7 @@ void test_eccTable2(void)
 	testFinish();
 }
 
-void test_newframe(void)
+static void test_newframe(void)
 {
 	unsigned char buf[QRSPEC_WIDTH_MAX * QRSPEC_WIDTH_MAX];
 	int i, width;
@@ -126,7 +126,7 @@ void test_newframe(void)
 	FILE *fp;
 	unsigned char *frame;
 	QRcode *qrcode;
-	unsigned int version;
+	int version;
 
 	testStart("Checking newly created frame.");
 	fp = fopen("frame", "rb");
@@ -145,7 +145,7 @@ void test_newframe(void)
 		assert_zero(memcmp(frame, buf, len), "frame pattern mismatch (version %d)\n", i);
 		qrcode = QRcode_new(i, width, frame);
 		version = QRcode_decodeVersion(qrcode);
-		assert_equal(version, (unsigned int)i, "Decoded version number is wrong: %d, expected %d.\n", version, i);
+		assert_equal(version, i, "Decoded version number is wrong: %d, expected %d.\n", version, i);
 		QRcode_free(qrcode);
 	}
 
@@ -153,7 +153,7 @@ void test_newframe(void)
 	fclose(fp);
 }
 
-void test_newframe_invalid(void)
+static void test_newframe_invalid(void)
 {
 	unsigned char *frame;
 
@@ -171,7 +171,7 @@ void test_newframe_invalid(void)
  * this test, change the value of the pattern marker's center dot from 0xa1
  * to 0xb1 (QRspec_putAlignmentMarker() : finder).
  */
-void test_alignment(void)
+static void test_alignment(void)
 {
 	unsigned char *frame;
 	int i, x, y, width, c;
@@ -201,7 +201,7 @@ void test_alignment(void)
 }
 #endif
 
-void test_verpat(void)
+static void test_verpat(void)
 {
 	int version;
 	unsigned int pattern;
@@ -242,7 +242,7 @@ void test_verpat(void)
 	}
 }
 
-void print_newFrame(void)
+static void print_newFrame(void)
 {
 	int width;
 	int x, y;
@@ -287,7 +287,7 @@ static unsigned int calcFormatInfo(int mask, QRecLevel level)
 	return (data | ecc) ^ 0x5412;
 }
 
-void test_format(void)
+static void test_format(void)
 {
 	unsigned int format;
 	int i, j;
@@ -308,7 +308,7 @@ void test_format(void)
 	testEnd(err);
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	test_eccTable();
 	test_eccTable2();

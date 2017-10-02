@@ -4,7 +4,7 @@
 #include "../mmask.h"
 #include "../mqrspec.h"
 
-char dot[2] = {'_', '#'};
+static char dot[2] = {'_', '#'};
 static char *maskPatterns[4] = {
 	/* i mod 2 = 0 */
 	"######"
@@ -36,7 +36,7 @@ static char *maskPatterns[4] = {
 	"_###__"
 };
 
-void print_mask(int mask)
+static void print_mask(int mask)
 {
 	const int w = 6;
 	unsigned char frame[w * w], *masked, *p;
@@ -57,7 +57,7 @@ void print_mask(int mask)
 	free(masked);
 }
 
-void print_masks(void)
+static void print_masks(void)
 {
 	int i;
 
@@ -66,7 +66,7 @@ void print_masks(void)
 	}
 }
 
-int test_mask(int mask)
+static int test_mask(int mask)
 {
 	const int w = 6;
 	unsigned char frame[w * w], *masked, *p;
@@ -92,7 +92,7 @@ int test_mask(int mask)
 	return err;
 }
 
-void test_masks(void)
+static void test_masks(void)
 {
 	int i;
 
@@ -103,13 +103,13 @@ void test_masks(void)
 	testFinish();
 }
 
-void test_maskEvaluation(void)
+static void test_maskEvaluation(void)
 {
 	static const int w = 11;
-	unsigned char pattern[w*w];
+	unsigned char pattern[w * w];
 	int i, score;
 
-	memset(pattern, 0, w*w);
+	memset(pattern, 0, w * w);
 
 	testStart("Test mask evaluation");
 	score = MMask_evaluateSymbol(w, pattern);
@@ -138,7 +138,7 @@ void test_maskEvaluation(void)
 	testFinish();
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	//print_masks();
 	test_masks();

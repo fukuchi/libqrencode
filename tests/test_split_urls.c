@@ -9,7 +9,7 @@
 
 #include "URI_testset.inc"
 
-void encodeURLandPrint(char *url) {
+static void encodeURLandPrint(char *url) {
 	QRinput *input;
 	BitStream *bstream;
 
@@ -24,7 +24,7 @@ void encodeURLandPrint(char *url) {
 	BitStream_free(bstream);
 }
 
-void print_currentBitLength() {
+static void print_currentBitLength() {
 	struct TestSet *ts = testset;
 
 	puts("struct TestSet {\n\tint expected_length;\n\tchar *url;\n};");
@@ -38,7 +38,7 @@ void print_currentBitLength() {
 	puts("{0,NULL}\n};");
 }
 
-int encodeURLandCompare(char *url, int expected_length) {
+static int encodeURLandCompare(char *url, size_t expected_length) {
 	QRinput *input;
 	BitStream *bstream;
 	int ret = 0;
@@ -48,14 +48,14 @@ int encodeURLandCompare(char *url, int expected_length) {
 	bstream = BitStream_new();
 	QRinput_mergeBitStream(input, bstream);
 
-	int length = BitStream_size(bstream);
+	size_t length = BitStream_size(bstream);
 	if(length > expected_length) {
-		printf("The length of the encode stream is longer than expected: %d over %d\n", length, expected_length);
+		printf("The length of the encode stream is longer than expected: %zu over %zu\n", length, expected_length);
 		printQRinput(input);
 
 		ret = 1;
 	} else if(length < expected_length) {
-		printf("The length of the encode stream is shorter than expected: %d under %d\n", length, expected_length);
+		printf("The length of the encode stream is shorter than expected: %zu under %zu\n", length, expected_length);
 		printQRinput(input);
 
 		ret = 1;
@@ -67,7 +67,7 @@ int encodeURLandCompare(char *url, int expected_length) {
 	return ret;
 }
 
-void test_bitstream_length() {
+static void test_bitstream_length() {
 	struct TestSet *ts = testset;
 	int err = 0;
 
@@ -79,7 +79,7 @@ void test_bitstream_length() {
 	testEnd(err);
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	test_bitstream_length();
 

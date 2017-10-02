@@ -174,7 +174,7 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 	}
 }
 
-void draw_singleQRcode(QRinput *stream, int mask)
+static void draw_singleQRcode(QRinput *stream, int mask)
 {
 	QRcode *qrcode;
 	int width;
@@ -209,7 +209,7 @@ void draw_singleQRcode(QRinput *stream, int mask)
 	QRcode_free(qrcode);
 }
 
-void draw_structuredQRcode(QRinput_Struct *s)
+static void draw_structuredQRcode(QRinput_Struct *s)
 {
 	int i, w, h, n, x, y;
 	int swidth;
@@ -244,7 +244,7 @@ void draw_structuredQRcode(QRinput_Struct *s)
 	QRcode_List_free(qrcodes);
 }
 
-void draw_structuredQRcodeFromText(int argc, char **argv)
+static void draw_structuredQRcodeFromText(int argc, char **argv)
 {
 	QRinput_Struct *s;
 	QRinput *input;
@@ -285,7 +285,7 @@ void draw_structuredQRcodeFromText(int argc, char **argv)
 	QRinput_Struct_free(s);
 }
 
-void draw_structuredQRcodeFromQRinput(QRinput *stream)
+static void draw_structuredQRcodeFromQRinput(QRinput *stream)
 {
 	QRinput_Struct *s;
 
@@ -300,7 +300,7 @@ void draw_structuredQRcodeFromQRinput(QRinput *stream)
 	}
 }
 
-void view(int mode, QRinput *input)
+static void view(int mode, QRinput *input)
 {
 	int flag = 1;
 	int mask = -1;
@@ -425,7 +425,7 @@ void view(int mode, QRinput *input)
 	}
 }
 
-void view_simple(const unsigned char *str, int length)
+static void view_simple(const unsigned char *str, int length)
 {
 	QRinput *input;
 	int ret;
@@ -454,7 +454,7 @@ void view_simple(const unsigned char *str, int length)
 	QRinput_free(input);
 }
 
-void view_multiText(char **argv, int argc)
+static void view_multiText(char **argv, int argc)
 {
 	textc = argc;
 	textv = argv;

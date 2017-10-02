@@ -388,7 +388,7 @@ static void test_calcN1N3(void)
 	testFinish();
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	//print_masks();
 	test_masks();

@@ -7,7 +7,7 @@
 #include "../split.h"
 #include "decoder.h"
 
-int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mode, char *data, char *correct)
+static int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mode, char *data, char *correct)
 {
 	QRinput *input;
 	BitStream *bstream;
@@ -33,7 +33,7 @@ int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mo
 	return ret;
 }
 
-int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
+static int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
 {
 	QRinput *input;
 	BitStream *bstream;
@@ -55,7 +55,7 @@ int mergeAndCheckBStream(int mqr, QRencodeMode mode, char *data, char *correct)
 	return ret;
 }
 
-void test_encodeKanji(void)
+static void test_encodeKanji(void)
 {
 	char str[5]= {0x93, 0x5f, 0xe4, 0xaa, 0x00};
 	char *correct = "10000000001001101100111111101010101010";
@@ -64,7 +64,7 @@ void test_encodeKanji(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_KANJI, str, correct));
 }
 
-void test_encode8(void)
+static void test_encode8(void)
 {
 	char str[] = "AC-42";
 	char correct[] = "0100000001010100000101000011001011010011010000110010";
@@ -73,7 +73,7 @@ void test_encode8(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_8, str, correct));
 }
 
-void test_encode8_versionup(void)
+static void test_encode8_versionup(void)
 {
 	QRinput *stream;
 	BitStream *bstream;
@@ -95,7 +95,7 @@ void test_encode8_versionup(void)
 	free(str);
 }
 
-void test_encodeAn(void)
+static void test_encodeAn(void)
 {
 	char *str = "AC-42";
 	char correct[] = "00100000001010011100111011100111001000010";
@@ -104,7 +104,7 @@ void test_encodeAn(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_AN, str, correct));
 }
 
-void test_encodeAn2(void)
+static void test_encodeAn2(void)
 {
 	QRinput *stream;
 	char str[] = "!,;$%";
@@ -117,7 +117,7 @@ void test_encodeAn2(void)
 	QRinput_free(stream);
 }
 
-void test_encodeNumeric(void)
+static void test_encodeNumeric(void)
 {
 	char *str = "01234567";
 	char correct[] = "00010000001000000000110001010110011000011";
@@ -126,7 +126,7 @@ void test_encodeNumeric(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
-void test_encodeNumeric_versionup(void)
+static void test_encodeNumeric_versionup(void)
 {
 	QRinput *stream;
 	BitStream *bstream;
@@ -148,7 +148,7 @@ void test_encodeNumeric_versionup(void)
 	free(str);
 }
 
-void test_encodeNumericPadded(void)
+static void test_encodeNumericPadded(void)
 {
 	char *str = "01234567";
 	char *correct;
@@ -168,7 +168,7 @@ void test_encodeNumericPadded(void)
 	free(correct);
 }
 
-void test_encodeNumericPadded2(void)
+static void test_encodeNumericPadded2(void)
 {
 	char *str = "0123456";
 	char *correct;
@@ -188,7 +188,7 @@ void test_encodeNumericPadded2(void)
 	free(correct);
 }
 
-void test_padding(void)
+static void test_padding(void)
 {
 	QRinput *input;
 	BitStream *bstream;
@@ -214,7 +214,7 @@ void test_padding(void)
 	BitStream_free(bstream);
 }
 
-void test_padding2(void)
+static void test_padding2(void)
 {
 	QRinput *input;
 	BitStream *bstream;
@@ -269,7 +269,7 @@ void test_padding2(void)
 	BitStream_free(bstream);
 }
 
-void test_encodeNumeric2(void)
+static void test_encodeNumeric2(void)
 {
 	char *str = "0123456789012345";
 	char *correct = "00010000010000000000110001010110011010100110111000010100111010100101";
@@ -278,7 +278,7 @@ void test_encodeNumeric2(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
-void test_encodeNumeric3(void)
+static void test_encodeNumeric3(void)
 {
 	char *str = "0123456";
 	char *correct = "0001 0000000111 0000001100 0101011001 0110";
@@ -287,7 +287,7 @@ void test_encodeNumeric3(void)
 	testEnd(mergeAndCheckBStream(0, QR_MODE_NUM, str, correct));
 }
 
-void test_encodeAnNum(void)
+static void test_encodeAnNum(void)
 {
 	QRinput *input;
 	BitStream *bstream;
@@ -312,7 +312,7 @@ void test_encodeAnNum(void)
 	BitStream_free(bstream);
 }
 
-void test_struct_listop(void)
+static void test_struct_listop(void)
 {
 	QRinput_Struct *s;
 	QRinput *inputs[5];
@@ -345,7 +345,7 @@ void test_struct_listop(void)
 	testFinish();
 }
 
-void test_insertStructuredAppendHeader(void)
+static void test_insertStructuredAppendHeader(void)
 {
 	QRinput *stream;
 	char correct[] = "0011000011111010010101000000000101000001";
@@ -367,7 +367,7 @@ void test_insertStructuredAppendHeader(void)
 	BitStream_free(bstream);
 }
 
-void test_insertStructuredAppendHeader_error(void)
+static void test_insertStructuredAppendHeader_error(void)
 {
 	QRinput *stream;
 	int ret;
@@ -389,7 +389,7 @@ void test_insertStructuredAppendHeader_error(void)
 	QRinput_free(stream);
 }
 
-void test_struct_insertStructuredAppendHeaders(void)
+static void test_struct_insertStructuredAppendHeaders(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -422,7 +422,7 @@ static int check_lengthOfCode(QRencodeMode mode, char *data, int size, int versi
 {
 	QRinput *input;
 	BitStream *b;
-	int bits;
+	size_t bits;
 	int bytes;
 
 	input = QRinput_new();
@@ -438,7 +438,7 @@ static int check_lengthOfCode(QRencodeMode mode, char *data, int size, int versi
 	return bytes;
 }
 
-void test_lengthOfCode_num(void)
+static void test_lengthOfCode_num(void)
 {
 	int i, bytes;
 	char *data;
@@ -461,7 +461,7 @@ void test_lengthOfCode_num(void)
 	free(data);
 }
 
-void test_lengthOfCode_kanji(void)
+static void test_lengthOfCode_kanji(void)
 {
 	int i, bytes;
 	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
@@ -474,7 +474,7 @@ void test_lengthOfCode_kanji(void)
 	testFinish();
 }
 
-void test_struct_split_example(void)
+static void test_struct_split_example(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -509,7 +509,7 @@ void test_struct_split_example(void)
 	QRinput_Struct_free(s);
 }
 
-void test_struct_split_tooLarge(void)
+static void test_struct_split_tooLarge(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -531,7 +531,7 @@ void test_struct_split_tooLarge(void)
 	free(str);
 }
 
-void test_struct_split_invalidVersion(void)
+static void test_struct_split_invalidVersion(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -553,7 +553,7 @@ void test_struct_split_invalidVersion(void)
 	free(str);
 }
 
-void test_struct_singlestructure(void)
+static void test_struct_singlestructure(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -573,7 +573,7 @@ void test_struct_singlestructure(void)
 	QRinput_free(input);
 }
 
-void test_splitentry(void)
+static void test_splitentry(void)
 {
 	QRinput *i1, *i2;
 	QRinput_List *e;
@@ -630,7 +630,7 @@ void test_splitentry(void)
 	testFinish();
 }
 
-void test_splitentry2(void)
+static void test_splitentry2(void)
 {
 	QRinput *i1, *i2;
 	QRinput_List *e;
@@ -688,7 +688,7 @@ void test_splitentry2(void)
 	testFinish();
 }
 
-void test_splitentry3(void)
+static void test_splitentry3(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -725,7 +725,7 @@ void test_splitentry3(void)
 	testFinish();
 }
 
-void test_parity(void)
+static void test_parity(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -758,7 +758,7 @@ void test_parity(void)
 	QRinput_Struct_free(s);
 }
 
-void test_parity2(void)
+static void test_parity2(void)
 {
 	QRinput *input;
 	QRinput_Struct *s;
@@ -783,7 +783,7 @@ void test_parity2(void)
 	QRinput_Struct_free(s);
 }
 
-void test_null_free(void)
+static void test_null_free(void)
 {
 	testStart("Testing free NULL pointers");
 	assert_nothing(QRinput_free(NULL), "Check QRinput_free(NULL).\n");
@@ -791,7 +791,7 @@ void test_null_free(void)
 	testFinish();
 }
 
-void test_mqr_new(void)
+static void test_mqr_new(void)
 {
 	QRinput *input;
 	testStart("Testing QRinput_newMQR().");
@@ -816,7 +816,7 @@ void test_mqr_new(void)
 	testFinish();
 }
 
-void test_mqr_setversion(void)
+static void test_mqr_setversion(void)
 {
 	QRinput *input;
 	int ret;
@@ -830,7 +830,7 @@ void test_mqr_setversion(void)
 	testFinish();
 }
 
-void test_mqr_setlevel(void)
+static void test_mqr_setlevel(void)
 {
 	QRinput *input;
 	int ret;
@@ -844,7 +844,7 @@ void test_mqr_setlevel(void)
 	testFinish();
 }
 
-void test_paddingMQR(void)
+static void test_paddingMQR(void)
 {
 	char *dataM1[] = {"65", "513", "5139", "51365"};
 	char *correctM1[] = {"01010000010000000000",
@@ -868,7 +868,7 @@ void test_paddingMQR(void)
 	testFinish();
 }
 
-void test_padding2MQR(void)
+static void test_padding2MQR(void)
 {
 	char *data[] = {"9", "513513", "513", "513"};
 	int ver[] = {1, 2, 2, 3};
@@ -888,7 +888,7 @@ void test_padding2MQR(void)
 	testFinish();
 }
 
-void test_textMQR(void)
+static void test_textMQR(void)
 {
 	int version = 3;
 	QRecLevel level = QR_ECLEVEL_M;
@@ -902,7 +902,7 @@ void test_textMQR(void)
 	testFinish();
 }
 
-void test_ECIinvalid(void)
+static void test_ECIinvalid(void)
 {
 	QRinput *stream;
 	int ret;
@@ -917,7 +917,7 @@ void test_ECIinvalid(void)
 	testFinish();
 }
 
-void test_encodeECI(void)
+static void test_encodeECI(void)
 {
 	QRinput *input;
 	BitStream *bstream;
@@ -944,7 +944,7 @@ void test_encodeECI(void)
 	testFinish();
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	test_encodeNumeric();
 	test_encodeNumeric2();

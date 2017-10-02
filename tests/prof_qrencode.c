@@ -5,14 +5,14 @@
 #include <errno.h>
 #include "../qrencode.h"
 
-struct timeval tv;
-void timerStart(const char *str)
+static struct timeval tv;
+static void timerStart(const char *str)
 {
 	printf("%s: START\n", str);
 	gettimeofday(&tv, NULL);
 }
 
-void timerStop(void)
+static void timerStop(void)
 {
 	struct timeval tc;
 
@@ -21,7 +21,7 @@ void timerStop(void)
 			+ (tc.tv_usec - tv.tv_usec) / 1000);
 }
 
-void prof_ver1to10(void)
+static void prof_ver1to10(void)
 {
 	QRcode *code;
 	int i;
@@ -42,7 +42,7 @@ void prof_ver1to10(void)
 	timerStop();
 }
 
-void prof_ver31to40(void)
+static void prof_ver31to40(void)
 {
 	QRcode *code;
 	int i;
@@ -63,7 +63,7 @@ void prof_ver31to40(void)
 	timerStop();
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	prof_ver1to10();
 	prof_ver31to40();

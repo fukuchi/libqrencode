@@ -20,6 +20,8 @@
 	  - Fixed some warnings.
 	* qrencode.h, qrinput.h, mqrspec.c:
 	  - Comment format fixes.
+	* various files in tests:
+	  - Fixed some warnings.
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]

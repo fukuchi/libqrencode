@@ -1,9 +1,9 @@
 struct TestSet {
-	int expected_length;
+	size_t expected_length;
 	char *url;
 };
 
-struct TestSet testset[] = {
+static struct TestSet testset[] = {
 {3132,"http://ads.bluelithium.com/clk?3,eJytjcFqwzAQRL8mNyO0luUoiB7WcQUGS8RFbXBuqVEcxxbKwSDy93HS0P5AH3uYYXd2AKT4hpOjJ-d4njGWdxIySB2nnB0hoVJKRvkmhTXb8GRyIWBVdw0W01bRAh-Y3Vfb4ItS4Ee.fcqdQBJLQsTg2.5nmzOT479QirH4fOkKcfnfL9WDMk09vhd.ZxpM2cSD17G2yh8uetZWTfoGQ7tXY22N1xa53lfc2DYz.W.yLUnO83xdMVylapkYI7kdzyGQLvjF3wHZQ1eK,http%3A%2F%2Fomicronpath.com%2F%3Fa%3D448%26c%3D3201%26s1%3DYahooStream_917_Nevada4"},
 {3745,"http://ads.bluelithium.com/clk?3,eJytjd2OgjAQhZ.GO9K0lEpJ48WwUNekdIWoBO8UCfKX7gUJ4tNv3bj6AvtlLs7knDlDiDgzSi8sqDzOAtfnviAecSuGGT25DhZCUGwN4tOAOX1lDGxUmULYZT0O4cGnyYoankQcsvrjV245oClCiDfDn8.UYQn.QsS7cP.UGwDbX9vXjdSp6uLwHUuIjtL5ay1btZPDsU3GZCf7ZCZNkcte5YdG3.c33cZY5wU7pq.LleNcx.F7QWHhSjvTNKH5dDUGlWaw-w-Jy1ek,http%3A%2F%2Ftanphysics.com%2Farticles%2Freview1.php%3Futm_source%3DUSA%26utm_medium%3DYHO%26utm_content%3D917-STRM4%26utm_campaign%3DYHO%26keyword%3DYHO-917-STRM4"},
 {896,"http://amigo.geneontology.org/cgi-bin/amigo/go.cgi?view=details&search_constraint=terms&depth=0&query=GO:0042438"},

@@ -5,8 +5,8 @@
 #include "datachunk.h"
 
 typedef struct {
-	int size;
 	unsigned char *data;
+	int size;
 	int mqr;
 	int version;
 	QRecLevel level;
