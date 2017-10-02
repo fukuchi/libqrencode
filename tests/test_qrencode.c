@@ -30,19 +30,6 @@ typedef struct {
 
 #define drand(__scale__) ((__scale__) * (double)rand() / ((double)RAND_MAX + 1.0))
 
-static int inputSize(QRinput *input)
-{
-	BitStream *bstream;
-	int size;
-
-	bstream = BitStream_new();
-	QRinput_mergeBitStream(input, bstream);
-	size = BitStream_size(bstream);
-	BitStream_free(bstream);
-
-	return size;
-}
-
 static void test_qrraw_new(void)
 {
 	int i;
