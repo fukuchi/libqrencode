@@ -22,6 +22,10 @@
 	  - Comment format fixes.
 	* various files in tests:
 	  - Fixed some warnings.
+	* tests/test_qrencode.c:
+	  - Removed unused function.
+	* tests/test_qrinput.c:
+	  - Added a new test function.
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]

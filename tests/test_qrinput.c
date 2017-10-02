@@ -464,10 +464,10 @@ static void test_lengthOfCode_num(void)
 static void test_lengthOfCode_kanji(void)
 {
 	int i, bytes;
-	unsigned char str[4]= {0x93, 0x5f,0xe4, 0xaa};
+	unsigned char str[12]= {0x93, 0x5f, 0xe4, 0xaa, 0x81, 0x40, 0x9f, 0xfc, 0xe0, 0x40, 0xeb, 0xbf};
 
 	testStart("Checking length of code (kanji)");
-	for(i=2; i<=4; i+=2) {
+	for(i=2; i<=12; i+=2) {
 		bytes = check_lengthOfCode(QR_MODE_KANJI, (char *)str, i, 1);
 		assert_equal(i, bytes, "lengthOfCode failed. (QR_MODE_KANJI, version:1, size:%d)\n", i);
 	}
@@ -965,6 +965,7 @@ int main()
 	test_insertStructuredAppendHeader_error();
 	test_struct_insertStructuredAppendHeaders();
 	test_lengthOfCode_num();
+	test_lengthOfCode_kanji();
 	test_splitentry();
 	test_splitentry2();
 	test_splitentry3();
