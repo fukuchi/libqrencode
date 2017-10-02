@@ -11,6 +11,8 @@
 	    #102)
 	* tests/common.[ch]:
 	  - Fixed some warnings.
+	* NEWS:
+	  - Format fixes.
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]

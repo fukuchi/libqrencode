@@ -222,6 +222,7 @@ Many thanks to Yusuke Mihara, who contributed a patch to add support of
 structured-append to version 1.0.2.
 
 API changes:
+
 * Incompatible API changes:
   - QRencode_encodeInput
 * New types:
@@ -248,7 +249,6 @@ API changes:
 
 Version 2.0.0 (2008.1.24)
 -------------------------
-Summary:
 * "-i" option to ignore case distinctions has been added to qrencode and
   view_qrcode.
 * "-c" option (case-sensitive mode) of qrencode is now enabled by default and
