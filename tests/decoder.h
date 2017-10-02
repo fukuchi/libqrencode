@@ -1,5 +1,5 @@
-#ifndef __DECODER_H__
-#define __DECODER_H__
+#ifndef DECODER_H
+#define DECODER_H
 
 #include "../qrencode.h"
 #include "datachunk.h"
@@ -40,4 +40,4 @@ BitStream *QRcode_extractBitsMQR(QRcode *code, int *dataLength, int *eccLength, 
 QRdata *QRcode_decodeBitsMQR(QRcode *code);
 QRdata *QRcode_decodeMQR(QRcode *code);
 
-#endif /* __DECODER_H__ */
+#endif /* DECODER_H */

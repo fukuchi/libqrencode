@@ -2,8 +2,8 @@
  * common part of test units.
  */
 
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef COMMON_H__
+#define COMMON_H__
 
 #include <stdlib.h>
 #if HAVE_CONFIG_H
@@ -52,4 +52,4 @@ void printBstream(BitStream *bstream);
 
 void show_QRcode(QRcode *qrcode);
 
-#endif /* __COMMON_H__ */
+#endif /* COMMON_H__ */

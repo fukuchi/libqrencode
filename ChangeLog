@@ -4,6 +4,8 @@
 	  - Memory alignment improved.
 	* tests/test_qrencode.c:
 	  - Error messages improved.
+	* tests/{common.h datachunk.h, decoder.h, rscode.h, rsecc_decoder.h}:
+	  - Reserved macro names are replaced.
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]

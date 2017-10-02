@@ -1,7 +1,7 @@
-#ifndef __RSECC_DECODER_H__
-#define __RSECC_DECODER_H__
+#ifndef RSECC_DECODER_H
+#define RSECC_DECODER_H
 
 void RSECC_decoder_init();
 int RSECC_decoder_checkSyndrome(int dl, unsigned char *data, int el, unsigned char *ecc);
 
-#endif /* __RSECC_DECODER_H__ */
+#endif /* RSECC_DECODER_H */

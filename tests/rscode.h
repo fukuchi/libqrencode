@@ -24,8 +24,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef __RSCODE_H__
-#define __RSCODE_H__
+#ifndef RSCODE_H
+#define RSCODE_H
 
 /*
  * General purpose RS codec, 8-bit symbols.
@@ -37,4 +37,4 @@ extern RS *init_rs(int symsize, int gfpoly, int fcr, int prim, int nroots, int p
 extern void encode_rs_char(RS *rs, const unsigned char *data, unsigned char *parity);
 extern void free_rs_char(RS *rs);
 
-#endif /* __RSCODE_H__ */
+#endif /* RSCODE_H */

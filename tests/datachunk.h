@@ -1,5 +1,5 @@
-#ifndef __DATACHUNK_H__
-#define __DATACHUNK_H__
+#ifndef DATACHUNK_H
+#define DATACHUNK_H
 
 #include "../qrencode.h"
 
@@ -18,4 +18,4 @@ void DataChunk_dumpChunkList(DataChunk *list);
 int DataChunk_totalSize(DataChunk *list);
 unsigned char *DataChunk_concatChunkList(DataChunk *list, int *retsize);
 
-#endif /* __DATACHUNK_H__ */
+#endif /* DATACHUNK_H */
