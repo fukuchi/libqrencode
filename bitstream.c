@@ -49,11 +49,10 @@ BitStream *BitStream_new(void)
 }
 
 #ifdef WITH_TESTS
-BitStream *BitStream_newWithBits(int size, unsigned char *bits)
+BitStream *BitStream_newWithBits(size_t size, unsigned char *bits)
 {
 	BitStream *bstream;
 
-	if(size < 0) return NULL;
 	if(size == 0) return BitStream_new();
 
 	bstream = (BitStream *)malloc(sizeof(BitStream));
@@ -88,10 +87,10 @@ static int BitStream_expand(BitStream *bstream)
 	return 0;
 }
 
-static void BitStream_writeNum(unsigned char *dest, int bits, unsigned int num)
+static void BitStream_writeNum(unsigned char *dest, size_t bits, unsigned int num)
 {
 	unsigned int mask;
-	int i;
+	size_t i;
 	unsigned char *p;
 
 	p = dest;
@@ -107,10 +106,10 @@ static void BitStream_writeNum(unsigned char *dest, int bits, unsigned int num)
 	}
 }
 
-static void BitStream_writeBytes(unsigned char *dest, int size, unsigned char *data)
+static void BitStream_writeBytes(unsigned char *dest, size_t size, unsigned char *data)
 {
 	unsigned char mask;
-	int i, j;
+	size_t i, j;
 	unsigned char *p;
 
 	p = dest;
@@ -150,7 +149,7 @@ int BitStream_append(BitStream *bstream, BitStream *arg)
 	return 0;
 }
 
-int BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
+int BitStream_appendNum(BitStream *bstream, size_t bits, unsigned int num)
 {
 	int ret;
 
@@ -166,7 +165,7 @@ int BitStream_appendNum(BitStream *bstream, int bits, unsigned int num)
 	return 0;
 }
 
-int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
+int BitStream_appendBytes(BitStream *bstream, size_t size, unsigned char *data)
 {
 	int ret;
 
@@ -184,7 +183,7 @@ int BitStream_appendBytes(BitStream *bstream, int size, unsigned char *data)
 
 unsigned char *BitStream_toByte(BitStream *bstream)
 {
-	int i, j, size, bytes, oddbits;
+	size_t i, j, size, bytes, oddbits;
 	unsigned char *data, v;
 	unsigned char *p;
 
@@ -203,7 +202,7 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	for(i = 0; i < bytes; i++) {
 		v = 0;
 		for(j = 0; j < 8; j++) {
-			v = v << 1;
+			v = (unsigned char)(v << 1);
 			v |= *p;
 			p++;
 		}
@@ -213,11 +212,11 @@ unsigned char *BitStream_toByte(BitStream *bstream)
 	if(oddbits > 0) {
 		v = 0;
 		for(j = 0; j < oddbits; j++) {
-			v = v << 1;
+			v = (unsigned char)(v << 1);
 			v |= *p;
 			p++;
 		}
-		data[bytes] = v << (8 - oddbits);
+		data[bytes] = (unsigned char)(v << (8 - oddbits));
 	}
 
 	return data;
