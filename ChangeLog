@@ -16,6 +16,8 @@
 	* mask.[ch]:
 	  - Some variables' type changed from int to unsigned int. (closing #89 and
 	    #102)
+	* tests/test_mask.c:
+	  - Fixed some warnings.
 
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]

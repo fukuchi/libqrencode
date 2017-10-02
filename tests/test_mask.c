@@ -5,7 +5,7 @@
 #include "../qrspec.h"
 #include "decoder.h"
 
-char dot[2] = {'_', '#'};
+static char dot[2] = {'_', '#'};
 static char *maskPatterns[8] = {
 	/* (i + j) mod 2 = 0 */
 	"#_#_#_"
@@ -65,9 +65,9 @@ static char *maskPatterns[8] = {
 	"_###__"
 };
 
-void print_mask(int mask)
+static void print_mask(int mask)
 {
-	const int w = 6;
+	const unsigned int w = 6;
 	unsigned char frame[w * w], *masked, *p;
 	int x, y;
 
@@ -86,7 +86,7 @@ void print_mask(int mask)
 	free(masked);
 }
 
-void print_masks(void)
+static void print_masks(void)
 {
 	int i;
 
@@ -95,7 +95,7 @@ void print_masks(void)
 	}
 }
 
-int test_mask(int mask)
+static int test_mask(int mask)
 {
 	const int w = 6;
 	unsigned char frame[w * w], *masked, *p;
@@ -121,7 +121,7 @@ int test_mask(int mask)
 	return err;
 }
 
-void test_masks(void)
+static void test_masks(void)
 {
 	int i;
 
@@ -137,10 +137,10 @@ void test_masks(void)
 #define N3 (40)
 #define N4 (10)
 
-void test_eval(void)
+static void test_eval(void)
 {
 	unsigned char *frame;
-	int w = 6;
+	unsigned int w = 6;
 	int demerit;
 
 	frame = (unsigned char *)malloc(w * w);
@@ -169,12 +169,12 @@ void test_eval(void)
  * .....#####
  * #####.....
  */
-void test_eval2(void)
+static void test_eval2(void)
 {
 	unsigned char *frame;
-	int w = 10;
+	unsigned int w = 10;
 	int demerit;
-	int x;
+	unsigned int x;
 
 	frame = (unsigned char *)malloc(w * w);
 
@@ -197,7 +197,7 @@ void test_eval2(void)
 	free(frame);
 }
 
-void test_calcN2(void)
+static void test_calcN2(void)
 {
 	unsigned char frame[64];
 	int width;
@@ -235,7 +235,7 @@ void test_calcN2(void)
 	testFinish();
 }
 
-void test_eval3(void)
+static void test_eval3(void)
 {
 	unsigned char *frame;
 	int w = 15;
@@ -284,7 +284,7 @@ void test_eval3(void)
 	free(frame);
 }
 
-void test_format(void)
+static void test_format(void)
 {
 	unsigned char *frame, *masked;
 	int version, mask, width, dmask;
@@ -312,7 +312,7 @@ void test_format(void)
 	testFinish();
 }
 
-void test_calcRunLength(void)
+static void test_calcRunLength(void)
 {
 	int width = 5;
 	unsigned char frame[width * width];
@@ -351,7 +351,7 @@ void test_calcRunLength(void)
 	testFinish();
 }
 
-void test_calcN1N3(void)
+static void test_calcN1N3(void)
 {
 	int runLength[26];
 	int length;
