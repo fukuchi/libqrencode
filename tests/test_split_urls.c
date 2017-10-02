@@ -18,7 +18,7 @@ void encodeURLandPrint(char *url) {
 	bstream = BitStream_new();
 	QRinput_mergeBitStream(input, bstream);
 
-	printf("{%d,\"%s\"},\n", BitStream_size(bstream), url);
+	printf("{%zu,\"%s\"},\n", BitStream_size(bstream), url);
 
 	QRinput_free(input);
 	BitStream_free(bstream);

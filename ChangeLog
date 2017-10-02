@@ -9,7 +9,7 @@
 	* bitstream.[ch]:
 	  - Some variables' type changed from int to size_t. (closing #89 and
 	    #102)
-	* tests/common.[ch]:
+	* tests/common.[ch], tests/test_split_url.c:
 	  - Fixed some warnings.
 	* NEWS:
 	  - Format fixes.
