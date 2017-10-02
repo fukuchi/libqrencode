@@ -32,8 +32,8 @@
 
 typedef struct {
 	int dataLength;
-	unsigned char *data;
 	int eccLength;
+	unsigned char *data;
 	unsigned char *ecc;
 } RSblock;
 

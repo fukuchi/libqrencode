@@ -1,3 +1,10 @@
+2017.10.02 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[4.0]
+	* bitstream.h, qrencode.c, qrencode_inner.h:
+	  - Memory alignment improved.
+	* tests/test_qrencode.c:
+	  - Error messages improved.
+
 2017.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
 	* README.md:
