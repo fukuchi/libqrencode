@@ -12,13 +12,14 @@ static const char *testFunc = NULL;
 const char levelChar[4] = {'L', 'M', 'Q', 'H'};
 const char *modeStr[5] = {"nm", "an", "8", "kj", "st"};
 
-int ncmpBin(char *correct, BitStream *bstream, int len)
+int ncmpBin(char *correct, BitStream *bstream, size_t len)
 {
-	int i, bit;
+	int bit;
+	size_t i;
 	char *p;
 
 	if(len != BitStream_size(bstream)) {
-		printf("Length is not match: %d, %d expected.\n", BitStream_size(bstream), len);
+		printf("Length is not match: %zu, %zu expected.\n", BitStream_size(bstream), len);
 		return -1;
 	}
 
@@ -138,7 +139,7 @@ void printQRinputInfo(QRinput *input)
 	b = BitStream_new();
 	ret = QRinput_mergeBitStream(input, b);
 	if(ret == 0) {
-		printf("  bitstream-size: %d\n", BitStream_size(b));
+		printf("  bitstream-size: %zu\n", BitStream_size(b));
 		BitStream_free(b);
 	}
 

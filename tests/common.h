@@ -37,7 +37,7 @@ void report();
 #define assert_notequal(__e1__, __e2__, ...) assert_exp((__e1__) != (__e2__), __VA_ARGS__)
 #define assert_nothing(__exp__, ...) {printf(__VA_ARGS__); __exp__;}
 
-int ncmpBin(char *correct, BitStream *bstream, int len);
+int ncmpBin(char *correct, BitStream *bstream, size_t len);
 int cmpBin(char *correct, BitStream *bstream);
 
 void printFrame(int width, unsigned char *frame);
