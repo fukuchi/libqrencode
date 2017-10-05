@@ -146,6 +146,7 @@ static void print_filler(void)
 	int version = 7;
 	unsigned char *frame;
 
+	puts("\nPrinting debug info of FrameFiller.");
 	width = QRspec_getWidth(version);
 	frame = FrameFiller_test(version);
 	if(frame == NULL) abort();
@@ -189,6 +190,7 @@ static void print_fillerMQR(void)
 	int version = 3;
 	unsigned char *frame;
 
+	puts("\nPrinting debug info of FrameFiller for Micro QR.");
 	for(version = 1; version <= MQRSPEC_VERSION_MAX; version++) {
 		width = MQRspec_getWidth(version);
 		frame = FrameFiller_testMQR(version);
@@ -536,6 +538,7 @@ static void print_01234567(void)
 	char num[9] = "01234567";
 	QRcode *qrcode;
 
+	puts("\nPrinting QR code of '01234567'.");
 	stream = QRinput_new2(1, QR_ECLEVEL_M);
 	QRinput_append(stream, QR_MODE_NUM, 8, (unsigned char *)num);
 	qrcode = QRcode_encodeInput(stream);
@@ -944,11 +947,10 @@ static void test_apiversion(void)
 	testFinish();
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	test_iterate();
 	test_iterate2();
-	//print_filler();
 	test_filler();
 	test_format();
 	test_encode();
@@ -961,7 +963,6 @@ int main()
 	test_encodeLongData();
 	test_01234567();
 	test_invalid_input();
-//	print_01234567();
 	test_struct_example();
 	test_struct_semilong();
 	test_null_free();
@@ -972,7 +973,6 @@ int main()
 	test_decodeSimple();
 	test_decodeLong();
 	test_decodeVeryLong();
-	//print_fillerMQR();
 	test_fillerMQR();
 	test_formatInfoMQR();
 	test_encodeTooLongMQR();
@@ -980,8 +980,13 @@ int main()
 	test_oddBitCalcMQR();
 	test_mqrencode();
 	test_apiversion();
-
 	report();
+
+	if(argc > 1) {
+		print_filler();
+		print_01234567();
+		print_fillerMQR();
+	}
 
 	return 0;
 }

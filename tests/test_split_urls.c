@@ -9,6 +9,7 @@
 
 #include "URI_testset.inc"
 
+#if 0
 static void encodeURLandPrint(char *url) {
 	QRinput *input;
 	BitStream *bstream;
@@ -37,6 +38,7 @@ static void print_currentBitLength() {
 
 	puts("{0,NULL}\n};");
 }
+#endif
 
 static int encodeURLandCompare(char *url, size_t expected_length) {
 	QRinput *input;

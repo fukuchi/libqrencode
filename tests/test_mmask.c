@@ -61,6 +61,7 @@ static void print_masks(void)
 {
 	int i;
 
+	puts("\nPrinting mask patterns.");
 	for(i=0; i<4; i++) {
 		print_mask(i);
 	}
@@ -138,13 +139,15 @@ static void test_maskEvaluation(void)
 	testFinish();
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	//print_masks();
 	test_masks();
 	test_maskEvaluation();
-
 	report();
+
+	if(argc > 1) {
+		print_masks();
+	}
 
 	return 0;
 }

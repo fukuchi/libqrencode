@@ -90,6 +90,7 @@ static void print_masks(void)
 {
 	int i;
 
+	puts("\nPrinting mask patterns.");
 	for(i=0; i<8; i++) {
 		print_mask(i);
 	}
@@ -388,9 +389,8 @@ static void test_calcN1N3(void)
 	testFinish();
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	//print_masks();
 	test_masks();
 	test_eval();
 	test_eval2();
@@ -399,8 +399,11 @@ int main()
 	test_calcN2();
 	test_calcRunLength();
 	test_calcN1N3();
-
 	report();
+
+	if(argc > 1) {
+		print_masks();
+	}
 
 	return 0;
 }

@@ -1,3 +1,9 @@
+2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[4.0]
+	* tests/test_{mask,mmask,qrspec,mqrspec,split_urls,qrencode}.c:
+	  - Removed or commented out unused functions.
+	  - Command line option introduced for verbose debug information.
+
 2017.10.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
 	* bitstream.h, qrencode.c, qrencode_inner.h:

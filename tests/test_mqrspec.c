@@ -124,6 +124,7 @@ static void print_format(void)
 	unsigned int format;
 	int i, j;
 
+	puts("\nPrinting hex strings of format information.");
 	for(i=0; i<4; i++) {
 		for(j=0; j<8; j++) {
 			format = calcFormatInfo(j, i);
@@ -162,15 +163,17 @@ static void test_dataLength(void)
 	testEnd(err);
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	test_newFrame();
 	test_newframe_invalid();
-	//print_format();
 	test_format();
 	test_dataLength();
-
 	report();
+
+	if(argc > 1) {
+		print_format();
+	}
 
 	return 0;
 }

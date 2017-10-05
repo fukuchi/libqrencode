@@ -12,6 +12,7 @@ static void print_eccTable(void)
 	int data;
 	int spec[5];
 
+	puts("\nPrinting ECC table.\n");
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
 		printf("Version %2d\n", i);
 		for(j=0; j<4; j++) {
@@ -242,23 +243,6 @@ static void test_verpat(void)
 	}
 }
 
-static void print_newFrame(void)
-{
-	int width;
-	int x, y;
-	unsigned char *frame;
-
-	frame = QRspec_newFrame(7);
-	width = QRspec_getWidth(7);
-	for(y=0; y<width; y++) {
-		for(x=0; x<width; x++) {
-			printf("%02x ", frame[y * width + x]);
-		}
-		printf("\n");
-	}
-	free(frame);
-}
-
 /* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
 static unsigned int levelIndicator[4] = {1, 0, 3, 2};
 static unsigned int calcFormatInfo(int mask, QRecLevel level)
@@ -308,19 +292,20 @@ static void test_format(void)
 	testEnd(err);
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	test_eccTable();
 	test_eccTable2();
-	//print_eccTable();
 	test_newframe();
 	test_newframe_invalid();
 	//test_alignment();
 	test_verpat();
-	//print_newFrame();
 	test_format();
-
 	report();
+
+	if(argc > 1) {
+		print_eccTable();
+	}
 
 	return 0;
 }
