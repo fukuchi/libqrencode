@@ -1,3 +1,11 @@
+2017.10.06 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* tests/test_{all,basic}.sh:
+	  - All tests except test_configure.sh can be run by test_basic.sh now.
+	  - test_all.sh activates test_basic.sh + test_configure.sh.
+	  - test_basic.sh is better during active development, especially when you
+	    gave additional options to configure script.
+
 2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
 	* tests/test_{mask,mmask,qrspec,mqrspec,split_urls,qrencode}.c:
