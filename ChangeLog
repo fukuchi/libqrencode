@@ -3,6 +3,12 @@
 	* CMakeLists.txt:
 	  - STATIC_IN_RELEASE is now set to "static" when WITH_TESTS is disabled.
 	    (closes #126)
+	[master]
+	* tests/test_{all,basic}.sh:
+	  - All tests except test_configure.sh can be run by test_basic.sh now.
+	  - test_all.sh activates test_basic.sh + test_configure.sh.
+	  - test_basic.sh is better during active development, especially when you
+	    gave additional options to configure script.
 
 2018.06.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
