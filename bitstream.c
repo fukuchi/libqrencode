@@ -94,7 +94,7 @@ static void BitStream_writeNum(unsigned char *dest, size_t bits, unsigned int nu
 	unsigned char *p;
 
 	p = dest;
-	mask = 1 << (bits - 1);
+	mask = 1U << (bits - 1);
 	for(i = 0; i < bits; i++) {
 		if(num & mask) {
 			*p = 1;
