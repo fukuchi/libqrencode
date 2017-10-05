@@ -31,12 +31,12 @@
 #include "qrspec.h"
 #include "mask.h"
 
-STATIC_IN_RELEASE unsigned int Mask_writeFormatInformation(unsigned int width, unsigned char *frame, int mask, QRecLevel level)
+STATIC_IN_RELEASE int Mask_writeFormatInformation(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned int format;
 	unsigned char v;
-	unsigned int i;
-	unsigned int blacks = 0;
+	int i;
+	int blacks = 0;
 
 	format = QRspec_getFormatInfo(mask, level);
 
@@ -84,8 +84,8 @@ STATIC_IN_RELEASE unsigned int Mask_writeFormatInformation(unsigned int width, u
 #define N4 (10)
 
 #define MASKMAKER(__exp__) \
-	unsigned int x, y;\
-	unsigned int b = 0;\
+	int x, y;\
+	int b = 0;\
 \
 	for(y = 0; y < width; y++) {\
 		for(x = 0; x < width; x++) {\
@@ -94,61 +94,61 @@ STATIC_IN_RELEASE unsigned int Mask_writeFormatInformation(unsigned int width, u
 			} else {\
 				*d = *s ^ ((__exp__) == 0);\
 			}\
-			b += (unsigned int)(*d & 1);\
+			b += (int)(*d & 1);\
 			s++; d++;\
 		}\
 	}\
 	return b;
 
-static unsigned int Mask_mask0(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask0(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((x+y)&1)
 }
 
-static unsigned int Mask_mask1(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask1(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(y&1)
 }
 
-static unsigned int Mask_mask2(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask2(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(x%3)
 }
 
-static unsigned int Mask_mask3(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask3(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((x+y)%3)
 }
 
-static unsigned int Mask_mask4(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask4(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(((y/2)+(x/3))&1)
 }
 
-static unsigned int Mask_mask5(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask5(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER(((x*y)&1)+(x*y)%3)
 }
 
-static unsigned int Mask_mask6(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask6(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((((x*y)&1)+(x*y)%3)&1)
 }
 
-static unsigned int Mask_mask7(unsigned int width, const unsigned char *s, unsigned char *d)
+static int Mask_mask7(int width, const unsigned char *s, unsigned char *d)
 {
 	MASKMAKER((((x*y)%3)+((x+y)&1))&1)
 }
 
 #define maskNum (8)
-typedef unsigned int MaskMaker(unsigned int, const unsigned char *, unsigned char *);
+typedef int MaskMaker(int, const unsigned char *, unsigned char *);
 static MaskMaker *maskMakers[maskNum] = {
 	Mask_mask0, Mask_mask1, Mask_mask2, Mask_mask3,
 	Mask_mask4, Mask_mask5, Mask_mask6, Mask_mask7
 };
 
 #ifdef WITH_TESTS
-unsigned char *Mask_makeMaskedFrame(unsigned int width, unsigned char *frame, int mask)
+unsigned char *Mask_makeMaskedFrame(int width, unsigned char *frame, int mask)
 {
 	unsigned char *masked;
 
@@ -161,7 +161,7 @@ unsigned char *Mask_makeMaskedFrame(unsigned int width, unsigned char *frame, in
 }
 #endif
 
-unsigned char *Mask_makeMask(unsigned int width, unsigned char *frame, int mask, QRecLevel level)
+unsigned char *Mask_makeMask(int width, unsigned char *frame, int mask, QRecLevel level)
 {
 	unsigned char *masked;
 
@@ -319,15 +319,15 @@ STATIC_IN_RELEASE int Mask_evaluateSymbol(int width, unsigned char *frame)
 	return demerit;
 }
 
-unsigned char *Mask_mask(unsigned int width, unsigned char *frame, QRecLevel level)
+unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 {
 	int i;
 	unsigned char *mask, *bestMask;
 	int minDemerit = INT_MAX;
-	unsigned int blacks;
+	int blacks;
 	int bratio;
 	int demerit;
-	unsigned int w2 = width * width;
+	int w2 = width * width;
 
 	mask = (unsigned char *)malloc(w2);
 	if(mask == NULL) return NULL;

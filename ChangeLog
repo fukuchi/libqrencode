@@ -29,9 +29,6 @@
 	  - Fixed some warnings.
 	* NEWS:
 	  - Format fixes.
-	* mask.[ch]:
-	  - Some variables' type changed from int to unsigned int. (closing #89 and
-	    #102)
 	* tests/test_mask.c:
 	  - Fixed some warnings.
 	* qrencode.h, qrinput.h, mqrspec.c:
