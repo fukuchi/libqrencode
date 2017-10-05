@@ -124,7 +124,7 @@ STATIC_IN_RELEASE QRRawCode *QRraw_new(QRinput *input)
 	raw->b1 = QRspec_rsBlockNum1(spec);
 	raw->dataLength = QRspec_rsDataLength(spec);
 	raw->eccLength = QRspec_rsEccLength(spec);
-	raw->ecccode = (unsigned char *)malloc(raw->eccLength);
+	raw->ecccode = (unsigned char *)malloc((size_t)raw->eccLength);
 	if(raw->ecccode == NULL) {
 		free(raw->datacode);
 		free(raw);
@@ -132,7 +132,7 @@ STATIC_IN_RELEASE QRRawCode *QRraw_new(QRinput *input)
 	}
 
 	raw->blocks = QRspec_rsBlockNum(spec);
-	raw->rsblock = (RSblock *)calloc(raw->blocks, sizeof(RSblock));
+	raw->rsblock = (RSblock *)calloc((size_t)(raw->blocks), sizeof(RSblock));
 	if(raw->rsblock == NULL) {
 		QRraw_free(raw);
 		return NULL;
@@ -219,7 +219,7 @@ STATIC_IN_RELEASE MQRRawCode *MQRraw_new(QRinput *input)
 		free(raw);
 		return NULL;
 	}
-	raw->ecccode = (unsigned char *)malloc(raw->eccLength);
+	raw->ecccode = (unsigned char *)malloc((size_t)raw->eccLength);
 	if(raw->ecccode == NULL) {
 		free(raw->datacode);
 		free(raw);
@@ -495,8 +495,8 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMask(QRinput *input, int mask)
 
 	/* masking */
 	if(mask == -2) { // just for debug purpose
-		masked = (unsigned char *)malloc(width * width);
-		memcpy(masked, frame, width * width);
+		masked = (unsigned char *)malloc((size_t)(width * width));
+		memcpy(masked, frame, (size_t)(width * width));
 	} else if(mask < 0) {
 		masked = Mask_mask(width, frame, input->level);
 	} else {
@@ -582,8 +582,8 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 
 	/* masking */
 	if(mask == -2) { // just for debug purpose
-		masked = (unsigned char *)malloc(width * width);
-		memcpy(masked, frame, width * width);
+		masked = (unsigned char *)malloc((size_t)(width * width));
+		memcpy(masked, frame, (size_t)(width * width));
 	} else if(mask < 0) {
 		masked = MMask_mask(version, frame, input->level);
 	} else {

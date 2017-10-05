@@ -5,7 +5,7 @@
 	  - test_all.sh activates test_basic.sh + test_configure.sh.
 	  - test_basic.sh is better during active development, especially when you
 	    gave additional options to configure script.
-	* bitstream.c:
+	* split.c, qrspec.c, mqrspec.c, mask.c, mmask.c, qrencode.c, qrinput.c:
 	  - Fixed some warnings.
 
 2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>

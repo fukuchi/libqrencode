@@ -1438,10 +1438,10 @@ static int QRinput_List_shrinkEntry(QRinput_List *entry, int bytes)
 {
 	unsigned char *data;
 
-	data = (unsigned char *)malloc(bytes);
+	data = (unsigned char *)malloc((size_t)bytes);
 	if(data == NULL) return -1;
 
-	memcpy(data, entry->data, bytes);
+	memcpy(data, entry->data, (size_t)bytes);
 	free(entry->data);
 	entry->data = data;
 	entry->size = bytes;

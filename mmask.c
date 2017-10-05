@@ -96,7 +96,7 @@ unsigned char *MMask_makeMaskedFrame(int width, unsigned char *frame, int mask)
 {
 	unsigned char *masked;
 
-	masked = (unsigned char *)malloc(width * width);
+	masked = (unsigned char *)malloc((size_t)(width * width));
 	if(masked == NULL) return NULL;
 
 	maskMakers[mask](width, frame, masked);
@@ -116,7 +116,7 @@ unsigned char *MMask_makeMask(int version, unsigned char *frame, int mask, QRecL
 	}
 
 	width = MQRspec_getWidth(version);
-	masked = (unsigned char *)malloc(width * width);
+	masked = (unsigned char *)malloc((size_t)(width * width));
 	if(masked == NULL) return NULL;
 
 	maskMakers[mask](width, frame, masked);
@@ -155,7 +155,7 @@ unsigned char *MMask_mask(int version, unsigned char *frame, QRecLevel level)
 
 	width = MQRspec_getWidth(version);
 
-	mask = (unsigned char *)malloc(width * width);
+	mask = (unsigned char *)malloc((size_t)(width * width));
 	if(mask == NULL) return NULL;
 	bestMask = NULL;
 
@@ -168,7 +168,7 @@ unsigned char *MMask_mask(int version, unsigned char *frame, QRecLevel level)
 			maxScore = score;
 			free(bestMask);
 			bestMask = mask;
-			mask = (unsigned char *)malloc(width * width);
+			mask = (unsigned char *)malloc((size_t)(width * width));
 			if(mask == NULL) break;
 		}
 	}
