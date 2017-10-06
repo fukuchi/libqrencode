@@ -66,7 +66,7 @@ static void RSblock_initBlock(RSblock *block, int dl, unsigned char *data, int e
 	block->eccLength = el;
 	block->ecc = ecc;
 
-	RSECC_encode(dl, el, data, ecc);
+	RSECC_encode((size_t)dl, (size_t)el, data, ecc);
 }
 
 static int RSblock_init(RSblock *blocks, int spec[5], unsigned char *data, unsigned char *ecc)
@@ -696,7 +696,7 @@ QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 0);
+	return QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), version, level, 0);
 }
 
 QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level)
@@ -710,7 +710,7 @@ QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel le
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataReal((unsigned char *)string, strlen(string), version, level, 1);
+	return QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), version, level, 1);
 }
 
 
@@ -868,7 +868,7 @@ QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, 
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataStructured(strlen(string), (unsigned char *)string, version, level);
+	return QRcode_encodeDataStructured((int)strlen(string), (unsigned char *)string, version, level);
 }
 
 QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
@@ -877,7 +877,7 @@ QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRec
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataStructuredReal(strlen(string), (unsigned char *)string, version, level, 0, hint, casesensitive);
+	return QRcode_encodeDataStructuredReal((int)strlen(string), (unsigned char *)string, version, level, 0, hint, casesensitive);
 }
 
 /******************************************************************************

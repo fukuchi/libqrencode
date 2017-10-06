@@ -6,7 +6,7 @@
 	  - test_basic.sh is better during active development, especially when you
 	    gave additional options to configure script.
 	* split.c, qrspec.c, mqrspec.c, mask.c, mmask.c, qrencode.c, qrinput.c,
-	  rsecc.c:
+	  rsecc.c, qrencode.c:
 	  - Fixed some warnings. (closing #89 and #102)
 
 2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>
