@@ -41,7 +41,7 @@ int ncmpBin(char *correct, BitStream *bstream, size_t len)
 
 int cmpBin(char *correct, BitStream *bstream)
 {
-	int len = 0;
+	size_t len = 0;
 	char *p;
 
 

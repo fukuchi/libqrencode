@@ -134,12 +134,12 @@ int RSECC_encode(size_t data_length, size_t ecc_length, const unsigned char *dat
 		feedback = aindex[data[i] ^ ecc[0]];
 		if(feedback != symbols) {
 			for(j = 1; j < ecc_length; j++) {
-				ecc[j] ^= alpha[(feedback + gen[ecc_length - j]) % symbols];
+				ecc[j] ^= alpha[(unsigned int)(feedback + gen[ecc_length - j]) % symbols];
 			}
 		}
 		memmove(&ecc[0], &ecc[1], ecc_length - 1);
 		if(feedback != symbols) {
-			ecc[ecc_length - 1] = alpha[(feedback + gen[0]) % symbols];
+			ecc[ecc_length - 1] = alpha[(unsigned int)(feedback + gen[0]) % symbols];
 		} else {
 			ecc[ecc_length - 1] = 0;
 		}

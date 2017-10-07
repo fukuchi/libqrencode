@@ -1,3 +1,8 @@
+2017.10.08 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* qrenc.c, qrinput.c, rsecc.c, tests/common.c, tests/decoder.c:
+	  - Fixed some warnings. (closing #89 and #102)
+
 2017.10.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
 	* tests/test_{all,basic}.sh:

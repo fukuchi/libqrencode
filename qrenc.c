@@ -293,9 +293,9 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	if(type == PNG_TYPE) {
-		row = (unsigned char *)malloc((realwidth + 7) / 8);
+		row = (unsigned char *)malloc((size_t)((realwidth + 7) / 8));
 	} else if(type == PNG32_TYPE) {
-		row = (unsigned char *)malloc(realwidth * 4);
+		row = (unsigned char *)malloc((size_t)realwidth * 4);
 	} else {
 		fprintf(stderr, "Internal error.\n");
 		exit(EXIT_FAILURE);
@@ -355,7 +355,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 	png_init_io(png_ptr, fp);
 	if(type == PNG_TYPE) {
 		png_set_IHDR(png_ptr, info_ptr,
-				realwidth, realwidth,
+				(unsigned int)realwidth, (unsigned int)realwidth,
 				1,
 				PNG_COLOR_TYPE_PALETTE,
 				PNG_INTERLACE_NONE,
@@ -363,7 +363,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 				PNG_FILTER_TYPE_DEFAULT);
 	} else {
 		png_set_IHDR(png_ptr, info_ptr,
-				realwidth, realwidth,
+				(unsigned int)realwidth, (unsigned int)realwidth,
 				8,
 				PNG_COLOR_TYPE_RGB_ALPHA,
 				PNG_INTERLACE_NONE,
@@ -378,7 +378,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 
 	if(type == PNG_TYPE) {
 	/* top margin */
-		memset(row, 0xff, (realwidth + 7) / 8);
+		memset(row, 0xff, (size_t)((realwidth + 7) / 8));
 		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
@@ -386,7 +386,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 		/* data */
 		p = qrcode->data;
 		for(y = 0; y < qrcode->width; y++) {
-			memset(row, 0xff, (realwidth + 7) / 8);
+			memset(row, 0xff, (size_t)((realwidth + 7) / 8));
 			q = row;
 			q += margin * size / 8;
 			bit = 7 - (margin * size % 8);
@@ -406,7 +406,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 			}
 		}
 		/* bottom margin */
-		memset(row, 0xff, (realwidth + 7) / 8);
+		memset(row, 0xff, (size_t)((realwidth + 7) / 8));
 		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
@@ -655,7 +655,7 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	realwidth = (qrcode->width + margin * 2) * size;
 	realmargin = margin * size;
 
-	row = malloc(realwidth + 1);
+	row = malloc((size_t)realwidth + 1);
 	if (!row ) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -674,7 +674,7 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	fprintf(fp, "\"B c #%s\",\n", bg);
 
 	fputs("/* pixels */\n", fp);
-	memset(row, 'B', realwidth);
+	memset(row, 'B', (size_t)realwidth);
 	row[realwidth] = '\0';
 
 	for (y = 0; y < realmargin; y++) {
@@ -727,8 +727,8 @@ static void writeANSI_margin(FILE* fp, int realwidth,
 {
 	int y;
 
-	strncpy(buffer, white, white_s);
-	memset(buffer + white_s, ' ', realwidth * 2);
+	strncpy(buffer, white, (size_t)white_s);
+	memset(buffer + white_s, ' ', (size_t)realwidth * 2);
 	strcpy(buffer + white_s + realwidth * 2, "\033[0m\n"); // reset to default colors
 	for(y = 0; y < margin; y++ ){
 		fputs(buffer, fp);
@@ -766,7 +766,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	buffer_s = (realwidth * white_s) * 2;
-	buffer = (char *)malloc(buffer_s);
+	buffer = (char *)malloc((size_t)buffer_s);
 	if(buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -780,8 +780,8 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 	for(y = 0; y < qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 
-		memset(buffer, 0, buffer_s);
-		strncpy(buffer, white, white_s);
+		memset(buffer, 0, (size_t)buffer_s);
+		strncpy(buffer, white, (size_t)white_s);
 		for(x = 0; x < margin; x++ ){
 			strncat(buffer, "  ", 2);
 		}
@@ -790,18 +790,18 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 		for(x = 0; x < qrcode->width; x++) {
 			if(*(row+x)&0x1) {
 				if( last != 1 ){
-					strncat(buffer, black, black_s);
+					strncat(buffer, black, (size_t)black_s);
 					last = 1;
 				}
 			} else if( last != 0 ){
-				strncat(buffer, white, white_s);
+				strncat(buffer, white, (size_t)white_s);
 				last = 0;
 			}
 			strncat(buffer, "  ", 2);
 		}
 
 		if( last != 0 ){
-			strncat(buffer, white, white_s);
+			strncat(buffer, white, (size_t)white_s);
 		}
 		for(x = 0; x < margin; x++ ){
 			strncat(buffer, "  ", 2);
@@ -920,7 +920,7 @@ static void writeASCII_margin(FILE* fp, int realwidth, char* buffer, int invert)
 
 	h = margin;
 
-	memset(buffer, (invert?'#':' '), realwidth);
+	memset(buffer, (invert?'#':' '), (size_t)realwidth);
 	buffer[realwidth] = '\n';
 	buffer[realwidth + 1] = '\0';
 	for(y = 0; y < h; y++ ){
@@ -950,7 +950,7 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 
 	realwidth = (qrcode->width + margin * 2) * 2;
 	buffer_s = realwidth + 2;
-	buffer = (char *)malloc( buffer_s );
+	buffer = (char *)malloc((size_t)buffer_s);
 	if(buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -964,7 +964,7 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 		row = qrcode->data+(y*qrcode->width);
 		p = buffer;
 
-		memset(p, white, margin * 2);
+		memset(p, white, (size_t)margin * 2);
 		p += margin * 2;
 
 		for(x = 0; x < qrcode->width; x++) {
@@ -977,7 +977,7 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 			}
 		}
 
-		memset(p, white, margin * 2);
+		memset(p, white, (size_t)margin * 2);
 		p += margin * 2;
 		*p++ = '\n';
 		*p++ = '\0';
