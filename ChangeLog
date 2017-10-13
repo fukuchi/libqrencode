@@ -1,3 +1,9 @@
+2017.10.13 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master, 4.0]
+	* qrencode.h:
+	  - Fix build on windows with Visual Studio. (merged #108) (Thanks to
+	    @Ation)
+
 2017.10.08 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
 	* qrenc.c, qrinput.c, rsecc.c, tests/common.c, tests/decoder.c:
