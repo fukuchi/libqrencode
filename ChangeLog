@@ -3,6 +3,9 @@
 	* qrencode.h:
 	  - Fix build on windows with Visual Studio. (merged #108) (Thanks to
 	    @Ation)
+	[4.0]
+	* README.md:
+	  - Revert again 2252a0f. Sorry for confusion.
 
 2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
