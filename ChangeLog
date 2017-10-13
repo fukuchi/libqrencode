@@ -1,3 +1,9 @@
+2017.10.13 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master, 4.0]
+	* qrencode.h:
+	  - Fix build on windows with Visual Studio. (merged #108) (Thanks to
+	    @Ation)
+
 2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
 	* tests/test_{mask,mmask,qrspec,mqrspec,split_urls,qrencode}.c:
