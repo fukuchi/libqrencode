@@ -3,6 +3,9 @@
 	* qrencode.h:
 	  - Fix build on windows with Visual Studio. (merged #108) (Thanks to
 	    @Ation)
+	[master]
+	* README.md:
+	  - libqrencode now advertised as a "fast and compact" library.
 
 2017.10.08 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]

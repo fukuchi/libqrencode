@@ -1,19 +1,19 @@
-# libqrencode - QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
+# libqrencode - a fast and compact QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
 
 **Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.0.0.
 
 GENERAL INFORMATION
 ===================
-Libqrencode is a library for encoding data in a QR Code symbol, a 2D symbology
-that can be scanned by handy terminals such as a mobile phone with CCD. The
-capacity of QR Code is up to 7000 digits or 4000 characters and has high
-robustness.
+Libqrencode is a fast and compact library for encoding data in a QR Code symbol,
+a 2D symbology that can be scanned by handy terminals such as a mobile phone
+with CCD. The capacity of QR Code is up to 7000 digits or 4000 characters and
+has high robustness.
 
 Libqrencode accepts a string or a list of data chunks then encodes in a QR Code
 symbol as a bitmap array. While other QR Code applications generate an image
 file, using libqrencode allows applications to render QR Code symbols from raw
 bitmap data directly. This library also contains a command-line utility outputs
-a QR Code symbol as a PNG image.
+QR Code images in various formats.
 
 
 SPECIFICATION
