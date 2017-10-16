@@ -45,6 +45,7 @@ static int structured = 0;
 static int rle = 0;
 static int svg_path = 0;
 static int micro = 0;
+static int inline_svg = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 static unsigned char fg_color[4] = {0, 0, 0, 255};
@@ -80,6 +81,7 @@ static const struct option options[] = {
 	{"margin"       , required_argument, NULL, 'm'},
 	{"dpi"          , required_argument, NULL, 'd'},
 	{"type"         , required_argument, NULL, 't'},
+	{"inline"       , no_argument      , NULL, 'I'},
 	{"structured"   , no_argument      , NULL, 'S'},
 	{"kanji"        , no_argument      , NULL, 'k'},
 	{"casesensitive", no_argument      , NULL, 'c'},
@@ -95,7 +97,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:r:l:s:v:m:d:t:Skci8MV";
+static char *optstring = "ho:r:l:s:v:m:d:t:ISkci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -132,6 +134,7 @@ static void usage(int help, int longopt, int status)
 "  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8},\n"
 "  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
+"  -I, --inline Only useful for SVG output, generates an svg without the XML tag\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -551,7 +554,8 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	bg_opacity = (float)bg_color[3] / 255;
 
 	/* XML declaration */
-	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
+	if (!inline_svg)
+		fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
 
 	/* DTD
 	   No document type specified because "while a DTD is provided in [the SVG]
@@ -1323,6 +1327,9 @@ int main(int argc, char **argv)
 					fprintf(stderr, "Invalid image type: %s\n", optarg);
 					exit(EXIT_FAILURE);
 				}
+				break;
+			case 'I':
+				inline_svg = 1;
 				break;
 			case 'S':
 				structured = 1;
