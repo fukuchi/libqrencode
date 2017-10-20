@@ -81,7 +81,6 @@ static const struct option options[] = {
 	{"margin"       , required_argument, NULL, 'm'},
 	{"dpi"          , required_argument, NULL, 'd'},
 	{"type"         , required_argument, NULL, 't'},
-	{"inline"       , no_argument      , NULL, 'I'},
 	{"structured"   , no_argument      , NULL, 'S'},
 	{"kanji"        , no_argument      , NULL, 'k'},
 	{"casesensitive", no_argument      , NULL, 'c'},
@@ -89,6 +88,7 @@ static const struct option options[] = {
 	{"8bit"         , no_argument      , NULL, '8'},
 	{"rle"          , no_argument      , &rle,   1},
 	{"svg-path"     , no_argument      , &svg_path, 1},
+	{"inline"       , no_argument      , &inline_svg, 1},
 	{"micro"        , no_argument      , NULL, 'M'},
 	{"foreground"   , required_argument, NULL, 'f'},
 	{"background"   , required_argument, NULL, 'b'},
@@ -97,7 +97,7 @@ static const struct option options[] = {
 	{NULL, 0, NULL, 0}
 };
 
-static char *optstring = "ho:r:l:s:v:m:d:t:ISkci8MV";
+static char *optstring = "ho:r:l:s:v:m:d:t:Skci8MV";
 
 static void usage(int help, int longopt, int status)
 {
@@ -134,7 +134,6 @@ static void usage(int help, int longopt, int status)
 "  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8},\n"
 "  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
-"  -I, --inline Only useful for SVG output, generates an svg without the XML tag\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -146,6 +145,7 @@ static void usage(int help, int longopt, int status)
 "      --rle    enable run-length encoding for SVG.\n\n"
 "      --svg-path\n"
 "               use single path to draw modules for SVG.\n\n"
+"      --inline only useful for SVG output, generates an SVG without the XML tag.\n"
 "  -M, --micro  encode in a Micro QR Code. (experimental)\n\n"
 "      --foreground=RRGGBB[AA]\n"
 "      --background=RRGGBB[AA]\n"
@@ -1327,9 +1327,6 @@ int main(int argc, char **argv)
 					fprintf(stderr, "Invalid image type: %s\n", optarg);
 					exit(EXIT_FAILURE);
 				}
-				break;
-			case 'I':
-				inline_svg = 1;
 				break;
 			case 'S':
 				structured = 1;
