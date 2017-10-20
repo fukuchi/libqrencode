@@ -1,3 +1,14 @@
+2017.10.20 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* qrenc.c:
+	  - Adds the --inline option, which omits the xml tag for SVG output.
+	    (merged #110) (Thanks to @jp-bennett)
+	  - Short option '-I' for '--inline' disabled.
+	* qrencode.1.in:
+	  - Added some missing descriptions.
+	* README.md:
+	  - Acknowledgments updated.
+
 2017.10.13 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
 	* qrencode.h:

@@ -63,6 +63,15 @@ ignore case distinctions and use only upper-case characters.
 .B \-8, \-\-8bit
 encode entire data in 8-bit mode. \-k, \-c and \-i will be ignored.
 .TP
+.B \-\-rle
+enable run-length encoding for SVG.
+.TP
+.B \-\-svg-path
+use single path to draw modules for SVG.
+.TP
+.B \-\-inline
+only useful for SVG output, generates an SVG without the XML tag.
+.TP
 .B \-M, \-\-micro
 encode in a Micro QR Code. (experimental)
 .TP
