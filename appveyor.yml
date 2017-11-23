@@ -1,0 +1,88 @@
+#Author: KangLin(kl222@126.com)
+#TODO:
+#version: '0.1.1.{build}'
+
+image:
+  - Visual Studio 2015
+  #- Visual Studio 2017
+
+environment:
+  matrix:
+  ##### msvc 2017 ########
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 15
+    ARCH: x64
+
+  ##### msvc 2015 ########
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x64
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x64
+
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x64
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x64
+
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x86
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x86
+
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x86
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 14
+    ARCH: x86
+
+  ##### msvc 2013 ########
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x64
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x64
+
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x64
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x64
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x86
+
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x86
+    
+  - BUILD_TARGERT: windows_msvc
+    TOOLCHAIN_VERSION: 12
+    ARCH: x86
+
+init:
+  - set varch=%RABBIT_ARCH%
+  - if "%ARCH%" == "x64" set varch=amd64
+  - if "%BUILD_TARGERT%" == "windows_msvc" if %TOOLCHAIN_VERSION% LSS 15 (call "C:\Program Files (x86)\Microsoft Visual Studio %TOOLCHAIN_VERSION%.0\VC\vcvarsall.bat" %varch%) else (call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %varch%)
+
+build_script:
+  - mkdir "%APPVEYOR_BUILD_FOLDER%\build"
+  - cd "%APPVEYOR_BUILD_FOLDER%\build"
+  - cmake ..  -DWITH_TOOLS=NO -DBUILD_SHARED_LIBS=on 
+  - cmake --build . --target install --config 
