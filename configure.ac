@@ -40,6 +40,31 @@ PKG_PROG_PKG_CONFIG
 
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
 
+
+dnl ***************************************************************************
+dnl Check for Windows
+dnl ***************************************************************************
+
+platform_win32=no
+platform_win64=no
+cross_compiling=no
+case "$host" in
+*-mingw*)
+    platform_win32=yes
+    cross_compiling=yes
+    case "$host" in
+    *x86_64*)
+      platform_win64=yes
+      ;;
+    *)
+    esac
+    ;;
+*)
+esac
+AM_CONDITIONAL(PLATFORM_WIN, [test $platform_win32 = yes -o  $platform_win64 = yes])
+AM_CONDITIONAL(PLATFORM_WIN32, [test $platform_win32 = yes])
+AM_CONDITIONAL(PLATFORM_WIN64, [test $platform_win64 = yes])
+
 AC_CHECK_FUNCS([strdup])
 
 dnl --enable-thread-safety

@@ -21,6 +21,10 @@ libqrencode_la_SOURCES = qrencode.c qrencode_inner.h \
 
 libqrencode_la_LDFLAGS = -version-number $(MAJOR_VERSION):$(MINOR_VERSION):$(MICRO_VERSION)
 
+if PLATFORM_WIN
+libqrencode_la_LDFLAGS += -no-undefined
+endif
+
 include_HEADERS = qrencode.h
 
 pkgconfigdir = $(libdir)/pkgconfig
