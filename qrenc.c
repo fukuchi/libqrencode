@@ -596,7 +596,7 @@ static int writeANSI(QRcode *qrcode, const char *outfile)
 	for(y=0; y<qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 
-		bzero( buffer, buffer_s );
+		memset ( buffer, 0, buffer_s );
 		strncpy( buffer, white, white_s );
 		for(x=0; x<margin; x++ ){
 			strncat( buffer, "  ", 2 );

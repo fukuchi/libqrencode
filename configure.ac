@@ -1,6 +1,6 @@
 m4_define([__MAJOR_VERSION], [3])dnl
 m4_define([__MINOR_VERSION], [4])dnl
-m4_define([__MICRO_VERSION], [4])dnl
+m4_define([__MICRO_VERSION], [5])dnl
 m4_define([__VERSION], [__MAJOR_VERSION.__MINOR_VERSION.__MICRO_VERSION])dnl
 AC_INIT(QRencode, __VERSION)
 
@@ -32,7 +32,10 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-AC_PROG_RANLIB
+dnl ***********************************************************************
+dnl Adding win32 DLL generation
+dnl ***********************************************************************¡
+LT_INIT([win32-dll])
 PKG_PROG_PKG_CONFIG
 
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.spec qrencode.1])
