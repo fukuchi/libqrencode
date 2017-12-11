@@ -107,14 +107,16 @@ else
 echo "#define __STATIC static" >>confdefs.h
 echo "/* #undef WITH_TESTS */" >>confdefs.h
 fi
-
+SDL_CFLAGS="xno"
+m4_ifdef(AM_PATH_SDL,[
 if test x$build_tests = xyes ; then
 	SDL_REQUIRED_VERSION=1.2.0
 	AM_PATH_SDL($SDL_REQUIRED_VERSION,,AC_MSG_WARN([*** SDL $SDL_REQUIRED_VERSION or better is required.]))
 	AC_MSG_NOTICE([SDL check done.])
 	AM_ICONV_LINK
 fi
-AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "x" ])
+],[])
+AM_CONDITIONAL(HAVE_SDL, [test "x$SDL_CFLAGS" != "xno" ])
 
 
 dnl --enable-gprof
