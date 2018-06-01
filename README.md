@@ -45,7 +45,22 @@ tests and/or tools if you want not to install programs using SDL or PNG.
 
 Compile & install
 -----------------
-Just try
+If there is no "configure" script in the source code directory, run
+"autogen.sh" at first to generate it - this is mandatory if you downloaded the
+source from GitHub. Some additional software is needed to complete this
+process. For example, in Ubuntu, the following packages are needed:
+
+- autoconf
+- automake
+- autotools-dev
+- libtool
+- pkg-config
+- libpng12-dev
+
+You can skip this process if you have "configure" script already (typically
+when you downloaded the source tarball from fukuchi.org.)
+
+Now you are ready to compile the library and tool. Type the following commands:
 
 ```
 ./configure
@@ -55,15 +70,12 @@ sudo ldconfig
 ```
 
 This compiles and installs the library and header file to the appropriate
-directories. By default, /usr/local/lib and /usr/local/include. You can change
+directories: by default, /usr/local/lib and /usr/local/include. You can change
 the destination directory by passing some options to the configure script.
 Run "./configure --help" to see the list of options.
 
 It also installs a command line tool "qrencode" to /usr/local/bin. If you want
 not to build it, give "--without-tools" option to the configure script.
-
-When you downloaded the source code from github, run "autogen.sh" at first to
-generate configure script.
 
 If the configure script does not work well, try to use CMake.
 
@@ -183,5 +195,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
   David Binderman, @ralgozino, Sean McMurray, Vlad Bespalov (@win32asm),
   Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray,
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
-  Yuji Ueno, Jakub Wilk, @KangLin, @c-273
+  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules
                         - bug report / suggestion / typo fixes
