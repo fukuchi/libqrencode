@@ -4,6 +4,7 @@ project(QRencode VERSION 4.0.0 LANGUAGES C)
 
 option(WITH_TOOLS "Build utility tools"  YES )
 option(WITH_TESTS "Build tests"  NO )
+option(WITHOUT_PNG "Disable PNG support" NO)
 option(GPROF "Generate extra code to write profile information" OFF)
 option(COVERAGE "Generate extra code to write coverage information" OFF)
 option(ASAN "Use AddressSanitizer" OFF)
@@ -123,8 +124,10 @@ install(FILES qrencode.h DESTINATION include)
 install(TARGETS qrencode DESTINATION lib)
 
 ## Build utility tools
-if(WITH_TOOLS AND TARGET PNG::PNG)
-    add_definitions(-DHAVE_PNG=1)
+if(WITH_TOOLS)
+	if(NOT WITHOUT_PNG)
+    	add_definitions(-DHAVE_PNG=1)
+	endif()
     add_executable(qrenc qrenc.c)
     set_target_properties(qrenc PROPERTIES OUTPUT_NAME qrencode)
 
@@ -141,7 +144,7 @@ if(WITH_TESTS)
     enable_testing()
     add_definitions(-DWITH_TESTS=)
     add_subdirectory(tests)
-endif(WITH_TESTS)
+endif()
 
 ## ==============================================================================
 ##
@@ -174,5 +177,6 @@ message(STATUS " .... PNG library ............... = ${PNG_LIBRARIES}"         )
 message(STATUS " Project configuration:"                                      )
 message(STATUS " .. Build test programs  ........ = ${WITH_TESTS}"            )
 message(STATUS " .. Build utility tools  ........ = ${WITH_TOOLS}"            )
+message(STATUS " .. Disable PNG support  ........ = ${WITHOUT_PNG}"           )
 message(STATUS " .. Installation prefix ......... = ${CMAKE_INSTALL_PREFIX}"  )
 message(STATUS "------------------------------------------------------------ ")

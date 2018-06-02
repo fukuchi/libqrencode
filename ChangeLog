@@ -1,7 +1,13 @@
+2018.06.02 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[4.0]
+	* CMakeLists.txt:
+	  - Added "WITHOUT_PNG" option that builds qrencode without PNG support.
+	    (closes #125)
+
 2018.06.01 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
 	* README.md:
-	  - Added some notes of how to use autogen.sh. (closed #122) (Thanks to
+	  - Added some notes of how to use autogen.sh. (closes #122) (Thanks to
 	    @thebunnyrules)
 
 2017.10.20 Kentaro Fukuchi <kentaro@fukuchi.org>
