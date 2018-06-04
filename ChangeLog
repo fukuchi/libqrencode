@@ -4,6 +4,9 @@
 	  - STATIC_IN_RELEASE is now set to "static" when WITH_TESTS is disabled.
 	    (closes #126)
 	  - Tabs expaned.
+	[4.0]
+	* configure.ac, CMakeLists.txt, README.md:
+	  - Bumped version to 4.0.1.
 
 2018.06.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
