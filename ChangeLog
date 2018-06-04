@@ -1,8 +1,9 @@
 2018.06.04 Kentaro Fukuchi <kentaro@fukuchi.org>
-	[4.0]
+	[master, 4.0]
 	* CMakeLists.txt:
 	  - STATIC_IN_RELEASE is now set to "static" when WITH_TESTS is disabled.
 	    (closes #126)
+	  - Tabs expaned.
 
 2018.06.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
