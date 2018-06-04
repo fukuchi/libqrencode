@@ -61,7 +61,6 @@ add_definitions(-DMAJOR_VERSION=${PROJECT_VERSION_MAJOR})
 add_definitions(-DMINOR_VERSION=${PROJECT_VERSION_MINOR})
 add_definitions(-DMICRO_VERSION=${PROJECT_VERSION_PATCH})
 add_definitions(-DVERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-add_definitions(-DSTATIC_IN_RELEASE=)
 add_definitions(-DHAVE_SDL=0)
 
 if(MSVC)
@@ -143,7 +142,10 @@ endif()
 if(WITH_TESTS)
     enable_testing()
     add_definitions(-DWITH_TESTS=)
+    add_definitions(-DSTATIC_IN_RELEASE=)
     add_subdirectory(tests)
+else()
+    add_definitions(-DSTATIC_IN_RELEASE=static)
 endif()
 
 ## ==============================================================================
