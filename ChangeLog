@@ -10,6 +10,8 @@
 	  - test_all.sh activates test_basic.sh + test_configure.sh.
 	  - test_basic.sh is better during active development, especially when you
 	    gave additional options to configure script.
+	* configure.ac, CMakeLists.txt, README.md:
+	  - Bumped version to 4.0.1.
 
 2018.06.02 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]

@@ -1,8 +1,15 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 4.0.0 (2017.9.21)
+Version 4.0.1 (2018.6.4)
 ------------------------
+* CMake support improved.
+* New test scripts have been added.
+* Some compile time warnings have been fixed.
+
+
+Version 4.0.0 (2017.9.21)
+-------------------------
 * Memory efficiency has been improved.
 * QRcode_clearCache() has been deprecated.
 * Error correction code generating functions have been improved.
