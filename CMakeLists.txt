@@ -117,10 +117,11 @@ set(VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION
 configure_file(qrencode.1.in qrencode.1 @ONLY)
 configure_file(libqrencode.pc.in libqrencode.pc @ONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qrencode.1 DESTINATION share/man/man1)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libqrencode.pc DESTINATION lib/pkgconfig)
-install(FILES qrencode.h DESTINATION include)
-install(TARGETS qrencode DESTINATION lib)
+include(GNUInstallDirs)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qrencode.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libqrencode.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES qrencode.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS qrencode DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 ## Build utility tools
 if(WITH_TOOLS)
@@ -136,7 +137,7 @@ if(WITH_TOOLS)
         target_link_libraries(qrenc ${GETOPT_LIBRARIES})
     endif(MSVC)
 
-    install(TARGETS qrenc DESTINATION bin)
+    install(TARGETS qrenc DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 if(WITH_TESTS)
