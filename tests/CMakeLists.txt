@@ -47,6 +47,7 @@ if(TARGET ICONV::ICONV)
 
     MAKE_TEST(test_qrinput decoder)
     MAKE_TEST(test_qrspec decoder)
+    target_compile_definitions(test_qrspec PRIVATE -DSRCDIR="${CMAKE_CURRENT_SOURCE_DIR}/")
     MAKE_TEST(test_mqrspec decoder)
     MAKE_TEST(test_qrencode decoder)
     MAKE_TEST(test_split_urls decoder)
