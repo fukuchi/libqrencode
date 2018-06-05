@@ -23,7 +23,7 @@ if HAVE_LIBPTHREAD
 noinst_PROGRAMS += pthread_qrencode
 endif
 
-EXTRA_DIST = test_all.sh test_configure.sh frame URI_testset.inc CMakeLists.txt
+EXTRA_DIST = test_all.sh test_basic.sh test_configure.sh frame URI_testset.inc CMakeLists.txt
 
 libdecoder_a_SOURCES = decoder.c decoder.h datachunk.c datachunk.h rsecc_decoder.c rsecc_decoder.h
 
