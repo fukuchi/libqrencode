@@ -5,6 +5,10 @@
 #include "../qrencode_inner.h"
 #include "decoder.h"
 
+#ifndef SRCDIR
+#	define SRCDIR
+#endif
+
 static void print_eccTable(void)
 {
 	int i, j;
@@ -130,9 +134,9 @@ static void test_newframe(void)
 	int version;
 
 	testStart("Checking newly created frame.");
-	fp = fopen("frame", "rb");
+	fp = fopen(SRCDIR "frame", "rb");
 	if(fp == NULL) {
-		perror("Failed to open \"frame\":");
+		perror("Failed to open \"" SRCDIR "frame\":");
 		abort();
 	}
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
