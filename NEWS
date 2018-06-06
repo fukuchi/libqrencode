@@ -1,6 +1,18 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 4.1.0 (2018.6.x)
+------------------------
+* Command line tool "qrencode" has been improved:
+    * New option "--inline" has been added. (Thanks to @jp-bennett)
+* Some compile time warnings have been fixed.
+
+Release Note:
+The internal representation of the output code has been changed slightly -
+the second bit from LSB side now represents; 1:ECC bit / 0:data bit.
+This is only for debug purpose and does not affect user applications.
+
+
 Version 4.0.1 (2018.6.4)
 ------------------------
 * CMake support improved.

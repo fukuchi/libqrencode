@@ -1,6 +1,6 @@
 m4_define([__MAJOR_VERSION], [4])dnl
-m4_define([__MINOR_VERSION], [0])dnl
-m4_define([__MICRO_VERSION], [1])dnl
+m4_define([__MINOR_VERSION], [1])dnl
+m4_define([__MICRO_VERSION], [0])dnl
 m4_define([__VERSION], [__MAJOR_VERSION.__MINOR_VERSION.__MICRO_VERSION])dnl
 AC_INIT(QRencode, __VERSION)
 

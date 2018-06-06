@@ -4,10 +4,10 @@
 
 GENERAL INFORMATION
 ===================
-Libqrencode is a fast and compact library for encoding data in a QR Code symbol,
-a 2D symbology that can be scanned by handy terminals such as a mobile phone
-with CCD. The capacity of QR Code is up to 7000 digits or 4000 characters and
-has high robustness.
+Libqrencode is a fast and compact library for encoding data in a QR Code,
+a 2D symbology that can be scanned by handy terminals such as a smartphone.
+The capacity of QR Code is up to 7000 digits or 4000 characters and has high
+robustness.
 
 Libqrencode accepts a string or a list of data chunks then encodes in a QR Code
 symbol as a bitmap array. While other QR Code applications generate an image
@@ -91,7 +91,9 @@ configure, or "-DWITH\_TESTS=YES" to cmake.
 USAGE
 =====
 Basic usages of this library are written in the header file (qrencode.h).
-You can generate a manual of the library by using Doxygen.
+You can generate a manual of the library by using Doxygen, or see
+
+https://fukuchi.org/works/qrencode/manual/index.html
 
 
 WARNINGS
@@ -108,7 +110,7 @@ application.
 
 LICENSING INFORMATION
 =====================
-Copyright (C) 2006-2017 Kentaro Fukuchi
+Copyright (C) 2006-2018 Kentaro Fukuchi
 
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the Free
