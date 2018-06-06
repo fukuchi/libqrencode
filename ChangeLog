@@ -9,6 +9,10 @@
 	[4.0]
 	* configure.ac, CMakeLists.txt, README.md:
 	  - Bumped version to 4.0.2.
+	[master]
+	* tests/{Makefile.am, CMakeLists.txt, test_qrspec.c}:
+	  - Fix running test_qrspec when building out-of-source. (merged #129)
+	    (Thanks to @mgorny)
 
 2018.06.04 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
