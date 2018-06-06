@@ -1,11 +1,14 @@
 2018.06.06 Kentaro Fukuchi <kentaro@fukuchi.org>
-	[master]
+	[master, 4.0]
 	* tests/Makefile.am:
 	  - Add missing test_basic.sh to EXTRA_DIST. (merged #127) (Thanks to
 	    @mgorny)
 	* CMakeLists.txt:
 	  - Use CMake GNUInstallDirs module to provide variables for configurable
 	    install directories. (merged #128) (Thanks to @mgorny)
+	[4.0]
+	* configure.ac, CMakeLists.txt, README.md:
+	  - Bumped version to 4.0.2.
 
 2018.06.04 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
