@@ -176,7 +176,8 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 * Robert Petersen (@ripetersen)
                         - added ability to read input data from a file
 * @Oblomov              - improved SVG support patch
-* @mgorny               - reverse mappings of UTF8 and ANSIUTF8
+* @mgorny               - reverse mappings of UTF8 and ANSIUTF8, build script
+                          fixes
 * @EckoEdc              - MinGW support patch
 * Sebastian Buchwald (@UniQP)
                         - Various code cleanups
