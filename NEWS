@@ -13,6 +13,11 @@ the second bit from LSB side now represents; 1:ECC bit / 0:data bit.
 This is only for debug purpose and does not affect user applications.
 
 
+Version 4.0.2 (2018.6.6)
+------------------------
+* Build script fixes. (Thanks to @mgorny)
+
+
 Version 4.0.1 (2018.6.4)
 ------------------------
 * CMake support improved.
