@@ -1,6 +1,10 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 4.0.2 (2018.6.6)
+------------------------
+* Build script fixes. (Thanks to @mgorny)
+
 Version 4.0.1 (2018.6.4)
 ------------------------
 * CMake support improved.
