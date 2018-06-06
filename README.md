@@ -1,6 +1,6 @@
 # libqrencode - a fast and compact QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
 
-**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.0.1.
+**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.0.2.
 
 GENERAL INFORMATION
 ===================
@@ -178,7 +178,8 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 * Robert Petersen (@ripetersen)
                         - added ability to read input data from a file
 * @Oblomov              - improved SVG support patch
-* @mgorny               - reverse mappings of UTF8 and ANSIUTF8, build script
+* Michał Górny (@mgorny)
+                        - reverse mappings of UTF8 and ANSIUTF8, build script
                           fixes
 * @EckoEdc              - MinGW support patch
 * Sebastian Buchwald (@UniQP)
