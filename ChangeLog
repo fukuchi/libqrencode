@@ -1,3 +1,11 @@
+2018.06.07 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt, tests/CMakeLists.txt:
+	  - Merged #131 (Thanks to @mgorny):
+	    - Update paths inside the pkg-config file to respect GNUInstallDirs.
+	    - Improve pthread support for the main library when building via CMake.
+	    - Always build libdecoder as static library.
+
 2018.06.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
 	* tests/Makefile.am:
