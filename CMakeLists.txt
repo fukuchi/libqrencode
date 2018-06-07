@@ -17,9 +17,16 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
 find_package(PNG)
 find_package(Iconv)
+
+if(CMAKE_USE_PTHREADS_INIT)
+    add_definitions(-DHAVE_LIBPTHREAD=1)
+    # for libqrencode.pc
+    set(LIBPTHREAD ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 ## Check for system include files
 include(CheckIncludeFile)
@@ -106,6 +113,9 @@ if(BUILD_SHARED_LIBS)
     set_target_properties(qrencode PROPERTIES VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} SOVERSION ${PROJECT_VERSION_MAJOR})
 else()
     add_library(qrencode ${QRENCODE_SRCS} ${QRENCODE_HDRS})
+endif()
+if(CMAKE_USE_PTHREADS_INIT)
+    target_link_libraries(qrencode Threads::Threads)
 endif()
 
 include(GNUInstallDirs)
