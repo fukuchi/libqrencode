@@ -39,7 +39,7 @@ MAKE_TEST(test_estimatebit)
 MAKE_TEST(test_split)
 
 if(TARGET ICONV::ICONV)
-    add_library(decoder 
+    add_library(decoder STATIC
         decoder.c decoder.h 
         datachunk.c datachunk.h 
         rsecc_decoder.c rsecc_decoder.h)
