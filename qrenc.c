@@ -65,6 +65,7 @@ enum imageType {
 	ASCIIi_TYPE,
 	UTF8_TYPE,
 	ANSIUTF8_TYPE,
+	ANSI256UTF8_TYPE,
 	UTF8i_TYPE,
 	ANSIUTF8i_TYPE
 };
@@ -131,8 +132,8 @@ static void usage(int help, int longopt, int status)
 "               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8},\n"
-"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8},\n"
+"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified.\n\n"
@@ -185,7 +186,7 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the minimum version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8,ANSI256UTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version must be specified.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -863,7 +864,11 @@ static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi, in
 	}
 
 	if (use_ansi){
-		white = "\033[40;37;1m";
+		if (use_ansi == 2) {
+			white = "\033[38;5;231m\033[48;5;16m";
+		} else {
+			white = "\033[40;37;1m";
+		}
 		reset = "\033[0m";
 	} else {
 		white = "";
@@ -1064,6 +1069,9 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case ANSIUTF8_TYPE:
 			writeUTF8(qrcode, outfile, 1, 0);
 			break;
+		case ANSI256UTF8_TYPE:
+			writeUTF8(qrcode, outfile, 2, 0);
+			break;
 		case UTF8i_TYPE:
 			writeUTF8(qrcode, outfile, 0, 1);
 			break;
@@ -1200,6 +1208,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			case ANSIUTF8_TYPE:
 				writeUTF8(p->code, filename, 0, 0);
 				break;
+			case ANSI256UTF8_TYPE:
+				writeUTF8(p->code, filename, 0, 0);
+				break;
 			case UTF8i_TYPE:
 				writeUTF8(p->code, filename, 0, 1);
 				break;
@@ -1319,6 +1330,8 @@ int main(int argc, char **argv)
 					image_type = UTF8_TYPE;
 				} else if(strcasecmp(optarg, "ansiutf8") == 0) {
 					image_type = ANSIUTF8_TYPE;
+				} else if(strcasecmp(optarg, "ansi256utf8") == 0) {
+					image_type = ANSI256UTF8_TYPE;
 				} else if(strcasecmp(optarg, "utf8i") == 0) {
 					image_type = UTF8i_TYPE;
 				} else if(strcasecmp(optarg, "ansiutf8i") == 0) {
