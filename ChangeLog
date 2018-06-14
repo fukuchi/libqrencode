@@ -1,3 +1,9 @@
+2018.06.14 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* qrenc.c, qrencode.1.in, README.md, NEWS:
+	  - UTF8 mode now supports ANSI256 color. (Thanks to András Veres-
+	    Szentkirályi)
+
 2018.06.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
 	* CMakeLists.txt, tests/CMakeLists.txt:

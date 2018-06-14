@@ -192,7 +192,9 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
                         - improved CMake support
 * @vanillahsu           - bug fix patch
 * @Ation                - bug fix patch
-* Jonathan Bennett      - Addedd "--inline" option to qrencode.
+* Jonathan Bennett      - Addedd "--inline" option to qrencode
+* András Veres-Szentkirályi
+                        - ANSI256UTF8 support
 * Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
   Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,

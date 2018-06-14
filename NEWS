@@ -5,6 +5,8 @@ Version 4.1.0 (2018.6.x)
 ------------------------
 * Command line tool "qrencode" has been improved:
     * New option "--inline" has been added. (Thanks to @jp-bennett)
+    * UTF8 mode now supports ANSI256 color. (Thanks to András Veres-
+	  Szentkirályi)
 * Some compile time warnings have been fixed.
 
 Release Note:
