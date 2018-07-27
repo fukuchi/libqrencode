@@ -1,3 +1,10 @@
+2018.07.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt:
+	  - Merged #133 (Thanks to @sdf5)
+	    - Change CMAKE_SORUCE_DIR to CMAKE_CURRENT_SORUCE_DIR in
+		  CMAKE_MODULE_PATH
+
 2018.06.14 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
 	* qrenc.c, qrencode.1.in, README.md, NEWS:
