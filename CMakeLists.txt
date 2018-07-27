@@ -15,7 +15,7 @@ if(BUILD_TESTING)
     message(DEPRECATION "use WITH_TESTS option instead BUILD_TESTING")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
