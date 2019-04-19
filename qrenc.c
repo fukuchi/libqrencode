@@ -614,7 +614,7 @@ static void writeFSVG2_drawModules(FILE *fp, int x, int y, const char* color)
 		style='fill:#%s;fill-opacity:1;fill-rule:evenodd;stroke:none'\
 		cx='%d'\
 		cy='%d'\
-		r='3.5' />"
+		r='4.5' />"
 		,color,x*10+5,y*10+5
 	);
 }
