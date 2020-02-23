@@ -87,19 +87,23 @@ make
 When you want to build the test programs, give "--with-tests" option to
 configure, or "-DWITH\_TESTS=YES" to cmake.
 
-Building libqrencode -use vcpkg
+### Building libqrencode with vcpkg
 
-You can download and install libqrencode using the [vcpkg](https://github.com/Microsoft/vcpkg) dependency manager:
+You can download and install libqrencode using the
+[vcpkg](https://github.com/Microsoft/vcpkg) dependency manager:
    
-    ```
-    git clone https://github.com/Microsoft/vcpkg.git
-    cd vcpkg
-    ./bootstrap-vcpkg.sh
-    ./vcpkg integrate install
-    vcpkg install libqrencode
-    ```
+```
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+vcpkg install libqrencode
+```
     
-The libqrencode port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+The libqrencode port in vcpkg is kept up to date by Microsoft team members and
+community contributors. If the version is out of date, please
+[create an issue or pull request](https://github.com/Microsoft/vcpkg) on the
+vcpkg repository.
 
 
 USAGE
@@ -218,5 +222,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
   David Binderman, @ralgozino, Sean McMurray, Vlad Bespalov (@win32asm),
   Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray,
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
-  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules
+  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules, @NancyLi1013
                         - bug report / suggestion / typo fixes
