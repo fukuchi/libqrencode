@@ -27,11 +27,21 @@ if(HAVE_SDL)
 endif(HAVE_SDL)
 
 if(TARGET Threads::Threads)
+    if(HAVE_SYS_TIME_H)
+        add_definitions(-DHAVE_SYS_TIME_H)
+    endif()
+
+    if(HAVE_TIME_H)
+        add_definitions(-DHAVE_TIME_H)
+    endif()
+
     add_executable(prof_qrencode prof_qrencode.c)
     target_link_libraries(prof_qrencode common Threads::Threads)
 
-    add_executable(pthread_qrencode pthread_qrencode.c)
-    target_link_libraries(pthread_qrencode common Threads::Threads)
+    if(HAVE_PTHREAD_H)
+        add_executable(pthread_qrencode pthread_qrencode.c)
+        target_link_libraries(pthread_qrencode common Threads::Threads)
+    endif()
 endif()
 
 MAKE_TEST(test_bitstream)
