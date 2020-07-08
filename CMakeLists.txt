@@ -141,7 +141,11 @@ if(WITH_TOOLS)
     add_executable(qrenc qrenc.c)
     set_target_properties(qrenc PROPERTIES OUTPUT_NAME qrencode)
 
-    target_link_libraries(qrenc qrencode PNG::PNG)
+    if(NOT WITHOUT_PNG)
+        target_link_libraries(qrenc qrencode PNG::PNG)
+    else()
+        target_link_libraries(qrenc qrencode)
+    endif()
 
     if(MSVC)
         target_link_libraries(qrenc ${GETOPT_LIBRARIES})
