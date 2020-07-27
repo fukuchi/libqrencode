@@ -216,7 +216,7 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 * @sdf5                 - improved CMake support
 * Lonnie Abelbeck (@abelbeck)
                         - bug fix patch
-* Rosen Penev           - CMake bug fix patch
+* Rosen Penev (@neheb)  - CMake bug fix patch
 * Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
   Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
