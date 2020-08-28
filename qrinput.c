@@ -521,7 +521,7 @@ static int QRinput_encodeModeAn(QRinput_List *entry, BitStream *bstream, int ver
 
 	if(mqr) {
 		if(version < 2) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		}
 		ret = BitStream_appendNum(bstream, (size_t)(version - 1), MQRSPEC_MODEID_AN);
@@ -583,7 +583,7 @@ static int QRinput_encodeMode8(QRinput_List *entry, BitStream *bstream, int vers
 
 	if(mqr) {
 		if(version < 3) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		}
 		ret = BitStream_appendNum(bstream, (size_t)(version - 1), MQRSPEC_MODEID_8);
@@ -659,7 +659,7 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, BitStream *bstream, int 
 
 	if(mqr) {
 		if(version < 2) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		}
 		ret = BitStream_appendNum(bstream, (size_t)(version - 1), MQRSPEC_MODEID_KANJI);
