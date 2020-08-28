@@ -1,7 +1,7 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
-Version 4.1.0 (2020.8.xx)
+Version 4.1.0 (2020.8.28)
 -------------------------
 * Micro QR Code no longer requires to specify the version number.
 * 'make check' allows to run the test programs. (Thanks to Jan Tojnar)

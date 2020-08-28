@@ -22,6 +22,8 @@
 	  - Return value was ignored. (Thanks to @xiaoyur347) (closed #143)
 	* README.md, NEWS:
 	  - Various documentation improvements and updates.
+	[release-4.1.0]
+	* Bumped version to 4.1.0.
 
 2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
