@@ -653,10 +653,12 @@ QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QR
 
 QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
 {
+	int i;
+
 	if(version == 0) {
 		version = 1;
 	}
-	for(int i=version; i<=MQRSPEC_VERSION_MAX ; i++) {
+	for(i = version; i <= MQRSPEC_VERSION_MAX ; i++) {
 		QRcode *code = QRcode_encodeStringReal(string, i, level, 1, hint, casesensitive);
 		if(code != NULL) return code;
 	}
@@ -709,10 +711,12 @@ QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level
 
 QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level)
 {
+	int i;
+
 	if(version == 0) {
 		version = 1;
 	}
-	for(int i=version; i<=MQRSPEC_VERSION_MAX; i++) {
+	for(i = version; i <= MQRSPEC_VERSION_MAX; i++) {
 		QRcode *code = QRcode_encodeDataReal(data, size, i, level, 1);
 		if(code != NULL) return code;
 	}
@@ -722,6 +726,8 @@ QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, Q
 
 QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level)
 {
+	int i;
+
 	if(string == NULL) {
 		errno = EINVAL;
 		return NULL;
@@ -729,7 +735,7 @@ QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel le
 	if(version == 0) {
 		version = 1;
 	}
-	for(int i=version; i<=MQRSPEC_VERSION_MAX; i++) {
+	for(i = version; i <= MQRSPEC_VERSION_MAX; i++) {
 		QRcode *code = QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), i, level, 1);
 		if(code != NULL) return code;
 	}

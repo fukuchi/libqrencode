@@ -878,8 +878,9 @@ static void checkEstimatedVersion(int ver, int mode)
 
 static void test_estimateVersionBoundaryCheck(void)
 {
+	int ver;
 	testStart("Boundary check of estimateVersion");
-	for(int ver=1; ver < QRSPEC_VERSION_MAX; ver++) {
+	for(ver = 1; ver < QRSPEC_VERSION_MAX; ver++) {
 		checkEstimatedVersion(ver, QR_MODE_NUM);
 		checkEstimatedVersion(ver, QR_MODE_AN);
 		checkEstimatedVersion(ver, QR_MODE_8);
