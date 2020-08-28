@@ -9,7 +9,8 @@ Version 4.1.0 (2020.8.xx)
 	  Szentkirályi)
 * Some compile time warnings have been fixed.
 * Various CMake support improvements. (Thanks to @mgorny and @sdf5)
-* Some minor bug fixes. (Thank to Lonnie Abelbeck and Frédéric Wang)
+* Some minor bug fixes. (Thanks to Lonnie Abelbeck and Frédéric Wang)
+* Some documentation/manpage improvements. (Thanks to Dan Jacobson)
 
 Release Note:
 The internal representation of the output code has been slightly changed -

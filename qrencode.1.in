@@ -3,6 +3,7 @@
 qrencode \- Encode input data in a QR Code and save as a PNG or EPS image.
 .SH SYNOPSIS
 .B "qrencode"
+[-o FILENAME]
 [OPTION]...
 [STRING]
 
