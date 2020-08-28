@@ -5,8 +5,11 @@ Version 4.1.0 (2020.8.xx)
 -------------------------
 * Command line tool "qrencode" has been improved:
     * New option "--inline" has been added. (Thanks to @jp-bennett)
+	* New option "--strict-version" has been added.
     * UTF8 mode now supports ANSI256 color. (Thanks to András Veres-
 	  Szentkirályi)
+	* Micro QR Code no longer requires to specify the version number.
+
 * Some compile time warnings have been fixed.
 * Various CMake support improvements. (Thanks to @mgorny and @sdf5)
 * Some minor bug fixes. (Thanks to Lonnie Abelbeck and Frédéric Wang)
