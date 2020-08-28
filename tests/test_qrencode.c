@@ -683,14 +683,14 @@ static void test_encodeTooLongMQR(void)
 	testStart("Encode too large data for MQR.");
 
 	code = QRcode_encodeStringMQR(data[0], 1, QR_ECLEVEL_L, QR_MODE_8, 0);
-	assert_null(code, "6 byte length numeric string was accepted to version 1.\n");
-	assert_equal(errno, ERANGE, "errno != ERANGE\n");
+	assert_nonnull(code, "6 byte length numeric string should be accepted to version 2 or larger.\n");
+	assert_equal(code->version, 2, "6 byte length numeric string should be accepted to version 2.\n");
 	code = QRcode_encodeStringMQR(data[1], 2, QR_ECLEVEL_L, QR_MODE_8, 0);
-	assert_null(code, "7 byte length alphanumeric string was accepted to version 2.\n");
-	assert_equal(errno, ERANGE, "errno != ERANGE\n");
+	assert_nonnull(code, "7 byte length alphanumeric string should be accepted to version 3 or larger.\n");
+	assert_equal(code->version, 3, "7 byte length alphanumeric string should be accepted to version 3.\n");
 	code = QRcode_encodeString8bitMQR(data[2], 3, QR_ECLEVEL_L);
-	assert_null(code, "9 byte length 8bit string was accepted to version 3.\n");
-	assert_equal(errno, ERANGE, "errno != ERANGE\n");
+	assert_nonnull(code, "9 byte length 8bit string should be accepted to version 4.\n");
+	assert_equal(code->version, 4, "9 byte length 8bit string should be accepted to version 4.\n");
 	code = QRcode_encodeString8bitMQR(data[3], 4, QR_ECLEVEL_L);
 	assert_null(code, "16 byte length 8bit string was accepted to version 4.\n");
 	assert_equal(errno, ERANGE, "errno != ERANGE\n");
