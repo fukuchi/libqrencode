@@ -14,6 +14,7 @@ Version 4.1.0 (2020.8.xx)
 * Various CMake support improvements. (Thanks to @mgorny and @sdf5)
 * Some minor bug fixes. (Thanks to Lonnie Abelbeck and Frédéric Wang)
 * Some documentation/manpage improvements. (Thanks to Dan Jacobson)
+* Some performance improvements. (Thanks to @4061N and Mika Lindqvist)
 
 Release Note:
 The internal representation of the output code has been slightly changed -
