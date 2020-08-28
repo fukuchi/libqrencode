@@ -1,7 +1,50 @@
+2020.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Made a develoment branch.
+	* test_qrspec.c:
+	  - Typo fixes.
+	* qrinput.[ch], tests/{test_qrencode.c, test_qrinput.c}:
+	  - A precise boundary check has been introduced to
+	    QRinput_estimateVersion(). (closes #160)
+	* qrinput.c, qrencode.c, tests/test_qrencode.c, qrenc.c, qrencode.1.in:
+	  - QRinput_encodeMode*() now throws ERANGE when encoding Micro QR Code
+	    and an appropriate version number was not specified.
+	  - Now Micro QR Code also allows auto version adjustment.
+	* qrenc.c, qrencode.1.in:
+	  - The synopsis has been improved. (Thanks to @jidanni) (closes #155)
+	  - A new option '--strict-version' has been introduced.
+	* split.c:
+	  - A tail recursion has been eliminated. (Thanks to @4061N) (closes #144)
+	* tests/*:
+	  - All test programs are now TAP-ready. Now you can run all test programs
+	    by 'make check'.(Thanks to @jtojnar) (closes #117)
+	* qrinput.c:
+	  - Return value was ignored. (Thanks to @xiaoyur347) (closed #143)
+	* README.md, NEWS:
+	  - Various documentation improvements and updates.
+
+2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt, README.md:
+	  - Merged #158 (Thanks to @neheb):
+	    - Fixed the compile-time issue of the environment without libpng.
+
+2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* README.md:
+	  - Merged #151 (Thanks to @NancyLi1013):
+	    - Added vcpkg installation instructions.
+
+2018.11.09 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* configure.ac, README.md:
+	  - Merged #137 (Thanks to @abelbeck and @charmander):
+	    - 'too many arguments' bug has been fixed.
+
 2018.07.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
 	* CMakeLists.txt:
-	  - Merged #133 (Thanks to @sdf5)
+	  - Merged #133 (Thanks to @sdf5):
 	    - Change CMAKE_SORUCE_DIR to CMAKE_CURRENT_SORUCE_DIR in
 		  CMAKE_MODULE_PATH
 

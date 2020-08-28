@@ -225,5 +225,6 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
   Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray,
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
   Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules, @NancyLi1013,
-  Frédéric Wang, Dan Jacobson, Mika Lindqvist, Jan Tojnar, @xiaoyur347
+  Frédéric Wang, Dan Jacobson, Mika Lindqvist, Jan Tojnar, @xiaoyur347,
+  @charmander
                         - bug report / suggestion / typo fixes
