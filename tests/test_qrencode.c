@@ -489,6 +489,34 @@ static void test_encodeLongData(void)
 	testFinish();
 }
 
+static void test_encodeVer26Num(void)
+{
+	char data[3284];
+	QRcode *qrcode;
+
+	testStart("Encoding 3283 digits number. (issue #160)");
+
+	memset(data, '0', 3283);
+	data[3283] = '\0';
+	qrcode = QRcode_encodeString(data, 0, QR_ECLEVEL_L, QR_MODE_8, 0);
+	assert_nonnull(qrcode, "(QRcode_encodeString) failed to encode 3283 digits number in level L.\n");
+	assert_equal(qrcode->version, 26, "version number is %d (26 expected)\n", qrcode->version);
+	if(qrcode != NULL) {
+		QRcode_free(qrcode);
+	}
+
+	QRinput *input;
+	QRinput_List *list;
+
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(data, input, QR_MODE_8, 0);
+	list = input->head;
+	assert_equal(list->size, 3283, "chunk size is wrong. (%d, 3283 expected)\n", list->size);
+	QRinput_free(input);
+
+	testFinish();
+}
+
 static void test_01234567(void)
 {
 	QRinput *stream;
@@ -961,6 +989,7 @@ int main(int argc, char **argv)
 	test_encodeNull8();
 	test_encodeEmpty8();
 	test_encodeLongData();
+	test_encodeVer26Num();
 	test_01234567();
 	test_invalid_input();
 	test_struct_example();

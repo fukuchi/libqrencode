@@ -896,7 +896,11 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 	} else {
 		l = QRspec_lengthIndicator(entry->mode, version);
 		m = 1 << l;
-		num = (entry->size + m - 1) / m;
+		if(entry->mode == QR_MODE_KANJI) {
+			num = (entry->size/2 + m - 1) / m;
+		} else {
+			num = (entry->size + m - 1) / m;
+		}
 
 		bits += num * (MODE_INDICATOR_SIZE + l);
 	}
@@ -927,9 +931,9 @@ STATIC_IN_RELEASE int QRinput_estimateBitStreamSize(QRinput *input, int version)
 /**
  * Estimate the required version number of the symbol.
  * @param input input data
- * @return required version number
+ * @return required version number or -1 for failure.
  */
-static int QRinput_estimateVersion(QRinput *input)
+STATIC_IN_RELEASE int QRinput_estimateVersion(QRinput *input)
 {
 	int bits;
 	int version, prev;
@@ -939,6 +943,9 @@ static int QRinput_estimateVersion(QRinput *input)
 		prev = version;
 		bits = QRinput_estimateBitStreamSize(input, prev);
 		version = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
+		if(prev == 0 && version > 1) {
+			version--;
+		}
 	} while (version > prev);
 
 	return version;
