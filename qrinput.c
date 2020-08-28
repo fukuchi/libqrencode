@@ -445,7 +445,7 @@ static int QRinput_encodeModeNum(QRinput_List *entry, BitStream *bstream, int ve
 	} else if(entry->size - words * 3 == 2) {
 		val  = (unsigned int)(entry->data[words*3  ] - '0') * 10;
 		val += (unsigned int)(entry->data[words*3+1] - '0');
-		BitStream_appendNum(bstream, 7, val);
+		ret = BitStream_appendNum(bstream, 7, val);
 		if(ret < 0) return -1;
 	}
 
