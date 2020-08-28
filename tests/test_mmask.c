@@ -141,9 +141,11 @@ static void test_maskEvaluation(void)
 
 int main(int argc, char **argv)
 {
+	int tests = 2;
+	testInit(tests);
 	test_masks();
 	test_maskEvaluation();
-	report();
+	testReport(tests);
 
 	if(argc > 1) {
 		print_masks();

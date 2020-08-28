@@ -977,6 +977,8 @@ static void test_apiversion(void)
 
 int main(int argc, char **argv)
 {
+	int tests = 32;
+	testInit(tests);
 	test_iterate();
 	test_iterate2();
 	test_filler();
@@ -1009,7 +1011,7 @@ int main(int argc, char **argv)
 	test_oddBitCalcMQR();
 	test_mqrencode();
 	test_apiversion();
-	report();
+	testReport(tests);
 
 	if(argc > 1) {
 		print_filler();

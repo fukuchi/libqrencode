@@ -186,11 +186,12 @@ static void monkey_encode_an(int loop)
 {
 	int i;
 
-	puts("Monkey test: QRcode_encodeString() - AlphaNumeric string.");
+	testStart("Monkey test: QRcode_encodeString() - AlphaNumeric string.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_encode_an(i);
 	}
+	testEnd(0);
 }
 
 
@@ -249,11 +250,12 @@ static void monkey_split_an(int loop)
 {
 	int i;
 
-	puts("Monkey test: Split_splitStringToQRinput() - AlphaNumeric string.");
+	testStart("Monkey test: Split_splitStringToQRinput() - AlphaNumeric string.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_split_an(i);
 	}
+	testEnd(0);
 }
 
 static void test_encode_8(int num)
@@ -291,11 +293,12 @@ static void monkey_encode_8(int loop)
 {
 	int i;
 
-	puts("Monkey test: QRcode_encodeData() - 8bit char string.");
+	testStart("Monkey test: QRcode_encodeData() - 8bit char string.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_encode_8(i);
 	}
+	testEnd(0);
 }
 
 static void test_split_8(int num)
@@ -353,11 +356,12 @@ static void monkey_split_8(int loop)
 {
 	int i;
 
-	puts("Monkey test: Split_splitStringToQRinput() - 8bit char string.");
+	testStart("Monkey test: Split_splitStringToQRinput() - 8bit char string.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_split_8(i);
 	}
+	testEnd(0);
 }
 
 static void test_encode_kanji(int num)
@@ -395,11 +399,12 @@ static void monkey_encode_kanji(int loop)
 {
 	int i;
 
-	puts("Monkey test: QRcode_encodeString() - kanji string.");
+	testStart("Monkey test: QRcode_encodeString() - kanji string.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_encode_kanji(i);
 	}
+	testEnd(0);
 }
 
 static void test_split_kanji(int num)
@@ -457,11 +462,12 @@ static void monkey_split_kanji(int loop)
 {
 	int i;
 
-	puts("Monkey test: Split_splitStringToQRinput() - kanji string.");
+	testStart("Monkey test: Split_splitStringToQRinput() - kanji string.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_split_kanji(i);
 	}
+	testEnd(0);
 }
 
 static void test_split_structure(int num)
@@ -539,17 +545,20 @@ static void test_split_structure(int num)
 	QRinput_free(input);
 	QRinput_Struct_free(s);
 	QRcode_List_free(codes);
+
+	return;
 }
 
 static void monkey_split_structure(int loop)
 {
 	int i;
 
-	puts("Monkey test: QRinput_splitQRinputToStruct.");
+	testStart("Monkey test: QRinput_splitQRinputToStruct.");
 	srand(0);
 	for(i=0; i<loop; i++) {
 		test_split_structure(i);
 	}
+	testEnd(0);
 }
 
 int main(int argc, char **argv)
@@ -558,6 +567,8 @@ int main(int argc, char **argv)
 	if(argc == 2) {
 		loop = atoi(argv[1]);
 	}
+	int tests = 7;
+	testInit(tests);
 	monkey_split_an(loop);
 	monkey_encode_an(loop);
 	monkey_split_8(loop);
@@ -565,6 +576,7 @@ int main(int argc, char **argv)
 	monkey_split_kanji(loop);
 	monkey_encode_kanji(loop);
 	monkey_split_structure(loop);
+	testReport(tests);
 
 	return 0;
 }

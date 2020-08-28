@@ -216,6 +216,7 @@ static void test_verpat(void)
 	int i, c;
 	unsigned int mask;
 
+	testStart("Checking version pattern.");
 	for(version=7; version <= QRSPEC_VERSION_MAX; version++) {
 		pattern = QRspec_getVersionPattern(version);
 		if((pattern >> 12) != (unsigned int)version) {
@@ -245,6 +246,7 @@ static void test_verpat(void)
 			err++;
 		}
 	}
+	testEnd(err);
 }
 
 /* See Table 22 (p.45) and Appendix C (p. 65) of JIS X0510:2004 */
@@ -298,6 +300,8 @@ static void test_format(void)
 
 int main(int argc, char **argv)
 {
+	int tests = 6;
+	testInit(tests);
 	test_eccTable();
 	test_eccTable2();
 	test_newframe();
@@ -305,7 +309,7 @@ int main(int argc, char **argv)
 	//test_alignment();
 	test_verpat();
 	test_format();
-	report();
+	testReport(tests);
 
 	if(argc > 1) {
 		print_eccTable();

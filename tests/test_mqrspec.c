@@ -165,11 +165,13 @@ static void test_dataLength(void)
 
 int main(int argc, char **argv)
 {
+	int tests = 4;
+	testInit(tests);
 	test_newFrame();
 	test_newframe_invalid();
 	test_format();
 	test_dataLength();
-	report();
+	testReport(tests);
 
 	if(argc > 1) {
 		print_format();

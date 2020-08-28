@@ -1043,6 +1043,9 @@ static void test_encodeECI(void)
 
 int main()
 {
+	int tests = 40;
+	testInit(tests);
+
 	test_encodeNumeric();
 	test_encodeNumeric2();
 	test_encodeNumeric3();
@@ -1085,7 +1088,7 @@ int main()
 	test_ECIinvalid();
 	test_encodeECI();
 
-	report();
+	testReport(tests);
 
 	return 0;
 }

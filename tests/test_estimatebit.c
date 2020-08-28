@@ -143,6 +143,8 @@ int main()
 {
 	gstream = QRinput_new();
 
+	int tests = 8;
+	testInit(tests);
 	test_numbit();
 	test_numbit2();
 	test_numbit3();
@@ -151,8 +153,7 @@ int main()
 	test_kanji();
 	test_structure();
 	test_mix();
-
-	report();
+	testReport(tests);
 
 	return 0;
 }
