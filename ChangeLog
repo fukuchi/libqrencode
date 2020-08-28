@@ -24,6 +24,8 @@
 	  - Various documentation improvements and updates.
 	[release-4.1.0]
 	* Bumped version to 4.1.0.
+	* qrencode.h:
+	  - Document improvements.
 
 2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
