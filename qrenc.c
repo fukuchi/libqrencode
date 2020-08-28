@@ -46,6 +46,7 @@ static int rle = 0;
 static int svg_path = 0;
 static int micro = 0;
 static int inline_svg = 0;
+static int strict_versioning = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 static unsigned char fg_color[4] = {0, 0, 0, 255};
@@ -73,28 +74,29 @@ enum imageType {
 static enum imageType image_type = PNG_TYPE;
 
 static const struct option options[] = {
-	{"help"         , no_argument      , NULL, 'h'},
-	{"output"       , required_argument, NULL, 'o'},
-	{"read-from"    , required_argument, NULL, 'r'},
-	{"level"        , required_argument, NULL, 'l'},
-	{"size"         , required_argument, NULL, 's'},
-	{"symversion"   , required_argument, NULL, 'v'},
-	{"margin"       , required_argument, NULL, 'm'},
-	{"dpi"          , required_argument, NULL, 'd'},
-	{"type"         , required_argument, NULL, 't'},
-	{"structured"   , no_argument      , NULL, 'S'},
-	{"kanji"        , no_argument      , NULL, 'k'},
-	{"casesensitive", no_argument      , NULL, 'c'},
-	{"ignorecase"   , no_argument      , NULL, 'i'},
-	{"8bit"         , no_argument      , NULL, '8'},
-	{"micro"        , no_argument      , NULL, 'M'},
-	{"rle"          , no_argument      , &rle,   1},
-	{"svg-path"     , no_argument      , &svg_path, 1},
-	{"inline"       , no_argument      , &inline_svg, 1},
-	{"foreground"   , required_argument, NULL, 'f'},
-	{"background"   , required_argument, NULL, 'b'},
-	{"version"      , no_argument      , NULL, 'V'},
-	{"verbose"      , no_argument      , &verbose, 1},
+	{"help"          , no_argument      , NULL, 'h'},
+	{"output"        , required_argument, NULL, 'o'},
+	{"read-from"     , required_argument, NULL, 'r'},
+	{"level"         , required_argument, NULL, 'l'},
+	{"size"          , required_argument, NULL, 's'},
+	{"symversion"    , required_argument, NULL, 'v'},
+	{"margin"        , required_argument, NULL, 'm'},
+	{"dpi"           , required_argument, NULL, 'd'},
+	{"type"          , required_argument, NULL, 't'},
+	{"structured"    , no_argument      , NULL, 'S'},
+	{"kanji"         , no_argument      , NULL, 'k'},
+	{"casesensitive" , no_argument      , NULL, 'c'},
+	{"ignorecase"    , no_argument      , NULL, 'i'},
+	{"8bit"          , no_argument      , NULL, '8'},
+	{"micro"         , no_argument      , NULL, 'M'},
+	{"rle"           , no_argument      , &rle,   1},
+	{"svg-path"      , no_argument      , &svg_path, 1},
+	{"inline"        , no_argument      , &inline_svg, 1},
+	{"strict-version", no_argument      , &strict_versioning, 1},
+	{"foreground"    , required_argument, NULL, 'f'},
+	{"background"    , required_argument, NULL, 'b'},
+	{"version"       , no_argument      , NULL, 'V'},
+	{"verbose"       , no_argument      , &verbose, 1},
 	{NULL, 0, NULL, 0}
 };
 
@@ -1032,6 +1034,10 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		} else {
 			perror("Failed to encode the input data");
 		}
+		exit(EXIT_FAILURE);
+	}
+	if(strict_versioning && version > 0 && qrcode->version != version) {
+		fprintf(stderr, "Failed to encode the input data: Input data too large\n");
 		exit(EXIT_FAILURE);
 	}
 
