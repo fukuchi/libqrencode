@@ -50,7 +50,7 @@ specify the DPI of the generated PNG. (default=72)
 specify the type of the generated image. (default=PNG)
 .TP
 .B \-S, \-\-structured
-make structured symbols. Version must be specified.
+make structured symbols. Version number must be specified with '-v'.
 .TP
 .B \-k, \-\-kanji
 assume that the input text contains kanji (shift-jis).
@@ -74,7 +74,7 @@ use single path to draw modules for SVG.
 only useful for SVG output, generates an SVG without the XML tag.
 .TP
 .B \-M, \-\-micro
-encode in a Micro QR Code. (experimental)
+encode in a Micro QR Code. Version number must be specified with '-v'. (experimental)
 .TP
 .PD 0
 .B \-\-foreground=RRGGBB[AA]
