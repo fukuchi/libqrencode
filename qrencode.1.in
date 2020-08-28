@@ -64,6 +64,9 @@ ignore case distinctions and use only upper-case characters.
 .B \-8, \-\-8bit
 encode entire data in 8-bit mode. \-k, \-c and \-i will be ignored.
 .TP
+.B \-M, \-\-micro
+encode in a Micro QR Code. See MICRO QR CODE for more information.
+.TP
 .B \-\-rle
 enable run-length encoding for SVG.
 .TP
@@ -72,9 +75,6 @@ use single path to draw modules for SVG.
 .TP
 .B \-\-inline
 only useful for SVG output, generates an SVG without the XML tag.
-.TP
-.B \-M, \-\-micro
-encode in a Micro QR Code. Version number must be specified with '-v'. (experimental)
 .TP
 .PD 0
 .B \-\-foreground=RRGGBB[AA]
@@ -100,6 +100,11 @@ Each version has a different module configuration or number of modules,
 ranging from Version 1 (21 x 21 modules) up to Version 40 (177 x 177 modules).
 Each higher version number comprises 4 additional modules per side by default.
 See http://www.qrcode.com/en/about/version.html for a detailed version list.
+
+.SH MICRO QR CODE
+With Micro QR Code, You can embed data in a smaller area than with QR Code,
+but the data capacity is strongly limited. The symbol versions range from
+Version 1 to 4.
 
 .SH EXAMPLES
 .TP

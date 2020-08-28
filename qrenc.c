@@ -87,10 +87,10 @@ static const struct option options[] = {
 	{"casesensitive", no_argument      , NULL, 'c'},
 	{"ignorecase"   , no_argument      , NULL, 'i'},
 	{"8bit"         , no_argument      , NULL, '8'},
+	{"micro"        , no_argument      , NULL, 'M'},
 	{"rle"          , no_argument      , &rle,   1},
 	{"svg-path"     , no_argument      , &svg_path, 1},
 	{"inline"       , no_argument      , &inline_svg, 1},
-	{"micro"        , no_argument      , NULL, 'M'},
 	{"foreground"   , required_argument, NULL, 'f'},
 	{"background"   , required_argument, NULL, 'b'},
 	{"version"      , no_argument      , NULL, 'V'},
@@ -143,11 +143,11 @@ static void usage(int help, int longopt, int status)
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -M, --micro  encode in a Micro QR Code.\n\n"
 "      --rle    enable run-length encoding for SVG.\n\n"
 "      --svg-path\n"
 "               use single path to draw modules for SVG.\n\n"
 "      --inline only useful for SVG output, generates an SVG without the XML tag.\n\n"
-"  -M           encode in a Micro QR Code. Version number must be specified with '-v'.\n\n"
 "      --foreground=RRGGBB[AA]\n"
 "      --background=RRGGBB[AA]\n"
 "               specify foreground/background color in hexadecimal notation.\n"
@@ -193,7 +193,7 @@ static void usage(int help, int longopt, int status)
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
 "  -8           encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n"
-"  -M           encode in a Micro QR Code. Version number must be specified with '-v'.\n"
+"  -M           encode in a Micro QR Code.\n"
 "  -V           display the version number and copyrights of the qrencode.\n"
 "  [STRING]     input data. If it is not specified, data will be taken from\n"
 "               standard input.\n\n"
@@ -1423,10 +1423,6 @@ int main(int argc, char **argv)
 	}
 
 	if(micro) {
-		if(version == 0) {
-			fprintf(stderr, "Version number must be specified to encode a Micro QR Code symbol.\n");
-			exit(EXIT_FAILURE);
-		}
 		if(structured) {
 			fprintf(stderr, "Micro QR Code does not support structured symbols.\n");
 			exit(EXIT_FAILURE);
