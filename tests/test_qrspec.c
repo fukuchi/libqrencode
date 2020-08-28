@@ -172,7 +172,7 @@ static void test_newframe_invalid(void)
 
 #if 0
 /* This test is used to check positions of alignment pattern. See Appendix E
- * (pp.71) of JIS X0510:2004 and compare to the output. Before comment out
+ * (p.71) of JIS X0510:2004 and compare to the output. Before comment out
  * this test, change the value of the pattern marker's center dot from 0xa1
  * to 0xb1 (QRspec_putAlignmentMarker() : finder).
  */
@@ -247,7 +247,7 @@ static void test_verpat(void)
 	}
 }
 
-/* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
+/* See Table 22 (p.45) and Appendix C (p. 65) of JIS X0510:2004 */
 static unsigned int levelIndicator[4] = {1, 0, 3, 2};
 static unsigned int calcFormatInfo(int mask, QRecLevel level)
 {
