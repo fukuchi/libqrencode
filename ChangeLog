@@ -26,6 +26,9 @@
 	* Bumped version to 4.1.0.
 	* qrencode.h:
 	  - Document improvements.
+	* qrenc.c, qrencode.1.in:
+	  - Added 'UTF8i' and 'ANSIUTF8i' to the descriptions of the corresponding
+	    options. (Thanks to @Khoyo) (merged #138)
 
 2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
