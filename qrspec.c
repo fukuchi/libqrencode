@@ -431,10 +431,10 @@ static unsigned char *QRspec_createFrame(int version)
 	unsigned int verinfo, v;
 
 	width = qrspecCapacity[version].width;
-	frame = (unsigned char *)malloc(width * width);
+	frame = (unsigned char *)malloc((size_t)(width * width));
 	if(frame == NULL) return NULL;
 
-	memset(frame, 0, width * width);
+	memset(frame, 0, (size_t)(width * width));
 	/* Finder pattern */
 	putFinderPattern(frame, width, 0, 0);
 	putFinderPattern(frame, width, width - 7, 0);

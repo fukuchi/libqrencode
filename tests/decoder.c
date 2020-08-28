@@ -80,7 +80,7 @@ static DataChunk *decodeNum(int *bits_length, unsigned char **bits, int version,
 		return NULL;
 	}
 
-	buf = (char *)malloc(size + 1);
+	buf = (char *)malloc((size_t)size + 1);
 	p = *bits;
 	q = buf;
 	for(i=0; i<words; i++) {
@@ -136,13 +136,13 @@ static DataChunk *decodeAn(int *bits_length, unsigned char **bits, int version, 
 		return NULL;
 	}
 
-	buf = (char *)malloc(size + 1);
+	buf = (char *)malloc((size_t)size + 1);
 	p = *bits;
 	q = buf;
 	for(i=0; i<words; i++) {
 		val = bitToInt(p, 11);
-		ch = val / 45;
-		cl = val % 45;
+		ch = (int)(val / 45);
+		cl = (int)(val % 45);
 		sprintf(q, "%c%c", decodeAnTable[ch], decodeAnTable[cl]);
 		p += 11;
 		q += 2;
@@ -178,7 +178,7 @@ static DataChunk *decode8(int *bits_length, unsigned char **bits, int version, i
 		return NULL;
 	}
 
-	buf = (unsigned char *)malloc(size);
+	buf = (unsigned char *)malloc((size_t)size);
 	p = *bits;
 	q = buf;
 	for(i=0; i<size; i++) {
@@ -203,7 +203,7 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 	unsigned char *p;
 	char *buf, *q;
 	unsigned int val;
-	int ch, cl;
+	unsigned int ch, cl;
 	DataChunk *chunk;
 
 	size = decodeLength(bits_length, bits, QR_MODE_KANJI, version, mqr);
@@ -215,7 +215,7 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 		return NULL;
 	}
 
-	buf = (char *)malloc(size * 2 + 1);
+	buf = (char *)malloc((size_t)size * 2 + 1);
 	p = *bits;
 	q = buf;
 	for(i=0; i<size; i++) {
@@ -244,7 +244,7 @@ static DataChunk *decodeKanji(int *bits_length, unsigned char **bits, int versio
 
 static DataChunk *decodeChunk(int *bits_length, unsigned char **bits, int version)
 {
-	int val;
+	unsigned int val;
 
 	if(*bits_length < 4) {
 		return NULL;
@@ -434,7 +434,7 @@ int QRcode_decodeVersion(QRcode *code)
 		return -1;
 	}
 
-	return v1 >> 12;
+	return (int)(v1 >> 12);
 }
 
 int QRcode_decodeFormat(QRcode *code, QRecLevel *level, int *mask)
@@ -620,7 +620,7 @@ static BitStream *extractBits(int width, unsigned char *frame, int spec[5])
 	words = QRspec_rsDataLength(spec);
 	d1 = QRspec_rsDataCodes1(spec);
 	b1 = QRspec_rsBlockNum1(spec);
-	bits = (unsigned char *)malloc(words * 8);
+	bits = (unsigned char *)malloc((size_t)words * 8);
 	/*
 	 * 00 01 02 03 04 05 06 07 08 09
 	 * 10 11 12 13 14 15 16 17 18 19
@@ -643,7 +643,7 @@ static BitStream *extractBits(int width, unsigned char *frame, int spec[5])
 	}
 	free(filler);
 
-	bstream = BitStream_newWithBits(words * 8, bits);
+	bstream = BitStream_newWithBits((size_t)words * 8, bits);
 	free(bits);
 
 	return bstream;
@@ -833,14 +833,14 @@ static BitStream *extractBitsMQR(int width, unsigned char *frame, int version, Q
 	int size;
 
 	size = MQRspec_getDataLengthBit(version, level) + MQRspec_getECCLength(version, level) * 8;
-	bits = (unsigned char *)malloc(size);
+	bits = (unsigned char *)malloc((size_t)size);
 	filler = FrameFiller_new(width, frame, 1);
 	for(i=0; i<size; i++) {
 		bits[i] = *(FrameFiller_next(filler)) & 1;
 	}
 	free(filler);
 
-	bstream = BitStream_newWithBits(size, bits);
+	bstream = BitStream_newWithBits((size_t)size, bits);
 	free(bits);
 
 	return bstream;

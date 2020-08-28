@@ -530,6 +530,8 @@ static void test_split8N8(void)
 
 int main()
 {
+	int tests = 24;
+	testInit(tests);
 	test_split1();
 	test_split2();
 	test_split3();
@@ -545,8 +547,7 @@ int main()
 	test_splitAn8An();
 	test_split8An8();
 	test_split8N8();
-
-	report();
+	testReport(tests);
 
 	return 0;
 }

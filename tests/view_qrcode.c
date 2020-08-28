@@ -21,6 +21,7 @@ static int size = 4;
 static int margin = -1;
 static int structured = 0;
 static int micro = 0;
+static int colorize = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 
@@ -148,7 +149,17 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 	int x, y, width;
 	unsigned char *p;
 	SDL_Rect rect;
-	Uint32 color;
+	Uint32 color[8];
+	int col;
+
+	color[0] = SDL_MapRGBA(surface->format, 255, 255, 255, 255);
+	color[1] = SDL_MapRGBA(surface->format,   0,   0,   0, 255);
+	color[2] = SDL_MapRGBA(surface->format, 192, 192, 255, 255);
+	color[3] = SDL_MapRGBA(surface->format,   0,   0,  64, 255);
+	color[4] = SDL_MapRGBA(surface->format, 255, 255, 192, 255);
+	color[5] = SDL_MapRGBA(surface->format,  64,  64,   0, 255);
+	color[6] = SDL_MapRGBA(surface->format, 255, 192, 192, 255);
+	color[7] = SDL_MapRGBA(surface->format,  64,   0,   0, 255);
 
 	ox += margin * size;
 	oy += margin * size;
@@ -160,15 +171,19 @@ static void draw_QRcode(QRcode *qrcode, int ox, int oy)
 			rect.y = oy + y * size;
 			rect.w = size;
 			rect.h = size;
-			if(*p & 1) {
-				//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-				color = SDL_MapRGBA(surface->format, 0, 0, 0, 255);
+			if(!colorize) {
+				col = 0;
 			} else {
-				//SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-				color = SDL_MapRGBA(surface->format, 255, 255, 255, 255);
+				if(*p & 0x80) {
+					col = 6;
+				} else if(*p & 0x02) {
+					col = 4;
+				} else {
+					col = 2;
+				}
 			}
-			//SDL_RenderFillRect(renderer, &rect);
-			SDL_FillRect(surface, &rect, color);
+			col += (*p & 1);
+			SDL_FillRect(surface, &rect, color[col]);
 			p++;
 		}
 	}
@@ -395,6 +410,10 @@ static void view(int mode, QRinput *input)
 					break;
 				case SDLK_q:
 					level = QR_ECLEVEL_Q;
+					loop = 0;
+					break;
+				case SDLK_c:
+					colorize ^= 1;
 					loop = 0;
 					break;
 				case SDLK_ESCAPE:

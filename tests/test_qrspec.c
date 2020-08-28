@@ -5,6 +5,10 @@
 #include "../qrencode_inner.h"
 #include "decoder.h"
 
+#ifndef SRCDIR
+#	define SRCDIR
+#endif
+
 static void print_eccTable(void)
 {
 	int i, j;
@@ -130,9 +134,9 @@ static void test_newframe(void)
 	int version;
 
 	testStart("Checking newly created frame.");
-	fp = fopen("frame", "rb");
+	fp = fopen(SRCDIR "frame", "rb");
 	if(fp == NULL) {
-		perror("Failed to open \"frame\":");
+		perror("Failed to open \"" SRCDIR "frame\":");
 		abort();
 	}
 	for(i=1; i<=QRSPEC_VERSION_MAX; i++) {
@@ -168,7 +172,7 @@ static void test_newframe_invalid(void)
 
 #if 0
 /* This test is used to check positions of alignment pattern. See Appendix E
- * (pp.71) of JIS X0510:2004 and compare to the output. Before comment out
+ * (p.71) of JIS X0510:2004 and compare to the output. Before comment out
  * this test, change the value of the pattern marker's center dot from 0xa1
  * to 0xb1 (QRspec_putAlignmentMarker() : finder).
  */
@@ -212,6 +216,7 @@ static void test_verpat(void)
 	int i, c;
 	unsigned int mask;
 
+	testStart("Checking version pattern.");
 	for(version=7; version <= QRSPEC_VERSION_MAX; version++) {
 		pattern = QRspec_getVersionPattern(version);
 		if((pattern >> 12) != (unsigned int)version) {
@@ -241,9 +246,10 @@ static void test_verpat(void)
 			err++;
 		}
 	}
+	testEnd(err);
 }
 
-/* See Table 22 (pp.45) and Appendix C (pp. 65) of JIS X0510:2004 */
+/* See Table 22 (p.45) and Appendix C (p. 65) of JIS X0510:2004 */
 static unsigned int levelIndicator[4] = {1, 0, 3, 2};
 static unsigned int calcFormatInfo(int mask, QRecLevel level)
 {
@@ -294,6 +300,8 @@ static void test_format(void)
 
 int main(int argc, char **argv)
 {
+	int tests = 6;
+	testInit(tests);
 	test_eccTable();
 	test_eccTable2();
 	test_newframe();
@@ -301,7 +309,7 @@ int main(int argc, char **argv)
 	//test_alignment();
 	test_verpat();
 	test_format();
-	report();
+	testReport(tests);
 
 	if(argc > 1) {
 		print_eccTable();

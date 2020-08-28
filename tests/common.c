@@ -41,7 +41,7 @@ int ncmpBin(char *correct, BitStream *bstream, size_t len)
 
 int cmpBin(char *correct, BitStream *bstream)
 {
-	int len = 0;
+	size_t len = 0;
 	char *p;
 
 
@@ -51,6 +51,11 @@ int cmpBin(char *correct, BitStream *bstream)
 	return ncmpBin(correct, bstream, len);
 }
 
+void testInit(int tests)
+{
+	printf("1..%d\n", tests);
+}
+
 void testStartReal(const char *func, const char *name)
 {
 	tests++;
@@ -58,37 +63,42 @@ void testStartReal(const char *func, const char *name)
 	testFunc = func;
 	assertionFailed = 0;
 	assertionNum = 0;
-	printf("_____%d: %s: %s...\n", tests, func, name);
+	//printf("_____%d: %s: %s...\n", tests, func, name);
 }
 
 void testEnd(int result)
 {
-	printf(".....%d: %s: %s, ", tests, testFunc, testName);
 	if(result) {
-		puts("FAILED.");
+		printf("not ok %d %s: %s\n", tests, testFunc, testName);
 		failed++;
 	} else {
-		puts("PASSED.");
+		printf("ok %d %s: %s\n", tests, testFunc, testName);
 	}
 }
 
 void testFinish(void)
 {
-	printf(".....%d: %s: %s, ", tests, testFunc, testName);
 	if(assertionFailed) {
-		printf("FAILED. (%d assertions failed.)\n", assertionFailed);
+		printf("not ok %d %s: %s (%d assertions failed.)\n", tests, testFunc, testName, assertionFailed);
 		failed++;
 	} else {
-		printf("PASSED. (%d assertions passed.)\n", assertionNum);
+		printf("ok %d %s: %s (%d assertions passed.)\n", tests, testFunc, testName, assertionNum);
 	}
 }
 
-void report()
+void testReport(int expectedTests)
 {
 	printf("Total %d tests, %d fails.\n", tests, failed);
 	if(failed) exit(-1);
+	if(expectedTests != tests) {
+		printf("WARNING: the number of the executed tests (%d) is not equal to the expecetd (%d).\n", tests, expectedTests);
+	}
 }
 
+int testNum(void)
+{
+	return tests;
+}
 
 void printBinary(unsigned char *data, int length)
 {

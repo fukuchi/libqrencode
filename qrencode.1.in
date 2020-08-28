@@ -1,8 +1,9 @@
-.TH QRENCODE 1 "Sep. 21, 2017" "qrencode @VERSION@"
+.TH QRENCODE 1 "Aug. 28, 2020" "qrencode @VERSION@"
 .SH NAME
 qrencode \- Encode input data in a QR Code and save as a PNG or EPS image.
 .SH SYNOPSIS
 .B "qrencode"
+[-o FILENAME]
 [OPTION]...
 [STRING]
 
@@ -42,14 +43,14 @@ specify the width of margin. (default=4)
 specify the DPI of the generated PNG. (default=72)
 .TP
 .PD 0
-.B \-t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
+.B \-t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}
 .TP
 .PD
-.B \-\-type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}
+.B \-\-type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}
 specify the type of the generated image. (default=PNG)
 .TP
 .B \-S, \-\-structured
-make structured symbols. Version must be specified.
+make structured symbols. Version number must be specified with '-v'.
 .TP
 .B \-k, \-\-kanji
 assume that the input text contains kanji (shift-jis).
@@ -64,7 +65,16 @@ ignore case distinctions and use only upper-case characters.
 encode entire data in 8-bit mode. \-k, \-c and \-i will be ignored.
 .TP
 .B \-M, \-\-micro
-encode in a Micro QR Code. (experimental)
+encode in a Micro QR Code. See MICRO QR CODE for more information.
+.TP
+.B \-\-rle
+enable run-length encoding for SVG.
+.TP
+.B \-\-svg-path
+use single path to draw modules for SVG.
+.TP
+.B \-\-inline
+only useful for SVG output, generates an SVG without the XML tag.
 .TP
 .PD 0
 .B \-\-foreground=RRGGBB[AA]
@@ -74,6 +84,11 @@ encode in a Micro QR Code. (experimental)
 specify foreground/background color in hexadecimal notation.
 6-digit (RGB) or 8-digit (RGBA) form are supported.
 Color output support available only in PNG, EPS and SVG.
+.TP
+.B \-\-strict\-version
+disable automatic version number adjustment. If the input data is
+too large for the specified version, the program exits with the
+code of 1.
 .TP
 .B \-V, \-\-version
 display the version number and copyrights of the qrencode.
@@ -90,6 +105,11 @@ Each version has a different module configuration or number of modules,
 ranging from Version 1 (21 x 21 modules) up to Version 40 (177 x 177 modules).
 Each higher version number comprises 4 additional modules per side by default.
 See http://www.qrcode.com/en/about/version.html for a detailed version list.
+
+.SH MICRO QR CODE
+With Micro QR Code, You can embed data in a smaller area than with QR Code,
+but the data capacity is strongly limited. The symbol versions range from
+Version 1 to 4.
 
 .SH EXAMPLES
 .TP
@@ -113,4 +133,4 @@ Main Web Site: https://fukuchi.org/works/qrencode/
 Source code repository: https://github.com/fukuchi/libqrencode/
 
 .SH COPYRIGHT
-Copyright (C) 2006-2017 Kentaro Fukuchi.
+Copyright (C) 2006-2018 Kentaro Fukuchi.

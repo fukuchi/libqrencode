@@ -1,6 +1,6 @@
 m4_define([__MAJOR_VERSION], [4])dnl
-m4_define([__MINOR_VERSION], [0])dnl
-m4_define([__MICRO_VERSION], [2])dnl
+m4_define([__MINOR_VERSION], [1])dnl
+m4_define([__MICRO_VERSION], [0])dnl
 m4_define([__VERSION], [__MAJOR_VERSION.__MINOR_VERSION.__MICRO_VERSION])dnl
 AC_INIT(QRencode, __VERSION)
 
@@ -71,7 +71,7 @@ AC_ARG_WITH([tools], [AS_HELP_STRING([--with-tools], [build utility tools [defau
 AM_CONDITIONAL(BUILD_TOOLS, [test "x$build_tools" = "xyes" ])
 if test x$build_tools = xyes && test x$with_png = xyes ; then
 	PKG_CHECK_MODULES(png, "libpng", [AC_DEFINE([HAVE_PNG], [1], [Define to 1 if using libpng is enabled.])], [AC_DEFINE([HAVE_PNG], [0])])
-	if test x$png_CFLAGS = x && test x$with_png = xyes ; then
+	if test "x$png_CFLAGS" = "x" && test x$with_png = xyes ; then
 		echo "
 !!!!!!!!!!
 LIBPNG is required to build the utility tools. Temporarily disabled.

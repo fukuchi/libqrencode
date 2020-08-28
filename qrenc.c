@@ -45,6 +45,8 @@ static int structured = 0;
 static int rle = 0;
 static int svg_path = 0;
 static int micro = 0;
+static int inline_svg = 0;
+static int strict_versioning = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
 static unsigned char fg_color[4] = {0, 0, 0, 255};
@@ -64,6 +66,7 @@ enum imageType {
 	ASCIIi_TYPE,
 	UTF8_TYPE,
 	ANSIUTF8_TYPE,
+	ANSI256UTF8_TYPE,
 	UTF8i_TYPE,
 	ANSIUTF8i_TYPE
 };
@@ -71,27 +74,29 @@ enum imageType {
 static enum imageType image_type = PNG_TYPE;
 
 static const struct option options[] = {
-	{"help"         , no_argument      , NULL, 'h'},
-	{"output"       , required_argument, NULL, 'o'},
-	{"read-from"    , required_argument, NULL, 'r'},
-	{"level"        , required_argument, NULL, 'l'},
-	{"size"         , required_argument, NULL, 's'},
-	{"symversion"   , required_argument, NULL, 'v'},
-	{"margin"       , required_argument, NULL, 'm'},
-	{"dpi"          , required_argument, NULL, 'd'},
-	{"type"         , required_argument, NULL, 't'},
-	{"structured"   , no_argument      , NULL, 'S'},
-	{"kanji"        , no_argument      , NULL, 'k'},
-	{"casesensitive", no_argument      , NULL, 'c'},
-	{"ignorecase"   , no_argument      , NULL, 'i'},
-	{"8bit"         , no_argument      , NULL, '8'},
-	{"rle"          , no_argument      , &rle,   1},
-	{"svg-path"     , no_argument      , &svg_path, 1},
-	{"micro"        , no_argument      , NULL, 'M'},
-	{"foreground"   , required_argument, NULL, 'f'},
-	{"background"   , required_argument, NULL, 'b'},
-	{"version"      , no_argument      , NULL, 'V'},
-	{"verbose"      , no_argument      , &verbose, 1},
+	{"help"          , no_argument      , NULL, 'h'},
+	{"output"        , required_argument, NULL, 'o'},
+	{"read-from"     , required_argument, NULL, 'r'},
+	{"level"         , required_argument, NULL, 'l'},
+	{"size"          , required_argument, NULL, 's'},
+	{"symversion"    , required_argument, NULL, 'v'},
+	{"margin"        , required_argument, NULL, 'm'},
+	{"dpi"           , required_argument, NULL, 'd'},
+	{"type"          , required_argument, NULL, 't'},
+	{"structured"    , no_argument      , NULL, 'S'},
+	{"kanji"         , no_argument      , NULL, 'k'},
+	{"casesensitive" , no_argument      , NULL, 'c'},
+	{"ignorecase"    , no_argument      , NULL, 'i'},
+	{"8bit"          , no_argument      , NULL, '8'},
+	{"micro"         , no_argument      , NULL, 'M'},
+	{"rle"           , no_argument      , &rle,   1},
+	{"svg-path"      , no_argument      , &svg_path, 1},
+	{"inline"        , no_argument      , &inline_svg, 1},
+	{"strict-version", no_argument      , &strict_versioning, 1},
+	{"foreground"    , required_argument, NULL, 'f'},
+	{"background"    , required_argument, NULL, 'b'},
+	{"version"       , no_argument      , NULL, 'V'},
+	{"verbose"       , no_argument      , &verbose, 1},
 	{NULL, 0, NULL, 0}
 };
 
@@ -106,7 +111,7 @@ static void usage(int help, int longopt, int status)
 	if(help) {
 		if(longopt) {
 			fprintf(out,
-"Usage: qrencode [OPTION]... [STRING]\n"
+"Usage: qrencode [-o FILENAME] [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h, --help   display the help message. -h displays only the help of short\n"
 "               options.\n\n"
@@ -129,26 +134,31 @@ static void usage(int help, int longopt, int status)
 "               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8},\n"
-"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8},\n"
+"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n\n"
 "  -S, --structured\n"
-"               make structured symbols. Version must be specified.\n\n"
+"               make structured symbols. Version must be specified with '-v'.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
 "  -c, --casesensitive\n"
 "               encode lower-case alphabet characters in 8-bit mode. (default)\n\n"
 "  -i, --ignorecase\n"
 "               ignore case distinctions and use only upper-case characters.\n\n"
 "  -8, --8bit   encode entire data in 8-bit mode. -k, -c and -i will be ignored.\n\n"
+"  -M, --micro  encode in a Micro QR Code.\n\n"
 "      --rle    enable run-length encoding for SVG.\n\n"
 "      --svg-path\n"
 "               use single path to draw modules for SVG.\n\n"
-"  -M, --micro  encode in a Micro QR Code. (experimental)\n\n"
+"      --inline only useful for SVG output, generates an SVG without the XML tag.\n\n"
 "      --foreground=RRGGBB[AA]\n"
 "      --background=RRGGBB[AA]\n"
 "               specify foreground/background color in hexadecimal notation.\n"
 "               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
 "               Color output support available only in PNG, EPS and SVG.\n\n"
+"      --strict-version\n"
+"               disable automatic version number adjustment. If the input data is\n"
+"               too large for the specified version, the program exits with the\n"
+"               code of 1.\n\n"
 "  -V, --version\n"
 "               display the version number and copyrights of the qrencode.\n\n"
 "      --verbose\n"
@@ -167,7 +177,7 @@ static void usage(int help, int longopt, int status)
 			);
 		} else {
 			fprintf(out,
-"Usage: qrencode [OPTION]... [STRING]\n"
+"Usage: qrencode [-o FILENAME] [OPTION]... [STRING]\n"
 "Encode input data in a QR Code and save as a PNG or EPS image.\n\n"
 "  -h           display this message.\n"
 "  --help       display the usage of long options.\n"
@@ -182,9 +192,9 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the minimum version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,ANSIUTF8}\n"
+"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n"
-"  -S           make structured symbols. Version must be specified.\n"
+"  -S           make structured symbols. Version number must be specified with '-v'.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
 "  -c           encode lower-case alphabet characters in 8-bit mode. (default)\n"
 "  -i           ignore case distinctions and use only upper-case characters.\n"
@@ -293,9 +303,9 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	if(type == PNG_TYPE) {
-		row = (unsigned char *)malloc((realwidth + 7) / 8);
+		row = (unsigned char *)malloc((size_t)((realwidth + 7) / 8));
 	} else if(type == PNG32_TYPE) {
-		row = (unsigned char *)malloc(realwidth * 4);
+		row = (unsigned char *)malloc((size_t)realwidth * 4);
 	} else {
 		fprintf(stderr, "Internal error.\n");
 		exit(EXIT_FAILURE);
@@ -355,7 +365,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 	png_init_io(png_ptr, fp);
 	if(type == PNG_TYPE) {
 		png_set_IHDR(png_ptr, info_ptr,
-				realwidth, realwidth,
+				(unsigned int)realwidth, (unsigned int)realwidth,
 				1,
 				PNG_COLOR_TYPE_PALETTE,
 				PNG_INTERLACE_NONE,
@@ -363,7 +373,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 				PNG_FILTER_TYPE_DEFAULT);
 	} else {
 		png_set_IHDR(png_ptr, info_ptr,
-				realwidth, realwidth,
+				(unsigned int)realwidth, (unsigned int)realwidth,
 				8,
 				PNG_COLOR_TYPE_RGB_ALPHA,
 				PNG_INTERLACE_NONE,
@@ -378,7 +388,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 
 	if(type == PNG_TYPE) {
 	/* top margin */
-		memset(row, 0xff, (realwidth + 7) / 8);
+		memset(row, 0xff, (size_t)((realwidth + 7) / 8));
 		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
@@ -386,7 +396,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 		/* data */
 		p = qrcode->data;
 		for(y = 0; y < qrcode->width; y++) {
-			memset(row, 0xff, (realwidth + 7) / 8);
+			memset(row, 0xff, (size_t)((realwidth + 7) / 8));
 			q = row;
 			q += margin * size / 8;
 			bit = 7 - (margin * size % 8);
@@ -406,7 +416,7 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 			}
 		}
 		/* bottom margin */
-		memset(row, 0xff, (realwidth + 7) / 8);
+		memset(row, 0xff, (size_t)((realwidth + 7) / 8));
 		for(y = 0; y < margin * size; y++) {
 			png_write_row(png_ptr, row);
 		}
@@ -551,7 +561,8 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	bg_opacity = (float)bg_color[3] / 255;
 
 	/* XML declaration */
-	fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
+	if (!inline_svg)
+		fputs( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", fp );
 
 	/* DTD
 	   No document type specified because "while a DTD is provided in [the SVG]
@@ -655,7 +666,7 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	realwidth = (qrcode->width + margin * 2) * size;
 	realmargin = margin * size;
 
-	row = malloc(realwidth + 1);
+	row = malloc((size_t)realwidth + 1);
 	if (!row ) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -674,7 +685,7 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	fprintf(fp, "\"B c #%s\",\n", bg);
 
 	fputs("/* pixels */\n", fp);
-	memset(row, 'B', realwidth);
+	memset(row, 'B', (size_t)realwidth);
 	row[realwidth] = '\0';
 
 	for (y = 0; y < realmargin; y++) {
@@ -727,8 +738,8 @@ static void writeANSI_margin(FILE* fp, int realwidth,
 {
 	int y;
 
-	strncpy(buffer, white, white_s);
-	memset(buffer + white_s, ' ', realwidth * 2);
+	strncpy(buffer, white, (size_t)white_s);
+	memset(buffer + white_s, ' ', (size_t)realwidth * 2);
 	strcpy(buffer + white_s + realwidth * 2, "\033[0m\n"); // reset to default colors
 	for(y = 0; y < margin; y++ ){
 		fputs(buffer, fp);
@@ -766,7 +777,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	buffer_s = (realwidth * white_s) * 2;
-	buffer = (char *)malloc(buffer_s);
+	buffer = (char *)malloc((size_t)buffer_s);
 	if(buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -780,8 +791,8 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 	for(y = 0; y < qrcode->width; y++) {
 		row = (p+(y*qrcode->width));
 
-		memset(buffer, 0, buffer_s);
-		strncpy(buffer, white, white_s);
+		memset(buffer, 0, (size_t)buffer_s);
+		strncpy(buffer, white, (size_t)white_s);
 		for(x = 0; x < margin; x++ ){
 			strncat(buffer, "  ", 2);
 		}
@@ -790,18 +801,18 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 		for(x = 0; x < qrcode->width; x++) {
 			if(*(row+x)&0x1) {
 				if( last != 1 ){
-					strncat(buffer, black, black_s);
+					strncat(buffer, black, (size_t)black_s);
 					last = 1;
 				}
 			} else if( last != 0 ){
-				strncat(buffer, white, white_s);
+				strncat(buffer, white, (size_t)white_s);
 				last = 0;
 			}
 			strncat(buffer, "  ", 2);
 		}
 
 		if( last != 0 ){
-			strncat(buffer, white, white_s);
+			strncat(buffer, white, (size_t)white_s);
 		}
 		for(x = 0; x < margin; x++ ){
 			strncat(buffer, "  ", 2);
@@ -859,7 +870,11 @@ static int writeUTF8(const QRcode *qrcode, const char *outfile, int use_ansi, in
 	}
 
 	if (use_ansi){
-		white = "\033[40;37;1m";
+		if (use_ansi == 2) {
+			white = "\033[38;5;231m\033[48;5;16m";
+		} else {
+			white = "\033[40;37;1m";
+		}
 		reset = "\033[0m";
 	} else {
 		white = "";
@@ -920,7 +935,7 @@ static void writeASCII_margin(FILE* fp, int realwidth, char* buffer, int invert)
 
 	h = margin;
 
-	memset(buffer, (invert?'#':' '), realwidth);
+	memset(buffer, (invert?'#':' '), (size_t)realwidth);
 	buffer[realwidth] = '\n';
 	buffer[realwidth + 1] = '\0';
 	for(y = 0; y < h; y++ ){
@@ -950,7 +965,7 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 
 	realwidth = (qrcode->width + margin * 2) * 2;
 	buffer_s = realwidth + 2;
-	buffer = (char *)malloc( buffer_s );
+	buffer = (char *)malloc((size_t)buffer_s);
 	if(buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -964,7 +979,7 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 		row = qrcode->data+(y*qrcode->width);
 		p = buffer;
 
-		memset(p, white, margin * 2);
+		memset(p, white, (size_t)margin * 2);
 		p += margin * 2;
 
 		for(x = 0; x < qrcode->width; x++) {
@@ -977,7 +992,7 @@ static int writeASCII(const QRcode *qrcode, const char *outfile, int invert)
 			}
 		}
 
-		memset(p, white, margin * 2);
+		memset(p, white, (size_t)margin * 2);
 		p += margin * 2;
 		*p++ = '\n';
 		*p++ = '\0';
@@ -1025,6 +1040,10 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		}
 		exit(EXIT_FAILURE);
 	}
+	if(strict_versioning && version > 0 && qrcode->version != version) {
+		fprintf(stderr, "Failed to encode the input data: Input data too large\n");
+		exit(EXIT_FAILURE);
+	}
 
 	if(verbose) {
 		fprintf(stderr, "File: %s, Version: %d\n", (outfile!=NULL)?outfile:"(stdout)", qrcode->version);
@@ -1059,6 +1078,9 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 			break;
 		case ANSIUTF8_TYPE:
 			writeUTF8(qrcode, outfile, 1, 0);
+			break;
+		case ANSI256UTF8_TYPE:
+			writeUTF8(qrcode, outfile, 2, 0);
 			break;
 		case UTF8i_TYPE:
 			writeUTF8(qrcode, outfile, 0, 1);
@@ -1196,6 +1218,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			case ANSIUTF8_TYPE:
 				writeUTF8(p->code, filename, 0, 0);
 				break;
+			case ANSI256UTF8_TYPE:
+				writeUTF8(p->code, filename, 0, 0);
+				break;
 			case UTF8i_TYPE:
 				writeUTF8(p->code, filename, 0, 1);
 				break;
@@ -1315,6 +1340,8 @@ int main(int argc, char **argv)
 					image_type = UTF8_TYPE;
 				} else if(strcasecmp(optarg, "ansiutf8") == 0) {
 					image_type = ANSIUTF8_TYPE;
+				} else if(strcasecmp(optarg, "ansi256utf8") == 0) {
+					image_type = ANSI256UTF8_TYPE;
 				} else if(strcasecmp(optarg, "utf8i") == 0) {
 					image_type = UTF8i_TYPE;
 				} else if(strcasecmp(optarg, "ansiutf8i") == 0) {
@@ -1382,7 +1409,7 @@ int main(int argc, char **argv)
 	if(intext == NULL) {
 		fp = infile == NULL ? stdin : fopen(infile,"r");
 		if(fp == 0) {
-			fprintf(stderr, "Can not read input file %s.\n", infile);
+			fprintf(stderr, "Cannot read input file %s.\n", infile);
 			exit(EXIT_FAILURE);
 		}
 		intext = readFile(fp,&length);
@@ -1390,10 +1417,10 @@ int main(int argc, char **argv)
 	}
 
 	if(micro && version > MQRSPEC_VERSION_MAX) {
-		fprintf(stderr, "Version should be less or equal to %d.\n", MQRSPEC_VERSION_MAX);
+		fprintf(stderr, "Version number should be less or equal to %d.\n", MQRSPEC_VERSION_MAX);
 		exit(EXIT_FAILURE);
 	} else if(!micro && version > QRSPEC_VERSION_MAX) {
-		fprintf(stderr, "Version should be less or equal to %d.\n", QRSPEC_VERSION_MAX);
+		fprintf(stderr, "Version number should be less or equal to %d.\n", QRSPEC_VERSION_MAX);
 		exit(EXIT_FAILURE);
 	}
 
@@ -1406,10 +1433,6 @@ int main(int argc, char **argv)
 	}
 
 	if(micro) {
-		if(version == 0) {
-			fprintf(stderr, "Version must be specified to encode a Micro QR Code symbol.\n");
-			exit(EXIT_FAILURE);
-		}
 		if(structured) {
 			fprintf(stderr, "Micro QR Code does not support structured symbols.\n");
 			exit(EXIT_FAILURE);
@@ -1418,7 +1441,7 @@ int main(int argc, char **argv)
 
 	if(structured) {
 		if(version == 0) {
-			fprintf(stderr, "Version must be specified to encode structured symbols.\n");
+			fprintf(stderr, "Version number must be specified to encode structured symbols.\n");
 			exit(EXIT_FAILURE);
 		}
 		qrencodeStructured(intext, length, outfile);

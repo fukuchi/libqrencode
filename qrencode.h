@@ -35,8 +35,8 @@
  *
  * If the input data contains Kanji (Shift-JIS) characters and you want to
  * encode them as Kanji in QR Code, you should give QR_MODE_KANJI as a hint.
- * Otherwise, all of non-alphanumeric characters are encoded as 8 bit data.
- * If you want to encode a whole string in 8 bit mode, you can use
+ * Otherwise, all of non-alphanumeric characters are encoded as 8-bit data.
+ * If you want to encode a whole string in 8-bit mode, you can use
  * QRcode_encodeString8bit() instead.
  *
  * Please note that a C string can not contain NUL characters. If your data
@@ -44,16 +44,16 @@
  *
  * \subsection encoding-input Encoding a structured data
  * You can construct a structured input data manually. If the structure of the
- * input data is known, you can use this way.
+ * input data is known, you can use this method.
  * At first, create a ::QRinput object by QRinput_new(). Then add input data
  * to the QRinput object by QRinput_append(). Finally call QRcode_encodeInput()
  * to encode the QRinput data.
- * You can reuse the QRinput data again to encode it in other symbols with
+ * You can reuse the QRinput object again to encode it in other symbols with
  * different parameters.
  *
  * \section result Result
- * The encoded symbol is resulted as a ::QRcode object. It will contain
- * its version number, width of the symbol and an array represents the symbol.
+ * The encoded symbol is generated as a ::QRcode object. It will contain its
+ * version number, the width of the symbol, and an array represents the symbol.
  * See ::QRcode for the details. You can free the object by QRcode_free().
  *
  * Please note that the version of the result may be larger than specified.
@@ -363,7 +363,7 @@ extern int QRinput_setFNC1Second(QRinput *input, unsigned char appid);
  * @verbatim
    MSB 76543210 LSB
        |||||||`- 1=black/0=white
-       ||||||`-- data and ecc code area
+       ||||||`-- 1=ecc/0=data code area
        |||||`--- format information
        ||||`---- version information
        |||`----- timing pattern

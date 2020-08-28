@@ -41,8 +41,8 @@ static pthread_mutex_t RSECC_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int initialized = 0;
 
 #define SYMBOL_SIZE (8)
-#define symbols ((1 << SYMBOL_SIZE) - 1)
-static const int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see pp.37 of JIS X0510:2004) */
+#define symbols ((1U << SYMBOL_SIZE) - 1)
+static const unsigned int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see pp.37 of JIS X0510:2004) */
 
 /* min/max codeword length of ECC, calculated from the specification. */
 #define min_length (2)
@@ -56,7 +56,7 @@ static unsigned char generatorInitialized[max_length - min_length + 1];
 
 static void RSECC_initLookupTable(void)
 {
-	int i, b;
+	unsigned int i, b;
 
 	alpha[symbols] = 0;
 	aindex[0] = symbols;
@@ -134,12 +134,12 @@ int RSECC_encode(size_t data_length, size_t ecc_length, const unsigned char *dat
 		feedback = aindex[data[i] ^ ecc[0]];
 		if(feedback != symbols) {
 			for(j = 1; j < ecc_length; j++) {
-				ecc[j] ^= alpha[(feedback + gen[ecc_length - j]) % symbols];
+				ecc[j] ^= alpha[(unsigned int)(feedback + gen[ecc_length - j]) % symbols];
 			}
 		}
 		memmove(&ecc[0], &ecc[1], ecc_length - 1);
 		if(feedback != symbols) {
-			ecc[ecc_length - 1] = alpha[(feedback + gen[0]) % symbols];
+			ecc[ecc_length - 1] = alpha[(unsigned int)(feedback + gen[0]) % symbols];
 		} else {
 			ecc[ecc_length - 1] = 0;
 		}

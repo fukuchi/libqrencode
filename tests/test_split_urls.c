@@ -83,9 +83,10 @@ static void test_bitstream_length() {
 
 int main()
 {
+	int tests = 1;
+	testInit(tests);
 	test_bitstream_length();
-
-	report();
+	testReport(tests);
 
 	return 0;
 }

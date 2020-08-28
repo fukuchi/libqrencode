@@ -1,19 +1,19 @@
-# libqrencode 4.0.2 - QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=4.0)](https://travis-ci.org/fukuchi/libqrencode)
+# libqrencode - a fast and compact QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
 
-**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.0.2.
+**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.1.0.
 
 GENERAL INFORMATION
 ===================
-Libqrencode is a library for encoding data in a QR Code symbol, a 2D symbology
-that can be scanned by handy terminals such as a mobile phone with CCD. The
-capacity of QR Code is up to 7000 digits or 4000 characters and has high
+Libqrencode is a fast and compact library for encoding data in a QR Code,
+a 2D symbology that can be scanned by handy terminals such as a smartphone.
+The capacity of QR Code is up to 7000 digits or 4000 characters and has high
 robustness.
 
 Libqrencode accepts a string or a list of data chunks then encodes in a QR Code
 symbol as a bitmap array. While other QR Code applications generate an image
 file, using libqrencode allows applications to render QR Code symbols from raw
 bitmap data directly. This library also contains a command-line utility outputs
-a QR Code symbol as a PNG image.
+QR Code images in various formats.
 
 
 SPECIFICATION
@@ -87,11 +87,31 @@ make
 When you want to build the test programs, give "--with-tests" option to
 configure, or "-DWITH\_TESTS=YES" to cmake.
 
+### Building libqrencode with vcpkg
+
+You can download and install libqrencode using the
+[vcpkg](https://github.com/Microsoft/vcpkg) dependency manager:
+   
+```
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+vcpkg install libqrencode
+```
+    
+The libqrencode port in vcpkg is kept up to date by Microsoft team members and
+community contributors. If the version is out of date, please
+[create an issue or pull request](https://github.com/Microsoft/vcpkg) on the
+vcpkg repository.
+
 
 USAGE
 =====
 Basic usages of this library are written in the header file (qrencode.h).
-You can generate a manual of the library by using Doxygen.
+You can generate a manual of the library by using Doxygen, or see
+
+https://fukuchi.org/works/qrencode/manual/index.html
 
 
 WARNINGS
@@ -108,7 +128,7 @@ application.
 
 LICENSING INFORMATION
 =====================
-Copyright (C) 2006-2017 Kentaro Fukuchi
+Copyright (C) 2006-2018 Kentaro Fukuchi
 
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the Free
@@ -176,7 +196,8 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
 * Robert Petersen (@ripetersen)
                         - added ability to read input data from a file
 * @Oblomov              - improved SVG support patch
-* @mgorny               - reverse mappings of UTF8 and ANSIUTF8, build script
+* Michał Górny (@mgorny)
+                        - reverse mappings of UTF8 and ANSIUTF8, build script
                           fixes
 * @EckoEdc              - MinGW support patch
 * Sebastian Buchwald (@UniQP)
@@ -189,11 +210,21 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
                         - improved CMake support
 * @vanillahsu           - bug fix patch
 * @Ation                - bug fix patch
+* Jonathan Bennett      - Added "--inline" option to qrencode
+* András Veres-Szentkirályi
+                        - ANSI256UTF8 support
+* @sdf5                 - improved CMake support
+* Lonnie Abelbeck (@abelbeck)
+                        - bug fix patch
+* @4061N                - performance improvement patch
+* Rosen Penev (@neheb)  - CMake bug fix patch
 * Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
   Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
   David Binderman, @ralgozino, Sean McMurray, Vlad Bespalov (@win32asm),
   Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray,
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
-  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules
+  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules, @NancyLi1013,
+  Frédéric Wang, Dan Jacobson, Mika Lindqvist, Jan Tojnar, @xiaoyur347,
+  @charmander
                         - bug report / suggestion / typo fixes

@@ -191,10 +191,10 @@ static unsigned char *MQRspec_createFrame(int version)
 	int x, y;
 
 	width = mqrspecCapacity[version].width;
-	frame = (unsigned char *)malloc(width * width);
+	frame = (unsigned char *)malloc((size_t)(width * width));
 	if(frame == NULL) return NULL;
 
-	memset(frame, 0, width * width);
+	memset(frame, 0, (size_t)(width * width));
 	/* Finder pattern */
 	putFinderPattern(frame, width, 0, 0);
 	/* Separator */

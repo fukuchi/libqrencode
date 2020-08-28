@@ -1,3 +1,74 @@
+2020.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Made a develoment branch.
+	* test_qrspec.c:
+	  - Typo fixes.
+	* qrinput.[ch], tests/{test_qrencode.c, test_qrinput.c}:
+	  - A precise boundary check has been introduced to
+	    QRinput_estimateVersion(). (closes #160)
+	* qrinput.c, qrencode.c, tests/test_qrencode.c, qrenc.c, qrencode.1.in:
+	  - QRinput_encodeMode*() now throws ERANGE when encoding Micro QR Code
+	    and an appropriate version number was not specified.
+	  - Now Micro QR Code also allows auto version adjustment.
+	* qrenc.c, qrencode.1.in:
+	  - The synopsis has been improved. (Thanks to @jidanni) (closes #155)
+	  - A new option '--strict-version' has been introduced.
+	* split.c:
+	  - A tail recursion has been eliminated. (Thanks to @4061N) (closes #144)
+	* tests/*:
+	  - All test programs are now TAP-ready. Now you can run all test programs
+	    by 'make check'.(Thanks to @jtojnar) (closes #117)
+	* qrinput.c:
+	  - Return value was ignored. (Thanks to @xiaoyur347) (closed #143)
+	* README.md, NEWS:
+	  - Various documentation improvements and updates.
+	[release-4.1.0]
+	* Bumped version to 4.1.0.
+	* qrencode.h:
+	  - Document improvements.
+	* qrenc.c, qrencode.1.in:
+	  - Added 'UTF8i' and 'ANSIUTF8i' to the descriptions of the corresponding
+	    options. (Thanks to @Khoyo) (merged #138)
+
+2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt, README.md:
+	  - Merged #158 (Thanks to @neheb):
+	    - Fixed the compile-time issue of the environment without libpng.
+
+2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* README.md:
+	  - Merged #151 (Thanks to @NancyLi1013):
+	    - Added vcpkg installation instructions.
+
+2018.11.09 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* configure.ac, README.md:
+	  - Merged #137 (Thanks to @abelbeck and @charmander):
+	    - 'too many arguments' bug has been fixed.
+
+2018.07.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt:
+	  - Merged #133 (Thanks to @sdf5):
+	    - Change CMAKE_SORUCE_DIR to CMAKE_CURRENT_SORUCE_DIR in
+		  CMAKE_MODULE_PATH
+
+2018.06.14 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* qrenc.c, qrencode.1.in, README.md, NEWS:
+	  - UTF8 mode now supports ANSI256 color. (Thanks to András Veres-
+	    Szentkirályi)
+
+2018.06.07 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt, tests/CMakeLists.txt:
+	  - Merged #131 (Thanks to @mgorny):
+	    - Update paths inside the pkg-config file to respect GNUInstallDirs.
+	    - Improve pthread support for the main library when building via CMake.
+	    - Always build libdecoder as static library.
+
 2018.06.06 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
 	* tests/Makefile.am:
@@ -6,8 +77,13 @@
 	* CMakeLists.txt:
 	  - Use CMake GNUInstallDirs module to provide variables for configurable
 	    install directories. (merged #128) (Thanks to @mgorny)
+	[4.0]
 	* configure.ac, CMakeLists.txt, README.md:
 	  - Bumped version to 4.0.2.
+	[master]
+	* tests/{Makefile.am, CMakeLists.txt, test_qrspec.c}:
+	  - Fix running test_qrspec when building out-of-source. (merged #129)
+	    (Thanks to @mgorny)
 
 2018.06.04 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
@@ -16,34 +92,56 @@
 	    (closes #126)
 	  - Tabs expaned.
 	[4.0]
-	* tests/test_{all,basic}.sh:
-	  - All tests except test_configure.sh can be run by test_basic.sh now.
-	  - test_all.sh activates test_basic.sh + test_configure.sh.
-	  - test_basic.sh is better during active development, especially when you
-	    gave additional options to configure script.
 	* configure.ac, CMakeLists.txt, README.md:
 	  - Bumped version to 4.0.1.
 
 2018.06.02 Kentaro Fukuchi <kentaro@fukuchi.org>
-	[4.0]
+	[master, 4.0]
 	* CMakeLists.txt:
 	  - Added "WITHOUT_PNG" option that builds qrencode without PNG support.
 	    (closes #125)
 
 2018.06.01 Kentaro Fukuchi <kentaro@fukuchi.org>
-	[4.0]
+	[master, 4.0]
 	* README.md:
 	  - Added some notes of how to use autogen.sh. (closes #122) (Thanks to
 	    @thebunnyrules)
+
+2017.10.20 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* qrenc.c:
+	  - Adds the --inline option, which omits the xml tag for SVG output.
+	    (merged #110) (Thanks to @jp-bennett)
+	  - Short option '-I' for '--inline' disabled.
+	* qrencode.1.in:
+	  - Added some missing descriptions.
+	* README.md:
+	  - Acknowledgments updated.
 
 2017.10.13 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master, 4.0]
 	* qrencode.h:
 	  - Fix build on windows with Visual Studio. (merged #108) (Thanks to
 	    @Ation)
-	[4.0]
+	[master]
 	* README.md:
-	  - Revert again 2252a0f. Sorry for confusion.
+	  - libqrencode now advertised as a "fast and compact" library.
+
+2017.10.08 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* qrenc.c, qrinput.c, rsecc.c, tests/common.c, tests/decoder.c:
+	  - Fixed some warnings. (closing #89 and #102)
+
+2017.10.06 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* tests/test_{all,basic}.sh:
+	  - All tests except test_configure.sh can be run by test_basic.sh now.
+	  - test_all.sh activates test_basic.sh + test_configure.sh.
+	  - test_basic.sh is better during active development, especially when you
+	    gave additional options to configure script.
+	* split.c, qrspec.c, mqrspec.c, mask.c, mmask.c, qrencode.c, qrinput.c,
+	  rsecc.c, qrencode.c:
+	  - Fixed some warnings. (closing #89 and #102)
 
 2017.10.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[4.0]
@@ -66,9 +164,6 @@
 	  - Fixed some warnings.
 	* NEWS:
 	  - Format fixes.
-	* mask.[ch]:
-	  - Some variables' type changed from int to unsigned int. (closing #89 and
-	    #102)
 	* tests/test_mask.c:
 	  - Fixed some warnings.
 	* qrencode.h, qrinput.h, mqrspec.c:
@@ -116,6 +211,16 @@
 	* README.md:
 	  - Version number added to the 1st line.
 	  - Fixed the URL to the badge of Travis CI.
+	[master]
+	* qrencode.[ch]:
+	  - Symbol data representation of QRcode object has been slightly changed.
+	    This change does not affect to most applications.
+	  - If your application uses bits other than the LSB, read the comments of
+	    QRCode class carefully.
+	* tests/test_qrencode.c:
+	  - Modified correct pattern of a test referring non-LSB bits of QRCode.
+	* tests/view_qrcode.c:
+	  - Now you can identify the feature of modules by color.
 
 2017.09.07 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* *.[ch]:

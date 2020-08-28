@@ -234,6 +234,8 @@ static void test_newWithBits_size0(void)
 
 int main()
 {
+	int tests = 11;
+	testInit(tests);
 	test_null();
 	test_num();
 	test_bytes();
@@ -245,8 +247,7 @@ int main()
 	test_append();
 	test_newWithBits();
 	test_newWithBits_size0();
-
-	report();
+	testReport(tests);
 
 	return 0;
 }

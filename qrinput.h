@@ -116,6 +116,7 @@ extern int QRinput_mergeBitStream(QRinput *input, BitStream *bstream);
 extern int QRinput_getBitStream(QRinput *input, BitStream *bstream);
 extern int QRinput_estimateBitStreamSize(QRinput *input, int version);
 extern int QRinput_splitEntry(QRinput_List *entry, int bytes);
+extern int QRinput_estimateVersion(QRinput *input);
 extern int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits);
 extern int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int index, unsigned char parity);
 #endif

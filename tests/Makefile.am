@@ -11,11 +11,10 @@ if HAVE_PNG
 pngPROGRAMS = create_frame_pattern create_mqr_frame_pattern
 endif
 
-noinst_PROGRAMS = test_qrinput test_bitstream test_estimatebit \
-				  test_qrspec test_rs test_qrencode prof_qrencode \
-				  test_mqrspec test_split test_monkey test_mask test_mmask \
-				  test_split_urls \
-				  $(pngPROGRAMS) $(sdlPROGRAMS)
+check_PROGRAMS = test_qrinput test_bitstream test_estimatebit test_qrspec \
+				 test_rs test_qrencode test_mqrspec test_split test_mask \
+				 test_mmask test_split_urls test_monkey
+noinst_PROGRAMS = $(pngPROGRAMS) $(sdlPROGRAMS) $(check_PROGRAMS) prof_qrencode
 noinst_LIBRARIES = libdecoder.a
 DECODER_LIBS = libdecoder.a $(LIBICONV)
 noinst_HEADERS = common.h rscode.h
@@ -23,6 +22,7 @@ if HAVE_LIBPTHREAD
 noinst_PROGRAMS += pthread_qrencode
 endif
 
+TESTS = $(check_PROGRAMS)
 EXTRA_DIST = test_all.sh test_basic.sh test_configure.sh frame URI_testset.inc CMakeLists.txt
 
 libdecoder_a_SOURCES = decoder.c decoder.h datachunk.c datachunk.h rsecc_decoder.c rsecc_decoder.h
@@ -37,6 +37,7 @@ test_estimatebit_SOURCES = test_estimatebit.c common.c
 test_estimatebit_LDADD = ../libqrencode.la
 
 test_qrspec_SOURCES = test_qrspec.c common.c
+test_qrspec_CPPFLAGS = -DSRCDIR=\"$(srcdir)/\"
 test_qrspec_LDADD = $(DECODER_LIBS) ../libqrencode.la
 
 test_mqrspec_SOURCES = test_mqrspec.c common.c

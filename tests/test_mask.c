@@ -391,6 +391,8 @@ static void test_calcN1N3(void)
 
 int main(int argc, char **argv)
 {
+	int tests = 9;
+	testInit(tests);
 	test_masks();
 	test_eval();
 	test_eval2();
@@ -399,7 +401,7 @@ int main(int argc, char **argv)
 	test_calcN2();
 	test_calcRunLength();
 	test_calcN1N3();
-	report();
+	testReport(tests);
 
 	if(argc > 1) {
 		print_masks();
