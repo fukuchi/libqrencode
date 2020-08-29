@@ -1,3 +1,8 @@
+2020.08.30 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* .github/workflows/configure.yml:
+	  - Added macOS CI script.
+
 2020.08.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[release-4.1.0]
 	* .github/workflows/{cmake,configure,cmake-windows}.yml:
@@ -12,6 +17,9 @@
 	  - ECLEVEL check has been improved.
 	* .gitignore:
 	  - Added 'use/test-driver'.
+	[master]
+	* merged release-4.1.0.
+	* version 4.1.0 has been released.
 
 2020.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
@@ -203,7 +211,7 @@
 	* qrencode.1.in, NEWS:
 	  - Release date has been updated.
 	  - Documentation updated.
-	* Version 4.0.0 has ben released.
+	* Version 4.0.0 has been released.
 
 2017.09.11 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* qrenc.c:
