@@ -216,6 +216,8 @@ static void test_newWithBits(void)
 	assert_zero(cmpBin("0101", bstream), "Internal data is incorrect.\n");
 
 	testFinish();
+
+	BitStream_free(bstream);
 }
 
 static void test_newWithBits_size0(void)
@@ -230,6 +232,8 @@ static void test_newWithBits_size0(void)
 	assert_nonnull(bstream->data, "Internal buffer not allocated.\n");
 
 	testFinish();
+
+	BitStream_free(bstream);
 }
 
 int main()
