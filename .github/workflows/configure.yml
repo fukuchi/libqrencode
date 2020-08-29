@@ -11,6 +11,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: brew setup
+      if: matrix.os == 'macos-latest'
+      run: brew install automake
     - name: generate configure script
       run: ./autogen.sh
     - name: configure
