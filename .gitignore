@@ -52,6 +52,7 @@ use/depcomp
 use/install-sh
 use/ltmain.sh
 use/missing
+use/test-driver
 html/
 massif.out.*
 gmon.out

@@ -10,6 +10,8 @@
 	  - 'wingetopt' has been replaced to 'getopt'.
 	* qrencode.c, tests/test_qrencode.c:
 	  - ECLEVEL check has been improved.
+	* .gitignore:
+	  - Added 'use/test-driver'.
 
 2020.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
