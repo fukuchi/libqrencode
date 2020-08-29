@@ -445,7 +445,7 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMask(QRinput *input, int mask)
 		errno = EINVAL;
 		return NULL;
 	}
-	if(input->level > QR_ECLEVEL_H) {
+	if(!(input->level >= QR_ECLEVEL_L && input->level <= QR_ECLEVEL_H)) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -533,7 +533,7 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		errno = EINVAL;
 		return NULL;
 	}
-	if(input->level > QR_ECLEVEL_Q) {
+	if(!(input->level >= QR_ECLEVEL_L && input->level <= QR_ECLEVEL_Q)) {
 		errno = EINVAL;
 		return NULL;
 	}
