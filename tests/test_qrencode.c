@@ -911,6 +911,43 @@ static void test_oddBitCalcMQR(void)
 	testFinish();
 }
 
+static void test_invalid_inputMQR(void)
+{
+	QRinput *input;
+	QRcode *code;
+
+	testStart("Testing invalid input (MQR).");
+	input = QRinput_newMQR(1, QR_ECLEVEL_L);
+	QRinput_append(input, QR_MODE_AN, 5, (unsigned char *)"TEST1");
+	input->version = -1;
+	input->level = QR_ECLEVEL_L;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid version(-1)  was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	input->version = 5;
+	input->level = QR_ECLEVEL_L;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid version(5) access was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	input->version = 1;
+	input->level = (QRecLevel)(QR_ECLEVEL_H);
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid level(H) access was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	input->version = 1;
+	input->level = (QRecLevel)-1;
+	code = QRcode_encodeInput(input);
+	assert_null(code, "invalid level(-1) access was not checked.\n");
+	if(code != NULL) QRcode_free(code);
+
+	QRinput_free(input);
+
+	testFinish();
+}
+
 static void test_mqrencode(void)
 {
 	char *str = "MICROQR";
@@ -977,7 +1014,7 @@ static void test_apiversion(void)
 
 int main(int argc, char **argv)
 {
-	int tests = 32;
+	int tests = 33;
 	testInit(tests);
 	test_iterate();
 	test_iterate2();
@@ -1009,6 +1046,7 @@ int main(int argc, char **argv)
 	test_encodeTooLongMQR();
 	test_decodeShortMQR();
 	test_oddBitCalcMQR();
+	test_invalid_inputMQR();
 	test_mqrencode();
 	test_apiversion();
 	testReport(tests);
