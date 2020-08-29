@@ -4,11 +4,16 @@ on: [push, pull_request]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v2
+    - name: brew setup
+      if: matrix.os == 'macos-latest'
+      run: brew install automake autoconf pkg-config libpng
     - name: generate configure script
       run: ./autogen.sh
     - name: configure
