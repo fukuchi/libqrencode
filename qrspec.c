@@ -49,7 +49,7 @@ typedef struct {
 
 /**
  * Table of the capacity of symbols
- * See Table 1 (pp.13) and Table 12-16 (pp.30-36), JIS X0510:2004.
+ * See Table 1 (p.13) and Table 12-16 (pp.30-36), JIS X0510:2004.
  */
 static const QRspec_Capacity qrspecCapacity[QRSPEC_VERSION_MAX + 1] = {
 	{  0,    0, 0, {   0,    0,    0,    0}},
@@ -264,7 +264,7 @@ void QRspec_getEccSpec(int version, QRecLevel level, int spec[5])
  * This array includes only the second and the third position of the alignment
  * patterns. Rest of them can be calculated from the distance between them.
  *
- * See Table 1 in Appendix E (pp.71) of JIS X0510:2004.
+ * See Table 1 in Appendix E (p.71) of JIS X0510:2004.
  */
 static const int alignmentPattern[QRSPEC_VERSION_MAX+1][2] = {
 	{ 0,  0},
@@ -351,7 +351,7 @@ static void QRspec_putAlignmentPattern(int version, unsigned char *frame, int wi
 
 /**
  * Version information pattern (BCH coded).
- * See Table 1 in Appendix D (pp.68) of JIS X0510:2004.
+ * See Table 1 in Appendix D (p.68) of JIS X0510:2004.
  */
 static const unsigned int versionPattern[QRSPEC_VERSION_MAX - 6] = {
 	0x07c94, 0x085bc, 0x09a99, 0x0a4d3, 0x0bbf6, 0x0c762, 0x0d847, 0x0e60d,

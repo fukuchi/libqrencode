@@ -76,7 +76,7 @@ STATIC_IN_RELEASE int Mask_writeFormatInformation(int width, unsigned char *fram
 
 /**
  * Demerit coefficients.
- * See Section 8.8.2, pp.45, JIS X0510:2004.
+ * See Section 8.8.2, p.45, JIS X0510:2004.
  */
 #define N1 (3)
 #define N2 (3)

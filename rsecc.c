@@ -42,7 +42,7 @@ static int initialized = 0;
 
 #define SYMBOL_SIZE (8)
 #define symbols ((1U << SYMBOL_SIZE) - 1)
-static const unsigned int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see pp.37 of JIS X0510:2004) */
+static const unsigned int proot = 0x11d; /* stands for x^8+x^4+x^3+x^2+1 (see p.37 of JIS X0510:2004) */
 
 /* min/max codeword length of ECC, calculated from the specification. */
 #define min_length (2)

@@ -159,7 +159,7 @@ extern unsigned char *QRspec_newFrame(int version);
  *****************************************************************************/
 
 /**
- * Mode indicator. See Table 2 of JIS X0510:2004, pp.16.
+ * Mode indicator. See Table 2 of JIS X0510:2004, p.16.
  */
 #define QRSPEC_MODEID_ECI        7
 #define QRSPEC_MODEID_NUM        1

@@ -774,7 +774,7 @@ static int QRinput_estimateBitsModeECI(unsigned char *data)
 
 	ecinum = QRinput_decodeECIfromByteArray(data);
 
-	/* See Table 4 of JISX 0510:2004 pp.17. */
+	/* See Table 4 of JISX 0510:2004 p.17. */
 	if(ecinum < 128) {
 		return MODE_INDICATOR_SIZE + 8;
 	} else if(ecinum < 16384) {
@@ -791,7 +791,7 @@ static int QRinput_encodeModeECI(QRinput_List *entry, BitStream *bstream)
 
 	ecinum = QRinput_decodeECIfromByteArray(entry->data);
 
-	/* See Table 4 of JISX 0510:2004 pp.17. */
+	/* See Table 4 of JISX 0510:2004 p.17. */
 	if(ecinum < 128) {
 		words = 1;
 		code = ecinum;
