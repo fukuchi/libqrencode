@@ -2,6 +2,12 @@
 	[develop]
 	* .github/workflows/configure.yml:
 	  - Added macOS CI script.
+	* qrencode.1.in, qrenc.c:
+	  - Detailed description of text output types has been added.
+	    (closes #142)
+	* qrenc.c:
+	  - Invalid XPM output has been fixed. (Thanks to @dlitz and @cbrt64)
+	    (closes #136)
 
 2020.08.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[release-4.1.0]
