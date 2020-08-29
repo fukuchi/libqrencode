@@ -573,7 +573,7 @@
 	  - ACKNOWLEDGMENTS updates.
 	[3.4]
 	  - Bumped version to 3.4.4.
-	* Version 3.4.4 has ben released.
+	* Version 3.4.4 has been released.
 
 2014.07.08 Kentaro FUKUCHI <kentaro@fukuchi.org>
 	* qrenc.c, qrinput.c, tests/test_qrinput.c:
