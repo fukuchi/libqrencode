@@ -1,11 +1,15 @@
 2020.08.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[release-4.1.0]
-	* .github/workflows/{cmake,configure}.yml:
+	* .github/workflows/{cmake,configure,cmake-windows}.yml:
 	  - Github actions CI scripts have been added.
 	* tests/test_bitstream.c:
 	  - Fixed memory leak.
-	* configure.ac, tests/prof_qrencode.c:
+	* configure.ac, tests/{prof,pthread}_qrencode.c:
 	  - Make configure to define HAVE_SYS_TIME_H in config.h.
+	* CMakeLists.txt:
+	  - 'wingetopt' has been replaced to 'getopt'.
+	* qrencode.c, tests/test_qrencode.c:
+	  - ECLEVEL check has been improved.
 
 2020.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
