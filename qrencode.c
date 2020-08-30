@@ -297,57 +297,54 @@ static void FrameFiller_set(FrameFiller *filler, int width, unsigned char *frame
 
 static unsigned char *FrameFiller_next(FrameFiller *filler)
 {
-	unsigned char *p;
 	int x, y, w;
-
-	if(filler->bit == -1) {
-		filler->bit = 0;
-		return filler->frame + filler->y * filler->width + filler->x;
-	}
 
 	x = filler->x;
 	y = filler->y;
-	p = filler->frame;
 	w = filler->width;
+	for(;;) {
+		if(filler->bit == -1) {
+			filler->bit = 0;
+			break;
+		}
 
-	if(filler->bit == 0) {
-		x--;
-		filler->bit++;
-	} else {
-		x++;
-		y += filler->dir;
-		filler->bit--;
-	}
+		if(filler->bit == 0) {
+			x--;
+			filler->bit++;
+		} else {
+			x++;
+			y += filler->dir;
+			filler->bit--;
+		}
 
-	if(filler->dir < 0) {
-		if(y < 0) {
-			y = 0;
+		if(filler->dir < 0) {
+			if(y < 0) {
+				y = 0;
+				x -= 2;
+				filler->dir = 1;
+				if(!filler->mqr && x == 6) {
+					x--;
+					y = 9;
+				}
+			}
+		} else if(y == w) {
+			y = w - 1;
 			x -= 2;
-			filler->dir = 1;
+			filler->dir = -1;
 			if(!filler->mqr && x == 6) {
 				x--;
-				y = 9;
+				y -= 8;
 			}
 		}
-	} else if(y == w) {
-		y = w - 1;
-		x -= 2;
-		filler->dir = -1;
-		if(!filler->mqr && x == 6) {
-			x--;
-			y -= 8;
+		if(x < 0 || y < 0) return NULL;
+
+		if(!(filler->frame[y * w + x] & 0x80)) {
+			break;
 		}
 	}
-	if(x < 0 || y < 0) return NULL;
-
 	filler->x = x;
 	filler->y = y;
-
-	if(p[y * w + x] & 0x80) {
-		// This tail recursion could be optimized.
-		return FrameFiller_next(filler);
-	}
-	return &p[y * w + x];
+	return &filler->frame[filler->y * w + filler->x];
 }
 
 #ifdef WITH_TESTS
