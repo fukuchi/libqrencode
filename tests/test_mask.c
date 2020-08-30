@@ -142,19 +142,19 @@ static void test_eval(void)
 {
 	unsigned char *frame;
 	unsigned int w = 6;
-	int demerit;
+	int penalty;
 
 	frame = (unsigned char *)malloc(w * w);
 
 	testStart("Test mask evaluation (all white)");
 	memset(frame, 0, w * w);
-	demerit = Mask_evaluateSymbol(w, frame);
-	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
+	penalty = Mask_evaluateSymbol(w, frame);
+	testEndExp(penalty == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
 
 	testStart("Test mask evaluation (all black)");
 	memset(frame, 1, w * w);
-	demerit = Mask_evaluateSymbol(w, frame);
-	testEndExp(demerit == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
+	penalty = Mask_evaluateSymbol(w, frame);
+	testEndExp(penalty == ((N1 + 1)*w*2 + N2 * (w - 1) * (w - 1)));
 
 	free(frame);
 }
@@ -174,7 +174,7 @@ static void test_eval2(void)
 {
 	unsigned char *frame;
 	unsigned int w = 10;
-	int demerit;
+	int penalty;
 	unsigned int x;
 
 	frame = (unsigned char *)malloc(w * w);
@@ -192,8 +192,8 @@ static void test_eval2(void)
 		frame[w*8 + x] = (x / 5) & 1;
 		frame[w*9 + x] = ((x / 5) & 1) ^ 1;
 	}
-	demerit = Mask_evaluateSymbol(w, frame);
-	testEndExp(demerit == N1 * 4 + N2 * 4);
+	penalty = Mask_evaluateSymbol(w, frame);
+	testEndExp(penalty == N1 * 4 + N2 * 4);
 
 	free(frame);
 }
@@ -202,7 +202,7 @@ static void test_calcN2(void)
 {
 	unsigned char frame[64];
 	int width;
-	int demerit;
+	int penalty;
 	int x, y;
 
 	testStart("Test mask evaluation (2x2 block check)");
@@ -212,8 +212,8 @@ static void test_calcN2(void)
 			frame[y * width + x] = ((x & 2) ^ (y & 2)) >> 1;
 		}
 	}
-	demerit = Mask_calcN2(width, frame);
-	assert_equal(demerit, N2 * 4, "Calculation of N2 demerit is wrong: %d, expected %d", demerit, N2 * 4);
+	penalty = Mask_calcN2(width, frame);
+	assert_equal(penalty, N2 * 4, "Calculation of N2 penalty is wrong: %d, expected %d", penalty, N2 * 4);
 
 	width = 4;
 	for(y = 0; y < width; y++) {
@@ -221,8 +221,8 @@ static void test_calcN2(void)
 			frame[y * width + x] = (((x + 1) & 2) ^ (y & 2)) >> 1;
 		}
 	}
-	demerit = Mask_calcN2(width, frame);
-	assert_equal(demerit, N2 * 2, "Calculation of N2 demerit is wrong: %d, expected %d", demerit, N2 * 2);
+	penalty = Mask_calcN2(width, frame);
+	assert_equal(penalty, N2 * 2, "Calculation of N2 penalty is wrong: %d, expected %d", penalty, N2 * 2);
 
 	width = 6;
 	for(y = 0; y < width; y++) {
@@ -230,8 +230,8 @@ static void test_calcN2(void)
 			frame[y * width + x] = (x / 3) ^ (y / 3);
 		}
 	}
-	demerit = Mask_calcN2(width, frame);
-	assert_equal(demerit, N2 * 16, "Calculation of N2 demerit is wrong: %d, expected %d", demerit, N2 * 16);
+	penalty = Mask_calcN2(width, frame);
+	assert_equal(penalty, N2 * 16, "Calculation of N2 penalty is wrong: %d, expected %d", penalty, N2 * 16);
 
 	testFinish();
 }
@@ -240,7 +240,7 @@ static void test_eval3(void)
 {
 	unsigned char *frame;
 	int w = 15;
-	int demerit;
+	int penalty;
 	int x, y;
 	static unsigned char pattern[7][15] = {
 		{0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0}, // N3x1
@@ -279,8 +279,8 @@ static void test_eval3(void)
 		printf("\n");
 	}
 	*/
-	demerit = Mask_evaluateSymbol(w, frame);
-	testEndExp(demerit == N3 * 10 + (N1 + 1) * 4);
+	penalty = Mask_evaluateSymbol(w, frame);
+	testEndExp(penalty == N3 * 10 + (N1 + 1) * 4);
 
 	free(frame);
 }
@@ -356,7 +356,7 @@ static void test_calcN1N3(void)
 {
 	int runLength[26];
 	int length;
-	int demerit;
+	int penalty;
 	int i;
 	static unsigned char pattern[][16] = {
 		{1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, N3},
@@ -378,13 +378,13 @@ static void test_calcN1N3(void)
 	testStart("Test N3 penalty calculation");
 	for(i=0; i<6; i++) {
 		length = Mask_calcRunLengthH(15, pattern[i], runLength);
-		demerit = Mask_calcN1N3(length, runLength);
-		assert_equal(pattern[i][15], demerit, "N3 penalty is wrong: %d, expected %d\n", demerit, pattern[i][15]);
+		penalty = Mask_calcN1N3(length, runLength);
+		assert_equal(pattern[i][15], penalty, "N3 penalty is wrong: %d, expected %d\n", penalty, pattern[i][15]);
 	}
 	for(i=0; i<5; i++) {
 		length = Mask_calcRunLengthH(18, pattern2[i], runLength);
-		demerit = Mask_calcN1N3(length, runLength);
-		assert_equal(pattern2[i][18], demerit, "N3 penalty is wrong: %d, expected %d\n", demerit, pattern2[i][18]);
+		penalty = Mask_calcN1N3(length, runLength);
+		assert_equal(pattern2[i][18], penalty, "N3 penalty is wrong: %d, expected %d\n", penalty, pattern2[i][18]);
 	}
 	testFinish();
 }
