@@ -47,9 +47,9 @@ static void dumpAn(DataChunk *chunk)
 
 static void dump8(DataChunk *chunk)
 {
-	int i, j;
+	size_t i, j;
 	unsigned char c;
-	int count = 0;
+	size_t count = 0;
 	unsigned char buf[16];
 
 	for(i=0; i<chunk->size; i++) {
@@ -110,23 +110,27 @@ static void dumpChunk(DataChunk *chunk)
 {
 	switch(chunk->mode) {
 		case QR_MODE_NUM:
-			printf("Numeric: %d bytes\n", chunk->size);
+			printf("Numeric: %zu bytes\n", chunk->size);
 			dumpNum(chunk);
 			break;
 		case QR_MODE_AN:
-			printf("AlphaNumeric: %d bytes\n", chunk->size);
+			printf("AlphaNumeric: %zu bytes\n", chunk->size);
 			dumpAn(chunk);
 			break;
 		case QR_MODE_8:
-			printf("8-bit data: %d bytes\n", chunk->size);
+			printf("8-bit data: %zu bytes\n", chunk->size);
 			dump8(chunk);
 			break;
 		case QR_MODE_KANJI:
-			printf("Kanji: %d bytes\n", chunk->size);
+			printf("Kanji: %zu bytes\n", chunk->size);
 			dumpKanji(chunk);
 			break;
-		default:
-			printf("Invalid or reserved: %d bytes\n", chunk->size);
+		case QR_MODE_NUL:
+		case QR_MODE_STRUCTURE:
+		case QR_MODE_ECI:
+		case QR_MODE_FNC1FIRST:
+		case QR_MODE_FNC1SECOND:
+			printf("Invalid or reserved: %zu bytes\n", chunk->size);
 			dump8(chunk);
 			break;
 	}
@@ -160,7 +164,7 @@ unsigned char *DataChunk_concatChunkList(DataChunk *list, int *retsize)
 	size = DataChunk_totalSize(list);
 	if(size <= 0) return NULL;
 
-	data = (unsigned char *)malloc(size + 1);
+	data = (unsigned char *)malloc((size_t)size + 1);
 	idx = 0;
 	while(list != NULL) {
 		memcpy(&data[idx], list->data, list->size);

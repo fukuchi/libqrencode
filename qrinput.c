@@ -140,7 +140,7 @@ QRinput *QRinput_newMQR(int version, QRecLevel level)
 	QRinput *input;
 
 	if(version <= 0 || version > MQRSPEC_VERSION_MAX) goto INVALID;
-	if((MQRspec_getECCLength(version, level) == 0)) goto INVALID;
+	if(MQRspec_getECCLength(version, level) == 0) goto INVALID;
 
 	input = QRinput_new2(version, level);
 	if(input == NULL) return NULL;
@@ -192,7 +192,7 @@ int QRinput_setVersionAndErrorCorrectionLevel(QRinput *input, int version, QRecL
 {
 	if(input->mqr) {
 		if(version <= 0 || version > MQRSPEC_VERSION_MAX) goto INVALID;
-		if((MQRspec_getECCLength(version, level) == 0)) goto INVALID;
+		if(MQRspec_getECCLength(version, level) == 0) goto INVALID;
 	} else {
 		if(version < 0 || version > QRSPEC_VERSION_MAX) goto INVALID;
 		if(level > QR_ECLEVEL_H) goto INVALID;

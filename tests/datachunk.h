@@ -5,8 +5,7 @@
 
 typedef struct _DataChunk {
 	QRencodeMode mode;
-	int size;
-	int bits;
+	size_t size;
 	unsigned char *data;
 	struct _DataChunk *next;
 } DataChunk;
