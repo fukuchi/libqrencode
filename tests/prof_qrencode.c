@@ -58,7 +58,7 @@ static void prof_ver1to10(void)
 	int version;
 	static const char *data = "This is test.";
 
-	timerStart("Version 1 - 10 (500 symbols for each)");
+	timerStart("Version 1 - 10 (5000 symbols for each)");
 	for(i=0; i<5000; i++) {
 		for(version = 0; version < 11; version++) {
 			code = QRcode_encodeString(data, version, QR_ECLEVEL_L, QR_MODE_8, 0);
@@ -79,7 +79,7 @@ static void prof_ver31to40(void)
 	int version;
 	static const char *data = "This is test.";
 
-	timerStart("Version 31 - 40 (50 symbols for each)");
+	timerStart("Version 31 - 40 (500 symbols for each)");
 	for(i=0; i<500; i++) {
 		for(version = 31; version < 41; version++) {
 			code = QRcode_encodeString(data, version, QR_ECLEVEL_L, QR_MODE_8, 0);
