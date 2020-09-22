@@ -241,7 +241,7 @@ int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned c
  * @param number index number of the symbol. (1 <= number <= size)
  * @param parity parity among input data. (NOTE: each symbol of a set of structured symbols has the same parity data)
  * @retval 0 success.
- * @retval -1 error occurred and errno is set to indeicate the error. See Execptions for the details.
+ * @retval -1 error occurred and errno is set to indicate the error. See Execptions for the details.
  * @throw EINVAL invalid parameter.
  * @throw ENOMEM unable to allocate memory.
  */
@@ -404,7 +404,7 @@ int QRinput_estimateBitsModeNum(int size)
  * @param entry
  * @param mqr
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  */
@@ -509,7 +509,7 @@ int QRinput_estimateBitsModeAn(int size)
  * @param entry
  * @param mqr
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL invalid version.
@@ -573,7 +573,7 @@ int QRinput_estimateBitsMode8(int size)
  * @param entry
  * @param mqr
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  */
@@ -647,7 +647,7 @@ static int QRinput_checkModeKanji(int size, const unsigned char *data)
  * @param entry
  * @param mqr
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL invalid version.
@@ -699,7 +699,7 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, BitStream *bstream, int 
  * @param entry
  * @param mqr
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL invalid entry.
@@ -1073,7 +1073,7 @@ ABORT:
  * Convert the input data to a bit stream.
  * @param input input data.
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  */
@@ -1100,7 +1100,7 @@ static int QRinput_createBitStream(QRinput *input, BitStream *bstream)
  * @param input input data.
  * @param bstream where the converted data is stored.
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw ERANGE input data is too large.
@@ -1135,7 +1135,7 @@ static int QRinput_convertData(QRinput *input, BitStream *bstream)
  * @param bstream Bitstream to be appended.
  * @param input input data.
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ERANGE input data is too large.
  * @throw ENOMEM unable to allocate memory.
@@ -1184,7 +1184,7 @@ static int QRinput_appendPaddingBit(BitStream *bstream, QRinput *input)
  * @param bstream Bitstream to be appended.
  * @param input input data.
  * @retval 0 success
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ERANGE input data is too large.
  * @throw ENOMEM unable to allocate memory.

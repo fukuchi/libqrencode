@@ -75,7 +75,7 @@ STATIC_IN_RELEASE int Mask_writeFormatInformation(int width, unsigned char *fram
 }
 
 /**
- * Demerit coefficients.
+ * Penalty coefficients.
  * See Section 8.8.2, p.45, JIS X0510:2004.
  */
 #define N1 (3)
@@ -323,7 +323,7 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 {
 	int i;
 	unsigned char *mask, *bestMask;
-	int minDemerit = INT_MAX;
+	int minPenalty = INT_MAX;
 	int blacks;
 	int bratio;
 	int penalty;
@@ -347,8 +347,8 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 //		n4 = penalty;
 		penalty += Mask_evaluateSymbol(width, mask);
 //		printf("(%d,%d,%d,%d)=%d\n", n1, n2, n3 ,n4, penalty);
-		if(penalty < minDemerit) {
-			minDemerit = penalty;
+		if(penalty < minPenalty) {
+			minPenalty = penalty;
 			memcpy(bestMask, mask, (size_t)w2);
 		}
 	}

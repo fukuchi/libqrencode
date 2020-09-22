@@ -61,11 +61,11 @@
  * symbol of the specified version.
  *
  * \section structured Structured append
- * Libqrencode can generate "Structured-appended" symbols that enables to split
- * a large data set into mulitple QR codes. A QR code reader concatenates
+ * Libqrencode can generate "Structured-appended" symbols that enable to split
+ * a large data set into multiple QR codes. A QR code reader concatenates
  * multiple QR code symbols into a string.
  * Just like QRcode_encodeString(), you can use QRcode_encodeStringStructured()
- * to generate structured-appended symbols. This functions returns an instance
+ * to generate structured-appended symbols. This function returns an instance
  * of ::QRcode_List. The returned list is a singly-linked list of QRcode: you
  * can retrieve each QR code in this way:
  *
@@ -191,7 +191,7 @@ extern QRinput *QRinput_newMQR(int version, QRecLevel level);
  * @param size size of data (byte).
  * @param data a pointer to the memory area of the input data.
  * @retval 0 success.
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL input data is invalid.
@@ -204,7 +204,7 @@ extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const uns
  * @param input input object.
  * @param ecinum ECI indicator number (0 - 999999)
  * @retval 0 success.
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL input data is invalid.
@@ -332,7 +332,7 @@ extern QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input);
  * a parity and set it if the parity is not set yet.
  * @param s input structure
  * @retval 0 success.
- * @retval -1 an error occurred and errno is set to indeicate the error.
+ * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
  * @throw EINVAL invalid input object.
  * @throw ENOMEM unable to allocate memory.
@@ -411,7 +411,7 @@ extern QRcode *QRcode_encodeInput(QRinput *input);
  * @param hint tell the library how Japanese Kanji characters should be
  *             encoded. If QR_MODE_KANJI is given, the library assumes that the
  *             given string contains Shift-JIS characters and encodes them in
- *             Kanji-mode. If QR_MODE_8 is given, all of non-alphanumerical
+ *             Kanji-mode. If QR_MODE_8 is given, all non-alphanumerical
  *             characters will be encoded as is. If you want to embed UTF-8
  *             string, choose this. Other mode will cause EINVAL error.
  * @param casesensitive case-sensitive(1) or not(0).
