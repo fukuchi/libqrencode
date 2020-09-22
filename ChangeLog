@@ -1,3 +1,10 @@
+2020.09.21 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[optimization]
+	* tests/prof_qrencode.c:
+	  - Test numbers are extended.
+	* mask.c:
+	  - Minor optimizations.
+
 2020.08.30 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* .github/workflows/configure.yml:
@@ -8,6 +15,9 @@
 	* qrenc.c:
 	  - Invalid XPM output has been fixed. (Thanks to @dlitz and @cbrt64)
 	    (closes #136)
+	[optimization]
+	* qrencode.c:
+	  - A tail recursion in FrameFiller_next() has been eliminated.
 
 2020.08.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[release-4.1.0]

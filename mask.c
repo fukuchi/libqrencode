@@ -196,7 +196,7 @@ STATIC_IN_RELEASE int Mask_calcN1N3(int length, int *runLength)
 			penalty += N1 + (runLength[i] - 5);
 			//n1 += N1 + (runLength[i] - 5);
 		}
-		if((i & 1)) {
+		if(i & 1) {
 			if(i >= 3 && i < length-2 && (runLength[i] % 3) == 0) {
 				fact = runLength[i] / 3;
 				if(runLength[i-2] == fact &&
@@ -225,12 +225,12 @@ STATIC_IN_RELEASE int Mask_calcN2(int width, unsigned char *frame)
 	unsigned char b22, w22;
 	int penalty = 0;
 
-	p = frame + width + 1;
+	p = frame;
 	for(y = 1; y < width; y++) {
 		for(x = 1; x < width; x++) {
-			b22 = p[0] & p[-1] & p[-width] & p [-width-1];
-			w22 = p[0] | p[-1] | p[-width] | p [-width-1];
-			if((b22 | (w22 ^ 1))&1) {
+			b22 = (p[0] & p[1] & p[width] & p[width+1]) & 1;
+			w22 = (p[0] | p[1] | p[width] | p[width+1]) & 1;
+			if(b22 != 0 || w22 == 0) {
 				penalty += N2;
 			}
 			p++;
@@ -247,14 +247,12 @@ STATIC_IN_RELEASE int Mask_calcRunLengthH(int width, unsigned char *frame, int *
 	int i;
 	unsigned char prev;
 
-	if(frame[0] & 1) {
+	prev = frame[0];
+	head = prev & 1;
+	if(head) {
 		runLength[0] = -1;
-		head = 1;
-	} else {
-		head = 0;
 	}
 	runLength[head] = 1;
-	prev = frame[0];
 
 	for(i = 1; i < width; i++) {
 		if((frame[i] ^ prev) & 1) {
@@ -275,23 +273,24 @@ STATIC_IN_RELEASE int Mask_calcRunLengthV(int width, unsigned char *frame, int *
 	int i;
 	unsigned char prev;
 
-	if(frame[0] & 1) {
+	prev = frame[0];
+	head = prev & 1;
+	if(head) {
 		runLength[0] = -1;
-		head = 1;
 	} else {
-		head = 0;
 	}
 	runLength[head] = 1;
-	prev = frame[0];
+	frame += width;
 
 	for(i = 1; i < width; i++) {
-		if((frame[i * width] ^ prev) & 1) {
+		if((*frame ^ prev) & 1) {
 			head++;
 			runLength[head] = 1;
-			prev = frame[i * width];
+			prev = *frame;
 		} else {
 			runLength[head]++;
 		}
+		frame += width;
 	}
 
 	return head + 1;
