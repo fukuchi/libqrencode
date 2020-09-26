@@ -2,6 +2,12 @@
 	[develop]
 	* tests/test_qrencode.c:
 	  - Minor memory leak bug in a test case has been fixed.
+	* COPYING:
+	  - Updated to the latest revision.
+	* qrenc.c:
+	  - Some URLs' schemes have been updated to https from http.
+	* README.md, qrenc.c, qrencode.1.in, qrencode.[ch]:
+	  - Copyright year has been updated.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]

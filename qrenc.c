@@ -2,7 +2,7 @@
  * qrencode - QR Code encoder
  *
  * QR Code encoding tool
- * Copyright (C) 2006-2017 Kentaro Fukuchi <kentaro@fukuchi.org>
+ * Copyright (C) 2006-2018, 2020 Kentaro Fukuchi <kentaro@fukuchi.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -107,7 +107,7 @@ static void usage(int help, int longopt, int status)
 	FILE *out = status ? stderr : stdout;
 	fprintf(out,
 "qrencode version %s\n"
-"Copyright (C) 2006-2017 Kentaro Fukuchi\n", QRcode_APIVersionString());
+"Copyright (C) 2006-2018, 2020 Kentaro Fukuchi\n", QRcode_APIVersionString());
 	if(help) {
 		if(longopt) {
 			fprintf(out,
@@ -176,7 +176,7 @@ static void usage(int help, int longopt, int status)
 "               of modules, ranging from Version 1 (21 x 21 modules) up to\n"
 "               Version 40 (177 x 177 modules). Each higher version number\n"
 "               comprises 4 additional modules per side by default. See\n"
-"               http://www.qrcode.com/en/about/version.html for a detailed\n"
+"               https://www.qrcode.com/en/about/version.html for a detailed\n"
 "               version list.\n"
 
 			);
@@ -575,7 +575,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	   be problematic. In particular, DTDs do not handle namespaces gracefully.
 	   It is *not* recommended that a DOCTYPE declaration be included in SVG
 	   documents."
-	   http://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
+	   https://www.w3.org/TR/2003/REC-SVG11-20030114/intro.html#Namespace
 	*/
 
 	/* Vanity remark */
