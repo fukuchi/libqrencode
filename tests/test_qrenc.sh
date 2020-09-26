@@ -1,7 +1,6 @@
 #!/bin/sh
 
 COMMAND=../qrencode
-TARGET_DIR="test_images"
 VALGRIND_COMMAND="libtool --mode=execute valgrind"
 VALGRIND_OPTIONS="--leak-check=full --show-reachable=yes"
 
@@ -33,8 +32,6 @@ test_command_fail()
 		echo "^^^this is the expected error. Everything OK."
 	fi
 }
-
-mkdir -p $TARGET_DIR
 
 test_command_success '1' 7089
 test_command_success 'A' 4296

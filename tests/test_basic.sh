@@ -6,6 +6,7 @@
 ./test_qrspec
 ./test_rs
 ./test_split
+./test_split_urls
 ./test_mask
 ./test_mqrspec
 ./test_mmask

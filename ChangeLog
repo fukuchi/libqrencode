@@ -7,6 +7,8 @@
 	    swapped. (closes #142)
 	* .github/workflows/{configure,cmake}.yml:
 	  - CI scripts have been improved to utilze multiple cores and cache.
+	* tests/{test_basic.sh, test_qrenc.sh}:
+	  - Code cleanups.
 
 2020.09.26 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
