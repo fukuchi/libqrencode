@@ -1,3 +1,11 @@
+2020.09.27 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* NEWS:
+	  - All tab characters have been replaced with spaces.
+	* qrenc.c, qrencode.1.in:
+	  - The effects of '--type' option's 'ASCII' and 'ASCIIi' have been
+	    swapped. (closes #142)
+
 2020.09.26 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* tests/test_qrencode.c:

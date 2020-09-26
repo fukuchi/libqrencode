@@ -1,6 +1,14 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version x.x.x (2020.xx.xx)
+--------------------------
+* Command line tool "qrencode" has been improved:
+  * The effects of '--type' option's 'ASCII' and 'ASCIIi' have been swapped.
+    (Thanks to Yannick Schinko)
+* Some minor bug fixes. (Thanks to Darsey Litzenberger and Edward E.)
+* Some performance improvements.
+
 Version 4.1.0 (2020.8.29)
 -------------------------
 * Command line tool "qrencode" has been improved:

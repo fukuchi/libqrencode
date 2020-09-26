@@ -140,8 +140,7 @@ static void usage(int help, int longopt, int status)
 "               If ASCII*, UTF8*, or ANSI* is specified, the image will be disp-\n"
 "               layed in the terminal by using text characters instead of gene-\n"
 "               rating an image file. If the name of the type is followed by\n"
-"               'i', the light/dark character will be reversed, but its appear-\n"
-"               ance is inconsistent for historical reasons.\n\n"
+"               'i', the light/dark character will be reversed.\n"
 "  -S, --structured\n"
 "               make structured symbols. Version must be specified with '-v'.\n\n"
 "  -k, --kanji  assume that the input text contains kanji (shift-jis).\n\n"
@@ -1074,10 +1073,10 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 			writeANSI(qrcode, outfile);
 			break;
 		case ASCIIi_TYPE:
-			writeASCII(qrcode, outfile,  1);
+			writeASCII(qrcode, outfile,  0);
 			break;
 		case ASCII_TYPE:
-			writeASCII(qrcode, outfile,  0);
+			writeASCII(qrcode, outfile,  1);
 			break;
 		case UTF8_TYPE:
 			writeUTF8(qrcode, outfile, 0, 0);

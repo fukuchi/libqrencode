@@ -51,8 +51,7 @@ specify the type of the generated image. (default=PNG)
 .br
 If ASCII*, UTF8*, or ANSI* is specified, the image will be displayed in the terminal by using
 text characters instead of generating an image file. If the name of the type is followed by 'i',
-the light/dark character will be reversed, but its appearance is inconsistent for historical
-reasons.
+the light/dark character will be reversed.
 .TP
 .B \-S, \-\-structured
 make structured symbols. Version number must be specified with '-v'.
