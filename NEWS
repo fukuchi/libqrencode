@@ -4,10 +4,10 @@ libqrencode NEWS - Overview of changes
 Version 4.1.0 (2020.8.29)
 -------------------------
 * Command line tool "qrencode" has been improved:
-	* New option "--inline" has been added. (Thanks to @jp-bennett)
-	* New option "--strict-version" has been added.
-	* UTF8 mode now supports ANSI256 color. (Thanks to András Veres-
-	  Szentkirályi)
+  * New option "--inline" has been added. (Thanks to @jp-bennett)
+  * New option "--strict-version" has been added.
+  * UTF8 mode now supports ANSI256 color. (Thanks to András Veres-
+    Szentkirályi)
 * Micro QR Code no longer requires to specify the version number.
 * 'make check' allows to run the test programs. (Thanks to Jan Tojnar)
 * Some compile time warnings have been fixed.
@@ -40,11 +40,11 @@ Version 4.0.0 (2017.9.21)
 * QRcode_clearCache() has been deprecated.
 * Error correction code generating functions have been improved.
 * Command line tool "qrencode" has been improved:
-	* XPM support. (Thanks to Tobias Klauser)
-	* PNG32 (direct color mode) support. (Thanks to Greg Hart)
-	* EPS output now supports foreground and background color.
-	* New options "-r" and "--svg-path" have been added.
-	  (Thanks to Robert Petersen and @Oblomov)
+  * XPM support. (Thanks to Tobias Klauser)
+  * PNG32 (direct color mode) support. (Thanks to Greg Hart)
+  * EPS output now supports foreground and background color.
+  * New options "-r" and "--svg-path" have been added.
+    (Thanks to Robert Petersen and @Oblomov)
 * CMake support has been added. (optional) (Thanks to @misery)
 * Various bug fixes.
 * Various performance improvements.
