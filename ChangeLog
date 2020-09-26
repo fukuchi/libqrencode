@@ -1,3 +1,14 @@
+2020.09.26 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* tests/test_qrencode.c:
+	  - Minor memory leak bug in a test case has been fixed.
+
+2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* mask.c, qrencode.h:
+	  - Typos and grammer errors have been fixed.
+	* Merge branch 'optimization'.
+
 2020.09.21 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[optimization]
 	* tests/prof_qrencode.c:
