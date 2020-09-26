@@ -10,6 +10,13 @@
 	  - Copyright year has been updated.
 	* .github/workflows/{configure,cmake,cmake-windows}.yml:
 	  - Workflow names have been improved.
+	* .travis.yml:
+	  - Migration to Github Actions has been completed.
+	* .github/workflows/{configure,cmake,cmake-windows}.yml:
+	  - CI scripts have been improved.
+	* README.md, makeREADME.sh:
+	  - Status badge has been changed to show the result from the Github Actions
+	    instead of Travis CI.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
