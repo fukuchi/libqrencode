@@ -8,6 +8,8 @@
 	  - Some URLs' schemes have been updated to https from http.
 	* README.md, qrenc.c, qrencode.1.in, qrencode.[ch]:
 	  - Copyright year has been updated.
+	* .github/workflows/{configure,cmake,cmake-windows}.yml:
+	  - Workflow names have been improved.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
