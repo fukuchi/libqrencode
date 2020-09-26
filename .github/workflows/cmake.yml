@@ -22,6 +22,7 @@ jobs:
           vcpkgArguments: getopt:x64-windows libiconv:x64-windows libpng:x64-windows
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: 'fca18ba3572f8aebe3b8158c359db62a7e26134e'
+          appendedCacheKey: ${{ hashFiles( '${{ github.workspace }}/.github/workflows/cmake.yml' ) }}
 
     - name: brew setup
       if: matrix.os == 'macos-latest'
@@ -46,7 +47,7 @@ jobs:
     - name: Build
       working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: cmake --build . --config $BUILD_TYPE
+      run: cmake --build . --config $BUILD_TYPE -j 2
 
     - name: Test
       working-directory: ${{runner.workspace}}/build

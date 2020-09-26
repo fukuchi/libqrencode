@@ -5,6 +5,8 @@
 	* qrenc.c, qrencode.1.in:
 	  - The effects of '--type' option's 'ASCII' and 'ASCIIi' have been
 	    swapped. (closes #142)
+	* .github/workflows/{configure,cmake}.yml:
+	  - CI scripts have been improved to utilze multiple cores and cache.
 
 2020.09.26 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
