@@ -51,9 +51,9 @@ int cmpBin(char *correct, BitStream *bstream)
 	return ncmpBin(correct, bstream, len);
 }
 
-void testInit(int tests)
+void testInit(int testnum)
 {
-	printf("1..%d\n", tests);
+	printf("1..%d\n", testnum);
 }
 
 void testStartReal(const char *func, const char *name)
@@ -95,14 +95,9 @@ void testReport(int expectedTests)
 	}
 }
 
-int testNum(void)
+void printBinary(unsigned char *data, size_t length)
 {
-	return tests;
-}
-
-void printBinary(unsigned char *data, int length)
-{
-	int i;
+	size_t i;
 
 	for(i=0; i<length; i++) {
 		printf(data[i]?"1":"0");

@@ -215,7 +215,7 @@ static void usage(int help, int longopt, int status)
 
 static int color_set(unsigned char color[4], const char *value)
 {
-	int len = strlen(value);
+	int len = (int)strlen(value);
 	int i, count;
 	unsigned int col[4];
 	if(len == 6) {
@@ -224,7 +224,7 @@ static int color_set(unsigned char color[4], const char *value)
 			return -1;
 		}
 		for(i = 0; i < 3; i++) {
-			color[i] = col[i];
+			color[i] = (unsigned char)col[i];
 		}
 		color[3] = 255;
 	} else if(len == 8) {
@@ -233,7 +233,7 @@ static int color_set(unsigned char color[4], const char *value)
 			return -1;
 		}
 		for(i = 0; i < 4; i++) {
-			color[i] = col[i];
+			color[i] = (unsigned char)col[i];
 		}
 	} else {
 		return -1;
@@ -247,7 +247,7 @@ static unsigned char *readFile(FILE *fp, int *length)
 {
 	int ret;
 
-	ret = fread(data_buffer, 1, MAX_DATA_SIZE, fp);
+	ret = (int)fread(data_buffer, 1, MAX_DATA_SIZE, fp);
 	if(ret == 0) {
 		fprintf(stderr, "No input data.\n");
 		exit(EXIT_FAILURE);
@@ -385,8 +385,8 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 				PNG_FILTER_TYPE_DEFAULT);
 	}
 	png_set_pHYs(png_ptr, info_ptr,
-			dpi * INCHES_PER_METER,
-			dpi * INCHES_PER_METER,
+			(png_uint_32)(dpi * INCHES_PER_METER),
+			(png_uint_32)(dpi * INCHES_PER_METER),
 			PNG_RESOLUTION_METER);
 	png_write_info(png_ptr, info_ptr);
 
@@ -494,15 +494,15 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	/* set color */
 	fprintf(fp, "gsave\n");
 	fprintf(fp, "%f %f %f setrgbcolor\n",
-			(float)bg_color[0] / 255,
-			(float)bg_color[1] / 255,
-			(float)bg_color[2] / 255);
+			(double)bg_color[0] / 255,
+			(double)bg_color[1] / 255,
+			(double)bg_color[2] / 255);
 	fprintf(fp, "%d %d scale\n", realwidth, realwidth);
 	fprintf(fp, "0 0 p\ngrestore\n");
 	fprintf(fp, "%f %f %f setrgbcolor\n",
-			(float)fg_color[0] / 255,
-			(float)fg_color[1] / 255,
-			(float)fg_color[2] / 255);
+			(double)fg_color[0] / 255,
+			(double)fg_color[1] / 255,
+			(double)fg_color[2] / 255);
 	fprintf(fp, "%d %d scale\n", size, size);
 
 	/* data */
@@ -524,7 +524,7 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static void writeSVG_drawModules(FILE *fp, int x, int y, int width, const char* col, float opacity)
+static void writeSVG_drawModules(FILE *fp, int x, int y, int width, const char* col, double opacity)
 {
 	if(svg_path) {
 		fprintf(fp, "M%d,%dh%d", x, y, width);
@@ -547,10 +547,10 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	unsigned char *row, *p;
 	int x, y, x0, pen;
 	int symwidth, realwidth;
-	float scale;
+	double scale;
 	char fg[7], bg[7];
-	float fg_opacity;
-	float bg_opacity;
+	double fg_opacity;
+	double bg_opacity;
 
 	fp = openFile(outfile);
 
@@ -561,8 +561,8 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 
 	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
 	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
-	fg_opacity = (float)fg_color[3] / 255;
-	bg_opacity = (float)bg_color[3] / 255;
+	fg_opacity = (double)fg_color[3] / 255;
+	bg_opacity = (double)bg_color[3] / 255;
 
 	/* XML declaration */
 	if (!inline_svg)
@@ -585,7 +585,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			"<svg width=\"%.2fcm\" height=\"%.2fcm\" viewBox=\"0 0 %d %d\""\
 			" preserveAspectRatio=\"none\" version=\"1.1\""\
 			" xmlns=\"http://www.w3.org/2000/svg\">\n",
-			realwidth / scale, realwidth / scale, symwidth, symwidth
+			(double)realwidth / scale, (double)realwidth / scale, symwidth, symwidth
 		   );
 
 	/* Make named group */
@@ -1021,12 +1021,12 @@ static QRcode *encode(const unsigned char *intext, int length)
 		if(eightbit) {
 			code = QRcode_encodeDataMQR(length, intext, version, level);
 		} else {
-			code = QRcode_encodeStringMQR((char *)intext, version, level, hint, casesensitive);
+			code = QRcode_encodeStringMQR((const char *)intext, version, level, hint, casesensitive);
 		}
 	} else if(eightbit) {
 		code = QRcode_encodeData(length, intext, version, level);
 	} else {
-		code = QRcode_encodeString((char *)intext, version, level, hint, casesensitive);
+		code = QRcode_encodeString((const char *)intext, version, level, hint, casesensitive);
 	}
 
 	return code;
@@ -1093,9 +1093,6 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case ANSIUTF8i_TYPE:
 			writeUTF8(qrcode, outfile, 1, 1);
 			break;
-		default:
-			fprintf(stderr, "Unknown image type.\n");
-			exit(EXIT_FAILURE);
 	}
 
 	QRcode_free(qrcode);
@@ -1108,7 +1105,7 @@ static QRcode_List *encodeStructured(const unsigned char *intext, int length)
 	if(eightbit) {
 		list = QRcode_encodeDataStructured(length, intext, version, level);
 	} else {
-		list = QRcode_encodeStringStructured((char *)intext, version, level, hint, casesensitive);
+		list = QRcode_encodeStringStructured((const char *)intext, version, level, hint, casesensitive);
 	}
 
 	return list;
@@ -1232,10 +1229,6 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			case ANSIUTF8i_TYPE:
 				writeUTF8(p->code, filename, 0, 1);
 				break;
-
-			default:
-				fprintf(stderr, "Unknown image type.\n");
-				exit(EXIT_FAILURE);
 		}
 		i++;
 	}
@@ -1409,15 +1402,15 @@ int main(int argc, char **argv)
 
 	if(optind < argc) {
 		intext = (unsigned char *)argv[optind];
-		length = strlen((char *)intext);
+		length = (int)strlen((char *)intext);
 	}
 	if(intext == NULL) {
-		fp = infile == NULL ? stdin : fopen(infile,"r");
+		fp = infile == NULL ? stdin : fopen(infile, "r");
 		if(fp == 0) {
 			fprintf(stderr, "Cannot read input file %s.\n", infile);
 			exit(EXIT_FAILURE);
 		}
-		intext = readFile(fp,&length);
+		intext = readFile(fp, &length);
 
 	}
 

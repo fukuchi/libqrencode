@@ -245,7 +245,7 @@ int QRinput_append(QRinput *input, QRencodeMode mode, int size, const unsigned c
  * @throw EINVAL invalid parameter.
  * @throw ENOMEM unable to allocate memory.
  */
-STATIC_IN_RELEASE int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int number, unsigned char parity)
+STATIC_IN_RELEASE int QRinput_insertStructuredAppendHeader(QRinput *input, int size, int number, int parity)
 {
 	QRinput_List *entry;
 	unsigned char buf[3];
@@ -261,7 +261,7 @@ STATIC_IN_RELEASE int QRinput_insertStructuredAppendHeader(QRinput *input, int s
 
 	buf[0] = (unsigned char)size;
 	buf[1] = (unsigned char)number;
-	buf[2] = parity;
+	buf[2] = (unsigned char)parity;
 	entry = QRinput_List_newEntry(QR_MODE_STRUCTURE, 3, buf);
 	if(entry == NULL) {
 		return -1;
@@ -357,8 +357,8 @@ QRinput *QRinput_dup(QRinput *input)
 
 /**
  * Check the input data.
- * @param size
- * @param data
+ * @param size size of the input data.
+ * @param data input data.
  * @return result
  */
 static int QRinput_checkModeNum(int size, const char *data)
@@ -375,7 +375,7 @@ static int QRinput_checkModeNum(int size, const char *data)
 
 /**
  * Estimate the length of the encoded bit stream of numeric data.
- * @param size
+ * @param size size of the input data.
  * @return number of bits
  */
 int QRinput_estimateBitsModeNum(int size)
@@ -401,8 +401,8 @@ int QRinput_estimateBitsModeNum(int size)
 
 /**
  * Convert the number data and append to a bit stream.
- * @param entry
- * @param mqr
+ * @param entry input data.
+ * @param mqr give 1 if generating Micro QR Code.
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
@@ -469,8 +469,8 @@ const signed char QRinput_anTable[128] = {
 
 /**
  * Check the input data.
- * @param size
- * @param data
+ * @param size size of the input data.
+ * @param data input data.
  * @return result
  */
 static int QRinput_checkModeAn(int size, const char *data)
@@ -487,7 +487,7 @@ static int QRinput_checkModeAn(int size, const char *data)
 
 /**
  * Estimate the length of the encoded bit stream of alphabet-numeric data.
- * @param size
+ * @param size size of the input data.
  * @return number of bits
  */
 int QRinput_estimateBitsModeAn(int size)
@@ -506,8 +506,8 @@ int QRinput_estimateBitsModeAn(int size)
 
 /**
  * Convert the alphabet-numeric data and append to a bit stream.
- * @param entry
- * @param mqr
+ * @param entry input data.
+ * @param mqr give 1 if generating Micro QR Code.
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
@@ -560,7 +560,7 @@ static int QRinput_encodeModeAn(QRinput_List *entry, BitStream *bstream, int ver
 
 /**
  * Estimate the length of the encoded bit stream of 8 bit data.
- * @param size
+ * @param size size of the input data.
  * @return number of bits
  */
 int QRinput_estimateBitsMode8(int size)
@@ -570,8 +570,8 @@ int QRinput_estimateBitsMode8(int size)
 
 /**
  * Convert the 8bits data and append to a bit stream.
- * @param entry
- * @param mqr
+ * @param entry input data.
+ * @param mqr give 1 if generating Micro QR Code.
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
@@ -610,7 +610,7 @@ static int QRinput_encodeMode8(QRinput_List *entry, BitStream *bstream, int vers
 
 /**
  * Estimate the length of the encoded bit stream of kanji data.
- * @param size
+ * @param size size of the input data.
  * @return number of bits
  */
 int QRinput_estimateBitsModeKanji(int size)
@@ -620,8 +620,8 @@ int QRinput_estimateBitsModeKanji(int size)
 
 /**
  * Check the input data.
- * @param size
- * @param data
+ * @param size size of the input data.
+ * @param data input data.
  * @return result
  */
 static int QRinput_checkModeKanji(int size, const unsigned char *data)
@@ -644,8 +644,8 @@ static int QRinput_checkModeKanji(int size, const unsigned char *data)
 
 /**
  * Convert the kanji data and append to a bit stream.
- * @param entry
- * @param mqr
+ * @param entry input data.
+ * @param mqr give 1 if generating Micro QR Code.
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
@@ -696,8 +696,8 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, BitStream *bstream, int 
 
 /**
  * Convert a structure symbol code and append to a bit stream.
- * @param entry
- * @param mqr
+ * @param entry input data.
+ * @param mqr give 1 if generating Micro QR Code.
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
@@ -850,9 +850,9 @@ int QRinput_check(QRencodeMode mode, int size, const unsigned char *data)
 
 /**
  * Estimate the length of the encoded bit stream on the current version.
- * @param entry
+ * @param entry input data.
  * @param version version of the symbol
- * @param mqr
+ * @param mqr give 1 if generating Micro QR Code.
  * @return number of bits
  */
 static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version, int mqr)
@@ -953,9 +953,9 @@ STATIC_IN_RELEASE int QRinput_estimateVersion(QRinput *input)
 
 /**
  * Return required length in bytes for specified mode, version and bits.
- * @param mode
- * @param version
- * @param bits
+ * @param mode encode mode.
+ * @param version version of the symbol.
+ * @param bits length of the input data in bits.
  * @return required length of code words in bytes.
  */
 STATIC_IN_RELEASE int QRinput_lengthOfCode(QRencodeMode mode, int version, int bits)
@@ -1006,8 +1006,8 @@ STATIC_IN_RELEASE int QRinput_lengthOfCode(QRencodeMode mode, int version, int b
 
 /**
  * Convert the input data in the data chunk and append to a bit stream.
- * @param entry
- * @param bstream
+ * @param entry input data.
+ * @param [out] bstream destination BitStream.
  * @return number of bits (>0) or -1 for failure.
  */
 static int QRinput_encodeBitStream(QRinput_List *entry, BitStream *bstream, int version, int mqr)
@@ -1098,7 +1098,7 @@ static int QRinput_createBitStream(QRinput *input, BitStream *bstream)
  * When the version number is given and that is not sufficient, it is increased
  * automatically.
  * @param input input data.
- * @param bstream where the converted data is stored.
+ * @param bstream Bitstream to be appended.
  * @retval 0 success
  * @retval -1 an error occurred and errno is set to indicate the error.
  *            See Execptions for the details.
