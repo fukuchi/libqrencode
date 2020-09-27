@@ -1,3 +1,12 @@
+2020.09.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[hotfix]
+	* qrinput.c, tests/test_estimatebit.c:
+	  - Fixed a bug in the estimation of the Micro QR Code's data length
+	    in QRinput_estimateBitStreamSizeOfEntry() has been fixed.
+	  - Fixed a bug in the calculation of the Micro QR Code's data capacity in
+	    QRinput_encodeBitStream().
+	  - A test case to test the bugs above has been added.
+
 2020.08.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[release-4.1.0]
 	* .github/workflows/{cmake,configure,cmake-windows}.yml:

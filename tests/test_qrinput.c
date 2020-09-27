@@ -889,6 +889,38 @@ static void test_estimateVersionBoundaryCheck(void)
 	testFinish();
 }
 
+static void test_QRinput_new_invalid(void)
+{
+	testStart("Invalid input to QRinput_new2()");
+	QRinput *input;
+
+	input = QRinput_new2(-1, QR_ECLEVEL_H);
+	assert_null(input, "QRinput_new2() returns non-null for invalid version (-1).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	input = QRinput_new2(41, QR_ECLEVEL_H);
+	assert_null(input, "QRinput_new2() returns non-null for invalid version (41).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	input = QRinput_new2(1, -1);
+	assert_null(input, "QRinput_new2() returns non-null for invalid level (-1).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	input = QRinput_new2(1, 5);
+	assert_null(input, "QRinput_new2() returns non-null for invalid level (5).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	testFinish();
+}
+
+static void test_QRinput_getErrorCorrectionLevel(void)
+{
+	testStart("Invalid input to QRinput_getErrorCorrectionLevel()");
+	QRinput *input;
+	QRecLevel level;
+
+	input = QRinput_new2(1, QR_ECLEVEL_H);
+	level = QRinput_getErrorCorrectionLevel(input);
+	assert_equal(level, QR_ECLEVEL_H, "QRinput_getErrorCorrectionLevel() fails to return expected level.\n");
+	testFinish();
+}
+
 static void test_mqr_new(void)
 {
 	QRinput *input;
@@ -1044,7 +1076,7 @@ static void test_encodeECI(void)
 
 int main()
 {
-	int tests = 40;
+	int tests = 42;
 	testInit(tests);
 
 	test_encodeNumeric();
@@ -1078,6 +1110,8 @@ int main()
 	test_parity2();
 	test_null_free();
 	test_estimateVersionBoundaryCheck();
+	test_QRinput_new_invalid();
+	test_QRinput_getErrorCorrectionLevel();
 
 	test_mqr_new();
 	test_mqr_setversion();
