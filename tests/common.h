@@ -48,7 +48,7 @@ void printQRinput(QRinput *input);
 void printQRinputInfo(QRinput *input);
 void printQRinputStruct(QRinput_Struct *s);
 
-void printBinary(unsigned char *data, int length);
+void printBinary(unsigned char *data, size_t length);
 void printBstream(BitStream *bstream);
 
 void show_QRcode(QRcode *qrcode);

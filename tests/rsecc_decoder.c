@@ -24,8 +24,8 @@ void RSECC_decoder_init() {
 
 	b = 1;
 	for(i = 0; i < symbols; i++) {
-		alpha[i] = b;
-		aindex[b] = i;
+		alpha[i] = (unsigned char)b;
+		aindex[b] = (unsigned char)i;
 		b <<= 1;
 		if(b & (symbols + 1)) {
 			b ^= proot;

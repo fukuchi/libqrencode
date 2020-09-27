@@ -112,7 +112,7 @@ static int Split_eatNum(const char *string, QRinput *input,QRencodeMode hint)
 		}
 	}
 
-	ret = QRinput_append(input, QR_MODE_NUM, run, (unsigned char *)string);
+	ret = QRinput_append(input, QR_MODE_NUM, run, (const unsigned char *)string);
 	if(ret < 0) return -1;
 
 	return run;
@@ -160,7 +160,7 @@ static int Split_eatAn(const char *string, QRinput *input, QRencodeMode hint)
 		}
 	}
 
-	ret = QRinput_append(input, QR_MODE_AN, run, (unsigned char *)string);
+	ret = QRinput_append(input, QR_MODE_AN, run, (const unsigned char *)string);
 	if(ret < 0) return -1;
 
 	return run;
@@ -177,7 +177,7 @@ static int Split_eatKanji(const char *string, QRinput *input, QRencodeMode hint)
 		p += 2;
 	}
 	run = (int)(p - string);
-	ret = QRinput_append(input, QR_MODE_KANJI, run, (unsigned char *)string);
+	ret = QRinput_append(input, QR_MODE_KANJI, run, (const unsigned char *)string);
 	if(ret < 0) return -1;
 
 	return run;
@@ -245,7 +245,7 @@ static int Split_eat8(const char *string, QRinput *input, QRencodeMode hint)
 	}
 
 	run = (int)(p - string);
-	ret = QRinput_append(input, QR_MODE_8, run, (unsigned char *)string);
+	ret = QRinput_append(input, QR_MODE_8, run, (const unsigned char *)string);
 	if(ret < 0) return -1;
 
 	return run;

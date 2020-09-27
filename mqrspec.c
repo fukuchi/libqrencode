@@ -155,8 +155,8 @@ unsigned int MQRspec_getFormatInfo(int mask, int version, QRecLevel level)
 
 /**
  * Put a finder pattern.
- * @param frame
- * @param width
+ * @param frame destination frame data
+ * @param width frame width
  * @param ox,oy upper-left coordinate of the pattern
  */
 static void putFinderPattern(unsigned char *frame, int width, int ox, int oy)

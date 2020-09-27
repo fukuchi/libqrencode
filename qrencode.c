@@ -703,7 +703,7 @@ QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), version, level, 0);
+	return QRcode_encodeDataReal((const unsigned char *)string, (int)strlen(string), version, level, 0);
 }
 
 QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level)
@@ -733,7 +733,7 @@ QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel le
 		version = 1;
 	}
 	for(i = version; i <= MQRSPEC_VERSION_MAX; i++) {
-		QRcode *code = QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), i, level, 1);
+		QRcode *code = QRcode_encodeDataReal((const unsigned char *)string, (int)strlen(string), i, level, 1);
 		if(code != NULL) return code;
 	}
 
@@ -874,7 +874,7 @@ static QRcode_List *QRcode_encodeDataStructuredReal(
 	if(eightbit) {
 		ret = QRinput_append(input, QR_MODE_8, size, data);
 	} else {
-		ret = Split_splitStringToQRinput((char *)data, input, hint, casesensitive);
+		ret = Split_splitStringToQRinput((const char *)data, input, hint, casesensitive);
 	}
 	if(ret < 0) {
 		QRinput_free(input);
@@ -895,7 +895,7 @@ QRcode_List *QRcode_encodeString8bitStructured(const char *string, int version, 
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataStructured((int)strlen(string), (unsigned char *)string, version, level);
+	return QRcode_encodeDataStructured((int)strlen(string), (const unsigned char *)string, version, level);
 }
 
 QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
@@ -904,7 +904,7 @@ QRcode_List *QRcode_encodeStringStructured(const char *string, int version, QRec
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataStructuredReal((int)strlen(string), (unsigned char *)string, version, level, 0, hint, casesensitive);
+	return QRcode_encodeDataStructuredReal((int)strlen(string), (const unsigned char *)string, version, level, 0, hint, casesensitive);
 }
 
 /******************************************************************************
