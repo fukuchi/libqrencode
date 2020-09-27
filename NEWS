@@ -1,6 +1,12 @@
 libqrencode NEWS - Overview of changes
 ======================================
 
+Version 4.1.1 (2020.9.28)
+-------------------------
+* Some minor bugs in Micro QR Code generation have been fixed.
+  * The data capacity calculations are now correct. These bugs probably did not
+    affect the Micro QR Code generation.
+
 Version 4.1.0 (2020.8.29)
 -------------------------
 * Command line tool "qrencode" has been improved:
