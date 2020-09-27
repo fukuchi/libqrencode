@@ -1072,11 +1072,11 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case ANSI256_TYPE:
 			writeANSI(qrcode, outfile);
 			break;
-		case ASCIIi_TYPE:
-			writeASCII(qrcode, outfile,  0);
-			break;
 		case ASCII_TYPE:
 			writeASCII(qrcode, outfile,  1);
+			break;
+		case ASCIIi_TYPE:
+			writeASCII(qrcode, outfile,  0);
 			break;
 		case UTF8_TYPE:
 			writeUTF8(qrcode, outfile, 0, 0);
@@ -1122,6 +1122,7 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 
 	switch(image_type) {
 		case PNG_TYPE:
+		case PNG32_TYPE:
 			type_suffix = ".png";
 			break;
 		case EPS_TYPE:
@@ -1135,16 +1136,15 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			break;
 		case ANSI_TYPE:
 		case ANSI256_TYPE:
+		case ANSI256UTF8_TYPE:
 		case ASCII_TYPE:
+		case ASCIIi_TYPE:
 		case UTF8_TYPE:
 		case ANSIUTF8_TYPE:
 		case UTF8i_TYPE:
 		case ANSIUTF8i_TYPE:
 			type_suffix = ".txt";
 			break;
-		default:
-			fprintf(stderr, "Unknown image type.\n");
-			exit(EXIT_FAILURE);
 	}
 
 	if(outfile == NULL) {
@@ -1208,26 +1208,26 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			case ANSI256_TYPE:
 				writeANSI(p->code, filename);
 				break;
-			case ASCIIi_TYPE:
+			case ASCII_TYPE:
 				writeASCII(p->code, filename, 1);
 				break;
-			case ASCII_TYPE:
+			case ASCIIi_TYPE:
 				writeASCII(p->code, filename, 0);
 				break;
 			case UTF8_TYPE:
 				writeUTF8(p->code, filename, 0, 0);
 				break;
 			case ANSIUTF8_TYPE:
-				writeUTF8(p->code, filename, 0, 0);
+				writeUTF8(p->code, filename, 1, 0);
 				break;
 			case ANSI256UTF8_TYPE:
-				writeUTF8(p->code, filename, 0, 0);
+				writeUTF8(p->code, filename, 2, 0);
 				break;
 			case UTF8i_TYPE:
 				writeUTF8(p->code, filename, 0, 1);
 				break;
 			case ANSIUTF8i_TYPE:
-				writeUTF8(p->code, filename, 0, 1);
+				writeUTF8(p->code, filename, 1, 1);
 				break;
 		}
 		i++;

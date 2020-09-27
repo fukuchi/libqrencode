@@ -9,6 +9,13 @@
 	  - CI scripts have been improved to utilze multiple cores and cache.
 	* tests/{test_basic.sh, test_qrenc.sh}:
 	  - Code cleanups.
+	[code cleanups]
+	* various files:
+	  - Cleanup compiler warnings.
+	[develop]
+	* Merged 'code cleanups' branch.
+	* qrenc.c:
+	  - Text output bug of structured append has been fixed.
 
 2020.09.26 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
