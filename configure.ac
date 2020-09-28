@@ -126,20 +126,6 @@ if test x$enable_gcov = xyes; then
 fi
 
 
-dnl --enable-mudflap
-AC_ARG_ENABLE([mudflap], [AS_HELP_STRING([--enable-mudflap], [generate extra code to check memory leaks [default=no]])],
- [], [enable_mudflap=no])
-
-if test x$enable_mudflap = xyes; then
-	if test x$enable_thread_safety = xyes; then
-		CFLAGS="$CFLAGS -fmudflapth"
-		LDFLAGS="$LDFLAGS -lmudflapth"
-	else
-		CFLAGS="$CFLAGS -fmudflap"
-		LDFLAGS="$LDFLAGS -lmudflap"
-	fi
-fi
-
 dnl --enable-asan
 AC_ARG_ENABLE([asan], [AS_HELP_STRING([--enable-asan], [use AddressSanitizer [default=no]])],
  [], [enable_asan=no])

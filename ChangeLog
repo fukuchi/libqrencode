@@ -12,6 +12,9 @@
 	* tests/release_check.sh:
 	  - Release checker script has been added. Currently it checks only the
 	    version numbers among scripts.
+	* configure.ac:
+	  - '--enable-mudflap' option has been deleted. (mudflap is deprecated
+	    since GCC 4.9)
 
 2020.09.27 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
