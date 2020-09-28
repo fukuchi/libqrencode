@@ -15,6 +15,8 @@
 	* configure.ac:
 	  - '--enable-mudflap' option has been deleted. (mudflap is deprecated
 	    since GCC 4.9)
+	* qrencode.h:
+	  - Comments for QRcode_APIVersion() has been slightly improved.
 
 2020.09.27 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
