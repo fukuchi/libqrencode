@@ -1,7 +1,7 @@
 # libqrencode - a fast and compact QR Code encoding library
 [![build](https://github.com/fukuchi/libqrencode/workflows/build/badge.svg)](https://github.com/fukuchi/libqrencode/actions)
 
-**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.1.0.
+**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.1.1.
 
 GENERAL INFORMATION
 ===================

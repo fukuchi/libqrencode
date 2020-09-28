@@ -890,7 +890,7 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 	}
 
 	if(mqr) {
-		l = QRspec_lengthIndicator(entry->mode, version);
+		l = MQRspec_lengthIndicator(entry->mode, version);
 		m = version - 1;
 		bits += l + m;
 	} else {
@@ -1018,7 +1018,11 @@ static int QRinput_encodeBitStream(QRinput_List *entry, BitStream *bstream, int 
 
 	prevsize = (int)BitStream_size(bstream);
 
-	words = QRspec_maximumWords(entry->mode, version);
+	if(mqr) {
+		words = MQRspec_maximumWords(entry->mode, version);
+	} else {
+		words = QRspec_maximumWords(entry->mode, version);
+	}
 	if(words != 0 && entry->size > words) {
 		st1 = QRinput_List_newEntry(entry->mode, words, entry->data);
 		if(st1 == NULL) goto ABORT;

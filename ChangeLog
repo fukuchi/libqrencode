@@ -1,4 +1,12 @@
 2020.09.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[hotfix]
+	* qrinput.c, tests/test_estimatebit.c:
+	  - Fixed a bug in the estimation of the Micro QR Code's data length
+	    in QRinput_estimateBitStreamSizeOfEntry() has been fixed.
+	  - Fixed a bug in the calculation of the Micro QR Code's data capacity in
+	    QRinput_encodeBitStream().
+	  - A test case to test the bugs above has been added.
+	* Bumped version to 4.1.1.
 	[develop]
 	* tests/release_check.sh:
 	  - Release checker script has been added. Currently it checks only the
