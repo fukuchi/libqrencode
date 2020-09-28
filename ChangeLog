@@ -6,6 +6,7 @@
 	  - Fixed a bug in the calculation of the Micro QR Code's data capacity in
 	    QRinput_encodeBitStream().
 	  - A test case to test the bugs above has been added.
+	  - Level check failure in QRinput_new2() on Windows has been fixed.
 	* Bumped version to 4.1.1.
 	[develop]
 	* tests/release_check.sh:

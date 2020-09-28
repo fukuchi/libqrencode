@@ -117,7 +117,7 @@ QRinput *QRinput_new2(int version, QRecLevel level)
 {
 	QRinput *input;
 
-	if(version < 0 || version > QRSPEC_VERSION_MAX || level > QR_ECLEVEL_H) {
+	if(version < 0 || version > QRSPEC_VERSION_MAX || level < 0 || level > QR_ECLEVEL_H) {
 		errno = EINVAL;
 		return NULL;
 	}
