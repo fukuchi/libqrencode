@@ -790,20 +790,6 @@ int QRcode_List_size(QRcode_List *qrlist)
 	return size;
 }
 
-#if 0
-static unsigned char QRcode_parity(const char *str, int size)
-{
-	unsigned char parity = 0;
-	int i;
-
-	for(i = 0; i < size; i++) {
-		parity ^= str[i];
-	}
-
-	return parity;
-}
-#endif
-
 QRcode_List *QRcode_encodeInputStructured(QRinput_Struct *s)
 {
 	QRcode_List *head = NULL;
