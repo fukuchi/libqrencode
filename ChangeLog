@@ -2,6 +2,8 @@
 	[develop]
 	* qrencode.c:
 	  - Removed unused code.
+	* qrencode.h:
+	  - Added a sample code snippet to the document.
 
 2020.09.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[hotfix]

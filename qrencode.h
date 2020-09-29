@@ -60,6 +60,27 @@
  * In such cases, the input data would be too large to be encoded in a
  * symbol of the specified version.
  *
+ * The following code snippet demonstrates how to use the obtained object:
+ *
+ * \code
+ * QRcode *qrcode;
+ *
+ * qrcode = QRcode_encodeString("TEST", 0, QR_ECLEVEL_M, QR_MODE_8, 1);
+ * if(qrcode == NULL) abort();
+ *
+ * for(int y = 0; y < qrcode->width; y++) {
+ *     for(int x = 0; x < qrcode->width; x++) {
+ *         if(qrcode->data[y * qrcode->width + x] & 1) {
+ *             draw_black_dot(x, y);
+ *         } else {
+ *             draw_white_dot(x, y);
+ *         }
+ *     }
+ * }
+ *
+ * QRcode_free(qrcode);
+ * \endcode
+ *
  * \section structured Structured append
  * Libqrencode can generate "Structured-appended" symbols that enable to split
  * a large data set into multiple QR codes. A QR code reader concatenates
@@ -371,6 +392,9 @@ extern int QRinput_setFNC1Second(QRinput *input, unsigned char appid);
        |`------- finder pattern and separator
        `-------- non-data modules (format, timing, etc.)
    @endverbatim
+ *
+ * See \ref result section for a sample code snippet that shows how to use the
+ * obtained QRcode object.
  */
 typedef struct {
 	int version;         ///< version of the symbol
