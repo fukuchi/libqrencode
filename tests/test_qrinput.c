@@ -919,6 +919,7 @@ static void test_QRinput_getErrorCorrectionLevel(void)
 	level = QRinput_getErrorCorrectionLevel(input);
 	assert_equal(level, QR_ECLEVEL_H, "QRinput_getErrorCorrectionLevel() fails to return expected level.\n");
 	testFinish();
+	QRinput_free(input);
 }
 
 static void test_mqr_new(void)
