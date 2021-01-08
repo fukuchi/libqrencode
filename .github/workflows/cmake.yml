@@ -21,7 +21,7 @@ jobs:
       with:
           vcpkgArguments: getopt:x64-windows libiconv:x64-windows libpng:x64-windows
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'fca18ba3572f8aebe3b8158c359db62a7e26134e'
+          vcpkgGitCommitId: '2a42024b53ebb512fb5dd63c523338bf26c8489c'
           appendedCacheKey: ${{ hashFiles( '${{ github.workspace }}/.github/workflows/cmake.yml' ) }}
 
     - name: brew setup
