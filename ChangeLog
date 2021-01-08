@@ -5,6 +5,9 @@
 	* README.md:
 	  - 'libpng12-dev' has been corrected to 'libpng-dev'. (closes #170)
 	    (Thanks to @a6q)
+	* .github/workflows/cmake.yml:
+	  - Updated 'run-vcpkg' package to v6.
+	  - vcpkg's git commit ID has been updated to the latest master.
 
 2020.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
