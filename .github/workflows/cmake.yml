@@ -17,7 +17,7 @@ jobs:
 
     - name: run vcpkg
       if: matrix.os == 'windows-latest'
-      uses: lukka/run-vcpkg@v3
+      uses: lukka/run-vcpkg@v6
       with:
           vcpkgArguments: getopt:x64-windows libiconv:x64-windows libpng:x64-windows
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
