@@ -56,7 +56,7 @@ process. For example, in Ubuntu, the following packages are needed:
 - autotools-dev
 - libtool
 - pkg-config
-- libpng12-dev
+- libpng-dev
 
 You can skip this process if you have "configure" script already (typically
 when you downloaded the source tarball from fukuchi.org.)
@@ -231,5 +231,5 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
   Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules, @NancyLi1013,
   Frédéric Wang, Dan Jacobson, Jan Tojnar, @xiaoyur347, @charmander,
-  Yannick Schinko
+  Yannick Schinko, @a6q
                         - bug report / suggestion / typo fixes

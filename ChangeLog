@@ -2,6 +2,9 @@
 	[develop]
 	* tests/test_qrinput.c:
 	  - A minor memory leak bug in a test case has been fixed.
+	* README.md:
+	  - 'libpng12-dev' has been corrected to 'libpng-dev'. (closes #170)
+	    (Thanks to @a6q)
 
 2020.09.29 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
