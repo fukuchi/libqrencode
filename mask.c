@@ -321,8 +321,9 @@ STATIC_IN_RELEASE int Mask_evaluateSymbol(int width, unsigned char *frame)
 unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 {
 	int i;
-	unsigned char *mask, *bestMask;
+	unsigned char *mask;
 	int minPenalty = INT_MAX;
+	int bestMaskNum = -1;
 	int blacks;
 	int bratio;
 	int penalty;
@@ -330,11 +331,6 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 
 	mask = (unsigned char *)malloc((size_t)w2);
 	if(mask == NULL) return NULL;
-	bestMask = (unsigned char *)malloc((size_t)w2);
-	if(bestMask == NULL) {
-		free(mask);
-		return NULL;
-	}
 
 	for(i = 0; i < maskNum; i++) {
 //		n1 = n2 = n3 = n4 = 0;
@@ -347,10 +343,18 @@ unsigned char *Mask_mask(int width, unsigned char *frame, QRecLevel level)
 		penalty += Mask_evaluateSymbol(width, mask);
 //		printf("(%d,%d,%d,%d)=%d\n", n1, n2, n3 ,n4, penalty);
 		if(penalty < minPenalty) {
+			bestMaskNum = i;
 			minPenalty = penalty;
-			memcpy(bestMask, mask, (size_t)w2);
 		}
 	}
-	free(mask);
-	return bestMask;
+
+	if(bestMaskNum == -1) {
+		free(mask);
+		return NULL;
+	}
+
+	maskMakers[bestMaskNum](width, frame, mask);
+	Mask_writeFormatInformation(width, mask, bestMaskNum, level);
+
+	return mask;
 }
