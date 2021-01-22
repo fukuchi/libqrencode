@@ -733,13 +733,13 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static void writeANSI_margin(FILE* fp, int realwidth,
-                             char* buffer, const char* white, int white_s)
+static void writeANSI_margin(FILE* fp, size_t realwidth,
+                             char* buffer, const char* white, size_t white_s)
 {
 	int y;
 
-	strncpy(buffer, white, (size_t)white_s);
-	memset(buffer + white_s, ' ', (size_t)realwidth * 2);
+	strncpy(buffer, white, white_s);
+	memset(buffer + white_s, ' ', realwidth * 2);
 	strcpy(buffer + white_s + realwidth * 2, "\033[0m\n"); // reset to default colors
 	for (y = 0; y < margin; y++) {
 		fputs(buffer, fp);
@@ -756,7 +756,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 
 	const char *white, *black;
 	char *buffer;
-	int white_s, black_s, buffer_s;
+	size_t white_s, black_s, buffer_s;
 
 	if (image_type == ANSI256_TYPE) {
 		/* codes for 256 color compatible terminals */
@@ -777,7 +777,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 
 	realwidth = (qrcode->width + margin * 2) * size;
 	buffer_s = (realwidth * white_s) * 2;
-	buffer = (char *)malloc((size_t)buffer_s);
+	buffer = malloc(buffer_s);
 	if (buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
 		exit(EXIT_FAILURE);
@@ -791,8 +791,8 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 	for (y = 0; y < qrcode->width; y++) {
 		row = p + (y * qrcode->width);
 
-		memset(buffer, 0, (size_t)buffer_s);
-		strncpy(buffer, white, (size_t)white_s);
+		memset(buffer, 0, buffer_s);
+		strncpy(buffer, white, white_s);
 		for (x = 0; x < margin; x++) {
 			strncat(buffer, "  ", 2);
 		}
@@ -801,18 +801,18 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 		for (x = 0; x < qrcode->width; x++) {
 			if (row[x] & 0x1) {
 				if (last != 1) {
-					strncat(buffer, black, (size_t)black_s);
+					strncat(buffer, black, black_s);
 					last = 1;
 				}
 			} else if(last != 0) {
-				strncat(buffer, white, (size_t)white_s);
+				strncat(buffer, white, white_s);
 				last = 0;
 			}
 			strncat(buffer, "  ", 2);
 		}
 
 		if (last != 0) {
-			strncat(buffer, white, (size_t)white_s);
+			strncat(buffer, white, white_s);
 		}
 		for (x = 0; x < margin; x++) {
 			strncat(buffer, "  ", 2);
