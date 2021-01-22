@@ -761,15 +761,13 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 	if (image_type == ANSI256_TYPE) {
 		/* codes for 256 color compatible terminals */
 		white = "\033[48;5;231m";
-		white_s = 11;
 		black = "\033[48;5;16m";
-		black_s = 10;
 	} else {
 		white = "\033[47m";
-		white_s = 5;
 		black = "\033[40m";
-		black_s = 5;
 	}
+	white_s = strlen(white);
+	black_s = strlen(black);
 
 	size = 1;
 
