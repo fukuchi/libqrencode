@@ -774,7 +774,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 	fp = openFile(outfile);
 
 	realwidth = (qrcode->width + margin * 2) * size;
-	buffer_s = (realwidth * white_s) * 2;
+	buffer_s = (realwidth * (white_s > black_s ? white_s : black_s)) * 2;
 	buffer = malloc(buffer_s);
 	if (buffer == NULL) {
 		fprintf(stderr, "Failed to allocate memory.\n");
