@@ -43,6 +43,6 @@ qrencode_LDADD = libqrencode.la $(png_LIBS)
 man1_MANS = qrencode.1
 endif
 
-if MINGW
+if CYGWIN_OR_MINGW
 libqrencode_la_LDFLAGS += -no-undefined -avoid-version -Wl,--nxcompat -Wl,--dynamicbase
 endif
