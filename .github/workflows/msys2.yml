@@ -1,4 +1,4 @@
-name: build
+name: msys2-build
 
 on: [push, pull_request]
 
@@ -14,7 +14,7 @@ jobs:
       with:
           msystem: MINGW64
           update: true
-          install: git mingw-w64-x86_64-toolchain
+          install: git mingw-w64-x86_64-toolchain autoconf automake libtool pkg-config
     - name: generate configure script
       run: ./autogen.sh
     - name: configure
