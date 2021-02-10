@@ -17,7 +17,7 @@ jobs:
       with:
           msystem: MINGW64
           update: true
-          install: git mingw-w64-x86_64-toolchain mingw-w64-cmake
+          install: git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
