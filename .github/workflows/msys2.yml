@@ -2,6 +2,9 @@ name: msys2-build
 
 on: [push, pull_request]
 
+env:
+  BUILD_TYPE: Release
+
 jobs:
   build:
     runs-on: windows-latest
@@ -14,14 +17,22 @@ jobs:
       with:
           msystem: MINGW64
           update: true
-          install: git mingw-w64-x86_64-toolchain autoconf automake libtool pkg-config
-    - name: generate configure script
-      run: ./autogen.sh
-    - name: configure
-      run: ./configure --with-tests
-    - name: make
-      run: make -j 2
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make -j 2 distcheck
+          install: git mingw-w64-x86_64-toolchain mingw-w64-cmake
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake for Windows
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/mingw64-x86_64.cmake -DWITH_TESTS=yes
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE -j 2
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: ctest -C $BUILD_TYPE
