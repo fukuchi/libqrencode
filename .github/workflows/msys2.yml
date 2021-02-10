@@ -1,0 +1,27 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+        run:
+            shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: msys2/setup-msys2@v2
+      with:
+          msystem: MINGW64
+          update: true
+          install: git mingw-w64-x86_64-toolchain
+    - name: generate configure script
+      run: ./autogen.sh
+    - name: configure
+      run: ./configure --with-tests
+    - name: make
+      run: make -j 2
+    - name: make check
+      run: make check
+    - name: make distcheck
+      run: make -j 2 distcheck
