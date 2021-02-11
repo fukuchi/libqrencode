@@ -24,9 +24,9 @@ jobs:
       run: cmake -E make_directory ${{runner.workspace}}/build
 
     - name: Configure CMake for Windows
-      shell: bash
       working-directory: ${{runner.workspace}}/build
       run: |
+          pwd
           ls
           cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/mingw64-x86_64.cmake -G 'MSYS Makefiles' -DWITH_TESTS=yes
 
