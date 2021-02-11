@@ -25,7 +25,7 @@ jobs:
           cmake -E make_directory ${{runner.workspace}}/build
           pwd
           ls
-          cd ${{runner.workspace}}/build
+          cd build
           cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/mingw64-x86_64.cmake -G 'MSYS Makefiles' -DWITH_TESTS=yes
 
     - name: Build
