@@ -37,10 +37,13 @@ AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG
 
 case "${target}" in
-*-*-cygwin*|*-*-mingw*)
-	cygwin_or_mingw=yes
+*-*-cygwin*)
+	cygwin=yes;;
+*-*-mingw*)
+	mingw=yes;;
 esac
-AM_CONDITIONAL(CYGWIN_OR_MINGW, [test "x$cygwin_or_mingw" = "xyes" ])
+AM_CONDITIONAL(MINGW, [test "x$mingw" = "xyes" ])
+AM_CONDITIONAL(CYGWIN, [test "x$cygwin" = "xyes" ])
 
 AC_CONFIG_FILES([Makefile libqrencode.pc tests/Makefile qrencode.1])
 
