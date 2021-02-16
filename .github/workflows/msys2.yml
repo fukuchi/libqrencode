@@ -36,6 +36,8 @@ jobs:
           cmake --build . --config $BUILD_TYPE -j 2
 
     - name: Test
-      working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: ctest -C $BUILD_TYPE
+      run: |
+          pwd
+          cd build
+          ctest -C $BUILD_TYPE
