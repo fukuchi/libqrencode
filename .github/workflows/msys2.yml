@@ -29,9 +29,11 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G 'MinGW Makefiles' -DWITH_TESTS=yes ..
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: cmake --build . --config $BUILD_TYPE -j 2
+      run: |
+          pwd
+          cd build
+          cmake --build . --config $BUILD_TYPE -j 2
 
     - name: Test
       working-directory: ${{runner.workspace}}/build
