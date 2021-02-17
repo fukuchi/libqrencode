@@ -18,7 +18,12 @@ jobs:
           msystem: MINGW64
           update: true
           path-type: minimal
-          install: git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-libpng
+          install:
+            git
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-libiconv
+            mingw-w64-x86_64-libpng
 
     - name: Create Build Environment
       run: |
