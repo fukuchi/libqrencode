@@ -18,7 +18,12 @@ jobs:
           msystem: MINGW64
           update: true
           path-type: minimal
-          install: git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
+          install:
+            git
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-libiconv
+            mingw-w64-x86_64-libpng
 
     - name: Create Build Environment
       run: |
@@ -26,14 +31,18 @@ jobs:
           pwd
           ls
           cd build
-          cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/mingw64-x86_64.cmake -G 'MSYS Makefiles' -DWITH_TESTS=yes ..
+          cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G 'MinGW Makefiles' -DWITH_TESTS=yes ..
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: cmake --build . --config $BUILD_TYPE -j 2
+      run: |
+          pwd
+          cd build
+          cmake --build . --config $BUILD_TYPE -j 2
 
     - name: Test
-      working-directory: ${{runner.workspace}}/build
       shell: bash
-      run: ctest -C $BUILD_TYPE
+      run: |
+          pwd
+          cd build
+          ctest -C $BUILD_TYPE
