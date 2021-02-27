@@ -107,7 +107,7 @@ static void usage(int help, int longopt, int status)
 	FILE *out = status ? stderr : stdout;
 	fprintf(out,
 "qrencode version %s\n"
-"Copyright (C) 2006-2017 Kentaro Fukuchi\n", QRcode_APIVersionString());
+"Copyright (C) 2006-2021 Kentaro Fukuchi\n", QRcode_APIVersionString());
 	if(help) {
 		if(longopt) {
 			fprintf(out,
