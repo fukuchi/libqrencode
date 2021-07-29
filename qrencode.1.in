@@ -73,6 +73,9 @@ enable run-length encoding for SVG.
 .B \-\-svg-path
 use single path to draw modules for SVG.
 .TP
+.B \-\-svg-no-background
+don't add a background for SVG output.
+.TP
 .B \-\-inline
 only useful for SVG output, generates an SVG without the XML tag.
 .TP
