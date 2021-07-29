@@ -588,11 +588,13 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 	fputs("\t<g id=\"QRcode\">\n", fp);
 
 	/* Make solid background */
-	if(bg_color[3] != 255) {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\"/>\n", symwidth, symwidth, bg, bg_opacity);
-	} else {
-		fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\"/>\n", symwidth, symwidth, bg);
-	}
+  if(bg_color[3] > 0) {
+    if(bg_color[3] != 255) {
+      fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" fill-opacity=\"%f\"/>\n", symwidth, symwidth, bg, bg_opacity);
+    } else {
+      fprintf(fp, "\t\t<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\"/>\n", symwidth, symwidth, bg);
+    }
+  }
 
 	if(svg_path) {
 		if(fg_color[3] != 255) {
