@@ -85,6 +85,9 @@ specify foreground/background color in hexadecimal notation.
 6-digit (RGB) or 8-digit (RGBA) form are supported.
 Color output support available only in PNG, EPS and SVG.
 .TP
+.B \-\-png-no-alpha
+do not add alpha channel in PNG output.
+.TP
 .B \-\-strict\-version
 disable automatic version number adjustment. If the input data is
 too large for the specified version, the program exits with the

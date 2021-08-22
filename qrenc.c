@@ -46,6 +46,7 @@ static int rle = 0;
 static int svg_path = 0;
 static int micro = 0;
 static int inline_svg = 0;
+static int png_no_alpha = 0;
 static int strict_versioning = 0;
 static QRecLevel level = QR_ECLEVEL_L;
 static QRencodeMode hint = QR_MODE_8;
@@ -93,6 +94,7 @@ static const struct option options[] = {
 	{"svg-path"      , no_argument      , &svg_path, 1},
 	{"inline"        , no_argument      , &inline_svg, 1},
 	{"strict-version", no_argument      , &strict_versioning, 1},
+	{"png-no-alpha"  , no_argument      , &png_no_alpha, 1},
 	{"foreground"    , required_argument, NULL, 'f'},
 	{"background"    , required_argument, NULL, 'b'},
 	{"version"       , no_argument      , NULL, 'V'},
@@ -155,6 +157,8 @@ static void usage(int help, int longopt, int status)
 "               specify foreground/background color in hexadecimal notation.\n"
 "               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
 "               Color output support available only in PNG, EPS and SVG.\n\n"
+"      --png-no-alpha\n"
+"               do not add alpha channel in PNG output.\n\n"
 "      --strict-version\n"
 "               disable automatic version number adjustment. If the input data is\n"
 "               too large for the specified version, the program exits with the\n"
@@ -359,7 +363,8 @@ static int writePNG(const QRcode *qrcode, const char *outfile, enum imageType ty
 		alpha_values[0] = fg_color[3];
 		alpha_values[1] = bg_color[3];
 		png_set_PLTE(png_ptr, info_ptr, palette, 2);
-		png_set_tRNS(png_ptr, info_ptr, alpha_values, 2, NULL);
+		if (!png_no_alpha)
+			png_set_tRNS(png_ptr, info_ptr, alpha_values, 2, NULL);
 	}
 
 	png_init_io(png_ptr, fp);
