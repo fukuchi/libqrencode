@@ -92,7 +92,7 @@ static RS *init_rs_char(int symsize, int gfpoly, int fcr, int prim, int nroots, 
   RS *rs;
 
 
-/* Common code for intializing a Reed-Solomon control block (char or int symbols)
+/* Common code for initializing a Reed-Solomon control block (char or int symbols)
  * Copyright 2004 Phil Karn, KA9Q
  * May be used under the terms of the GNU Lesser General Public License (LGPL)
  */

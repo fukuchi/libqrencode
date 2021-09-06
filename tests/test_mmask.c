@@ -114,27 +114,27 @@ static void test_maskEvaluation(void)
 
 	testStart("Test mask evaluation");
 	score = MMask_evaluateSymbol(w, pattern);
-	assert_equal(score, 0, "Mask score caluculation is incorrect. (score=%d (%d expected)\n", score, 0);
+	assert_equal(score, 0, "Mask score calculation is incorrect. (score=%d (%d expected)\n", score, 0);
 
 	for(i=0; i<w; i++) {
 		pattern[(w-1) * w + i] = 1;
 	}
 	score = MMask_evaluateSymbol(w, pattern);
-	assert_equal(score, 16 + w - 1, "Mask score caluculation is incorrect. (score=%d) (%d expected)\n", score, 16 + w - 1);
+	assert_equal(score, 16 + w - 1, "Mask score calculation is incorrect. (score=%d) (%d expected)\n", score, 16 + w - 1);
 
 	for(i=0; i<w; i++) {
 		pattern[(w-1) * w + i] = 0;
 		pattern[i * w + w - 1] = 1;
 	}
 	score = MMask_evaluateSymbol(w, pattern);
-	assert_equal(score, 16 + w - 1, "Mask score caluculation is incorrect. (score=%d) (%d expected)\n", score, 16 + w - 1);
+	assert_equal(score, 16 + w - 1, "Mask score calculation is incorrect. (score=%d) (%d expected)\n", score, 16 + w - 1);
 
 	for(i=0; i<w; i++) {
 		pattern[(w-1) * w + i] = 1;
 		pattern[i * w + w - 1] = 1;
 	}
 	score = MMask_evaluateSymbol(w, pattern);
-	assert_equal(score, 16 * (w - 1) + w - 1, "Mask score caluculation is incorrect. (score=%d) (%d expected)\n", score, 16 * (w - 1) + w - 1);
+	assert_equal(score, 16 * (w - 1) + w - 1, "Mask score calculation is incorrect. (score=%d) (%d expected)\n", score, 16 * (w - 1) + w - 1);
 
 	testFinish();
 }

@@ -237,7 +237,7 @@ static int color_set(unsigned char color[4], const char *value)
 	return 0;
 }
 
-#define MAX_DATA_SIZE (7090 * 2) /* timed by the safty factor 2 */
+#define MAX_DATA_SIZE (7090 * 2) /* multiplied by the safety factor 2 */
 static unsigned char data_buffer[MAX_DATA_SIZE];
 static unsigned char *readFile(FILE *fp, int *length)
 {

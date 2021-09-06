@@ -91,7 +91,7 @@ void testReport(int expectedTests)
 	printf("Total %d tests, %d fails.\n", tests, failed);
 	if(failed) exit(-1);
 	if(expectedTests != tests) {
-		printf("WARNING: the number of the executed tests (%d) is not equal to the expecetd (%d).\n", tests, expectedTests);
+		printf("WARNING: the number of the executed tests (%d) is not equal to the expected (%d).\n", tests, expectedTests);
 	}
 }
 

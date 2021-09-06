@@ -73,7 +73,7 @@ extern int MQRspec_getMinimumVersion(int size, QRecLevel level);
 extern int MQRspec_getWidth(int version);
 
 /**
- * Return the numer of remainder bits.
+ * Return the number of remainder bits.
  * @param version version of the symbol
  * @return number of remainder bits
  */
@@ -86,7 +86,7 @@ extern int MQRspec_getRemainder(int version);
 /**
  * Return the size of length indicator for the mode and version.
  * @param mode encode mode
- * @param version vesion of the symbol
+ * @param version version of the symbol
  * @return the size of the appropriate length indicator (bits).
  */
 extern int MQRspec_lengthIndicator(QRencodeMode mode, int version);
@@ -94,7 +94,7 @@ extern int MQRspec_lengthIndicator(QRencodeMode mode, int version);
 /**
  * Return the maximum length for the mode and version.
  * @param mode encode mode
- * @param version vesion of the symbol
+ * @param version version of the symbol
  * @return the maximum length (bytes)
  */
 extern int MQRspec_maximumWords(QRencodeMode mode, int version);
@@ -106,7 +106,7 @@ extern int MQRspec_maximumWords(QRencodeMode mode, int version);
 /**
  * Return BCH encoded version information pattern that is used for the symbol
  * of version 7 or greater. Use lower 18 bits.
- * @param version vesion of the symbol
+ * @param version version of the symbol
  * @return BCH encoded version information pattern
  */
 extern unsigned int MQRspec_getVersionPattern(int version);

@@ -34,7 +34,7 @@ BitStream *QRcode_extractBits(QRcode *code, int *dataLength, int *eccLength);
 QRdata *QRcode_decodeBits(QRcode *code);
 QRdata *QRcode_decode(QRcode *code);
 
-int QRcode_decodeFormatMQR(QRcode *code, int *vesion, QRecLevel *level, int *mask);
+int QRcode_decodeFormatMQR(QRcode *code, int *version, QRecLevel *level, int *mask);
 unsigned char *QRcode_unmaskMQR(QRcode *code);
 BitStream *QRcode_extractBitsMQR(QRcode *code, int *dataLength, int *eccLength, int *version, QRecLevel *level);
 QRdata *QRcode_decodeBitsMQR(QRcode *code);

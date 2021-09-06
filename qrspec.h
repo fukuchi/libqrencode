@@ -59,14 +59,14 @@ extern int QRspec_getMinimumVersion(int size, QRecLevel level);
 
 /**
  * Return the width of the symbol for the version.
- * @param version vesion of the symbol
+ * @param version version of the symbol
  * @return width of the symbol
  */
 extern int QRspec_getWidth(int version);
 
 /**
- * Return the numer of remainder bits.
- * @param version vesion of the symbol
+ * Return the number of remainder bits.
+ * @param version version of the symbol
  * @return number of remainder bits
  */
 extern int QRspec_getRemainder(int version);
@@ -78,7 +78,7 @@ extern int QRspec_getRemainder(int version);
 /**
  * Return the size of length indicator for the mode and version.
  * @param mode encode mode
- * @param version vesion of the symbol
+ * @param version version of the symbol
  * @return the size of the appropriate length indicator (bits).
  */
 extern int QRspec_lengthIndicator(QRencodeMode mode, int version);
@@ -86,7 +86,7 @@ extern int QRspec_lengthIndicator(QRencodeMode mode, int version);
 /**
  * Return the maximum length for the mode and version.
  * @param mode encode mode
- * @param version vesion of the symbol
+ * @param version version of the symbol
  * @return the maximum length (bytes)
  */
 extern int QRspec_maximumWords(QRencodeMode mode, int version);

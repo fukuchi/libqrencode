@@ -430,7 +430,7 @@ int QRcode_decodeVersion(QRcode *code)
 	}
 
 	if(v1 != v2) {
-		printf("Two verion patterns are different.\n");
+		printf("Two version patterns are different.\n");
 		return -1;
 	}
 

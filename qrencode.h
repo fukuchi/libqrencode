@@ -62,7 +62,7 @@
  *
  * \section structured Structured append
  * Libqrencode can generate "Structured-appended" symbols that enables to split
- * a large data set into mulitple QR codes. A QR code reader concatenates
+ * a large data set into multiple QR codes. A QR code reader concatenates
  * multiple QR code symbols into a string.
  * Just like QRcode_encodeString(), you can use QRcode_encodeStringStructured()
  * to generate structured-appended symbols. This functions returns an instance
@@ -191,8 +191,8 @@ extern QRinput *QRinput_newMQR(int version, QRecLevel level);
  * @param size size of data (byte).
  * @param data a pointer to the memory area of the input data.
  * @retval 0 success.
- * @retval -1 an error occurred and errno is set to indeicate the error.
- *            See Execptions for the details.
+ * @retval -1 an error occurred and errno is set to indicate the error.
+ *            See Exceptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL input data is invalid.
  *
@@ -204,8 +204,8 @@ extern int QRinput_append(QRinput *input, QRencodeMode mode, int size, const uns
  * @param input input object.
  * @param ecinum ECI indicator number (0 - 999999)
  * @retval 0 success.
- * @retval -1 an error occurred and errno is set to indeicate the error.
- *            See Execptions for the details.
+ * @retval -1 an error occurred and errno is set to indicate the error.
+ *            See Exceptions for the details.
  * @throw ENOMEM unable to allocate memory.
  * @throw EINVAL input data is invalid.
  *
@@ -232,7 +232,7 @@ extern int QRinput_setVersion(QRinput *input, int version);
 /**
  * Get current error correction level.
  * @param input input object.
- * @return Current error correcntion level.
+ * @return Current error correction level.
  */
 extern QRecLevel QRinput_getErrorCorrectionLevel(QRinput *input);
 
@@ -248,7 +248,7 @@ extern int QRinput_setErrorCorrectionLevel(QRinput *input, QRecLevel level);
 
 /**
  * Set version and error correction level of the QR code at once.
- * This function is recommened for Micro QR Code.
+ * This function is recommended for Micro QR Code.
  * @param input input object.
  * @param version version number (0 = auto)
  * @param level Error correction level.
@@ -332,8 +332,8 @@ extern QRinput_Struct *QRinput_splitQRinputToStruct(QRinput *input);
  * a parity and set it if the parity is not set yet.
  * @param s input structure
  * @retval 0 success.
- * @retval -1 an error occurred and errno is set to indeicate the error.
- *            See Execptions for the details.
+ * @retval -1 an error occurred and errno is set to indicate the error.
+ *            See Exceptions for the details.
  * @throw EINVAL invalid input object.
  * @throw ENOMEM unable to allocate memory.
  */
