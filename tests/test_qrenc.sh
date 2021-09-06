@@ -34,7 +34,7 @@ test_command_fail()
 	fi
 }
 
-mkdir -p $TARGET_DIR
+mkdir -p "$TARGET_DIR"
 
 test_command_success '1' 7089
 test_command_success 'A' 4296
