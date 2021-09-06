@@ -88,7 +88,7 @@ extern QRinput *QRinput_dup(QRinput *input);
 extern const signed char QRinput_anTable[128];
 
 /**
- * Look up the alphabet-numeric convesion table (see JIS X0510:2004, pp.19).
+ * Look up the alphabet-numeric conversion table (see JIS X0510:2004, pp.19).
  * @param __c__ character
  * @return value
  */

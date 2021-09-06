@@ -1067,7 +1067,7 @@ static void test_encodeECI(void)
 	assert_nonnull(bstream, "Failed to merge.\n");
 	if(bstream != NULL) {
 		ret = ncmpBin(correct, bstream, 64);
-		assert_zero(ret, "Encodation of ECI header was invalid.\n");
+		assert_zero(ret, "Encoding of ECI header was invalid.\n");
 		BitStream_free(bstream);
 	}
 	QRinput_free(input);

@@ -79,7 +79,7 @@ if(MSVC)
     add_definitions(-Dstrncasecmp=_strnicmp)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-    
+
     if(WITH_TOOLS)
         find_path(GETOPT_INCLUDE_DIR getopt.h PATH_SUFFIXES include)
         find_library(GETOPT_LIBRARIES getopt PATH_SUFFIXES lib)

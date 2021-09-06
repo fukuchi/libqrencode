@@ -50,8 +50,8 @@ MAKE_TEST(test_split)
 
 if(TARGET ICONV::ICONV)
     add_library(decoder STATIC
-        decoder.c decoder.h 
-        datachunk.c datachunk.h 
+        decoder.c decoder.h
+        datachunk.c datachunk.h
         rsecc_decoder.c rsecc_decoder.h)
     target_link_libraries(decoder ICONV::ICONV)
 
@@ -71,11 +71,10 @@ if(TARGET ICONV::ICONV)
             return 0;
         }"
         FIXED_SIZE_BUFFER_INITIALIZATION)
-    
+
     if(FIXED_SIZE_BUFFER_INITIALIZATION)
         MAKE_TEST(test_mask decoder)
         MAKE_TEST(test_mmask decoder)
         MAKE_TEST(test_rs rscode decoder)
     endif()
 endif()
-

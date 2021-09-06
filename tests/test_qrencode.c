@@ -776,7 +776,7 @@ static void test_formatInfoMQR(void)
 										QR_MODE_8, 1);
 		ret = QRcode_decodeFormatMQR(qrcode, &version, &level, &mask);
 		assert_zero(ret, "Failed to decode.\n");
-		assert_equal(MQRformat[i].version, version, "Decoded verion is wrong.\n");
+		assert_equal(MQRformat[i].version, version, "Decoded version is wrong.\n");
 		assert_equal(MQRformat[i].level, level, "Decoded level is wrong.\n");
 		QRcode_free(qrcode);
 	}
