@@ -732,6 +732,8 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	}
 	fputs("};\n", fp);
 
+    fputs("};\n", fp);
+
 	free(row);
 	fclose(fp);
 
