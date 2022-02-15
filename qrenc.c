@@ -724,8 +724,10 @@ static int writeXPM(const QRcode *qrcode, const char *outfile)
 	}
 
 	for (y = 0; y < realmargin; y++) {
-		fprintf(fp, "\"%s\"%s\n", row, y < (size - 1) ? "," : "};");
+		fprintf(fp, "\"%s\",\n", row);
 	}
+
+    fputs("};\n", fp);
 
 	free(row);
 	fclose(fp);
