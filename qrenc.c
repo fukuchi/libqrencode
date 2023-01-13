@@ -794,7 +794,7 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 		memset(buffer, 0, (size_t)buffer_s);
 		strncpy(buffer, white, (size_t)white_s);
 		for(x = 0; x < margin; x++ ){
-			strncat(buffer, "  ", 2);
+			strcat(buffer, "  ");
 		}
 		last = 0;
 
@@ -808,16 +808,16 @@ static int writeANSI(const QRcode *qrcode, const char *outfile)
 				strncat(buffer, white, (size_t)white_s);
 				last = 0;
 			}
-			strncat(buffer, "  ", 2);
+			strcat(buffer, "  ");
 		}
 
 		if( last != 0 ){
 			strncat(buffer, white, (size_t)white_s);
 		}
 		for(x = 0; x < margin; x++ ){
-			strncat(buffer, "  ", 2);
+			strcat(buffer, "  ");
 		}
-		strncat(buffer, "\033[0m\n", 5);
+		strcat(buffer, "\033[0m\n");
 		fputs(buffer, fp);
 	}
 
