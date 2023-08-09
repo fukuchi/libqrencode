@@ -1,6 +1,6 @@
 m4_define([__MAJOR_VERSION], [4])dnl
 m4_define([__MINOR_VERSION], [1])dnl
-m4_define([__MICRO_VERSION], [0])dnl
+m4_define([__MICRO_VERSION], [1])dnl
 m4_define([__VERSION], [__MAJOR_VERSION.__MINOR_VERSION.__MICRO_VERSION])dnl
 AC_INIT(QRencode, __VERSION)
 
@@ -27,6 +27,7 @@ AC_DISABLE_STATIC
 AC_C_CONST
 AC_C_INLINE
 AC_HEADER_STDC
+AC_CHECK_HEADERS(sys/time.h)
 
 LT_INIT
 AC_PROG_CC

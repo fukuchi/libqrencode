@@ -445,7 +445,7 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMask(QRinput *input, int mask)
 		errno = EINVAL;
 		return NULL;
 	}
-	if(input->level > QR_ECLEVEL_H) {
+	if(!(input->level >= QR_ECLEVEL_L && input->level <= QR_ECLEVEL_H)) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -533,7 +533,7 @@ STATIC_IN_RELEASE QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 		errno = EINVAL;
 		return NULL;
 	}
-	if(input->level > QR_ECLEVEL_Q) {
+	if(!(input->level >= QR_ECLEVEL_L && input->level <= QR_ECLEVEL_Q)) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -653,7 +653,17 @@ QRcode *QRcode_encodeString(const char *string, int version, QRecLevel level, QR
 
 QRcode *QRcode_encodeStringMQR(const char *string, int version, QRecLevel level, QRencodeMode hint, int casesensitive)
 {
-	return QRcode_encodeStringReal(string, version, level, 1, hint, casesensitive);
+	int i;
+
+	if(version == 0) {
+		version = 1;
+	}
+	for(i = version; i <= MQRSPEC_VERSION_MAX ; i++) {
+		QRcode *code = QRcode_encodeStringReal(string, i, level, 1, hint, casesensitive);
+		if(code != NULL) return code;
+	}
+
+	return NULL;
 }
 
 static QRcode *QRcode_encodeDataReal(const unsigned char *data, int length, int version, QRecLevel level, int mqr)
@@ -701,16 +711,36 @@ QRcode *QRcode_encodeString8bit(const char *string, int version, QRecLevel level
 
 QRcode *QRcode_encodeDataMQR(int size, const unsigned char *data, int version, QRecLevel level)
 {
-	return QRcode_encodeDataReal(data, size, version, level, 1);
+	int i;
+
+	if(version == 0) {
+		version = 1;
+	}
+	for(i = version; i <= MQRSPEC_VERSION_MAX; i++) {
+		QRcode *code = QRcode_encodeDataReal(data, size, i, level, 1);
+		if(code != NULL) return code;
+	}
+
+	return NULL;
 }
 
 QRcode *QRcode_encodeString8bitMQR(const char *string, int version, QRecLevel level)
 {
+	int i;
+
 	if(string == NULL) {
 		errno = EINVAL;
 		return NULL;
 	}
-	return QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), version, level, 1);
+	if(version == 0) {
+		version = 1;
+	}
+	for(i = version; i <= MQRSPEC_VERSION_MAX; i++) {
+		QRcode *code = QRcode_encodeDataReal((unsigned char *)string, (int)strlen(string), i, level, 1);
+		if(code != NULL) return code;
+	}
+
+	return NULL;
 }
 
 

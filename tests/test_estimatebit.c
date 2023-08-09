@@ -139,10 +139,35 @@ static void test_mix(void)
 	QRinput_free(gstream);
 }
 
+/* Taken from JISX 0510:2018, p.23 */
+static void test_numbit1_mqr(void)
+{
+	QRinput *stream;
+	char *str = "0123456789012345";
+	int bits;
+
+	testStart("Estimation of Numeric stream for Micro QR Code (16 digits)");
+	stream = QRinput_newMQR(3, QR_ECLEVEL_M);
+	QRinput_append(stream, QR_MODE_NUM, 16, (const unsigned char *)str);
+	bits = QRinput_estimateBitStreamSize(stream, QRinput_getVersion(stream));
+	assert_equal(bits, 61, "Estimated bit length is wrong: %d, expected: %d.\n", bits, 61);
+	QRinput_free(stream);
+
+	stream = QRinput_newMQR(4, QR_ECLEVEL_M);
+	QRinput_append(stream, QR_MODE_NUM, 16, (const unsigned char *)str);
+	bits = QRinput_estimateBitStreamSize(stream, QRinput_getVersion(stream));
+	assert_equal(bits, 63, "Estimated bit length is wrong: %d, expected: %d.\n", bits, 63);
+	QRinput_free(stream);
+
+	testFinish();
+}
+
 int main()
 {
 	gstream = QRinput_new();
 
+	int tests = 9;
+	testInit(tests);
 	test_numbit();
 	test_numbit2();
 	test_numbit3();
@@ -151,8 +176,8 @@ int main()
 	test_kanji();
 	test_structure();
 	test_mix();
-
-	report();
+	test_numbit1_mqr();
+	testReport(tests);
 
 	return 0;
 }

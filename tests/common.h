@@ -19,12 +19,13 @@ extern int assertionNum;
 extern const char levelChar[4];
 extern const char *modeStr[5];
 
+void testInit(int tests);
 #define testStart(__arg__) (testStartReal(__func__, __arg__))
 #define testEndExp(__arg__) (testEnd(!(__arg__)))
 void testStartReal(const char *func, const char *name);
 void testEnd(int result);
 void testFinish(void);
-void report();
+void testReport(int tests);
 
 #define assert_exp(__exp__, ...) \
 {assertionNum++;if(!(__exp__)) {assertionFailed++; printf(__VA_ARGS__);}}

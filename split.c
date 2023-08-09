@@ -257,21 +257,23 @@ static int Split_splitString(const char *string, QRinput *input,
 	int length;
 	QRencodeMode mode;
 
-	if(*string == '\0') return 0;
-
-	mode = Split_identifyMode(string, hint);
-	if(mode == QR_MODE_NUM) {
-		length = Split_eatNum(string, input, hint);
-	} else if(mode == QR_MODE_AN) {
-		length = Split_eatAn(string, input, hint);
-	} else if(mode == QR_MODE_KANJI && hint == QR_MODE_KANJI) {
-		length = Split_eatKanji(string, input, hint);
-	} else {
-		length = Split_eat8(string, input, hint);
+	while(*string != '\0') {
+		mode = Split_identifyMode(string, hint);
+		if(mode == QR_MODE_NUM) {
+			length = Split_eatNum(string, input, hint);
+		} else if(mode == QR_MODE_AN) {
+			length = Split_eatAn(string, input, hint);
+		} else if(mode == QR_MODE_KANJI && hint == QR_MODE_KANJI) {
+			length = Split_eatKanji(string, input, hint);
+		} else {
+			length = Split_eat8(string, input, hint);
+		}
+		if(length == 0) break;
+		if(length < 0) return -1;
+		string += length;
 	}
-	if(length == 0) return 0;
-	if(length < 0) return -1;
-	return Split_splitString(&string[length], input, hint);
+
+	return 0;
 }
 
 static char *dupAndToUpper(const char *str, QRencodeMode hint)

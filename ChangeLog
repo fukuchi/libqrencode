@@ -1,7 +1,83 @@
+2020.09.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[hotfix]
+	* qrinput.c, tests/test_estimatebit.c:
+	  - Fixed a bug in the estimation of the Micro QR Code's data length
+	    in QRinput_estimateBitStreamSizeOfEntry() has been fixed.
+	  - Fixed a bug in the calculation of the Micro QR Code's data capacity in
+	    QRinput_encodeBitStream().
+	  - A test case to test the bugs above has been added.
+	  - Level check failure in QRinput_new2() on Windows has been fixed.
+	* Bumped version to 4.1.1.
+
+2020.08.29 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[release-4.1.0]
+	* .github/workflows/{cmake,configure,cmake-windows}.yml:
+	  - Github actions CI scripts have been added.
+	* tests/test_bitstream.c:
+	  - Fixed memory leak.
+	* configure.ac, tests/{prof,pthread}_qrencode.c:
+	  - Make configure to define HAVE_SYS_TIME_H in config.h.
+	* CMakeLists.txt:
+	  - 'wingetopt' has been replaced to 'getopt'.
+	* qrencode.c, tests/test_qrencode.c:
+	  - ECLEVEL check has been improved.
+	* .gitignore:
+	  - Added 'use/test-driver'.
+
+2020.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Made a develoment branch.
+	* test_qrspec.c:
+	  - Typo fixes.
+	* qrinput.[ch], tests/{test_qrencode.c, test_qrinput.c}:
+	  - A precise boundary check has been introduced to
+	    QRinput_estimateVersion(). (closes #160)
+	* qrinput.c, qrencode.c, tests/test_qrencode.c, qrenc.c, qrencode.1.in:
+	  - QRinput_encodeMode*() now throws ERANGE when encoding Micro QR Code
+	    and an appropriate version number was not specified.
+	  - Now Micro QR Code also allows auto version adjustment.
+	* qrenc.c, qrencode.1.in:
+	  - The synopsis has been improved. (Thanks to @jidanni) (closes #155)
+	  - A new option '--strict-version' has been introduced.
+	* split.c:
+	  - A tail recursion has been eliminated. (Thanks to @4061N) (closes #144)
+	* tests/*:
+	  - All test programs are now TAP-ready. Now you can run all test programs
+	    by 'make check'.(Thanks to @jtojnar) (closes #117)
+	* qrinput.c:
+	  - Return value was ignored. (Thanks to @xiaoyur347) (closed #143)
+	* README.md, NEWS:
+	  - Various documentation improvements and updates.
+	[release-4.1.0]
+	* Bumped version to 4.1.0.
+	* qrencode.h:
+	  - Document improvements.
+	* qrenc.c, qrencode.1.in:
+	  - Added 'UTF8i' and 'ANSIUTF8i' to the descriptions of the corresponding
+	    options. (Thanks to @Khoyo) (merged #138)
+
+2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* CMakeLists.txt, README.md:
+	  - Merged #158 (Thanks to @neheb):
+	    - Fixed the compile-time issue of the environment without libpng.
+
+2020.02.23 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* README.md:
+	  - Merged #151 (Thanks to @NancyLi1013):
+	    - Added vcpkg installation instructions.
+
+2018.11.09 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[master]
+	* configure.ac, README.md:
+	  - Merged #137 (Thanks to @abelbeck and @charmander):
+	    - 'too many arguments' bug has been fixed.
+
 2018.07.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[master]
 	* CMakeLists.txt:
-	  - Merged #133 (Thanks to @sdf5)
+	  - Merged #133 (Thanks to @sdf5):
 	    - Change CMAKE_SORUCE_DIR to CMAKE_CURRENT_SORUCE_DIR in
 		  CMAKE_MODULE_PATH
 

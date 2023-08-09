@@ -116,10 +116,11 @@ void test_allQRSizeAndECCLevel(void)
 int main()
 {
 	RSECC_decoder_init();
+	int tests = 2;
+	testInit(tests);
 	test_rscodeexample();
 	test_allQRSizeAndECCLevel();
-
-	report();
+	testReport(tests);
 
 	return 0;
 }

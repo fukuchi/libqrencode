@@ -7,6 +7,50 @@
 #include "../split.h"
 #include "decoder.h"
 
+/* taken from the Table 7 of JIS X0510:2018 (pp. 31-34) */
+static int maxCharacterLengths[40][4] = {
+	{  41,   25,   17,   10}, /* ver  1 */
+	{  77,   47,   32,   20}, /* ver  2 */
+	{ 127,   77,   53,   32}, /* ver  3 */
+	{ 187,  114,   78,   48}, /* ver  4 */
+	{ 255,  154,  106,   65}, /* ver  5 */
+	{ 322,  195,  134,   82}, /* ver  6 */
+	{ 370,  224,  154,   95}, /* ver  7 */
+	{ 461,  279,  192,  118}, /* ver  8 */
+	{ 552,  335,  230,  141}, /* ver  9 */
+	{ 652,  395,  271,  167}, /* ver 10 */
+	{ 772,  468,  321,  198}, /* ver 11 */
+	{ 883,  535,  367,  226}, /* ver 12 */
+	{1022,  619,  425,  262}, /* ver 13 */
+	{1101,  667,  458,  282}, /* ver 14 */
+	{1250,  758,  520,  320}, /* ver 15 */
+	{1408,  854,  586,  361}, /* ver 16 */
+	{1548,  938,  644,  397}, /* ver 17 */
+	{1725, 1046,  718,  442}, /* ver 18 */
+	{1903, 1153,  792,  488}, /* ver 19 */
+	{2061, 1249,  858,  528}, /* ver 20 */
+	{2232, 1352,  929,  572}, /* ver 21 */
+	{2409, 1460, 1003,  618}, /* ver 22 */
+	{2620, 1588, 1091,  672}, /* ver 23 */
+	{2812, 1704, 1171,  721}, /* ver 24 */
+	{3057, 1853, 1273,  784}, /* ver 25 */
+	{3283, 1990, 1367,  842}, /* ver 26 */
+	{3517, 2132, 1465,  902}, /* ver 27 */
+	{3669, 2223, 1528,  940}, /* ver 28 */
+	{3909, 2369, 1628, 1002}, /* ver 29 */
+	{4158, 2520, 1732, 1066}, /* ver 30 */
+	{4417, 2677, 1840, 1132}, /* ver 31 */
+	{4686, 2840, 1952, 1201}, /* ver 32 */
+	{4965, 3009, 2068, 1273}, /* ver 33 */
+	{5253, 3183, 2188, 1347}, /* ver 34 */
+	{5529, 3351, 2303, 1417}, /* ver 35 */
+	{5836, 3537, 2431, 1496}, /* ver 36 */
+	{6153, 3729, 2563, 1577}, /* ver 37 */
+	{6479, 3927, 2699, 1661}, /* ver 38 */
+	{6743, 4087, 2809, 1729}, /* ver 39 */
+	{7089, 4296, 2953, 1817}  /* ver 40 */
+};
+
 static int encodeAndCheckBStream(int mqr, int version, QRecLevel level, QRencodeMode mode, char *data, char *correct)
 {
 	QRinput *input;
@@ -791,6 +835,92 @@ static void test_null_free(void)
 	testFinish();
 }
 
+static void fillCharacter(char *dest, char ch, int size)
+{
+	memset(dest, ch, size);
+	dest[size] = '\0';
+}
+
+static void checkEstimatedVersion(int ver, int mode)
+{
+	int estimatedVersion;
+	char data[7200];
+	QRinput *input;
+	QRencodeMode hint;
+	int size1, size2;
+	static char *modeStr[4] = {"numeric", "alphanumeric", "8 bit data", "kanji"};
+	static char ch[4] = {'0', 'A', 'a', '\x92'};
+
+	if(mode == QR_MODE_KANJI) {
+		hint = QR_MODE_KANJI;
+		size1 = maxCharacterLengths[ver - 1][mode] * 2;
+		size2 = size1 + 2;
+	} else {
+		hint = QR_MODE_8;
+		size1 = maxCharacterLengths[ver - 1][mode];
+		size2 = size1 + 1;
+	}
+
+	fillCharacter(data, ch[mode], size1);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(data, input, hint, 1);
+	estimatedVersion = QRinput_estimateVersion(input);
+	assert_equal(estimatedVersion, ver, "Estimated version %d is not equal to the expected version %d for %d %s sequence.\n", estimatedVersion, ver, maxCharacterLengths[ver - 1][mode], modeStr[mode]);
+	QRinput_free(input);
+
+	fillCharacter(data, ch[mode], size2);
+	input = QRinput_new2(0, QR_ECLEVEL_L);
+	Split_splitStringToQRinput(data, input, hint, 1);
+	estimatedVersion = QRinput_estimateVersion(input);
+	assert_equal(estimatedVersion, ver + 1, "Estimated version %d is not equal to the expected version %d for %d %s sequence.\n", estimatedVersion, ver, maxCharacterLengths[ver - 1][mode] + 1, modeStr[mode]);
+	QRinput_free(input);
+}
+
+static void test_estimateVersionBoundaryCheck(void)
+{
+	int ver;
+	testStart("Boundary check of estimateVersion");
+	for(ver = 1; ver < QRSPEC_VERSION_MAX; ver++) {
+		checkEstimatedVersion(ver, QR_MODE_NUM);
+		checkEstimatedVersion(ver, QR_MODE_AN);
+		checkEstimatedVersion(ver, QR_MODE_8);
+		checkEstimatedVersion(ver, QR_MODE_KANJI);
+	}
+	testFinish();
+}
+
+static void test_QRinput_new_invalid(void)
+{
+	testStart("Invalid input to QRinput_new2()");
+	QRinput *input;
+
+	input = QRinput_new2(-1, QR_ECLEVEL_H);
+	assert_null(input, "QRinput_new2() returns non-null for invalid version (-1).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	input = QRinput_new2(41, QR_ECLEVEL_H);
+	assert_null(input, "QRinput_new2() returns non-null for invalid version (41).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	input = QRinput_new2(1, -1);
+	assert_null(input, "QRinput_new2() returns non-null for invalid level (-1).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	input = QRinput_new2(1, 5);
+	assert_null(input, "QRinput_new2() returns non-null for invalid level (5).\n");
+	assert_equal(errno, EINVAL, "Error code is not EINVAL.\n");
+	testFinish();
+}
+
+static void test_QRinput_getErrorCorrectionLevel(void)
+{
+	testStart("Invalid input to QRinput_getErrorCorrectionLevel()");
+	QRinput *input;
+	QRecLevel level;
+
+	input = QRinput_new2(1, QR_ECLEVEL_H);
+	level = QRinput_getErrorCorrectionLevel(input);
+	assert_equal(level, QR_ECLEVEL_H, "QRinput_getErrorCorrectionLevel() fails to return expected level.\n");
+	testFinish();
+}
+
 static void test_mqr_new(void)
 {
 	QRinput *input;
@@ -946,6 +1076,9 @@ static void test_encodeECI(void)
 
 int main()
 {
+	int tests = 42;
+	testInit(tests);
+
 	test_encodeNumeric();
 	test_encodeNumeric2();
 	test_encodeNumeric3();
@@ -976,6 +1109,9 @@ int main()
 	test_parity();
 	test_parity2();
 	test_null_free();
+	test_estimateVersionBoundaryCheck();
+	test_QRinput_new_invalid();
+	test_QRinput_getErrorCorrectionLevel();
 
 	test_mqr_new();
 	test_mqr_setversion();
@@ -987,7 +1123,7 @@ int main()
 	test_ECIinvalid();
 	test_encodeECI();
 
-	report();
+	testReport(tests);
 
 	return 0;
 }

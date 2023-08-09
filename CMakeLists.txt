@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(QRencode VERSION 4.1.0 LANGUAGES C)
+project(QRencode VERSION 4.1.1 LANGUAGES C)
 
 option(WITH_TOOLS "Build utility tools"  YES )
 option(WITH_TESTS "Build tests"  NO )
@@ -41,6 +41,8 @@ check_include_file(strings.h  HAVE_STRINGS_H )
 check_include_file(string.h   HAVE_STRING_H  )
 check_include_file(getopt.h   HAVE_GETOPT_H  )
 check_include_file(sys/time.h HAVE_SYS_TIME_H)
+check_include_file(time.h     HAVE_TIME_H    )
+check_include_file(pthread.h  HAVE_PTHREAD_H )
 
 check_function_exists(strdup HAVE_STRDUP)
 
@@ -80,7 +82,7 @@ if(MSVC)
     
     if(WITH_TOOLS)
         find_path(GETOPT_INCLUDE_DIR getopt.h PATH_SUFFIXES include)
-        find_library(GETOPT_LIBRARIES wingetopt PATH_SUFFIXES lib)
+        find_library(GETOPT_LIBRARIES getopt PATH_SUFFIXES lib)
         include_directories(${GETOPT_INCLUDE_DIR})
     endif(WITH_TOOLS)
 endif(MSVC)
@@ -141,7 +143,11 @@ if(WITH_TOOLS)
     add_executable(qrenc qrenc.c)
     set_target_properties(qrenc PROPERTIES OUTPUT_NAME qrencode)
 
-    target_link_libraries(qrenc qrencode PNG::PNG)
+    if(NOT WITHOUT_PNG)
+        target_link_libraries(qrenc qrencode PNG::PNG)
+    else()
+        target_link_libraries(qrenc qrencode)
+    endif()
 
     if(MSVC)
         target_link_libraries(qrenc ${GETOPT_LIBRARIES})

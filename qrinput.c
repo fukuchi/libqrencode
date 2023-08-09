@@ -117,7 +117,7 @@ QRinput *QRinput_new2(int version, QRecLevel level)
 {
 	QRinput *input;
 
-	if(version < 0 || version > QRSPEC_VERSION_MAX || level > QR_ECLEVEL_H) {
+	if(version < 0 || version > QRSPEC_VERSION_MAX || level < 0 || level > QR_ECLEVEL_H) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -445,7 +445,7 @@ static int QRinput_encodeModeNum(QRinput_List *entry, BitStream *bstream, int ve
 	} else if(entry->size - words * 3 == 2) {
 		val  = (unsigned int)(entry->data[words*3  ] - '0') * 10;
 		val += (unsigned int)(entry->data[words*3+1] - '0');
-		BitStream_appendNum(bstream, 7, val);
+		ret = BitStream_appendNum(bstream, 7, val);
 		if(ret < 0) return -1;
 	}
 
@@ -521,7 +521,7 @@ static int QRinput_encodeModeAn(QRinput_List *entry, BitStream *bstream, int ver
 
 	if(mqr) {
 		if(version < 2) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		}
 		ret = BitStream_appendNum(bstream, (size_t)(version - 1), MQRSPEC_MODEID_AN);
@@ -583,7 +583,7 @@ static int QRinput_encodeMode8(QRinput_List *entry, BitStream *bstream, int vers
 
 	if(mqr) {
 		if(version < 3) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		}
 		ret = BitStream_appendNum(bstream, (size_t)(version - 1), MQRSPEC_MODEID_8);
@@ -659,7 +659,7 @@ static int QRinput_encodeModeKanji(QRinput_List *entry, BitStream *bstream, int 
 
 	if(mqr) {
 		if(version < 2) {
-			errno = EINVAL;
+			errno = ERANGE;
 			return -1;
 		}
 		ret = BitStream_appendNum(bstream, (size_t)(version - 1), MQRSPEC_MODEID_KANJI);
@@ -890,13 +890,17 @@ static int QRinput_estimateBitStreamSizeOfEntry(QRinput_List *entry, int version
 	}
 
 	if(mqr) {
-		l = QRspec_lengthIndicator(entry->mode, version);
+		l = MQRspec_lengthIndicator(entry->mode, version);
 		m = version - 1;
 		bits += l + m;
 	} else {
 		l = QRspec_lengthIndicator(entry->mode, version);
 		m = 1 << l;
-		num = (entry->size + m - 1) / m;
+		if(entry->mode == QR_MODE_KANJI) {
+			num = (entry->size/2 + m - 1) / m;
+		} else {
+			num = (entry->size + m - 1) / m;
+		}
 
 		bits += num * (MODE_INDICATOR_SIZE + l);
 	}
@@ -927,9 +931,9 @@ STATIC_IN_RELEASE int QRinput_estimateBitStreamSize(QRinput *input, int version)
 /**
  * Estimate the required version number of the symbol.
  * @param input input data
- * @return required version number
+ * @return required version number or -1 for failure.
  */
-static int QRinput_estimateVersion(QRinput *input)
+STATIC_IN_RELEASE int QRinput_estimateVersion(QRinput *input)
 {
 	int bits;
 	int version, prev;
@@ -939,6 +943,9 @@ static int QRinput_estimateVersion(QRinput *input)
 		prev = version;
 		bits = QRinput_estimateBitStreamSize(input, prev);
 		version = QRspec_getMinimumVersion((bits + 7) / 8, input->level);
+		if(prev == 0 && version > 1) {
+			version--;
+		}
 	} while (version > prev);
 
 	return version;
@@ -1011,7 +1018,11 @@ static int QRinput_encodeBitStream(QRinput_List *entry, BitStream *bstream, int 
 
 	prevsize = (int)BitStream_size(bstream);
 
-	words = QRspec_maximumWords(entry->mode, version);
+	if(mqr) {
+		words = MQRspec_maximumWords(entry->mode, version);
+	} else {
+		words = QRspec_maximumWords(entry->mode, version);
+	}
 	if(words != 0 && entry->size > words) {
 		st1 = QRinput_List_newEntry(entry->mode, words, entry->data);
 		if(st1 == NULL) goto ABORT;

@@ -1,6 +1,6 @@
 # libqrencode - a fast and compact QR Code encoding library [![Build Status](https://travis-ci.org/fukuchi/libqrencode.png?branch=master)](https://travis-ci.org/fukuchi/libqrencode)
 
-**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.0.2.
+**Attention:** This repository contains the development version of libqrencode. See <https://fukuchi.org/works/qrencode/> for the official stable releases. At this moment, the latest stable release is version 4.1.1.
 
 GENERAL INFORMATION
 ===================
@@ -86,6 +86,24 @@ make
 
 When you want to build the test programs, give "--with-tests" option to
 configure, or "-DWITH\_TESTS=YES" to cmake.
+
+### Building libqrencode with vcpkg
+
+You can download and install libqrencode using the
+[vcpkg](https://github.com/Microsoft/vcpkg) dependency manager:
+   
+```
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+./vcpkg install libqrencode
+```
+    
+The libqrencode port in vcpkg is kept up to date by Microsoft team members and
+community contributors. If the version is out of date, please
+[create an issue or pull request](https://github.com/Microsoft/vcpkg) on the
+vcpkg repository.
 
 
 USAGE
@@ -192,17 +210,22 @@ Copyright (C) 2002, 2003, 2004, 2006 Phil Karn, KA9Q
                         - improved CMake support
 * @vanillahsu           - bug fix patch
 * @Ation                - bug fix patch
-* Jonathan Bennett      - Addedd "--inline" option to qrencode
+* Jonathan Bennett      - Added "--inline" option to qrencode
 * András Veres-Szentkirályi
                         - ANSI256UTF8 support
 * @sdf5                 - improved CMake support
 * Lonnie Abelbeck (@abelbeck)
                         - bug fix patch
+* @4061N                - performance improvement patch
+* Rosen Penev (@neheb)  - CMake bug fix patch
+* Mika Lindqvist (@mtl1979)
+                        - replacement for gettimeofday() for Windows.
 * Shigeyuki Hirai, Paul Janssens, wangsai, Gavan Fantom, Matthew Baker,
   Rob Ryan, Fred Steinhaeuser, Terry Burton, @chisj, @vlad417, Petr,
   Hassan Hajji, Emmanuel Blot, ßlúèÇhîp, Heiko Becker, Gavin Andresen,
   David Binderman, @ralgozino, Sean McMurray, Vlad Bespalov (@win32asm),
   Antenore Gatta, Yoshimichi Inoue, Sunil Maganally, Norman Gray,
   Danomi Manchego, @minus7, Ian Sweet, @qianchenglenger, Ronald Michaels,
-  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules
+  Yuji Ueno, Jakub Wilk, @KangLin, @c-273, @thebunnyrules, @NancyLi1013,
+  Frédéric Wang, Dan Jacobson, Jan Tojnar, @xiaoyur347, @charmander
                         - bug report / suggestion / typo fixes
