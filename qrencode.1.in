@@ -43,10 +43,10 @@ specify the width of margin. (default=4)
 specify the DPI of the generated PNG. (default=72)
 .TP
 .PD 0
-.B \-t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}
+.B \-t {PNG,PNG32,EPS,PIC,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}
 .TP
 .PD
-.B \-\-type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}
+.B \-\-type={PNG,PNG32,EPS,PIC,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}
 specify the type of the generated image. (default=PNG)
 .br
 If ASCII*, UTF8*, or ANSI* is specified, the image will be displayed in the terminal by using
@@ -75,7 +75,7 @@ encode in a Micro QR Code. See MICRO QR CODE for more information.
 enable run-length encoding for SVG.
 .TP
 .B \-\-svg-path
-use single path to draw modules for SVG.
+use single path to draw modules for SVG or PIC.
 .TP
 .B \-\-inline
 only useful for SVG output, generates an SVG without the XML tag.
@@ -87,7 +87,7 @@ only useful for SVG output, generates an SVG without the XML tag.
 .B \-\-background=RRGGBB[AA]
 specify foreground/background color in hexadecimal notation.
 6-digit (RGB) or 8-digit (RGBA) form are supported.
-Color output support available only in PNG, EPS and SVG.
+Color output support available only in PNG, EPS, PIC and SVG.
 .TP
 .B \-\-strict\-version
 disable automatic version number adjustment. If the input data is

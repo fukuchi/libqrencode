@@ -68,7 +68,8 @@ enum imageType {
 	ANSIUTF8_TYPE,
 	ANSI256UTF8_TYPE,
 	UTF8i_TYPE,
-	ANSIUTF8i_TYPE
+	ANSIUTF8i_TYPE,
+	PIC_TYPE
 };
 
 static enum imageType image_type = PNG_TYPE;
@@ -134,8 +135,8 @@ static void usage(int help, int longopt, int status)
 "               specify the width of the margins. (default=4 (2 for Micro QR)))\n\n"
 "  -d NUMBER, --dpi=NUMBER\n"
 "               specify the DPI of the generated PNG. (default=72)\n\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8},\n"
-"  --type={PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}\n"
+"  -t {PNG,PNG32,EPS,PIC,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8},\n"
+"  --type={PNG,PNG32,EPS,PIC,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "               If ASCII*, UTF8*, or ANSI* is specified, the image will be disp-\n"
 "               layed in the terminal by using text characters instead of gene-\n"
@@ -152,13 +153,13 @@ static void usage(int help, int longopt, int status)
 "  -M, --micro  encode in a Micro QR Code.\n\n"
 "      --rle    enable run-length encoding for SVG.\n\n"
 "      --svg-path\n"
-"               use single path to draw modules for SVG.\n\n"
+"               use single path to draw modules for SVG or PIC.\n\n"
 "      --inline only useful for SVG output, generates an SVG without the XML tag.\n\n"
 "      --foreground=RRGGBB[AA]\n"
 "      --background=RRGGBB[AA]\n"
 "               specify foreground/background color in hexadecimal notation.\n"
 "               6-digit (RGB) or 8-digit (RGBA) form are supported.\n"
-"               Color output support available only in PNG, EPS and SVG.\n\n"
+"               Color output support available only in PNG, EPS, PIC and SVG.\n\n"
 "      --strict-version\n"
 "               disable automatic version number adjustment. If the input data is\n"
 "               too large for the specified version, the program exits with the\n"
@@ -196,7 +197,7 @@ static void usage(int help, int longopt, int status)
 "  -v NUMBER    specify the minimum version of the symbol. (default=auto)\n"
 "  -m NUMBER    specify the width of the margins. (default=4 (2 for Micro))\n"
 "  -d NUMBER    specify the DPI of the generated PNG. (default=72)\n"
-"  -t {PNG,PNG32,EPS,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}\n"
+"  -t {PNG,PNG32,EPS,PIC,SVG,XPM,ANSI,ANSI256,ASCII,ASCIIi,UTF8,UTF8i,ANSIUTF8,ANSIUTF8i,ANSI256UTF8}\n"
 "               specify the type of the generated image. (default=PNG)\n"
 "  -S           make structured symbols. Version number must be specified with '-v'.\n"
 "  -k           assume that the input text contains kanji (shift-jis).\n"
@@ -519,6 +520,71 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	}
 
 	fprintf(fp, "\n%%%%EOF\n");
+	fclose(fp);
+
+	return 0;
+}
+
+static void writePIC_drawModules(FILE *fp, int x, int y, int width, const char* col)
+{
+	if(svg_path) {
+		fprintf(fp, "line left %d color \"%s\" at (%d,%d)\n", width, col, x, y);
+	} else {
+    fprintf(fp, "box width %d height 1 color \"%s\" at (%d,%d)\n", width, col, x, -y);
+	}
+}
+
+static int writePIC(const QRcode *qrcode, const char *outfile)
+{
+	FILE *fp;
+	unsigned char *row, *p;
+	int x, y;
+	int symwidth;
+	float scale;
+	char fg[7], bg[7];
+
+	fp = openFile(outfile);
+
+	scale = dpi * INCHES_PER_METER / 100.0;
+
+	symwidth = qrcode->width + margin * 2;
+
+	snprintf(fg, 7, "%02x%02x%02x", fg_color[0], fg_color[1],  fg_color[2]);
+	snprintf(bg, 7, "%02x%02x%02x", bg_color[0], bg_color[1],  bg_color[2]);
+
+	/* PIC code start */
+  fputs(".PS ", fp);
+
+	/* Vanity remark */
+	fprintf(fp, "\\\" Created with qrencode %s (https://fukuchi.org/works/qrencode/index.html)\n", QRcode_APIVersionString());
+
+  fprintf(fp,  ".defcolor qrpicfg rgb #%s\n", fg );
+  fprintf(fp,  ".defcolor qrpicbg rgb #%s\n", bg );
+  if (svg_path) {
+    fputs( ".nop \\X'ps: exec 0 setlinecap'\\c\n", fp);
+    fputs( "linethick=3\n", fp );
+  }
+  fputs( "move down 0;move left 0\n", fp );
+
+  float symoffset = (qrcode->width - margin * 0.25) * 0.5;
+  fprintf( fp, "box width %d height %d color \"qrpicbg\" at (%f,%f)\n", symwidth, symwidth, symoffset, symoffset * ((svg_path) ? 1.0 : -1.0));
+
+	/* Write data */
+	p = qrcode->data;
+	for(y = 0; y < qrcode->width; y++) {
+		row = (p+(y*qrcode->width));
+
+    for(x = 0; x < qrcode->width; x++) {
+      if(*(row+x)&0x1) {
+        writePIC_drawModules(fp, x, y, 1, "qrpicfg");
+      }
+    }
+	}
+
+  fprintf( fp, "scale=%.f\n", scale );
+
+	/* Close PIC code */
+  fputs(".PE\n", fp);
 	fclose(fp);
 
 	return 0;
@@ -1062,6 +1128,9 @@ static void qrencode(const unsigned char *intext, int length, const char *outfil
 		case EPS_TYPE:
 			writeEPS(qrcode, outfile);
 			break;
+		case PIC_TYPE:
+			writePIC(qrcode, outfile);
+			break;
 		case SVG_TYPE:
 			writeSVG(qrcode, outfile);
 			break;
@@ -1127,6 +1196,9 @@ static void qrencodeStructured(const unsigned char *intext, int length, const ch
 			break;
 		case EPS_TYPE:
 			type_suffix = ".eps";
+			break;
+		case PIC_TYPE:
+			type_suffix = ".pic";
 			break;
 		case SVG_TYPE:
 			type_suffix = ".svg";
@@ -1322,6 +1394,8 @@ int main(int argc, char **argv)
 					image_type = PNG_TYPE;
 				} else if(strcasecmp(optarg, "eps") == 0) {
 					image_type = EPS_TYPE;
+				} else if(strcasecmp(optarg, "pic") == 0) {
+					image_type = PIC_TYPE;
 				} else if(strcasecmp(optarg, "svg") == 0) {
 					image_type = SVG_TYPE;
 				} else if(strcasecmp(optarg, "xpm") == 0) {
