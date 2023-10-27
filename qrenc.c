@@ -520,20 +520,13 @@ static int writeEPS(const QRcode *qrcode, const char *outfile)
 	return 0;
 }
 
-static void writeSVG_drawModules(FILE *fp, int x, int y, int width, const char* col, float opacity)
+static void writeSVG_drawModules(FILE *fp, int x, int y, int width)
 {
 	if(svg_path) {
 		fprintf(fp, "M%d,%dh%d", x, y, width);
 	} else {
-		if(fg_color[3] != 255) {
-			fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-					"fill=\"#%s\" fill-opacity=\"%f\"/>\n",
-					x, y, width, col, opacity );
-		} else {
-			fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\" "\
-					"fill=\"#%s\"/>\n",
-					x, y, width, col );
-		}
+		fprintf(fp, "\t\t\t<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"1\"/>\n",
+				x, y, width );
 	}
 }
 
@@ -602,7 +595,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 		}
 	} else {
 		/* Create new viewbox for QR data */
-		fprintf(fp, "\t\t<g id=\"Pattern\" transform=\"translate(%d,%d)\">\n", margin, margin);
+		fprintf(fp, "\t\t<g id=\"Pattern\" transform=\"translate(%d,%d)\" fill=\"#%s\" fill-opacity=\"%f\">\n", margin, margin, fg, fg_opacity);
 	}
 
 	/* Write data */
@@ -614,7 +607,7 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 			/* no RLE */
 			for(x = 0; x < qrcode->width; x++) {
 				if(*(row+x)&0x1) {
-					writeSVG_drawModules(fp, x, y, 1, fg, fg_opacity);
+					writeSVG_drawModules(fp, x, y, 1);
 				}
 			}
 		} else {
@@ -626,12 +619,12 @@ static int writeSVG(const QRcode *qrcode, const char *outfile)
 					pen = *(row+x)&0x1;
 					x0 = x;
 				} else if(!(*(row+x)&0x1)) {
-					writeSVG_drawModules(fp, x0, y, x-x0, fg, fg_opacity);
+					writeSVG_drawModules(fp, x0, y, x-x0);
 					pen = 0;
 				}
 			}
 			if( pen ) {
-				writeSVG_drawModules(fp, x0, y, qrcode->width - x0, fg, fg_opacity);
+				writeSVG_drawModules(fp, x0, y, qrcode->width - x0);
 			}
 		}
 	}
