@@ -14,6 +14,8 @@ AC_DEFINE_UNQUOTED([MAJOR_VERSION], [$MAJOR_VERSION], [Major version number])
 AC_DEFINE_UNQUOTED([MINOR_VERSION], [$MINOR_VERSION], [Minor version number])
 AC_DEFINE_UNQUOTED([MICRO_VERSION], [$MICRO_VERSION], [Micro version number])
 
+AC_DEFINE([BUILDING_QRENCODE], [], [Specify we are currently building QRencode])
+
 AC_CONFIG_SRCDIR([qrencode.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(use)
