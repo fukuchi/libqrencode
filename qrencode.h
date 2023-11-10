@@ -110,7 +110,11 @@ extern "C" {
 #define QRENCODE_EXTERN __declspec(dllimport)
 #endif
 #else
+#if defined(__GNUC__)
+#define QRENCODE_EXTERN extern __attribute__((visibility("default")))
+#else
 #define QRENCODE_EXTERN extern
+#endif
 #endif
 
 /**
