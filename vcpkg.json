@@ -1,0 +1,9 @@
+{
+  "name": "libqrencode",
+  "version": "1.0.0",
+  "dependencies": [
+    "getopt",
+    "libiconv",
+    "libpng"
+  ]
+}
