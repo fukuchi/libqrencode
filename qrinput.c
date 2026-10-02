@@ -800,7 +800,7 @@ static int QRinput_encodeModeECI(QRinput_List *entry, BitStream *bstream)
 		code = 0x8000 + ecinum;
 	} else {
 		words = 3;
-		code = 0xc0000 + ecinum;
+		code = 0xc00000 + ecinum;
 	}
 
 	ret = BitStream_appendNum(bstream, 4, QRSPEC_MODEID_ECI);

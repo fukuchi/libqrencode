@@ -1047,6 +1047,40 @@ static void test_ECIinvalid(void)
 	testFinish();
 }
 
+static void test_encodeECIrange(void)
+{
+	const struct {
+		unsigned int ecinum;
+		char *bits;
+	} cases[] = {
+		{0, "0111 00000000"},
+		{127, "0111 01111111"},
+		{128, "0111 10000000 10000000"},
+		{16383, "0111 10111111 11111111"},
+		{16384, "0111 11000000 01000000 00000000"},
+		{999999, "0111 11001111 01000010 00111111"}
+	};
+	QRinput *input;
+	BitStream *bstream;
+	size_t i;
+	int ret;
+
+	testStart("Encoding ECI headers at assignment range boundaries.");
+	for(i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+		input = QRinput_new();
+		ret = QRinput_appendECIheader(input, cases[i].ecinum);
+		assert_zero(ret, "Valid ECI assignment %u rejected.\n", cases[i].ecinum);
+		bstream = BitStream_new();
+		ret = QRinput_mergeBitStream(input, bstream);
+		assert_zero(ret, "Failed to merge ECI assignment %u.\n", cases[i].ecinum);
+		ret = cmpBin(cases[i].bits, bstream);
+		assert_zero(ret, "ECI assignment %u incorrectly encoded.\n", cases[i].ecinum);
+		BitStream_free(bstream);
+		QRinput_free(input);
+	}
+	testFinish();
+}
+
 static void test_encodeECI(void)
 {
 	QRinput *input;
@@ -1076,7 +1110,7 @@ static void test_encodeECI(void)
 
 int main()
 {
-	int tests = 42;
+	int tests = 43;
 	testInit(tests);
 
 	test_encodeNumeric();
@@ -1121,6 +1155,7 @@ int main()
 	test_textMQR();
 
 	test_ECIinvalid();
+	test_encodeECIrange();
 	test_encodeECI();
 
 	testReport(tests);
