@@ -79,3 +79,6 @@ if(TARGET ICONV::ICONV)
     endif()
 endif()
 
+add_executable(test_cmake_target test_cmake_target.c)
+target_link_libraries(test_cmake_target qrencode)
+add_test(test_cmake_target test_cmake_target)

@@ -23,7 +23,7 @@ noinst_PROGRAMS += pthread_qrencode
 endif
 
 TESTS = $(check_PROGRAMS)
-EXTRA_DIST = test_all.sh test_basic.sh test_configure.sh frame URI_testset.inc CMakeLists.txt
+EXTRA_DIST = test_all.sh test_basic.sh test_configure.sh frame URI_testset.inc CMakeLists.txt test_cmake_target.c
 
 libdecoder_a_SOURCES = decoder.c decoder.h datachunk.c datachunk.h rsecc_decoder.c rsecc_decoder.h
 
