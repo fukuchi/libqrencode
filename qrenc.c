@@ -1397,7 +1397,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if(outfile == NULL && image_type == PNG_TYPE) {
+	if(outfile == NULL && (image_type == PNG_TYPE || image_type == PNG32_TYPE)) {
 		fprintf(stderr, "No output filename is given.\n");
 		exit(EXIT_FAILURE);
 	}
